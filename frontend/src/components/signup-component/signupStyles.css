@@ -15,3 +15,8 @@ body {
 .w-35 {
 	width: 35%;
 }
+
+label {
+	font-family: 'Raleway', sans-serif;
+	font-weight: bold;
+}
