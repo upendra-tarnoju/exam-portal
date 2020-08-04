@@ -1,7 +1,68 @@
 import React, { Component } from 'react';
 import './signupStyles.css';
+import axios from 'axios';
 
 class SignUp extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			firstName: '',
+			lastName: '',
+			mobileNumber: '',
+			email: '',
+			password: '',
+			accountType: '',
+		};
+
+		this.handleSubmit = this.handleSubmit.bind(this);
+		this.handleChange = this.handleChange.bind(this);
+	}
+
+	handleSubmit(event) {
+		event.preventDefault();
+		let {
+			firstName,
+			lastName,
+			email,
+			mobileNumber,
+			password,
+			accountType,
+		} = this.state;
+		axios
+			.post(`${process.env.REACT_APP_BASE_URL}/api/signup`, {
+				firstName,
+				lastName,
+				email,
+				mobileNumber,
+				password,
+				accountType,
+			})
+			.then((response) => {
+				console.log(response);
+			});
+	}
+
+	handleChange(event) {
+		var regex = /^[0-9\b]+$/;
+
+		if (event.target.name === 'mobileNumber') {
+			let number = event.target.value;
+			if (number === '' || regex.test(number)) {
+				console.log('efef');
+				this.setState({
+					[event.target.name]: event.target.value,
+				});
+			}
+		} else {
+			this.setState({
+				[event.target.name]: event.target.value,
+			});
+		}
+	}
+
+	handleKeyDown(event) {}
+
 	render() {
 		return (
 			<div className='container-fluid p-3'>
@@ -9,23 +70,52 @@ class SignUp extends Component {
 					<div className='pt-3 pb-2'>
 						<p className='text-center heading'>Sign up to continue</p>
 						<div className='px-5'>
-							<form className='text-center'>
-								<label className='w-100 text-left font-weight-bold'>
-									First name
-								</label>
-								<input type='text' className='w-100 px-3 py-2 mb-2' />
+							<form className='text-center' onSubmit={this.handleSubmit}>
+								<label className='w-100 text-left'>First name</label>
+								<input
+									type='text'
+									name='firstName'
+									className='w-100 px-3 py-2 mb-2'
+									value={this.state.firstName}
+									onChange={this.handleChange}
+								/>
 
 								<label className='w-100 text-left'>Last name</label>
-								<input type='text' className='w-100 px-3 py-2 mb-2' />
+								<input
+									type='text'
+									className='w-100 px-3 py-2 mb-2'
+									name='lastName'
+									value={this.state.lastName}
+									onChange={this.handleChange}
+								/>
 
 								<label className='w-100 text-left'>Mobile number</label>
-								<input type='text' className='w-100 px-3 py-2 mb-2' />
+								<input
+									type='text'
+									className='w-100 px-3 py-2 mb-2'
+									name='mobileNumber'
+									maxLength={10}
+									value={this.state.mobileNumber}
+									onChange={this.handleChange}
+								/>
 
 								<label className='w-100 text-left'>Email</label>
-								<input type='email' className='w-100 px-3 py-2 mb-2' />
+								<input
+									type='email'
+									className='w-100 px-3 py-2 mb-2'
+									name='email'
+									value={this.state.email}
+									onChange={this.handleChange}
+								/>
 
 								<label className='w-100 text-left'>Password</label>
-								<input type='password' className='w-100 px-3 py-2' />
+								<input
+									type='password'
+									className='w-100 px-3 py-2'
+									name='password'
+									value={this.state.password}
+									onChange={this.handleChange}
+								/>
 
 								<p className='text-center font-weight-bold mt-2 mb-0'>
 									Account Type
@@ -38,10 +128,11 @@ class SignUp extends Component {
 											name='accountType'
 											id='examiner'
 											value='examiner'
+											onChange={this.handleChange}
 										/>
 										<label
 											className='form-check-label'
-											for='examiner'
+											htmlFor='examiner'
 										>
 											Examiner
 										</label>
@@ -53,8 +144,12 @@ class SignUp extends Component {
 											name='accountType'
 											id='student'
 											value='student'
+											onChange={this.handleChange}
 										/>
-										<label className='form-check-label' for='student'>
+										<label
+											className='form-check-label'
+											htmlFor='student'
+										>
 											Student
 										</label>
 									</div>
