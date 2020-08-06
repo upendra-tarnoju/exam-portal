@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './signupStyles.css';
 import axios from 'axios';
+import ShowModal from './showModal';
 
 class SignUp extends Component {
 	constructor(props) {
@@ -13,45 +14,41 @@ class SignUp extends Component {
 			email: '',
 			password: '',
 			accountType: '',
+			modal: false,
+			message: '',
 		};
 
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleChange = this.handleChange.bind(this);
+		this.handleModal = this.handleModal.bind(this);
 	}
+
+	showModal = (message) => {
+		this.setState({ modal: true, message: message });
+	};
+
+	hideModal = () => {
+		this.setState({ modal: false });
+	};
 
 	handleSubmit(event) {
 		event.preventDefault();
-		let {
-			firstName,
-			lastName,
-			email,
-			mobileNumber,
-			password,
-			accountType,
-		} = this.state;
 		axios
-			.post(`${process.env.REACT_APP_BASE_URL}/api/signup`, {
-				firstName,
-				lastName,
-				email,
-				mobileNumber,
-				password,
-				accountType,
-			})
+			.post(`${process.env.REACT_APP_BASE_URL}/api/signup`, this.state)
 			.then((response) => {
-				console.log(response);
+				this.showModal(response.data.msg);
 			});
 	}
 
 	handleChange(event) {
+		var value = event.target.value;
 		var regex = /^[0-9\b]+$/;
 
 		if (event.target.name === 'mobileNumber') {
 			let number = event.target.value;
 			if (number === '' || regex.test(number)) {
-				console.log('efef');
 				this.setState({
-					[event.target.name]: event.target.value,
+					[event.target.name]: number,
 				});
 			}
 		} else {
@@ -61,7 +58,11 @@ class SignUp extends Component {
 		}
 	}
 
-	handleKeyDown(event) {}
+	handleModal(state) {
+		this.setState({
+			modal: state,
+		});
+	}
 
 	render() {
 		return (
@@ -179,6 +180,11 @@ class SignUp extends Component {
 						</div>
 					</div>
 				</div>
+				<ShowModal
+					show={this.state.modal}
+					handleClose={this.hideModal}
+					message={this.state.message}
+				/>
 			</div>
 		);
 	}
