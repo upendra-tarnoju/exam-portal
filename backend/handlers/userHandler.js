@@ -1,5 +1,14 @@
 const { users } = require('../models');
 const bcrypt = require('bcryptjs');
+
+mapNewUser = (userData) => {
+	Object.keys(userData).forEach((key) => {
+		if (key !== 'message' || key !== 'modal')
+			userData[key] = userData[key]['value'];
+	});
+	return checkAccountStatus(userData);
+};
+
 checkAccountStatus = (data) => {
 	if (data.accountType == 'examiner') {
 		data.accountStatus = 'pending';
@@ -11,15 +20,15 @@ checkAccountStatus = (data) => {
 
 const user = {
 	save_user_details: async (req, res) => {
-		let existingUser = await users.find(req.body.email);
+		let userData = mapNewUser(req.body);
+		let existingUser = await users.find(userData.email);
 		if (existingUser == null) {
-			let password = req.body.password;
 			let salt = bcrypt.genSaltSync(10);
-			let hash = bcrypt.hashSync(password, salt);
-			req.body.password = hash;
-			let data = checkAccountStatus(req.body);
+			let hash = bcrypt.hashSync(userData.password, salt);
+			userData.password = hash;
+
 			await users
-				.create(req.body)
+				.create(userData)
 				.then((user) => {
 					if (user.accountType == 'examiner') {
 						res.status(200).send({

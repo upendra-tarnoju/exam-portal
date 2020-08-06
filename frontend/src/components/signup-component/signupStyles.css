@@ -21,6 +21,10 @@ label {
 	font-weight: bold;
 }
 
+label span {
+	font-size: 12px;
+}
+
 .custom-modal-container {
 	position: fixed;
 	z-index: 1;
