@@ -13,6 +13,7 @@ class Login extends Component {
 				value: '',
 				error: '',
 			},
+			error: '',
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -51,7 +52,14 @@ class Login extends Component {
 					username: this.state.email.value,
 					password: this.state.password.value,
 				})
-				.then((response) => {});
+				.then((response) => {})
+				.catch((error) => {
+					if (error.response) {
+						this.setState({
+							error: error.response.data.msg,
+						});
+					}
+				});
 		}
 	};
 
@@ -66,6 +74,13 @@ class Login extends Component {
 					/>
 					<div className='card-body'>
 						<h3 className='bg-white text-center'>Login</h3>
+						{this.state.error ? (
+							<p className='mb-0 text-center text-danger font-weight-bold'>
+								* {this.state.error}
+							</p>
+						) : (
+							' '
+						)}
 						<form className='px-3 pb-4' onSubmit={this.handleSubmit}>
 							<label className='w-100 text-left'>
 								Email{' '}

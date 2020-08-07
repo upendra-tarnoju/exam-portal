@@ -10,12 +10,21 @@ module.exports = (passport) => {
 				.find(email)
 				.select({ email: 1, accountType: 1, accountStatus: 1, password: 1 })
 				.then((user) => {
-					let userStatus = bcryptjs.compareSync(password, user.password);
-					if (userStatus) return done(null, user);
-					else
+					if (user) {
+						let userStatus = bcryptjs.compareSync(
+							password,
+							user.password
+						);
+						if (userStatus) return done(null, user);
+						else
+							return done(null, false, {
+								message: 'Incorrect credentials',
+							});
+					} else {
 						return done(null, false, {
 							message: 'Incorrect credentials',
 						});
+					}
 				});
 		})
 	);

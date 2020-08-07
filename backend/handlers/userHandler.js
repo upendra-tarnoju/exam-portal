@@ -58,7 +58,7 @@ const user = {
 	loginUser: async (req, res, next) => {
 		passport.authenticate('local', (err, user, info) => {
 			if (err) return next(err);
-			if (!user) return res.status(401).send({ msg: 'Invalid credentials' });
+			if (!user) return res.status(401).json({ msg: info.message });
 			req.logIn(user, async (err) => {
 				let token = createToken(user._id);
 				return res
