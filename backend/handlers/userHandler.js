@@ -1,5 +1,8 @@
 const { users } = require('../models');
 const bcrypt = require('bcryptjs');
+const passport = require('passport');
+const { userModel } = require('../models/user');
+const { createToken } = require('../auth').token;
 
 mapNewUser = (userData) => {
 	Object.keys(userData).forEach((key) => {
@@ -19,7 +22,7 @@ checkAccountStatus = (data) => {
 };
 
 const user = {
-	save_user_details: async (req, res) => {
+	saveUserDetails: async (req, res) => {
 		let userData = mapNewUser(req.body);
 		let existingUser = await users.find(userData.email);
 		if (existingUser == null) {
@@ -50,6 +53,19 @@ const user = {
 		} else {
 			res.status(200).send({ msg: 'User already existed' });
 		}
+	},
+
+	loginUser: async (req, res, next) => {
+		passport.authenticate('local', (err, user, info) => {
+			if (err) return next(err);
+			if (!user) return res.status(401).send({ msg: 'Invalid credentials' });
+			req.logIn(user, async (err) => {
+				let token = createToken(user._id);
+				return res
+					.status(200)
+					.send({ token: token, accountType: user.accountType });
+			});
+		})(req, res, next);
 	},
 };
 

@@ -6,5 +6,7 @@ module.exports = () => {
 
 	router.post('/signup', userController.saveUserDetails);
 
+	router.post('/login', userController.loginUser);
+
 	return router;
 };

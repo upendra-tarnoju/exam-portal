@@ -17,6 +17,7 @@ const cookieParser = require('cookie-parser');
 dotenv.config();
 const { HOST, PORT } = require('./config');
 const { routes } = require('../routes');
+const passport = require('passport');
 require('../db').connection;
 
 app.use(cookieParser());
@@ -31,6 +32,10 @@ app.use(
 	})
 );
 
+app.use(passport.initialize());
+app.use(passport.session());
+
+require('../auth/passportAuth')(passport);
 app.use('/api', routes());
 
 app.listen(PORT, HOST, (err) => {
