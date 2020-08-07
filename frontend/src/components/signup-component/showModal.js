@@ -1,24 +1,26 @@
 import React from 'react';
-import './signupStyles.css';
+import styles from './signup.module.css';
 
 const ShowModal = ({ handleClose, show, message }) => {
 	const showHideClassName = show ? 'modal d-block' : 'd-none';
 
 	return (
 		<div className={showHideClassName}>
-			<div className='custom-modal-container'>
-				<div className='custom-modal-content'>
-					<div className='custom-modal-header'>
+			<div className={`${styles.customModalContainer}`}>
+				<div className={`${styles.customModalContent}`}>
+					<div className={`${styles.customModalHeader}`}>
 						<h5>Message</h5>
 						<button
 							type='button'
-							className='custom-modal-button'
+							className={`${styles.customModalButton}`}
 							onClick={handleClose}
 						>
 							<span>x</span>
 						</button>
 					</div>
-					<div className='custom-modal-data px-3 py-2'>{message}</div>
+					<div className={`${styles.customModalData} px-3 py-2`}>
+						{message}
+					</div>
 
 					<div className='px-3 py-2 d-flex flex-row-reverse'>
 						<button

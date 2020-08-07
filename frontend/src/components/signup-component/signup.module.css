@@ -12,7 +12,7 @@ body {
 	font-size: 12px;
 }
 
-.w-35 {
+.width35 {
 	width: 35%;
 }
 
@@ -25,7 +25,7 @@ label span {
 	font-size: 12px;
 }
 
-.custom-modal-container {
+.customModalContainer {
 	position: fixed;
 	z-index: 1;
 	left: 0;
@@ -37,7 +37,7 @@ label span {
 	background-color: rgba(0, 0, 0, 0.4);
 }
 
-.custom-modal-content {
+.customModalContent {
 	background-color: #fefefe;
 	margin: 15% auto;
 	border: 1px solid #888;
@@ -47,7 +47,7 @@ label span {
 	border-radius: 5px;
 }
 
-.custom-modal-header {
+.customModalHeader {
 	display: flex;
 	-ms-flex-align: start;
 	align-items: flex-start;
@@ -59,17 +59,17 @@ label span {
 	border-top-right-radius: calc(0.3rem - 1px);
 }
 
-.custom-modal-header p {
+.customModalHeader p {
 	font-size: 20px;
 	letter-spacing: 1;
 }
 
-.custom-modal-data {
+.customModalData {
 	padding: 1rem;
 	font-size: 20px;
 }
 
-.custom-modal-button {
+.customModalButton {
 	float: right;
 	cursor: pointer;
 	outline: none;

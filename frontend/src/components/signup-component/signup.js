@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './signupStyles.css';
+import styles from './signup.module.css';
 import axios from 'axios';
 import ShowModal from './showModal';
 
@@ -104,9 +104,11 @@ class SignUp extends Component {
 	render() {
 		return (
 			<div className='container-fluid p-3'>
-				<div className='card w-35 mx-auto'>
+				<div className={`card ${styles.width35} mx-auto`}>
 					<div className='pt-3 pb-2'>
-						<p className='text-center heading'>Sign up to continue</p>
+						<p className={`text-center ${styles.heading}`}>
+							Sign up to continue
+						</p>
 						<div className='px-5'>
 							<form className='text-center' onSubmit={this.handleSubmit}>
 								<label className='w-100 text-left'>
@@ -234,7 +236,7 @@ class SignUp extends Component {
 
 								<div className='w-100 text-left'>
 									<input type='checkbox' className='pt-1' />
-									<span className='textSize'>
+									<span className={`${styles.textSize}`}>
 										{' '}
 										I have read and agree to Terms and Conditions
 									</span>
