@@ -5,7 +5,8 @@ class AdminPanel extends Component {
 	render() {
 		return (
 			<div className={`${styles.stickySidebar} pt-3`}>
-				<div className='d-flex flex-row'>
+				<h4 className='text-center font-weight-normal'>Dashboard</h4>
+				<div className='d-flex flex-row px-1 pb-2'>
 					<img
 						className={styles.examinerIcon}
 						src={require('../../../assets/icons/examinerIcon.png')}
@@ -15,24 +16,30 @@ class AdminPanel extends Component {
 						Examiner
 					</h5>
 				</div>
-				<ul className='nav flex-column justify-content-center py-2'>
-					<li className={`nav-item ${styles.icon}`}>
+				<ul className='nav flex-column justify-content-center '>
+					<li
+						className={`nav-item ${styles.icon} bg-primary py-2 px-3 ${styles.iconHover}`}
+					>
 						<img
-							className={`${styles.navIcon} mr-1 mb-2`}
+							className={`${styles.navIcon} mr-1`}
 							src={require('../../../assets/icons/approvedIcon.jpg')}
 							alt='approved icon'
 						/>{' '}
 						Approved
 					</li>
-					<li className={`nav-item ${styles.icon}`}>
+					<li
+						className={`nav-item ${styles.icon} ${styles.bgOrange} px-3 py-2 ${styles.iconHover}`}
+					>
 						<img
-							className={`${styles.navIcon} mr-1 mb-2`}
+							className={`${styles.navIcon} mr-1`}
 							src={require('../../../assets/icons/pendingIcon.png')}
 							alt='pending icon'
 						/>{' '}
 						Pending
 					</li>
-					<li className={`nav-item ${styles.icon}`}>
+					<li
+						className={`nav-item ${styles.icon} bg-warning px-3 py-2 ${styles.iconHover}`}
+					>
 						<img
 							className={`${styles.navIcon} mr-1 `}
 							src={require('../../../assets/icons/declinedIcon.jpg')}
@@ -41,7 +48,7 @@ class AdminPanel extends Component {
 						Declined
 					</li>
 				</ul>
-				<div className='d-flex flex-row'>
+				<div className='d-flex flex-row px-1 pt-3 '>
 					<img
 						className={styles.examinerIcon}
 						src={require('../../../assets/icons/examIcon.png')}
@@ -50,15 +57,19 @@ class AdminPanel extends Component {
 					<h5 className='pb-0 my-auto ml-2 font-weight-normal'>Exam</h5>
 				</div>
 				<ul className='nav flex-column justify-content-center py-2'>
-					<li className={`nav-item ${styles.icon}`}>
+					<li
+						className={`nav-item ${styles.icon} bg-primary py-2 px-3 ${styles.iconHover}`}
+					>
 						<img
-							className={`${styles.navIcon} mr-1 mb-2`}
+							className={`${styles.navIcon} mr-1`}
 							src={require('../../../assets/icons/approvedIcon.jpg')}
 							alt='approved icon'
 						/>{' '}
 						Approved
 					</li>
-					<li className={`nav-item ${styles.icon}`}>
+					<li
+						className={`nav-item ${styles.icon} bg-warning px-3 py-2 ${styles.iconHover}`}
+					>
 						<img
 							className={`${styles.navIcon} mr-1 `}
 							src={require('../../../assets/icons/declinedIcon.jpg')}

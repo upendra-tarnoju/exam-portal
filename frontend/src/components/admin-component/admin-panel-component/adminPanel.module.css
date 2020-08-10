@@ -15,4 +15,14 @@
 
 .icon {
 	cursor: pointer;
+	font-family: 'Raleway';
+}
+
+.bgOrange {
+	background-color: #ff810c;
+}
+
+.iconHover:hover {
+	opacity: 0.7;
+	color: white;
 }
