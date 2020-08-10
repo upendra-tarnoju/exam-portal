@@ -8,5 +8,7 @@ module.exports = () => {
 
 	router.post('/login', userController.loginUser);
 
+	router.get('/admin');
+
 	return router;
 };
