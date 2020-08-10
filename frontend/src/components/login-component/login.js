@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import cookie from 'js-cookie';
 
 class Login extends Component {
 	constructor(props) {
@@ -52,7 +53,14 @@ class Login extends Component {
 					username: this.state.email.value,
 					password: this.state.password.value,
 				})
-				.then((response) => {})
+				.then((response) => {
+					cookie.set('token', response.data.token, {
+						expires: 365,
+					});
+					cookie.set('type', response.data.accountType, {
+						expires: 365,
+					});
+				})
 				.catch((error) => {
 					if (error.response) {
 						this.setState({
