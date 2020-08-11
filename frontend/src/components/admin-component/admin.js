@@ -1,20 +1,29 @@
 import React, { Component } from 'react';
 import cookie from 'js-cookie';
-import axios from 'axios';
 import styles from './admin.module.css';
 import AdminPanel from './admin-panel-component/adminPanel';
+import { connect } from 'react-redux';
+import JwtDecode from 'jwt-decode';
+import * as ActionTypes from '../../action';
 
 class Admin extends Component {
-	constructor(props) {
-		super(props);
-	}
 	componentDidMount() {
 		let cookieData = cookie.getJSON();
-		axios.get(`${process.env.REACT_APP_BASE_URL}/api/admin`, {
-			headers: {
-				cookieData,
-			},
-		});
+		if (Object.keys(cookieData).length !== 0) {
+			let decodedToken = JwtDecode(cookieData.token);
+			if (
+				Date.now() >= decodedToken.exp * 1000 ||
+				decodedToken.type !== 'admin'
+			) {
+				this.props.history.push('/login');
+				this.props.setAuthenticatedUser(false);
+			} else {
+				this.props.setAuthenticatedUser(true);
+			}
+		} else {
+			this.props.history.replace('/login');
+			this.props.setAuthenticatedUser(false);
+		}
 	}
 
 	render() {
@@ -22,14 +31,40 @@ class Admin extends Component {
 			<div className='container-fluid'>
 				<div className='row'>
 					<nav
-						className={`col-md-3 d-md-block p-0 col-lg-2 bg-light ${styles.sidebar} collapse`}
+						className={`col-md-3 d-md-block p-0 col-lg-2 bg-light ${styles.sidebar}`}
 					>
 						<AdminPanel />
 					</nav>
+					<main className='col-md-9 ml-sm-auto col-lg-10 px-md-4'>
+						{this.props.panel !== '' ? (
+							<p>Some Value</p>
+						) : (
+							<div className='text-center'>
+								<h3>Select any option from panel to continue</h3>
+							</div>
+						)}
+					</main>
 				</div>
 			</div>
 		);
 	}
 }
 
-export default Admin;
+const mapStateToProps = (state) => {
+	return {
+		panel: state.adminReducer.panel,
+	};
+};
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		setAuthenticatedUser: (authenticatedState) => {
+			dispatch({
+				type: ActionTypes.SET_AUTHENTICATED_USER,
+				authenticated: authenticatedState,
+			});
+		},
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Admin);

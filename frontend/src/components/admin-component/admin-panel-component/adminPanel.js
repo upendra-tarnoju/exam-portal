@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import styles from './adminPanel.module.css';
+import * as actionTypes from '../../../action';
 
 class AdminPanel extends Component {
 	render() {
@@ -18,6 +20,7 @@ class AdminPanel extends Component {
 				</div>
 				<ul className='nav flex-column justify-content-center '>
 					<li
+						onClick={this.handlePanelClick}
 						className={`nav-item ${styles.icon} bg-primary py-2 px-3 ${styles.iconHover}`}
 					>
 						<img
@@ -83,4 +86,14 @@ class AdminPanel extends Component {
 	}
 }
 
-export default AdminPanel;
+const mapDispatchToProps = (dispatch) => {
+	return {
+		panelWindow: (source) => {
+			dispatch({
+				type: actionTypes.SET_PANEL_WINDOW,
+				source: source,
+			});
+		},
+	};
+};
+export default connect(null, mapDispatchToProps)(AdminPanel);

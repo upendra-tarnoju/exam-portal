@@ -60,6 +60,10 @@ class Login extends Component {
 					cookie.set('type', response.data.accountType, {
 						expires: 365,
 					});
+					let accountType = response.data.accountType;
+					if (accountType === 'admin') {
+						this.props.history.push('/admin');
+					}
 				})
 				.catch((error) => {
 					if (error.response) {
