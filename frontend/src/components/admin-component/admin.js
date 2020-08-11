@@ -32,7 +32,7 @@ class Admin extends Component {
 			<div className='container-fluid'>
 				<div className='row'>
 					<nav
-						className={`col-md-3 d-md-block p-0 col-lg-2 bg-light ${styles.sidebar}`}
+						className={`col-md-3 d-md-block p-0 col-lg-2 bg-dark ${styles.sidebar}`}
 					>
 						<AdminPanel />
 					</nav>
