@@ -9,6 +9,7 @@ class AdminPanel extends Component {
 			<div className={`${styles.stickySidebar} pt-3`}>
 				<div className='text-center'>
 					<img
+						alt='logo'
 						src={require('../../../assets/logo.png')}
 						className={`${styles.logo}`}
 					/>
@@ -18,37 +19,41 @@ class AdminPanel extends Component {
 				</div>
 				<ul className='nav flex-column'>
 					<li
+						onClick={() => this.props.panelWindow('dashboard')}
 						className={`nav-item py-2 px-4 text-white-50 ${styles.iconHover}`}
 					>
 						<i
-							class='fa fa-desktop fa-lg text-white-50 pr-3'
+							className='fa fa-desktop fa-lg text-white-50 pr-3'
 							aria-hidden='true'
 						></i>{' '}
 						Dashboard
 					</li>
 					<li
+						onClick={() => this.props.panelWindow('examiner')}
 						className={`nav-item py-2 px-4 text-white-50 ${styles.iconHover}`}
 					>
 						<i
-							class='fa fa-user-circle fa-lg text-white-50 pr-3'
+							className='fa fa-user-circle fa-lg text-white-50 pr-3'
 							aria-hidden='true'
 						></i>{' '}
 						Examiner
 					</li>
 					<li
+						onClick={() => this.props.panelWindow('exam')}
 						className={`nav-item py-2 px-4 text-white-50 ${styles.iconHover}`}
 					>
 						<i
-							class='fa fa-book fa-lg text-white-50 pr-3'
+							className='fa fa-book fa-lg text-white-50 pr-3'
 							aria-hidden='true'
 						></i>{' '}
 						Exam
 					</li>
 					<li
+						onClick={() => this.props.panelWindow('settings')}
 						className={`nav-item py-2 px-4 text-white-50 ${styles.iconHover}`}
 					>
 						<i
-							class='fa fa-cog fa-lg text-white-50 pr-3'
+							className='fa fa-cog fa-lg text-white-50 pr-3'
 							aria-hidden='true'
 						></i>{' '}
 						Settings

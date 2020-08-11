@@ -2,8 +2,21 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import cookie from 'js-cookie';
 import * as ActionTypes from '../../action';
+import { withRouter } from 'react-router-dom';
 
 class Navbar extends Component {
+	constructor(props) {
+		super(props);
+		this.signOut = this.signOut.bind(this);
+		this.AuthenticatedNavItems = this.AuthenticatedNavItems.bind(this);
+		this.SignOutNavItems = this.SignOutNavItems.bind(this);
+	}
+	signOut() {
+		cookie.remove('token');
+		cookie.remove('type');
+		this.props.setAuthenticatedUser(false);
+		this.props.history.push('/login');
+	}
 	SignOutNavItems() {
 		return (
 			<ul className='navbar-nav ml-auto'>
@@ -30,17 +43,12 @@ class Navbar extends Component {
 		return (
 			<ul className='navbar-nav ml-auto'>
 				<li className='nav-item active'>
-					<a
-						className='text-light text-decoration-none'
-						onClick={() => {
-							cookie.remove('token');
-							cookie.remove('type');
-							this.props.setAuthenticatedUser(false);
-							this.props.history.replace('/login');
-						}}
+					<span
+						className='text-light text-decoration-none cursor-pointer'
+						onClick={() => this.signOut()}
 					>
 						Sign Out
-					</a>
+					</span>
 				</li>
 			</ul>
 		);
@@ -92,4 +100,4 @@ const mapDispatchToProps = (dispatch) => {
 	};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Navbar);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Navbar));
