@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import cookie from 'js-cookie';
 
 class Navbar extends Component {
 	SignOutNavItems() {
@@ -28,7 +29,15 @@ class Navbar extends Component {
 		return (
 			<ul className='navbar-nav ml-auto'>
 				<li className='nav-item active'>
-					<a className='text-light text-decoration-none' href='# '>
+					<a
+						className='text-light text-decoration-none'
+						onClick={() => {
+							cookie.remove('token');
+							cookie.remove('type');
+							this.props.setAuthenticatedUser(false);
+							this.props.history.replace('/login');
+						}}
+					>
 						Sign Out
 					</a>
 				</li>
@@ -71,4 +80,15 @@ const mapStateToProps = (state) => {
 	};
 };
 
-export default connect(mapStateToProps, null)(Navbar);
+const mapDispatchToProps = (dispatch) => {
+	return {
+		setAuthenticatedUser: (authenticatedState) => {
+			dispatch({
+				type: ActionTypes.SET_AUTHENTICATED_USER,
+				authenticated: authenticatedState,
+			});
+		},
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Navbar);
