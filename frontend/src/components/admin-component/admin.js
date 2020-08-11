@@ -5,6 +5,7 @@ import AdminPanel from './admin-panel-component/adminPanel';
 import { connect } from 'react-redux';
 import JwtDecode from 'jwt-decode';
 import * as ActionTypes from '../../action';
+import PanelContent from './panel-content-component/panelContent';
 
 class Admin extends Component {
 	componentDidMount() {
@@ -37,7 +38,7 @@ class Admin extends Component {
 					</nav>
 					<main className='col-md-9 ml-sm-auto col-lg-10 px-md-4'>
 						{this.props.panel !== '' ? (
-							<p>Some Value</p>
+							<PanelContent />
 						) : (
 							<div className='text-center'>
 								<h3>Select any option from panel to continue</h3>

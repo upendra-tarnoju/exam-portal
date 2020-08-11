@@ -20,7 +20,9 @@ class AdminPanel extends Component {
 				</div>
 				<ul className='nav flex-column justify-content-center '>
 					<li
-						onClick={this.handlePanelClick}
+						onClick={() => {
+							this.props.panelWindow('approvedExaminer');
+						}}
 						className={`nav-item ${styles.icon} bg-primary py-2 px-3 ${styles.iconHover}`}
 					>
 						<img
@@ -31,6 +33,9 @@ class AdminPanel extends Component {
 						Approved
 					</li>
 					<li
+						onClick={() => {
+							this.props.panelWindow('pendingExaminer');
+						}}
 						className={`nav-item ${styles.icon} ${styles.bgOrange} px-3 py-2 ${styles.iconHover}`}
 					>
 						<img
@@ -41,6 +46,9 @@ class AdminPanel extends Component {
 						Pending
 					</li>
 					<li
+						onClick={() => {
+							this.props.panelWindow('declinedExaminer');
+						}}
 						className={`nav-item ${styles.icon} bg-warning px-3 py-2 ${styles.iconHover}`}
 					>
 						<img
@@ -61,6 +69,9 @@ class AdminPanel extends Component {
 				</div>
 				<ul className='nav flex-column justify-content-center py-2'>
 					<li
+						onClick={() => {
+							this.props.panelWindow('approvedExam');
+						}}
 						className={`nav-item ${styles.icon} bg-primary py-2 px-3 ${styles.iconHover}`}
 					>
 						<img
@@ -71,6 +82,9 @@ class AdminPanel extends Component {
 						Approved
 					</li>
 					<li
+						onClick={() => {
+							this.props.panelWindow('declinedExam');
+						}}
 						className={`nav-item ${styles.icon} bg-warning px-3 py-2 ${styles.iconHover}`}
 					>
 						<img
@@ -91,7 +105,7 @@ const mapDispatchToProps = (dispatch) => {
 		panelWindow: (source) => {
 			dispatch({
 				type: actionTypes.SET_PANEL_WINDOW,
-				source: source,
+				panelValue: source,
 			});
 		},
 	};

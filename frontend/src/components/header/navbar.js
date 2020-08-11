@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import cookie from 'js-cookie';
+import * as ActionTypes from '../../action';
 
 class Navbar extends Component {
 	SignOutNavItems() {
