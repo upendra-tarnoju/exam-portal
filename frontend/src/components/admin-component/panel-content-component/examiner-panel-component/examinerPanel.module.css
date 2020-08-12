@@ -25,3 +25,7 @@
 .icon {
 	font-size: 1.2rem;
 }
+
+.dropdown {
+	width: 10rem !important;
+}
