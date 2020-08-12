@@ -1,6 +1,7 @@
 const initialState = {
-	panel: '',
+	panel: 'examiner',
 	authenticated: false,
+	panelHeading: 'Manage Examiner',
 };
 
 const adminReducers = (state = initialState, action) => {
@@ -8,6 +9,7 @@ const adminReducers = (state = initialState, action) => {
 		return {
 			...state,
 			panel: action.panelValue,
+			panelHeading: action.panelHeading,
 		};
 	} else if (action.type === 'set_authenticated_user') {
 		return {
