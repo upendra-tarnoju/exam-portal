@@ -4,11 +4,11 @@ import styles from './examinerPanel.module.css';
 class ExaminerPanel extends Component {
 	render() {
 		return (
-			<div className={`container pt-5`}>
+			<div className={`container pt-4`}>
 				<div className='row'>
 					<div className='col-md-4'>
 						<div
-							className={`card p-3 ${styles.approvedCard} cursor-pointer`}
+							className={`card p-3 ${styles.approvedCard} cursor-pointer ${styles.iconHover}`}
 						>
 							<img
 								alt='approved icon'
@@ -20,16 +20,20 @@ class ExaminerPanel extends Component {
 								Approved
 							</h3>
 							<div className='d-flex justify-content-between mt-2'>
-								<p className='mb-0 font-weight-bold text-white'>
+								<p
+									className={`mb-0 font-weight-bold text-white ${styles.textStyle}`}
+								>
 									Total approved
 								</p>
-								<p className='mb-0 text-white'>120</p>
+								<p className={`mb-0 text-white ${styles.textStyle}`}>
+									120
+								</p>
 							</div>
 						</div>
 					</div>
 					<div className='col-md-4'>
 						<div
-							className={`card p-3 ${styles.pendingCard} cursor-pointer`}
+							className={`card p-3 ${styles.pendingCard} cursor-pointer ${styles.iconHover}`}
 						>
 							<img
 								alt='pending icon'
@@ -41,16 +45,20 @@ class ExaminerPanel extends Component {
 								Pending
 							</h3>
 							<div className='d-flex justify-content-between mt-2'>
-								<p className='mb-0 font-weight-bold text-white'>
+								<p
+									className={`mb-0 font-weight-bold text-white ${styles.textStyle}`}
+								>
 									Total pending
 								</p>
-								<p className='mb-0 text-white'>25</p>
+								<p className={`mb-0 text-white ${styles.textStyle}`}>
+									25
+								</p>
 							</div>
 						</div>
 					</div>
 					<div className='col-md-4'>
 						<div
-							className={`card p-3 ${styles.pendingCard} cursor-pointer`}
+							className={`card p-3 ${styles.declinedCard} cursor-pointer ${styles.iconHover}`}
 						>
 							<img
 								alt='declined icon'
@@ -62,10 +70,14 @@ class ExaminerPanel extends Component {
 								Declined
 							</h3>
 							<div className='d-flex justify-content-between mt-2'>
-								<p className='mb-0 font-weight-bold text-white'>
+								<p
+									className={`mb-0 font-weight-bold text-white ${styles.textStyle}`}
+								>
 									Total declined
 								</p>
-								<p className='mb-0 text-white'>10</p>
+								<p className={`mb-0 text-white ${styles.textStyle}`}>
+									10
+								</p>
 							</div>
 						</div>
 					</div>
