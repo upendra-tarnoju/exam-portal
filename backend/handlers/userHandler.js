@@ -61,7 +61,9 @@ const user = {
 			if (!user) return res.status(401).json({ msg: info.message });
 			req.logIn(user, async (err) => {
 				let token = createToken(user._id, user.accountType);
-				return res.status(200).send({ token: token });
+				return res
+					.status(200)
+					.send({ token: token, accountType: user.accountType });
 			});
 		})(req, res, next);
 	},

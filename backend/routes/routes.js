@@ -1,5 +1,5 @@
 const express = require('express');
-const { userController } = require('../controllers');
+const { userController, adminController } = require('../controllers');
 
 module.exports = () => {
 	const router = express.Router();
@@ -8,7 +8,7 @@ module.exports = () => {
 
 	router.post('/login', userController.loginUser);
 
-	router.get('/admin');
+	router.get('/admin/examiner', adminController.getExaminerDetails);
 
 	return router;
 };

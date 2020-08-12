@@ -14,6 +14,10 @@ class Users {
 		const userData = new this.userModel(data);
 		return userData.save();
 	};
+
+	findByAccountStatus = (accountStatus) => {
+		return this.userModel.find({ accountStatus: accountStatus });
+	};
 }
 
 module.exports = new Users();
