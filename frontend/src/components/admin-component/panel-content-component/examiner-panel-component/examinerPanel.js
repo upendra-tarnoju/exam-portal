@@ -12,9 +12,12 @@ class ExaminerPanel extends Component {
 			msg: '',
 			pageIndex: 0,
 			pageSize: 5,
+			tableIndex: 0,
+			maxSizeIndex: 5,
 		};
 		this.examinerData = this.examinerData.bind(this);
 		this.paginateExaminers = this.paginateExaminers.bind(this);
+		this.changePageSize = this.changePageSize.bind(this);
 	}
 
 	handleCardClick(type) {
@@ -27,30 +30,59 @@ class ExaminerPanel extends Component {
 				},
 			})
 			.then((res) => {
+				let maxIndex;
+				if (this.props.examinerCount.pending < this.state.maxSizeIndex) {
+					maxIndex = this.props.examinerCount.pending;
+				} else maxIndex = this.state.maxSizeIndex;
 				this.setState({
 					tableData: res.data.examiner,
 					accountStatus: type,
 					msg: res.data.msg,
+					maxSizeIndex: maxIndex,
 				});
 			});
 	}
 
-	paginateExaminers(type, paginateType) {
-		console.log(paginateType);
+	paginateExaminers(examinerType, paginateType) {
 		let pageIndex = this.state.pageIndex;
+		let pageSize = this.state.pageSize;
 		if (paginateType === 'inc') pageIndex = pageIndex + 1;
 		else pageIndex = pageIndex - 1;
-		if (pageIndex >= 0) {
-			this.setState({ pageIndex: pageIndex }, () => {
-				this.handleCardClick(type);
-			});
+		let maxSizeIndex = (pageIndex + 1) * pageSize;
+		if (maxSizeIndex > this.props.examinerCount.pending)
+			maxSizeIndex = this.props.examinerCount.pending;
+		if (
+			pageIndex >= 0 &&
+			(this.state.maxSizeIndex !== this.props.examinerCount.pending ||
+				maxSizeIndex !== this.props.examinerCount.pending)
+		) {
+			this.setState(
+				{
+					pageIndex: pageIndex,
+					tableIndex: pageIndex * pageSize,
+					maxSizeIndex: maxSizeIndex,
+				},
+				() => {
+					this.handleCardClick(examinerType);
+				}
+			);
 		}
+	}
+
+	changePageSize(event) {
+		let newPageSize = event.target.value;
+		this.setState(
+			{ pageSize: newPageSize, pageIndex: 0, maxSizeIndex: 10 },
+			() => {
+				this.handleCardClick('pending');
+			}
+		);
 	}
 
 	examinerData() {
 		let examiners = this.state.tableData.map((data, index) => (
 			<tr key={data._id}>
-				<th scope='row'>{index + 1}</th>
+				<th scope='row'>{this.state.tableIndex + index + 1}</th>
 				<td>{data.firstName}</td>
 				<td>{data.lastName}</td>
 				<td>{data.email}</td>
@@ -97,6 +129,8 @@ class ExaminerPanel extends Component {
 				<div className='py-2 px-1 bg-light d-flex justify-content-end'>
 					<span className='align-self-center mr-3'>Items per page</span>
 					<select
+						onChange={this.changePageSize}
+						value={this.state.pageSize}
 						className={`form-control form-control-sm ${styles.dropdown} mr-3`}
 					>
 						<option>5</option>
@@ -104,7 +138,8 @@ class ExaminerPanel extends Component {
 						<option>15</option>
 					</select>
 					<span className='align-self-center mr-3'>
-						1-10 of {this.props.examinerCount.pending}
+						{this.state.tableIndex + 1}- {this.state.maxSizeIndex} of{' '}
+						{this.props.examinerCount.pending}
 					</span>
 					<i
 						onClick={() => this.paginateExaminers('pending', 'dec')}
