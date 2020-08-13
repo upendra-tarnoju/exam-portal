@@ -22,7 +22,7 @@ class AdminPanel extends Component {
 				</div>
 				<ul className='nav flex-column'>
 					<li
-						onClick={() => this.props.panelWindow('')}
+						onClick={() => this.props.panelWindow('', 'Dashboard')}
 						className={
 							this.props.panel === ''
 								? `nav-item py-2 px-4 text-white ${styles.iconHover}`
@@ -114,18 +114,10 @@ class AdminPanel extends Component {
 							this.props.setAuthenticatedUser(false);
 							this.props.history.push('/login');
 						}}
-						className={
-							this.props.panel === 'settings'
-								? `nav-item py-2 px-4 text-white ${styles.iconHover}`
-								: `nav-item py-2 px-4 text-white-50 ${styles.iconHover}`
-						}
+						className={`nav-item py-2 px-4 text-white-50 ${styles.iconHover}`}
 					>
 						<i
-							className={
-								this.props.panel === 'settings'
-									? 'fa fa-sign-out fa-lg text-white pr-3'
-									: 'fa fa-sign-out fa-lg text-white-50 pr-3'
-							}
+							className='fa fa-sign-out fa-lg text-white-50 pr-3'
 							aria-hidden='true'
 						></i>{' '}
 						Log out

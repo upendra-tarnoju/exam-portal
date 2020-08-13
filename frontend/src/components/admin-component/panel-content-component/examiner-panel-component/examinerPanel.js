@@ -14,6 +14,7 @@ class ExaminerPanel extends Component {
 			pageSize: 5,
 		};
 		this.examinerData = this.examinerData.bind(this);
+		this.paginateExaminers = this.paginateExaminers.bind(this);
 	}
 
 	handleCardClick(type) {
@@ -32,6 +33,18 @@ class ExaminerPanel extends Component {
 					msg: res.data.msg,
 				});
 			});
+	}
+
+	paginateExaminers(type, paginateType) {
+		console.log(paginateType);
+		let pageIndex = this.state.pageIndex;
+		if (paginateType === 'inc') pageIndex = pageIndex + 1;
+		else pageIndex = pageIndex - 1;
+		if (pageIndex >= 0) {
+			this.setState({ pageIndex: pageIndex }, () => {
+				this.handleCardClick(type);
+			});
+		}
 	}
 
 	examinerData() {
@@ -90,9 +103,17 @@ class ExaminerPanel extends Component {
 						<option>10</option>
 						<option>15</option>
 					</select>
-					<span className='align-self-center mr-3'>1-10 of 100</span>
-					<i className='fa fa-2x fa-angle-left align-self-center mr-3'></i>
-					<i className='fa fa-2x fa-angle-right align-self-center'></i>
+					<span className='align-self-center mr-3'>
+						1-10 of {this.props.examinerCount.pending}
+					</span>
+					<i
+						onClick={() => this.paginateExaminers('pending', 'dec')}
+						className='fa fa-2x fa-angle-left align-self-center mr-3 cursor-pointer'
+					></i>
+					<i
+						onClick={() => this.paginateExaminers('pending', 'inc')}
+						className='fa fa-2x fa-angle-right align-self-center cursor-pointer'
+					></i>
 				</div>
 			</div>
 		);

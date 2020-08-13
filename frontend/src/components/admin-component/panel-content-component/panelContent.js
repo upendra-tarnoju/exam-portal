@@ -7,7 +7,9 @@ class PanelContent extends Component {
 	render() {
 		return (
 			<div className='container-fluid p-0'>
-				<div className={`${styles.heading} bg-dark text-white p-3`}>
+				<div
+					className={`${styles.heading} bg-dark text-white p-3 sticky-top`}
+				>
 					{this.props.panelHeading}
 				</div>
 				{this.props.panelWindow === 'examiner' ? <ExaminerPanel /> : null}

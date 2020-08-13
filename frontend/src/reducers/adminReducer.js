@@ -1,7 +1,7 @@
 const initialState = {
 	panel: '',
 	authenticated: false,
-	panelHeading: '',
+	panelHeading: 'Dashboard',
 	examinerCount: {
 		approved: 0,
 		declined: 0,

@@ -18,6 +18,10 @@ class Users {
 	findByAccountStatus = (accountStatus) => {
 		return this.userModel.find({ accountStatus: accountStatus });
 	};
+
+	findByAccountType = (accountType) => {
+		return this.userModel.find({ accountType: accountType });
+	};
 }
 
 module.exports = new Users();

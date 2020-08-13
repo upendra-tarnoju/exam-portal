@@ -37,13 +37,7 @@ class Admin extends Component {
 						<AdminPanel />
 					</div>
 					<main className='col-md-9 ml-sm-auto col-lg-10 p-0'>
-						{this.props.panel !== '' ? (
-							<PanelContent />
-						) : (
-							<div className='text-center'>
-								<h3>Select any option from panel to continue</h3>
-							</div>
-						)}
+						<PanelContent />
 					</main>
 				</div>
 			</div>
