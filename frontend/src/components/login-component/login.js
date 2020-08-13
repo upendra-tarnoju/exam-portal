@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import cookie from 'js-cookie';
+import Navbar from '../header/navbar';
 
 class Login extends Component {
 	constructor(props) {
@@ -77,8 +78,9 @@ class Login extends Component {
 
 	render() {
 		return (
-			<div className='container-fluid p-3'>
-				<div className='card mx-auto w-25'>
+			<div className='container-fluid p-0'>
+				<Navbar />
+				<div className='card mx-auto w-25 mt-4'>
 					<img
 						src={require('../../assets/login.jpg')}
 						alt={'login'}

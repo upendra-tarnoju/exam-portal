@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styles from './signup.module.css';
 import axios from 'axios';
 import ShowModal from './showModal';
+import Navbar from '../header/navbar';
 
 class SignUp extends Component {
 	constructor(props) {
@@ -103,8 +104,9 @@ class SignUp extends Component {
 
 	render() {
 		return (
-			<div className='container-fluid p-3'>
-				<div className={`card ${styles.width35} mx-auto`}>
+			<div className='container-fluid p-0'>
+				<Navbar />
+				<div className={`card ${styles.width35} mx-auto mt-3`}>
 					<div className='pt-3 pb-2'>
 						<p className={`text-center ${styles.heading}`}>
 							Sign up to continue

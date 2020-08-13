@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styles from './examinerPanel.module.css';
 import axios from 'axios';
-import { Dropdown } from 'semantic-ui-react';
+import { connect } from 'react-redux';
 
 class ExaminerPanel extends Component {
 	constructor(props) {
@@ -10,34 +10,27 @@ class ExaminerPanel extends Component {
 			tableData: [],
 			accountStatus: '',
 			msg: '',
+			pageIndex: 0,
+			pageSize: 5,
 		};
 		this.examinerData = this.examinerData.bind(this);
-		this.paginatorList = [
-			{ key: 100, value: 5, text: '05' },
-			{ key: 101, value: 10, text: '10' },
-			{ key: 102, value: 15, text: '15' },
-		];
 	}
 
 	handleCardClick(type) {
 		axios
 			.get(`${process.env.REACT_APP_BASE_URL}/api/admin/examiner`, {
-				params: { type: type },
+				params: {
+					type: type,
+					pageIndex: this.state.pageIndex,
+					pageSize: this.state.pageSize,
+				},
 			})
 			.then((res) => {
-				let newState = {};
-				if (res.data.examiner.length !== 0) {
-					newState = {
-						tableData: res.data.examiner,
-						accountStatus: type,
-					};
-				} else {
-					newState = {
-						msg: res.data.msg,
-					};
-				}
-
-				this.setState(newState);
+				this.setState({
+					tableData: res.data.examiner,
+					accountStatus: type,
+					msg: res.data.msg,
+				});
 			});
 	}
 
@@ -89,13 +82,14 @@ class ExaminerPanel extends Component {
 					<tbody>{examiners}</tbody>
 				</table>
 				<div className='py-2 px-1 bg-light d-flex justify-content-end'>
-					<Dropdown
-						className={`${styles.dropdown} mr-2`}
-						placeholder='Items per page'
-						fluid
-						selection
-						options={this.paginatorList}
-					/>
+					<span className='align-self-center mr-3'>Items per page</span>
+					<select
+						className={`form-control form-control-sm ${styles.dropdown} mr-3`}
+					>
+						<option>5</option>
+						<option>10</option>
+						<option>15</option>
+					</select>
 					<span className='align-self-center mr-3'>1-10 of 100</span>
 					<i className='fa fa-2x fa-angle-left align-self-center mr-3'></i>
 					<i className='fa fa-2x fa-angle-right align-self-center'></i>
@@ -129,7 +123,7 @@ class ExaminerPanel extends Component {
 									Total approved
 								</p>
 								<p className={`mb-0 text-white ${styles.textStyle}`}>
-									120
+									{this.props.examinerCount.approved}
 								</p>
 							</div>
 						</div>
@@ -155,7 +149,7 @@ class ExaminerPanel extends Component {
 									Total pending
 								</p>
 								<p className={`mb-0 text-white ${styles.textStyle}`}>
-									{this.state.tableData.length}
+									{this.props.examinerCount.pending}
 								</p>
 							</div>
 						</div>
@@ -181,7 +175,7 @@ class ExaminerPanel extends Component {
 									Total declined
 								</p>
 								<p className={`mb-0 text-white ${styles.textStyle}`}>
-									10
+									{this.props.examinerCount.declined}
 								</p>
 							</div>
 						</div>
@@ -198,4 +192,10 @@ class ExaminerPanel extends Component {
 		);
 	}
 }
-export default ExaminerPanel;
+
+const mapStateToProps = (state) => {
+	return {
+		examinerCount: state.adminReducer.examinerCount,
+	};
+};
+export default connect(mapStateToProps, null)(ExaminerPanel);

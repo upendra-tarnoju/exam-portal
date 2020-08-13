@@ -31,11 +31,11 @@ class Admin extends Component {
 		return (
 			<div className='container-fluid'>
 				<div className='row'>
-					<nav
-						className={`col-md-3 d-md-block p-0 col-lg-2 bg-dark ${styles.sidebar}`}
+					<div
+						className={`col-md-3 col-lg-2 bg-dark ${styles.sidenav} p-0`}
 					>
 						<AdminPanel />
-					</nav>
+					</div>
 					<main className='col-md-9 ml-sm-auto col-lg-10 p-0'>
 						{this.props.panel !== '' ? (
 							<PanelContent />

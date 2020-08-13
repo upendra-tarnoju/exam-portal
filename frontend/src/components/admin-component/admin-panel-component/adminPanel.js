@@ -2,11 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styles from './adminPanel.module.css';
 import * as actionTypes from '../../../action';
+import axios from 'axios';
+import cookie from 'js-cookie';
+import { withRouter } from 'react-router-dom';
 
 class AdminPanel extends Component {
 	render() {
 		return (
-			<div className={`${styles.stickySidebar} pt-3`}>
+			<div className='pt-3'>
 				<div className='text-center'>
 					<img
 						alt='logo'
@@ -37,9 +40,19 @@ class AdminPanel extends Component {
 						Dashboard
 					</li>
 					<li
-						onClick={() =>
-							this.props.panelWindow('examiner', 'Manage Examiner')
-						}
+						onClick={() => {
+							axios
+								.get(
+									`${process.env.REACT_APP_BASE_URL}/api/admin/examiner`
+								)
+								.then((res) => {
+									this.props.panelWindow(
+										'examiner',
+										'Manage Examiner'
+									);
+									this.props.examinerCount(res.data);
+								});
+						}}
 						className={
 							this.props.panel === 'examiner'
 								? `nav-item py-2 px-4 text-white ${styles.iconHover}`
@@ -94,6 +107,29 @@ class AdminPanel extends Component {
 						></i>{' '}
 						Settings
 					</li>
+					<li
+						onClick={() => {
+							cookie.remove('token');
+							cookie.remove('type');
+							this.props.setAuthenticatedUser(false);
+							this.props.history.push('/login');
+						}}
+						className={
+							this.props.panel === 'settings'
+								? `nav-item py-2 px-4 text-white ${styles.iconHover}`
+								: `nav-item py-2 px-4 text-white-50 ${styles.iconHover}`
+						}
+					>
+						<i
+							className={
+								this.props.panel === 'settings'
+									? 'fa fa-sign-out fa-lg text-white pr-3'
+									: 'fa fa-sign-out fa-lg text-white-50 pr-3'
+							}
+							aria-hidden='true'
+						></i>{' '}
+						Log out
+					</li>
 				</ul>
 			</div>
 		);
@@ -115,6 +151,20 @@ const mapDispatchToProps = (dispatch) => {
 				panelHeading: heading,
 			});
 		},
+		examinerCount: (count) => {
+			dispatch({
+				type: actionTypes.SET_EXAMINER_COUNT,
+				examinerCount: count,
+			});
+		},
+		setAuthenticatedUser: (authenticatedState) => {
+			dispatch({
+				type: actionTypes.SET_AUTHENTICATED_USER,
+				authenticated: authenticatedState,
+			});
+		},
 	};
 };
-export default connect(mapStateToProps, mapDispatchToProps)(AdminPanel);
+export default withRouter(
+	connect(mapStateToProps, mapDispatchToProps)(AdminPanel)
+);

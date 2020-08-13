@@ -1,7 +1,9 @@
-.sidebar {
+.sidenav {
+	height: 100%;
 	position: fixed;
-	top: 41.5px;
-	bottom: 0;
+	z-index: 1;
+	top: 0;
 	left: 0;
-	z-index: 100;
+	bottom: 0;
+	overflow-x: hidden;
 }

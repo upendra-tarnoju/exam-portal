@@ -1,7 +1,12 @@
 const initialState = {
-	panel: 'examiner',
+	panel: '',
 	authenticated: false,
-	panelHeading: 'Manage Examiner',
+	panelHeading: '',
+	examinerCount: {
+		approved: 0,
+		declined: 0,
+		pending: 0,
+	},
 };
 
 const adminReducers = (state = initialState, action) => {
@@ -15,6 +20,11 @@ const adminReducers = (state = initialState, action) => {
 		return {
 			...state,
 			authenticated: action.authenticated,
+		};
+	} else if (action.type === 'set_examiner_count') {
+		return {
+			...state,
+			examinerCount: action.examinerCount,
 		};
 	}
 	return state;
