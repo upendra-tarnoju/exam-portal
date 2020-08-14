@@ -18,7 +18,7 @@ class ExaminerPanel extends Component {
 			maxSizeIndex: 5,
 			showModal: false,
 			fullName: '',
-			modalData: { id: '', type: '', success: true },
+			modalData: { id: '', type: '', success: false },
 		};
 		this.examinerData = this.examinerData.bind(this);
 		this.paginateExaminers = this.paginateExaminers.bind(this);
@@ -61,8 +61,8 @@ class ExaminerPanel extends Component {
 			})
 			.then((res) => {
 				let maxIndex;
-				if (this.props.examinerCount.pending < this.state.maxSizeIndex) {
-					maxIndex = this.props.examinerCount.pending;
+				if (this.props.examinerCount[type] < this.state.maxSizeIndex) {
+					maxIndex = this.props.examinerCount[type];
 				} else maxIndex = this.state.maxSizeIndex;
 				this.setState({
 					tableData: res.data.examiner,
@@ -116,8 +116,9 @@ class ExaminerPanel extends Component {
 				<td>{data.firstName}</td>
 				<td>{data.lastName}</td>
 				<td>{data.email}</td>
-				{this.state.accountStatus === 'pending' ? (
-					<td>
+				<td>
+					{this.state.accountStatus === 'pending' ||
+					this.state.accountStatus === 'approved' ? (
 						<button
 							type='button'
 							className={`${styles.icon} btn p-0`}
@@ -137,6 +138,9 @@ class ExaminerPanel extends Component {
 								className={'fa fa-trash-o cursor-pointer text-white'}
 							></i>
 						</button>
+					) : null}
+					{this.state.accountStatus === 'pending' ||
+					this.state.accountStatus === 'declined' ? (
 						<button
 							type='button'
 							className={`${styles.icon} btn pr-2`}
@@ -154,8 +158,8 @@ class ExaminerPanel extends Component {
 						>
 							<i className='fa fa-check-square-o cursor-pointer text-white'></i>
 						</button>
-					</td>
-				) : null}
+					) : null}
+				</td>
 			</tr>
 		));
 		return (
@@ -194,7 +198,7 @@ class ExaminerPanel extends Component {
 					</select>
 					<span className='align-self-center mr-3'>
 						{this.state.tableIndex + 1}- {this.state.maxSizeIndex} of{' '}
-						{this.props.examinerCount.pending}
+						{this.props.examinerCount[this.state.accountStatus]}
 					</span>
 					<i
 						onClick={() => this.paginateExaminers('pending', 'dec')}
