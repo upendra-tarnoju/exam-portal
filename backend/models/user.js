@@ -22,6 +22,12 @@ class Users {
 	findByAccountType = (accountType) => {
 		return this.userModel.find({ accountType: accountType });
 	};
+
+	update = (id, accountStatus) => {
+		return this.userModel.findByIdAndUpdate(id, {
+			accountStatus: accountStatus,
+		});
+	};
 }
 
 module.exports = new Users();

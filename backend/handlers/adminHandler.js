@@ -25,6 +25,10 @@ const admin = {
 		).length;
 		return examinerCount;
 	},
+
+	approveOrDeclineExaminer: async (examinerId, accountStatus) => {
+		await users.update(examinerId, accountStatus);
+	},
 };
 
 module.exports = admin;

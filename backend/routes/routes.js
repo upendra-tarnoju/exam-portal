@@ -10,5 +10,7 @@ module.exports = () => {
 
 	router.get('/admin/examiner', adminController.getExaminerDetails);
 
+	router.patch('/admin/examiner', adminController.saveExaminerDetails);
+
 	return router;
 };

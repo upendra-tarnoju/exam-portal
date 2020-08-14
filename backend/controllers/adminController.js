@@ -19,6 +19,16 @@ const admin = {
 			res.status(200).send(examinerCount);
 		}
 	},
+
+	saveExaminerDetails: async (req, res) => {
+		let examinerId = req.body.id;
+		let accountStatus = `${req.body.type}d`;
+		let data = await adminHandler.approveOrDeclineExaminer(
+			examinerId,
+			accountStatus
+		);
+		res.status(200).send({ msg: `Examiner ${accountStatus}` });
+	},
 };
 
 module.exports = admin;
