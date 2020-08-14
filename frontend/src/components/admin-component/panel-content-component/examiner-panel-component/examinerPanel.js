@@ -3,6 +3,7 @@ import styles from './examinerPanel.module.css';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import AdminModal from '../../../modal-component/modal';
+import Alert from 'react-bootstrap/Alert';
 
 class ExaminerPanel extends Component {
 	constructor(props) {
@@ -17,23 +18,35 @@ class ExaminerPanel extends Component {
 			maxSizeIndex: 5,
 			showModal: false,
 			fullName: '',
-			modalData: { id: '', type: '' },
+			modalData: { id: '', type: '', success: true },
 		};
 		this.examinerData = this.examinerData.bind(this);
 		this.paginateExaminers = this.paginateExaminers.bind(this);
 		this.changePageSize = this.changePageSize.bind(this);
 		this.handleModal = this.handleModal.bind(this);
+		this.handleAlert = this.handleAlert.bind(this);
 	}
 
 	handleModal(status) {
 		this.setState({ showModal: status });
 	}
 
+	handleAlert(status, msg) {
+		this.setState((prevState) => ({
+			...prevState,
+			msg: msg,
+			modalData: {
+				...prevState.modalData,
+				success: status,
+			},
+		}));
+	}
+
 	approveOrDeclineExaminers(firstName, lastName, modalType, id) {
 		this.setState({
 			fullName: `${firstName} ${lastName}`,
 			showModal: true,
-			modalData: { id: id, type: modalType },
+			modalData: { id: id, type: modalType, success: false },
 		});
 	}
 
@@ -147,6 +160,15 @@ class ExaminerPanel extends Component {
 		));
 		return (
 			<div className='mt-4 table-responsive'>
+				<Alert
+					variant='success'
+					show={this.state.modalData.success}
+					onClose={() => this.handleAlert(false, this.state.msg)}
+					dismissible
+					animation='false'
+				>
+					{this.state.msg}
+				</Alert>
 				<table className='table table-hover table-dark mb-0'>
 					<thead>
 						<tr>
@@ -281,6 +303,7 @@ class ExaminerPanel extends Component {
 					name={this.state.fullName}
 					show={this.state.showModal}
 					closeModal={this.handleModal}
+					openAlert={this.handleAlert}
 					modalData={this.state.modalData}
 				/>
 			</div>

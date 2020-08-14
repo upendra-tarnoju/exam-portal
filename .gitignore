@@ -1,2 +1,2 @@
 backend/node_modules/
-backend/config/mailConfig.js
+backend/config/credentials.js

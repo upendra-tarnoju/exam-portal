@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import React from 'react';
 import axios from 'axios';
 
-const AdminModal = ({ name, show, closeModal, modalData }) => {
+const AdminModal = ({ name, show, closeModal, openAlert, modalData }) => {
 	const approveOrDeclineExaminer = () => {
 		axios
 			.patch(
@@ -12,6 +12,7 @@ const AdminModal = ({ name, show, closeModal, modalData }) => {
 			)
 			.then((res) => {
 				closeModal(false);
+				openAlert(true, res.data.msg);
 			});
 	};
 	return (

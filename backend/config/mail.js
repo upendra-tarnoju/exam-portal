@@ -1,17 +1,18 @@
 const nodemailer = require('nodemailer');
-const { email, password } = require('./mailConfig');
-
+const { sender, password } = require('./credentials');
+let senderAddress = sender;
 let transporter = nodemailer.createTransport({
 	host: 'smtp.gmail.com',
 	port: 587,
 	secure: false,
 	requireTLS: true,
 	auth: {
-		user: email,
+		user: sender,
 		pass: password,
 	},
 });
 
 module.exports = {
-	transporter,
+	sender: senderAddress,
+	transporter: transporter,
 };
