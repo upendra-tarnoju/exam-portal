@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styles from './examinerPanel.module.css';
 import axios from 'axios';
 import { connect } from 'react-redux';
+import AdminModal from '../../../modal-component/modal';
 
 class ExaminerPanel extends Component {
 	constructor(props) {
@@ -14,10 +15,26 @@ class ExaminerPanel extends Component {
 			pageSize: 5,
 			tableIndex: 0,
 			maxSizeIndex: 5,
+			showModal: false,
+			fullName: '',
+			modalData: { id: '', type: '' },
 		};
 		this.examinerData = this.examinerData.bind(this);
 		this.paginateExaminers = this.paginateExaminers.bind(this);
 		this.changePageSize = this.changePageSize.bind(this);
+		this.handleModal = this.handleModal.bind(this);
+	}
+
+	handleModal(status) {
+		this.setState({ showModal: status });
+	}
+
+	approveOrDeclineExaminers(firstName, lastName, modalType, id) {
+		this.setState({
+			fullName: `${firstName} ${lastName}`,
+			showModal: true,
+			modalData: { id: id, type: modalType },
+		});
 	}
 
 	handleCardClick(type) {
@@ -94,6 +111,14 @@ class ExaminerPanel extends Component {
 							data-toggle='tooltip'
 							data-placement='top'
 							title='Decline'
+							onClick={() => {
+								this.approveOrDeclineExaminers(
+									data.firstName,
+									data.lastName,
+									'decline',
+									data._id
+								);
+							}}
 						>
 							<i
 								className={'fa fa-trash-o cursor-pointer text-white'}
@@ -105,6 +130,14 @@ class ExaminerPanel extends Component {
 							data-toggle='tooltip'
 							data-placement='top'
 							title='Approve'
+							onClick={() =>
+								this.approveOrDeclineExaminers(
+									data.firstName,
+									data.lastName,
+									'approve',
+									data._id
+								)
+							}
 						>
 							<i className='fa fa-check-square-o cursor-pointer text-white'></i>
 						</button>
@@ -244,6 +277,12 @@ class ExaminerPanel extends Component {
 						{this.state.msg}
 					</h3>
 				)}
+				<AdminModal
+					name={this.state.fullName}
+					show={this.state.showModal}
+					closeModal={this.handleModal}
+					modalData={this.state.modalData}
+				/>
 			</div>
 		);
 	}
