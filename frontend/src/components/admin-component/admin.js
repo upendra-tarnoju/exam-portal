@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import cookie from 'js-cookie';
 import styles from './admin.module.css';
-import AdminPanel from './admin-panel-component/adminPanel';
+import AdminSidebar from './admin-sidebar-component/adminSidebar';
 import { connect } from 'react-redux';
 import JwtDecode from 'jwt-decode';
 import * as ActionTypes from '../../action';
-import PanelContent from './panel-content-component/panelContent';
+import SidebarContent from './sidebar-content-component/sidebarContent';
 import Sidebar from '../sidebar-component/sidebar';
 
 class Admin extends Component {
@@ -35,10 +35,10 @@ class Admin extends Component {
 					<div
 						className={`col-md-3 col-lg-2 bg-dark ${styles.sidenav} p-0`}
 					>
-						<Sidebar content={<AdminPanel />} />
+						<Sidebar content={<AdminSidebar />} />
 					</div>
 					<main className='col-md-9 ml-sm-auto col-lg-10 p-0'>
-						<PanelContent />
+						<SidebarContent />
 					</main>
 				</div>
 			</div>

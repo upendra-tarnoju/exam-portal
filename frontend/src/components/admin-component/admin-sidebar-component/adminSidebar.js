@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import styles from './adminPanel.module.css';
+import styles from './adminSidebar.module.css';
 import * as actionTypes from '../../../action';
 import axios from 'axios';
 import cookie from 'js-cookie';
 import { withRouter } from 'react-router-dom';
 
-class AdminPanel extends Component {
+class AdminSidebar extends Component {
 	render() {
 		return (
 			<ul className='nav flex-column'>
@@ -143,5 +143,5 @@ const mapDispatchToProps = (dispatch) => {
 	};
 };
 export default withRouter(
-	connect(mapStateToProps, mapDispatchToProps)(AdminPanel)
+	connect(mapStateToProps, mapDispatchToProps)(AdminSidebar)
 );

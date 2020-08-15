@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import styles from './examinerPanel.module.css';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import AdminModal from '../../../modal-component/modal';
 import Alert from 'react-bootstrap/Alert';
 
-class ExaminerPanel extends Component {
+import AdminModal from '../../../modal-component/modal';
+import styles from './viewExaminers.module.css';
+
+class ViewExaminers extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -320,4 +321,4 @@ const mapStateToProps = (state) => {
 		examinerCount: state.adminReducer.examinerCount,
 	};
 };
-export default connect(mapStateToProps, null)(ExaminerPanel);
+export default connect(mapStateToProps, null)(ViewExaminers);
