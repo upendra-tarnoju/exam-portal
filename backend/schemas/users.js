@@ -33,6 +33,10 @@ const users = new Schema({
 	accountStatus: {
 		type: String,
 	},
+	lastLogin: {
+		type: Date,
+		default: null,
+	},
 });
 
 module.exports = mongoose.model('users', users);
