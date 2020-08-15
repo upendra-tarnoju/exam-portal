@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import JwtDecode from 'jwt-decode';
 import * as ActionTypes from '../../action';
 import PanelContent from './panel-content-component/panelContent';
+import Sidebar from '../sidebar-component/sidebar';
 
 class Admin extends Component {
 	componentDidMount() {
@@ -34,7 +35,7 @@ class Admin extends Component {
 					<div
 						className={`col-md-3 col-lg-2 bg-dark ${styles.sidenav} p-0`}
 					>
-						<AdminPanel />
+						<Sidebar content={<AdminPanel />} />
 					</div>
 					<main className='col-md-9 ml-sm-auto col-lg-10 p-0'>
 						<PanelContent />

@@ -64,6 +64,8 @@ class Login extends Component {
 					let accountType = response.data.accountType;
 					if (accountType === 'admin') {
 						this.props.history.push('/admin');
+					} else if (accountType === 'examiner') {
+						this.props.history.push('/examiner');
 					}
 				})
 				.catch((error) => {
