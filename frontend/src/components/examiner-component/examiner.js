@@ -8,7 +8,7 @@ class Examiner extends Component {
 			<div className='container-fluid'>
 				<div className='row'>
 					<div className='col-md-3 col-lg-2 bg-dark sidenav p-0'>
-						<Sidebar content={<ExaminerSidebar />} />
+						<Sidebar content={<ExaminerSidebar props={this.props} />} />
 					</div>
 					<main className='col-md-9 ml-sm-auto col-lg-10 p-0'></main>
 				</div>
