@@ -23,10 +23,12 @@ class Users {
 		return this.userModel.find({ accountType: accountType });
 	};
 
-	update = (id, accountStatus) => {
-		return this.userModel.findByIdAndUpdate(id, {
-			accountStatus: accountStatus,
-		});
+	update = (id, toUpdate) => {
+		return this.userModel.findByIdAndUpdate(id, toUpdate);
+	};
+
+	findById = (id) => {
+		return this.userModel.findById(id);
 	};
 }
 

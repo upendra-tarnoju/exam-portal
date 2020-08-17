@@ -37,6 +37,15 @@ const users = new Schema({
 		type: Date,
 		default: null,
 	},
+	institution: {
+		type: String,
+	},
+	department: {
+		type: String,
+	},
+	designation: {
+		type: String,
+	},
 });
 
 module.exports = mongoose.model('users', users);
