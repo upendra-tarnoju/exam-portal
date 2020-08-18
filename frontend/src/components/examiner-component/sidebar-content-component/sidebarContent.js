@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import ViewExaminers from './view-examiners-component/viewExaminers';
+import Courses from './courses-component/courses';
+// import CreateExam from './create-exam-component/createExam';
 
 class SidebarContent extends Component {
 	render() {
@@ -9,7 +10,7 @@ class SidebarContent extends Component {
 				<div className='panelHeading bg-dark text-white p-3 sticky-top'>
 					{this.props.panelHeading}
 				</div>
-				{this.props.panelWindow === 'examiner' ? <ViewExaminers /> : null}
+				{this.props.panelWindow === 'manageCourse' ? <Courses /> : null}
 			</div>
 		);
 	}
@@ -17,8 +18,8 @@ class SidebarContent extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		panelWindow: state.adminReducer.panel,
-		panelHeading: state.adminReducer.panelHeading,
+		panelWindow: state.examinerReducer.examinerTab,
+		panelHeading: state.examinerReducer.examinerHeading,
 	};
 };
 
