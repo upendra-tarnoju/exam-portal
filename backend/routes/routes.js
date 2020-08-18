@@ -23,5 +23,11 @@ module.exports = () => {
 		examinerController.updateExaminerDetails
 	);
 
+	router.post(
+		'/examiner/exam',
+		passport.authenticate('jwt'),
+		examinerController.createCourse
+	);
+
 	return router;
 };
