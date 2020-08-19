@@ -14,6 +14,13 @@ const examiner = {
 			return { status: 400, msg: 'Course name already existed' };
 		}
 	},
+
+	getExaminerCourses: async (userId) => {
+		let courses = await course
+			.findByExaminerId(userId)
+			.select({ examinerId: 0 });
+		return courses;
+	},
 };
 
 module.exports = examiner;

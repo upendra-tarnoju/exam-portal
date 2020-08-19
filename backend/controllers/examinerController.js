@@ -30,6 +30,12 @@ const examiner = {
 				});
 			});
 	},
+
+	getExaminerCourses: async (req, res) => {
+		let userId = req.user._id;
+		let courses = await examinerHandler.getExaminerCourses(userId);
+		res.status(200).send({ courses });
+	},
 };
 
 module.exports = examiner;

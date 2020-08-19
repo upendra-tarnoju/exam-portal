@@ -16,6 +16,10 @@ class Course {
 			$and: [{ examinerId: examinerId, name: name }],
 		});
 	};
+
+	findByExaminerId = (examinerId) => {
+		return this.courseModel.find({ examinerId });
+	};
 }
 
 module.exports = new Course();
