@@ -53,7 +53,7 @@ class CreateCourses extends Component {
 			let token = cookie.get('token');
 			axios({
 				method: 'post',
-				url: `${process.env.REACT_APP_BASE_URL}/api/examiner/exam`,
+				url: `${process.env.REACT_APP_BASE_URL}/api/examiner/course`,
 				data: {
 					name: this.state.name.value,
 					description: this.state.description.value,
