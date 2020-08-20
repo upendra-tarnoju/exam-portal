@@ -13,7 +13,13 @@ class Courses extends Component {
 			alert: false,
 			msg: '',
 			courses: [],
+			pageIndex: 0,
+			pageSize: 5,
+			maxSizeIndex: 5,
+			tableIndex: 0,
+			totalCount: 0,
 		};
+		this.changePageSize = this.changePageSize.bind(this);
 	}
 
 	handleCreate = (status) => {
@@ -29,24 +35,75 @@ class Courses extends Component {
 		});
 	};
 
-	componentDidMount() {
+	viewCourses() {
 		let token = cookie.get('token');
 		axios({
 			method: 'get',
 			url: `${process.env.REACT_APP_BASE_URL}/api/examiner/course`,
+			params: {
+				pageIndex: this.state.pageIndex,
+				pageSize: this.state.pageSize,
+			},
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,
 			},
 		}).then((response) => {
-			this.setState({ courses: response.data.courses });
+			let maxIndex;
+			if (response.data.totalCourses < this.state.maxSizeIndex)
+				maxIndex = response.data.totalCourses;
+			else maxIndex = this.state.maxSizeIndex;
+			this.setState({
+				courses: response.data.courses,
+				maxSizeIndex: maxIndex,
+				totalCount: response.data.totalCourses,
+			});
 		});
+	}
+
+	componentDidMount() {
+		this.viewCourses();
+	}
+
+	changePageSize(event) {
+		let newPageSize = event.target.value;
+		this.setState({ pageIndex: 0, pageSize: newPageSize }, () => {
+			this.viewCourses();
+		});
+	}
+
+	paginateCourses(paginateType) {
+		let pageIndex = this.state.pageIndex;
+		let pageSize = this.state.pageSize;
+		if (paginateType === 'inc') pageIndex = pageIndex + 1;
+		else pageIndex = pageIndex - 1;
+		let maxSizeIndex = (pageIndex + 1) * pageSize;
+		if (maxSizeIndex > this.state.totalCount) {
+			maxSizeIndex = this.state.totalCount;
+		}
+
+		if (
+			pageIndex >= 0 &&
+			(this.state.maxSizeIndex !== this.state.totalCount ||
+				maxSizeIndex !== this.state.totalCount)
+		) {
+			this.setState(
+				{
+					pageIndex: pageIndex,
+					tableIndex: pageIndex * pageSize,
+					maxSizeIndex: maxSizeIndex,
+				},
+				() => {
+					this.viewCourses();
+				}
+			);
+		}
 	}
 
 	render() {
 		let courses = this.state.courses.map((data, index) => (
 			<tr key={data._id}>
-				<th scope='row'>index</th>
+				<th scope='row'>{this.state.tableIndex + index + 1}</th>
 				<td>{data.name}</td>
 				<td>{data.description}</td>
 				<td>
@@ -118,6 +175,33 @@ class Courses extends Component {
 									</thead>
 									{courses}
 								</table>
+								<div className='py-2 px-1 bg-light d-flex justify-content-end'>
+									<span className='align-self-center mr-3'>
+										Item per page
+									</span>
+									<select
+										onChange={this.changePageSize}
+										value={this.state.pageSize}
+										className={`form-control ${styles.selectWidth} form-control-sm mr-3`}
+									>
+										<option>5</option>
+										<option>10</option>
+										<option>15</option>
+									</select>
+									<span className='align-self-center mr-3'>
+										{this.state.tableIndex + 1} -{' '}
+										{this.state.maxSizeIndex} of{' '}
+										{this.state.totalCount}
+									</span>
+									<i
+										onClick={() => this.paginateCourses('dec')}
+										className='fa fa-2x fa-angle-left align-self-center mr-3 cursor-pointer'
+									></i>
+									<i
+										onClick={() => this.paginateCourses('inc')}
+										className='fa fa-2x fa-angle-right align-self-center cursor-pointer'
+									></i>
+								</div>
 							</div>
 						)}
 					</div>

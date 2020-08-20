@@ -15,11 +15,19 @@ const examiner = {
 		}
 	},
 
-	getExaminerCourses: async (userId) => {
+	getExaminerCourses: async (userId, pageIndex, pageSize) => {
+		pageIndex = pageIndex * pageSize;
 		let courses = await course
 			.findByExaminerId(userId)
+			.skip(pageIndex)
+			.limit(pageSize)
 			.select({ examinerId: 0 });
 		return courses;
+	},
+
+	getCoursesLength: async (userId) => {
+		let courses = await course.findByExaminerId(userId);
+		return courses.length;
 	},
 };
 

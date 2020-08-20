@@ -33,8 +33,15 @@ const examiner = {
 
 	getExaminerCourses: async (req, res) => {
 		let userId = req.user._id;
-		let courses = await examinerHandler.getExaminerCourses(userId);
-		res.status(200).send({ courses });
+		let pageIndex = parseInt(req.query.pageIndex);
+		let pageSize = parseInt(req.query.pageSize);
+		let courses = await examinerHandler.getExaminerCourses(
+			userId,
+			pageIndex,
+			pageSize
+		);
+		let totalCourses = await examinerHandler.getCoursesLength(userId);
+		res.status(200).send({ courses, totalCourses });
 	},
 };
 
