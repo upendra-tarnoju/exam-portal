@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import cookie from 'js-cookie';
+import validateInputs from '../../services/validation';
+import ExaminerService from '../../services/examinerApi';
 
 class ExaminerInput extends Component {
 	constructor(props) {
@@ -22,6 +22,7 @@ class ExaminerInput extends Component {
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
+		this.examinerService = new ExaminerService();
 	}
 
 	handleChange = (event) => {
@@ -35,45 +36,13 @@ class ExaminerInput extends Component {
 
 	handleSubmit = (event) => {
 		event.preventDefault();
-		let token = cookie.get('token');
-		let validationState = this.validateInput();
+		let validationState = validateInputs(this.state, 'login');
 		if (!validationState) {
-			axios({
-				method: 'patch',
-				url: `${process.env.REACT_APP_BASE_URL}/api/examiner`,
-				data: {
-					institution: this.state.collegeName.value,
-					department: this.state.department.value,
-					designation: this.state.designation.value,
-				},
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${token}`,
-				},
-			}).then((res) => {
+			this.examinerService.saveExaminerDetails(this.state).then((res) => {
 				this.props.history.push('/examiner');
 			});
 		}
 	};
-
-	validateInput() {
-		let error = false;
-		let tempState = this.state;
-		if (tempState.collegeName.value === '') {
-			tempState.collegeName.error = '* Required';
-			error = true;
-		}
-		if (tempState.department.value === '') {
-			tempState.department.error = '* Required';
-			error = true;
-		}
-		if (tempState.designation.value === '') {
-			tempState.designation.error = '* Required';
-			error = true;
-		}
-		this.setState(tempState);
-		return error;
-	}
 
 	render() {
 		return (

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import Navbar from '../header/navbar';
-import LoginCard from './login-card-component/loginCard';
+import LoginCard from './loginCard';
 import { connect } from 'react-redux';
-import ExaminerInput from './examiner-input-component/examinerInput';
+import ExaminerInput from './examinerInput';
 
 class Login extends Component {
 	render() {
