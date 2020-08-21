@@ -12,6 +12,15 @@ body {
 	font-size: 12px;
 }
 
-.w-35 {
+.width35 {
 	width: 35%;
+}
+
+label {
+	font-family: 'Raleway', sans-serif;
+	font-weight: bold;
+}
+
+label span {
+	font-size: 12px;
 }

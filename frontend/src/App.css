@@ -13,3 +13,26 @@
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 }
+
+.cursor-pointer {
+	cursor: pointer;
+}
+
+.sidenav {
+	height: 100%;
+	position: fixed;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	overflow-x: hidden;
+}
+
+.iconHover:hover {
+	cursor: pointer;
+	color: white !important;
+}
+.panelHeading {
+	font-family: 'Raleway';
+	font-size: 20px;
+}

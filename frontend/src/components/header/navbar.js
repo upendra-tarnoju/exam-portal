@@ -26,7 +26,10 @@ class Navbar extends Component {
 							</a>
 						</li>
 						<li className='nav-item'>
-							<a className='text-light text-decoration-none' href='# '>
+							<a
+								className='text-light text-decoration-none'
+								href='/login'
+							>
 								Login
 							</a>
 						</li>
