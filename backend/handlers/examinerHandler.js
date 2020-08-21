@@ -37,7 +37,10 @@ const examiner = {
 		return updatedCourse;
 	},
 
-	deleteCourse: async (userId) => {},
+	deleteCourse: async (courseId) => {
+		let deletedCourse = await course.delete(courseId).select({ _id: 1 });
+		return deletedCourse;
+	},
 };
 
 module.exports = examiner;

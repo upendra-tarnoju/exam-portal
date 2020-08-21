@@ -50,7 +50,11 @@ const examiner = {
 		res.status(200).send({ course: updatedCourse, msg: 'Updated course' });
 	},
 
-	deleteCourse: async (req, res) => {},
+	deleteCourse: async (req, res) => {
+		let courseId = req.query.courseId;
+		let deletedCourse = await examinerHandler.deleteCourse(courseId);
+		res.status(200).send(deletedCourse);
+	},
 };
 
 module.exports = examiner;

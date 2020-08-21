@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import styles from './courses.module.css';
 import CreateCourses from './createCourses';
 import Alert from 'react-bootstrap/Alert';
-import axios from 'axios';
-import cookie from 'js-cookie';
 import * as ActionTypes from '../../../../action';
 import { connect } from 'react-redux';
+import ExaminerService from '../../../../services/examinerApi';
 
 class Courses extends Component {
 	constructor(props) {
@@ -25,6 +24,7 @@ class Courses extends Component {
 			courseId: '',
 		};
 		this.changePageSize = this.changePageSize.bind(this);
+		this.examinerService = new ExaminerService();
 	}
 
 	handleCreate = (status) => {
@@ -49,20 +49,14 @@ class Courses extends Component {
 		});
 	};
 
+	deleteCourse(courseId) {
+		this.examinerService.deleteCourse(courseId).then((response) => {
+			this.viewCourses();
+		});
+	}
+
 	viewCourses() {
-		let token = cookie.get('token');
-		axios({
-			method: 'get',
-			url: `${process.env.REACT_APP_BASE_URL}/api/examiner/course`,
-			params: {
-				pageIndex: this.state.pageIndex,
-				pageSize: this.state.pageSize,
-			},
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`,
-			},
-		}).then((response) => {
+		this.examinerService.viewCourses(this.state).then((response) => {
 			let maxIndex;
 			if (response.data.totalCourses < this.state.maxSizeIndex)
 				maxIndex = response.data.totalCourses;
@@ -143,6 +137,7 @@ class Courses extends Component {
 						data-placement='top'
 						title='Delete'
 						className='btn p-0'
+						onClick={() => this.deleteCourse(data._id)}
 					>
 						<i className={'fa fa-trash-o cursor-pointer text-white'}></i>
 					</button>

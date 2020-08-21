@@ -34,6 +34,10 @@ class Course {
 			{ new: true }
 		);
 	};
+
+	delete = (courseId) => {
+		return this.courseModel.findByIdAndRemove(courseId);
+	};
 }
 
 module.exports = new Course();

@@ -63,7 +63,7 @@ class ExaminerService {
 			method: 'delete',
 			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}/course`,
 			params: {
-				id: id,
+				courseId: id,
 			},
 			headers: {
 				'Content-Type': 'application/json',
@@ -71,6 +71,22 @@ class ExaminerService {
 			},
 		});
 	};
+
+	viewCourses(state) {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'get',
+			url: `${process.env.REACT_APP_BASE_URL}/api/examiner/course`,
+			params: {
+				pageIndex: state.pageIndex,
+				pageSize: state.pageSize,
+			},
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	}
 }
 
 export default ExaminerService;
