@@ -32,7 +32,19 @@ module.exports = () => {
 	router.get(
 		'/examiner/course',
 		passport.authenticate('jwt'),
-		examinerController.getExaminerCourses
+		examinerController.getCourses
+	);
+
+	router.patch(
+		'/examiner/course',
+		passport.authenticate('jwt'),
+		examinerController.updateCourse
+	);
+
+	router.delete(
+		'/examiner/course',
+		passport.authenticate('jwt'),
+		examinerController.deleteCourse
 	);
 
 	return router;

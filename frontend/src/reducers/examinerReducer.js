@@ -2,6 +2,7 @@ const initialState = {
 	examinerInput: false,
 	examinerTab: '',
 	examinerHeading: '',
+	courses: [],
 };
 
 const examinerReducers = (state = initialState, action) => {
@@ -15,6 +16,11 @@ const examinerReducers = (state = initialState, action) => {
 			...state,
 			examinerTab: action.tab,
 			examinerHeading: action.heading,
+		};
+	} else if (action.type === 'set_courses') {
+		return {
+			...state,
+			courses: action.courses,
 		};
 	}
 	return state;

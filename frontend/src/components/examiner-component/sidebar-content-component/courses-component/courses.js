@@ -4,6 +4,8 @@ import CreateCourses from './createCourses';
 import Alert from 'react-bootstrap/Alert';
 import axios from 'axios';
 import cookie from 'js-cookie';
+import * as ActionTypes from '../../../../action';
+import { connect } from 'react-redux';
 
 class Courses extends Component {
 	constructor(props) {
@@ -18,6 +20,9 @@ class Courses extends Component {
 			maxSizeIndex: 5,
 			tableIndex: 0,
 			totalCount: 0,
+			name: '',
+			description: '',
+			courseId: '',
 		};
 		this.changePageSize = this.changePageSize.bind(this);
 	}
@@ -32,6 +37,15 @@ class Courses extends Component {
 		this.setState({
 			alert: status,
 			msg: msg,
+		});
+	};
+
+	editCourse = (name, description, id) => {
+		this.setState({
+			create: true,
+			name: name,
+			description: description,
+			courseId: id,
 		});
 	};
 
@@ -53,8 +67,8 @@ class Courses extends Component {
 			if (response.data.totalCourses < this.state.maxSizeIndex)
 				maxIndex = response.data.totalCourses;
 			else maxIndex = this.state.maxSizeIndex;
+			this.props.setCourses(response.data.courses);
 			this.setState({
-				courses: response.data.courses,
 				maxSizeIndex: maxIndex,
 				totalCount: response.data.totalCourses,
 			});
@@ -101,7 +115,7 @@ class Courses extends Component {
 	}
 
 	render() {
-		let courses = this.state.courses.map((data, index) => (
+		let courses = this.props.courses.map((data, index) => (
 			<tr key={data._id}>
 				<th scope='row'>{this.state.tableIndex + index + 1}</th>
 				<td>{data.name}</td>
@@ -113,6 +127,9 @@ class Courses extends Component {
 						title='Edit'
 						type='button'
 						className='btn p-0'
+						onClick={() =>
+							this.editCourse(data.name, data.description, data._id)
+						}
 					>
 						<i
 							className={
@@ -154,7 +171,7 @@ class Courses extends Component {
 					{this.state.msg}
 				</Alert>
 				<div className={`text-center ${styles.heading} mb-2`}>Courses</div>
-				{this.state.courses.length === 0 ? (
+				{this.props.courses.length === 0 ? (
 					<p className='mb-0'>No course existed. Create a new one </p>
 				) : (
 					<div className='table-responsive'>
@@ -167,7 +184,7 @@ class Courses extends Component {
 									<th scope='col'>Actions</th>
 								</tr>
 							</thead>
-							{courses}
+							<tbody>{courses}</tbody>
 						</table>
 						<div className='py-2 px-1 bg-light d-flex justify-content-end'>
 							<span className='align-self-center mr-3'>
@@ -201,10 +218,30 @@ class Courses extends Component {
 					show={this.state.create}
 					closeModal={this.handleCreate}
 					handleAlert={this.handleAlert}
+					name={this.state.name}
+					description={this.state.description}
+					courseId={this.state.courseId}
 				/>
 			</div>
 		);
 	}
 }
 
-export default Courses;
+const mapStateToProps = (state) => {
+	return {
+		courses: state.examinerReducer.courses,
+	};
+};
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		setCourses: (courses) => {
+			dispatch({
+				type: ActionTypes.SET_COURSES,
+				courses: courses,
+			});
+		},
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Courses);

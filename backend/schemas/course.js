@@ -15,6 +15,14 @@ const course = new Schema({
 		type: String,
 		required: true,
 	},
+	createdAt: {
+		type: Date,
+		default: Date.now,
+	},
+	modifiedAt: {
+		type: Date,
+		default: null,
+	},
 });
 
 module.exports = mongoose.model('course', course);

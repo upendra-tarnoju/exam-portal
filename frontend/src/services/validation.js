@@ -42,7 +42,7 @@ let validateSignUpFields = (state) => {
 
 const validateInputs = (state, validationMethod) => {
 	let tempState;
-	if (validationMethod === 'login') {
+	if (validationMethod === 'empty_fields') {
 		tempState = validateEmptyFields(state);
 	} else if (validationMethod === 'signup') {
 		tempState = validateSignUpFields(state);

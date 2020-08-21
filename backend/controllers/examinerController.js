@@ -31,11 +31,11 @@ const examiner = {
 			});
 	},
 
-	getExaminerCourses: async (req, res) => {
+	getCourses: async (req, res) => {
 		let userId = req.user._id;
 		let pageIndex = parseInt(req.query.pageIndex);
 		let pageSize = parseInt(req.query.pageSize);
-		let courses = await examinerHandler.getExaminerCourses(
+		let courses = await examinerHandler.getCourses(
 			userId,
 			pageIndex,
 			pageSize
@@ -43,6 +43,14 @@ const examiner = {
 		let totalCourses = await examinerHandler.getCoursesLength(userId);
 		res.status(200).send({ courses, totalCourses });
 	},
+
+	updateCourse: async (req, res) => {
+		let courseData = req.query;
+		let updatedCourse = await examinerHandler.updateCourse(courseData);
+		res.status(200).send({ course: updatedCourse, msg: 'Updated course' });
+	},
+
+	deleteCourse: async (req, res) => {},
 };
 
 module.exports = examiner;

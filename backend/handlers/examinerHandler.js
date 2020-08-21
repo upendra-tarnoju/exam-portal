@@ -15,7 +15,7 @@ const examiner = {
 		}
 	},
 
-	getExaminerCourses: async (userId, pageIndex, pageSize) => {
+	getCourses: async (userId, pageIndex, pageSize) => {
 		pageIndex = pageIndex * pageSize;
 		let courses = await course
 			.findByExaminerId(userId)
@@ -29,6 +29,15 @@ const examiner = {
 		let courses = await course.findByExaminerId(userId);
 		return courses.length;
 	},
+
+	updateCourse: async (courseData) => {
+		let updatedCourse = await course
+			.update(courseData)
+			.select({ name: 1, description: 1 });
+		return updatedCourse;
+	},
+
+	deleteCourse: async (userId) => {},
 };
 
 module.exports = examiner;

@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import styles from './courses.module.css';
-import axios from 'axios';
-import cookie from 'js-cookie';
+import validateInputs from '../../../../services/validation';
+import ExaminerService from '../../../../services/examinerApi';
+import * as ActionTypes from '../../../../action';
+import { connect } from 'react-redux';
 
 class CreateCourses extends Component {
 	constructor(props) {
@@ -20,22 +22,21 @@ class CreateCourses extends Component {
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
+		this.examinerService = new ExaminerService();
 	}
 
-	validateInput = () => {
-		let error = false;
-		let tempState = this.state;
-		if (tempState.name.value === '') {
-			tempState.name.error = '* Required';
-			error = true;
-		}
-		if (tempState.description.value === '') {
-			tempState.description.error = '* Required';
-			error = true;
-		}
-		this.setState(tempState);
-		return error;
-	};
+	componentWillReceiveProps(nextProps) {
+		this.setState({
+			name: {
+				...this.state.name,
+				value: nextProps.name,
+			},
+			description: {
+				...this.state.description,
+				value: nextProps.description,
+			},
+		});
+	}
 
 	handleChange = (event) => {
 		this.setState({
@@ -48,30 +49,39 @@ class CreateCourses extends Component {
 
 	handleSubmit = (event) => {
 		event.preventDefault();
-		let validationState = this.validateInput();
-		if (!validationState) {
-			let token = cookie.get('token');
-			axios({
-				method: 'post',
-				url: `${process.env.REACT_APP_BASE_URL}/api/examiner/course`,
-				data: {
-					name: this.state.name.value,
-					description: this.state.description.value,
-				},
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${token}`,
-				},
-			})
-				.then((res) => {
-					this.props.closeModal();
-					this.props.handleAlert(true, res.data.msg);
-				})
-				.catch((err) => {
-					this.setState({
-						error: err.response.data.msg,
+		let validationMethod = 'empty_fields';
+		let validationState = validateInputs(this.state, validationMethod);
+		if (!validationState.error) {
+			if (this.props.name === '' && this.props.description === '') {
+				this.examinerService
+					.createCourse(this.state)
+					.then((res) => {
+						this.props.closeModal();
+						this.props.handleAlert(true, res.data.msg);
+					})
+					.catch((err) => {
+						this.setState({
+							error: err.response.data.msg,
+						});
 					});
-				});
+			} else {
+				this.examinerService
+					.editCourse(this.props.courseId, this.state)
+					.then((res) => {
+						let name = res.data.course.name;
+						let description = res.data.course.description;
+						let updatedCourse = this.props.courses.map((course) =>
+							course._id === res.data.course._id
+								? { ...course, name: name, description: description }
+								: course
+						);
+						this.props.setCourses(updatedCourse);
+						this.props.closeModal();
+						this.props.handleAlert(true, res.data.msg);
+					});
+			}
+		} else {
+			this.setState(validationState.tempState);
 		}
 	};
 	render() {
@@ -83,7 +93,9 @@ class CreateCourses extends Component {
 				centered
 			>
 				<Modal.Header closeButton className={styles.createCourseHeading}>
-					Create new Course
+					{this.props.name === '' && this.props.description === ''
+						? 'Create new course'
+						: 'Update course'}
 				</Modal.Header>
 				<Modal.Body>
 					<div className='container'>
@@ -128,7 +140,10 @@ class CreateCourses extends Component {
 							/>
 							<div className='d-flex justify-content-end pt-2'>
 								<button type='submit' className='btn btn-primary'>
-									Create
+									{this.props.name === '' &&
+									this.props.description === ''
+										? 'Create'
+										: 'Update'}
 								</button>
 							</div>
 						</form>
@@ -139,4 +154,20 @@ class CreateCourses extends Component {
 	}
 }
 
-export default CreateCourses;
+const mapStateToProps = (state) => {
+	return {
+		courses: state.examinerReducer.courses,
+	};
+};
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		setCourses: (courses) => {
+			dispatch({
+				type: ActionTypes.SET_COURSES,
+				courses: courses,
+			});
+		},
+	};
+};
+export default connect(mapStateToProps, mapDispatchToProps)(CreateCourses);

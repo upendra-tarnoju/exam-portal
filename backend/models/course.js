@@ -20,6 +20,20 @@ class Course {
 	findByExaminerId = (examinerId) => {
 		return this.courseModel.find({ examinerId });
 	};
+
+	update = (course) => {
+		return this.courseModel.findByIdAndUpdate(
+			course.courseId,
+			{
+				$set: {
+					name: course.name,
+					description: course.description,
+					modifiedAt: Date.now(),
+				},
+			},
+			{ new: true }
+		);
+	};
 }
 
 module.exports = new Course();
