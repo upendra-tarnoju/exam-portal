@@ -1,22 +1,25 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import cookie from 'js-cookie';
 import { withRouter, Link } from 'react-router-dom';
 import queryString from 'query-string';
 import { connect } from 'react-redux';
 
 import styles from './adminSidebar.module.css';
 import * as actionTypes from '../../../action';
+import AdminService from '../../../services/adminApi';
+import UserService from '../../../services/userApi';
 
 class AdminSidebar extends Component {
+	constructor(props) {
+		super(props);
+		this.adminService = new AdminService();
+		this.userService = new UserService();
+	}
 	handleAdminQueryParams(params) {
 		if (params.tab === 'examiner') {
-			axios
-				.get(`${process.env.REACT_APP_BASE_URL}/api/admin/examiner`)
-				.then((res) => {
-					this.props.panelWindow('examiner', 'Manage Examiner');
-					this.props.examinerCount(res.data);
-				});
+			this.adminService.getAllExaminer().then((res) => {
+				this.props.panelWindow('examiner', 'Manage Examiner');
+				this.props.examinerCount(res.data);
+			});
 		} else if (params.tab === undefined) {
 			this.props.panelWindow('', 'Dashboard');
 		}
@@ -111,8 +114,7 @@ class AdminSidebar extends Component {
 				</Link>
 				<li
 					onClick={() => {
-						cookie.remove('token');
-						cookie.remove('type');
+						this.userService.removeCookie();
 						this.props.setAuthenticatedUser(false);
 						this.props.history.push('/login');
 					}}

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { withRouter } from 'react-router-dom';
-import cookie from 'js-cookie';
-import * as ActionTypes from '../../../action';
+
+import * as ActionTypes from '../../action';
 import { connect } from 'react-redux';
+import UserService from '../../services/userApi';
+import validateInputs from '../../services/validation';
 
 class LoginCard extends Component {
 	constructor(props) {
@@ -21,6 +22,7 @@ class LoginCard extends Component {
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
+		this.userService = new UserService();
 	}
 
 	handleChange = (event) => {
@@ -32,41 +34,22 @@ class LoginCard extends Component {
 		});
 	};
 
-	validateInput = () => {
-		let error = false;
-		let tempState = this.state;
-		if (tempState.email.value === '') {
-			tempState.email.error = '* Required';
-			error = true;
-		}
-		if (tempState.password.value === '') {
-			tempState.password.error = '* Required';
-			error = true;
-		}
-		this.setState(tempState);
-		return error;
-	};
-
 	handleSubmit = (event) => {
 		event.preventDefault();
-		let validationState = this.validateInput();
-		if (!validationState) {
-			axios
-				.post(`${process.env.REACT_APP_BASE_URL}/api/login`, {
-					username: this.state.email.value,
-					password: this.state.password.value,
-				})
+		let validation = validateInputs(this.state, 'login');
+		this.setState(validation.tempState);
+		if (!validation.error) {
+			this.userService
+				.loginExisitingUser(
+					this.state.email.value,
+					this.state.password.value
+				)
 				.then((response) => {
-					cookie.set('token', response.data.token, {
-						expires: 365,
-					});
-					cookie.set('type', response.data.accountType, {
-						expires: 365,
-					});
-					let accountType = response.data.accountType;
-					if (accountType === 'admin') {
+					let data = response.data;
+					this.userService.setCookie(data.token, data.accountType);
+					if (data.accountType === 'admin') {
 						this.props.history.push('/admin');
-					} else if (accountType === 'examiner') {
+					} else if (data.accountType === 'examiner') {
 						let lastLogin = response.data.lastLogin;
 						if (lastLogin == null) {
 							this.props.setExaminerInputWindow(true);
@@ -78,9 +61,7 @@ class LoginCard extends Component {
 				})
 				.catch((error) => {
 					if (error.response) {
-						this.setState({
-							error: error.response.data.msg,
-						});
+						this.setState({ error: error.response.data.msg });
 					}
 				});
 		}

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import styles from './signup.module.css';
-import axios from 'axios';
 import ShowModal from './showModal';
 import Navbar from '../header/navbar';
+import validateInputs from '../../services/validation';
+import UserService from '../../services/userApi';
 
 class SignUp extends Component {
 	constructor(props) {
@@ -23,6 +24,7 @@ class SignUp extends Component {
 		this.handleChange = this.handleChange.bind(this);
 		this.handleModal = this.handleModal.bind(this);
 		this.hideModal = this.hideModal.bind(this);
+		this.userService = new UserService();
 	}
 
 	showModal = (message) => {
@@ -33,46 +35,13 @@ class SignUp extends Component {
 		this.setState({ modal: false }, () => this.props.history.push('/login'));
 	};
 
-	validateInput = () => {
-		let error = false;
-		let tempState = this.state;
-		Object.entries(tempState).forEach((item) => {
-			let key = item[0];
-			let value = item[1].value;
-			if (value === '') {
-				error = true;
-				item[1].error = '* Required';
-			} else if (key === 'email') {
-				let re = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
-				if (!re.test(value)) {
-					error = true;
-					item[1].error = 'Invalid Email';
-				} else item[1].error = '';
-			} else if (key === 'mobileNumber') {
-				var re = /^[0-9\b]+$/;
-				if (!re.test(value)) {
-					item[1].error = 'Invalid Mobile number';
-				} else item[1].error = '';
-			} else if (key === 'password') {
-				if (value.length <= 6) {
-					error = true;
-					item[1].error = 'Minimum password length should be 6';
-				} else item[1].error = '';
-			}
-		});
-		this.setState(tempState);
-		return error;
-	};
-
 	handleSubmit(event) {
 		event.preventDefault();
-		let validation = this.validateInput();
-		if (!validation) {
-			axios
-				.post(`${process.env.REACT_APP_BASE_URL}/api/signup`, this.state)
-				.then((response) => {
-					this.showModal(response.data.msg);
-				});
+		let validation = validateInputs(this.state, 'signup');
+		if (!validation.error) {
+			this.userService.saveNewUsers(this.state).then((response) => {
+				this.showModal(response.data.msg);
+			});
 		}
 	}
 
