@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Courses from './courses-component/courses';
-// import CreateExam from './create-exam-component/createExam';
+import Exam from './exam-component/exam';
 
 class SidebarContent extends Component {
 	render() {
@@ -10,7 +10,11 @@ class SidebarContent extends Component {
 				<div className='panelHeading bg-dark text-white p-3 sticky-top'>
 					{this.props.panelHeading}
 				</div>
-				{this.props.panelWindow === 'manageCourse' ? <Courses /> : null}
+				{this.props.panelWindow === 'manageCourse' ? (
+					<Courses />
+				) : this.props.panelWindow === 'manageExam' ? (
+					<Exam />
+				) : null}
 			</div>
 		);
 	}

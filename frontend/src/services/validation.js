@@ -44,6 +44,7 @@ const validateInputs = (state, validationMethod) => {
 	let tempState;
 	if (validationMethod === 'empty_fields') {
 		tempState = validateEmptyFields(state);
+		console.log(tempState);
 	} else if (validationMethod === 'signup') {
 		tempState = validateSignUpFields(state);
 	}

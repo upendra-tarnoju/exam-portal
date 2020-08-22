@@ -36,7 +36,7 @@ class LoginCard extends Component {
 
 	handleSubmit = (event) => {
 		event.preventDefault();
-		let validation = validateInputs(this.state, 'login');
+		let validation = validateInputs(this.state, 'empty_fields');
 		this.setState(validation.tempState);
 		if (!validation.error) {
 			this.userService
