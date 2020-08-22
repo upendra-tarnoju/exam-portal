@@ -25,6 +25,13 @@ const examiner = {
 		return courses;
 	},
 
+	getAllCourses: async (userId) => {
+		let courses = await course
+			.findByExaminerId(userId)
+			.select({ name: 1, description: 1 });
+		return courses;
+	},
+
 	getCoursesLength: async (userId) => {
 		let courses = await course.findByExaminerId(userId);
 		return courses.length;

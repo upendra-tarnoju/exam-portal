@@ -33,15 +33,21 @@ const examiner = {
 
 	getCourses: async (req, res) => {
 		let userId = req.user._id;
-		let pageIndex = parseInt(req.query.pageIndex);
-		let pageSize = parseInt(req.query.pageSize);
-		let courses = await examinerHandler.getCourses(
-			userId,
-			pageIndex,
-			pageSize
-		);
-		let totalCourses = await examinerHandler.getCoursesLength(userId);
-		res.status(200).send({ courses, totalCourses });
+		let length = Object.keys(req.query).length;
+		if (length != 0) {
+			let pageIndex = parseInt(req.query.pageIndex);
+			let pageSize = parseInt(req.query.pageSize);
+			let courses = await examinerHandler.getCourses(
+				userId,
+				pageIndex,
+				pageSize
+			);
+			let totalCourses = await examinerHandler.getCoursesLength(userId);
+			res.status(200).send({ courses, totalCourses });
+		} else {
+			let courses = await examinerHandler.getAllCourses(userId);
+			res.status(200).send(courses);
+		}
 	},
 
 	updateCourse: async (req, res) => {
