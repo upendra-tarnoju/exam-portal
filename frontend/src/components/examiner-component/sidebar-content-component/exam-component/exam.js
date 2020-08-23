@@ -6,7 +6,7 @@ class Exam extends Component {
 		super(props);
 		this.state = {
 			createExam: true,
-			nextInputs: true,
+			nextInputs: false,
 			subject: { value: '', error: '' },
 			course: { value: '', error: '' },
 			examCode: { value: '', error: '' },
@@ -28,10 +28,10 @@ class Exam extends Component {
 		});
 	}
 
-	handleInputs(status) {
-		this.setState({
-			nextInputs: status,
-		});
+	handleInputs(event) {
+		// this.setState({
+		// 	nextInputs: status,
+		// });
 	}
 
 	handleChange = (event) => {
@@ -201,7 +201,7 @@ class Exam extends Component {
 								<button
 									type='button'
 									className='btn btn-primary'
-									onClick={() => this.handleInputs(true)}
+									onClick={this.handleInputs}
 								>
 									Next
 								</button>

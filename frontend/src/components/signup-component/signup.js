@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styles from './signup.module.css';
 import ShowModal from './showModal';
 import Navbar from '../header/navbar';
-import validateInputs from '../../services/validation';
+import validate from '../../services/validation.js';
 import UserService from '../../services/userApi';
 
 class SignUp extends Component {
@@ -10,16 +10,23 @@ class SignUp extends Component {
 		super(props);
 
 		this.state = {
-			firstName: { value: '', error: '' },
-			lastName: { value: '', error: '' },
-			mobileNumber: { value: '', error: '' },
-			email: { value: '', error: '' },
-			password: { value: '', error: '' },
-			accountType: { value: '', error: '' },
+			firstName: '',
+			lastName: '',
+			mobileNumber: '',
+			email: '',
+			password: '',
+			accountType: '',
+			errors: {
+				firstName: '',
+				lastName: '',
+				mobileNumber: '',
+				email: '',
+				password: '',
+				accountType: '',
+			},
 			modal: false,
 			message: '',
 		};
-
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handleModal = this.handleModal.bind(this);
@@ -37,11 +44,16 @@ class SignUp extends Component {
 
 	handleSubmit(event) {
 		event.preventDefault();
-		let validation = validateInputs(this.state, 'signup');
+		let tempState = this.state;
+		let validation = validate.signUpFields(tempState);
+		console.log(validation);
+
 		if (!validation.error) {
 			this.userService.saveNewUsers(this.state).then((response) => {
 				this.showModal(response.data.msg);
 			});
+		} else {
+			this.setState(validation.tempState);
 		}
 	}
 
@@ -52,15 +64,12 @@ class SignUp extends Component {
 			let number = event.target.value;
 			let mobileNumber = this.state.mobileNumber;
 			if (number === '' || regex.test(number)) {
-				mobileNumber.value = number;
+				mobileNumber = number;
 			}
 			this.setState({ mobileNumber });
 		} else {
 			this.setState({
-				[event.target.name]: {
-					...this.state[event.target.name],
-					value: event.target.value,
-				},
+				[event.target.name]: event.target.value,
 			});
 		}
 	}
@@ -84,9 +93,9 @@ class SignUp extends Component {
 							<form className='text-center' onSubmit={this.handleSubmit}>
 								<label className='w-100 text-left'>
 									First name{' '}
-									{this.state.firstName.error ? (
+									{this.state.errors.firstName ? (
 										<span className='text-danger'>
-											{this.state.firstName.error}
+											{this.state.errors.firstName}
 										</span>
 									) : null}
 								</label>
@@ -94,14 +103,14 @@ class SignUp extends Component {
 									type='text'
 									name='firstName'
 									className='w-100 px-3 py-2 mb-2'
-									value={this.state.firstName.value}
+									value={this.state.firstName}
 									onChange={this.handleChange}
 								/>
 								<label className='w-100 text-left'>
 									Last name{' '}
-									{this.state.lastName.error ? (
+									{this.state.errors.lastName ? (
 										<span className='text-danger'>
-											{this.state.lastName.error}
+											{this.state.errors.lastName}
 										</span>
 									) : null}
 								</label>
@@ -109,15 +118,15 @@ class SignUp extends Component {
 									type='text'
 									className='w-100 px-3 py-2 mb-2'
 									name='lastName'
-									value={this.state.lastName.value}
+									value={this.state.lastName}
 									onChange={this.handleChange}
 								/>
 
 								<label className='w-100 text-left'>
 									Mobile number{' '}
-									{this.state.mobileNumber.error ? (
+									{this.state.errors.mobileNumber ? (
 										<span className='text-danger'>
-											{this.state.mobileNumber.error}
+											{this.state.errors.mobileNumber}
 										</span>
 									) : null}
 								</label>
@@ -126,15 +135,15 @@ class SignUp extends Component {
 									className='w-100 px-3 py-2 mb-2'
 									name='mobileNumber'
 									maxLength={10}
-									value={this.state.mobileNumber.value}
+									value={this.state.mobileNumber}
 									onChange={this.handleChange}
 								/>
 
 								<label className='w-100 text-left'>
 									Email{' '}
-									{this.state.email.error ? (
+									{this.state.errors.email ? (
 										<span className='text-danger'>
-											{this.state.email.error}
+											{this.state.errors.email}
 										</span>
 									) : null}
 								</label>
@@ -142,15 +151,15 @@ class SignUp extends Component {
 									type='text'
 									className='w-100 px-3 py-2 mb-2'
 									name='email'
-									value={this.state.email.value}
+									value={this.state.email}
 									onChange={this.handleChange}
 								/>
 
 								<label className='w-100 text-left'>
 									Password{' '}
-									{this.state.password.error ? (
+									{this.state.errors.password ? (
 										<span className='text-danger'>
-											{this.state.password.error}
+											{this.state.errors.password}
 										</span>
 									) : null}
 								</label>
@@ -158,15 +167,15 @@ class SignUp extends Component {
 									type='password'
 									className='w-100 px-3 py-2'
 									name='password'
-									value={this.state.password.value}
+									value={this.state.password}
 									onChange={this.handleChange}
 								/>
 
 								<p className='text-center font-weight-bold mt-2 mb-0'>
 									Account Type{' '}
-									{this.state.accountType.error ? (
+									{this.state.errors.accountType ? (
 										<span className='text-danger'>
-											{this.state.accountType.error}
+											{this.state.errors.accountType}
 										</span>
 									) : null}
 								</p>
