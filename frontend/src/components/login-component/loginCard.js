@@ -4,21 +4,19 @@ import { withRouter } from 'react-router-dom';
 import * as ActionTypes from '../../action';
 import { connect } from 'react-redux';
 import UserService from '../../services/userApi';
-import validateInputs from '../../services/validation';
+import validate from '../../services/validation.js';
 
 class LoginCard extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			email: {
-				value: '',
-				error: '',
-			},
-			password: {
-				value: '',
-				error: '',
-			},
+			email: '',
+			password: '',
 			error: '',
+			errors: {
+				email: '',
+				password: '',
+			},
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -27,23 +25,16 @@ class LoginCard extends Component {
 
 	handleChange = (event) => {
 		this.setState({
-			[event.target.name]: {
-				...this.state[event.target.name],
-				value: event.target.value,
-			},
+			[event.target.name]: event.target.value,
 		});
 	};
 
 	handleSubmit = (event) => {
 		event.preventDefault();
-		let validation = validateInputs(this.state, 'empty_fields');
-		this.setState(validation.tempState);
+		let validation = validate.loginFields(this.state);
 		if (!validation.error) {
 			this.userService
-				.loginExisitingUser(
-					this.state.email.value,
-					this.state.password.value
-				)
+				.loginExisitingUser(this.state.email, this.state.password)
 				.then((response) => {
 					let data = response.data;
 					this.userService.setCookie(data.token, data.accountType);
@@ -64,6 +55,8 @@ class LoginCard extends Component {
 						this.setState({ error: error.response.data.msg });
 					}
 				});
+		} else {
+			this.setState(validation.tempState);
 		}
 	};
 	render() {
@@ -80,9 +73,9 @@ class LoginCard extends Component {
 				<form className='px-3 pb-4' onSubmit={this.handleSubmit}>
 					<label className='w-100 text-left'>
 						Email{' '}
-						{this.state.email.error ? (
+						{this.state.errors.email ? (
 							<span className='text-danger'>
-								{this.state.email.error}
+								{this.state.errors.email}
 							</span>
 						) : null}
 					</label>
@@ -90,14 +83,14 @@ class LoginCard extends Component {
 						type='text'
 						name='email'
 						className='w-100 px-3 py-2 mb-2'
-						value={this.state.email.value}
+						value={this.state.email}
 						onChange={this.handleChange}
 					/>
 					<label className='w-100 text-left'>
 						Password{' '}
-						{this.state.password.error ? (
+						{this.state.errors.password ? (
 							<span className='text-danger'>
-								{this.state.password.error}
+								{this.state.errors.password}
 							</span>
 						) : null}
 					</label>
@@ -105,7 +98,7 @@ class LoginCard extends Component {
 						type='password'
 						className='w-100 px-3 py-2'
 						name='password'
-						value={this.state.password.value}
+						value={this.state.password}
 						onChange={this.handleChange}
 					/>
 					<button

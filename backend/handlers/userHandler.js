@@ -23,7 +23,7 @@ checkAccountStatus = (data) => {
 
 const user = {
 	saveUserDetails: async (req, res) => {
-		let userData = mapNewUser(req.body);
+		let userData = req.body;
 		let existingUser = await users.find(userData.email);
 		if (existingUser == null) {
 			let salt = bcrypt.genSaltSync(10);

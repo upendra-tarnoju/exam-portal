@@ -65,8 +65,8 @@ const signUpFields = (temp) => {
 		}
 	}
 	let values = Object.values(temp.errors);
-	for (let value in values) {
-		if (value.length > 1) {
+	for (let index in values) {
+		if (values[index].length > 1) {
 			error = true;
 			break;
 		}
@@ -74,8 +74,27 @@ const signUpFields = (temp) => {
 	return { tempState: temp, error: error };
 };
 
-const loginFields = () => {
-	console.log('no');
+const loginFields = (temp) => {
+	let error = false;
+	let keys = Object.keys(temp);
+	for (let index in keys) {
+		if (keys[index] === 'password') {
+			let emptyFieldError = checkEmptyField(temp.password);
+			if (emptyFieldError !== '') {
+				temp.errors.password = emptyFieldError;
+			}
+		} else {
+			temp = validateFields(keys[index], temp);
+		}
+	}
+	let values = Object.values(temp.errors);
+	for (let index in values) {
+		if (values[index].length > 1) {
+			error = true;
+			break;
+		}
+	}
+	return { tempState: temp, error: error };
 };
 
 export default { signUpFields, loginFields };
