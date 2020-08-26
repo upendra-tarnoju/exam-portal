@@ -20,10 +20,11 @@ class ExamPeriod extends Component {
 				endTime: '',
 				duration: '',
 			},
-			showDuration: false,
+			hideDuration: false,
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
+		this.handleCheckBox = this.handleCheckBox.bind(this);
 	}
 
 	handleSubmit(event) {
@@ -63,12 +64,13 @@ class ExamPeriod extends Component {
 				this.setState({ [key]: value });
 			}
 		}
+		this.setState({ [key]: value });
 	}
 
 	handleCheckBox(event) {
 		let value = event.target.checked;
 		this.setState({
-			showDuration: value,
+			hideDuration: value,
 		});
 	}
 
@@ -139,7 +141,21 @@ class ExamPeriod extends Component {
 							></input>
 						</div>
 					</div>
-
+					{errors.examDate ? (
+						<label className='w-100'>
+							<span className='text-danger'>{errors.examDate}</span>
+						</label>
+					) : null}
+					{errors.startTime ? (
+						<label className='w-100'>
+							<span className='text-danger'>{errors.startTime}</span>
+						</label>
+					) : null}
+					{errors.endTime ? (
+						<label className='w-100'>
+							<span className='text-danger'>{errors.endTime}</span>
+						</label>
+					) : null}
 					<div className='d-flex'>
 						<input
 							type='checkbox'
@@ -152,10 +168,17 @@ class ExamPeriod extends Component {
 							between start time and end time ?
 						</span>
 					</div>
-					{!this.state.showDuration ? (
+					{!this.state.hideDuration ? (
 						<div>
 							{' '}
-							<label className='w-100'>Exam duration</label>
+							<label className='w-100'>
+								Exam duration{' '}
+								{errors.duration ? (
+									<span className='text-danger'>
+										{errors.duration}
+									</span>
+								) : null}
+							</label>
 							<input
 								name='duration'
 								onChange={this.handleChange}
