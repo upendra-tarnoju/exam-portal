@@ -21,17 +21,21 @@ let validateSignUpPassword = (temp) => {
 		temp.errors.password = emptyFieldError;
 	} else if (temp.password.length <= 6) {
 		temp.errors.password = 'Minimum password length should be 6';
+	} else {
+		temp.errors.password = '';
 	}
 	return temp;
 };
 
 let validateFields = (key, temp) => {
 	switch (key) {
+		case 'subject':
+		case 'course':
+		case 'examCode':
 		case 'firstName':
-			temp['errors'][key] = checkEmptyField(temp[key]);
-			return temp;
-
 		case 'lastName':
+		case 'totalMarks':
+		case 'passingMarks':
 			temp['errors'][key] = checkEmptyField(temp[key]);
 			return temp;
 
@@ -97,4 +101,48 @@ const loginFields = (temp) => {
 	return { tempState: temp, error: error };
 };
 
-export default { signUpFields, loginFields };
+const examDetailFields = (temp) => {
+	let error = false;
+	let keys = Object.keys(temp);
+	for (let index in keys) {
+		if (keys[index] === 'password') {
+			temp = validateSignUpPassword(temp);
+		} else {
+			temp = validateFields(keys[index], temp);
+		}
+	}
+	let values = Object.values(temp.errors);
+	for (let index in values) {
+		if (values[index].length > 1) {
+			error = true;
+			break;
+		}
+	}
+	return { tempState: temp, error: error };
+};
+
+const examDurationFields = (temp) => {
+	let error = false;
+	let keys = Object.keys(temp);
+	for (let index in keys) {
+		if (keys[index] === 'password') {
+		} else {
+			temp = validateFields(keys[index], temp);
+		}
+	}
+	let values = Object.values(temp.errors);
+	for (let index in values) {
+		if (values[index].length > 1) {
+			error = true;
+			break;
+		}
+	}
+	return { tempState: temp, error: error };
+};
+
+export default {
+	signUpFields,
+	loginFields,
+	examDetailFields,
+	examDurationFields,
+};
