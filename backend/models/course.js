@@ -1,5 +1,4 @@
 const { course } = require('../schemas');
-const user = require('../handlers/userHandler');
 
 class Course {
 	constructor() {

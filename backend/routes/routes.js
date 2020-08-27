@@ -3,6 +3,7 @@ const {
 	userController,
 	adminController,
 	examinerController,
+	examController,
 } = require('../controllers');
 const passport = require('passport');
 
@@ -45,6 +46,12 @@ module.exports = () => {
 		'/examiner/course',
 		passport.authenticate('jwt'),
 		examinerController.deleteCourse
+	);
+
+	router.post(
+		'/examiner/exam',
+		passport.authenticate('jwt'),
+		examController.saveExamDetails
 	);
 
 	return router;
