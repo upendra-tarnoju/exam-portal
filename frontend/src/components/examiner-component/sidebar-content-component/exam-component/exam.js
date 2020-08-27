@@ -7,8 +7,8 @@ class Exam extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			createExam: true,
-			nextInputs: true,
+			createExam: false,
+			nextInputs: false,
 		};
 		this.examinerService = new ExaminerService();
 		this.handleInputs = this.handleInputs.bind(this);
@@ -30,13 +30,6 @@ class Exam extends Component {
 		return (
 			<div className='container pt-4'>
 				<div className='d-flex justify-content-end'>
-					<button
-						type='submit'
-						className='btn btn-primary mr-2'
-						onClick={() => this.setInputScreen(true)}
-					>
-						Create
-					</button>
 					{this.state.createExam ? (
 						<button
 							type='button'
@@ -45,7 +38,15 @@ class Exam extends Component {
 						>
 							Cancel
 						</button>
-					) : null}
+					) : (
+						<button
+							type='submit'
+							className='btn btn-primary'
+							onClick={() => this.setInputScreen(true)}
+						>
+							Create
+						</button>
+					)}
 				</div>
 				{this.state.createExam ? (
 					<div className='card mt-4 w-50 mx-auto'>

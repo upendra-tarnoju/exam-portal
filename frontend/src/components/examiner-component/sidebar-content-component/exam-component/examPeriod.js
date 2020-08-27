@@ -35,7 +35,9 @@ class ExamPeriod extends Component {
 		if (!validation.error) {
 			this.examinerService
 				.saveExamDetails(this.props.fieldDetails, this.state)
-				.then((response) => {});
+				.then((response) => {
+					this.props.handleInputs(false);
+				});
 		}
 
 		this.setState(validation.tempState);
