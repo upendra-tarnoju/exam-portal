@@ -9,7 +9,6 @@ class Exam extends Component {
 		this.state = {
 			createExam: true,
 			nextInputs: true,
-			courseList: [],
 		};
 		this.examinerService = new ExaminerService();
 		this.handleInputs = this.handleInputs.bind(this);
@@ -24,15 +23,6 @@ class Exam extends Component {
 	handleInputs(status) {
 		this.setState({
 			nextInputs: status,
-		});
-	}
-
-	componentDidMount() {
-		let state = {};
-		this.examinerService.viewCourses(state).then((res) => {
-			this.setState({
-				courseList: res.data,
-			});
 		});
 	}
 
@@ -63,10 +53,7 @@ class Exam extends Component {
 							<h3 className='font-weight-normal'>Create new Exam</h3>
 						</div>
 						{!this.state.nextInputs ? (
-							<ExamDetails
-								courseList={this.state.courseList}
-								handleInputs={this.handleInputs}
-							/>
+							<ExamDetails handleInputs={this.handleInputs} />
 						) : (
 							<ExamPeriod handleInputs={this.handleInputs} />
 						)}

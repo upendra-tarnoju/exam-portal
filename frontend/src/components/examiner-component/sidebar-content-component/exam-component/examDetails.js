@@ -2,30 +2,50 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as ActionTypes from '../../../../action';
 import validate from '../../../../services/validation';
+import ExaminerService from '../../../../services/examinerApi';
 
 class ExamDetails extends Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			courseName: '',
+		};
 		this.handleSubmit = this.handleSubmit.bind(this);
+		this.examinerService = new ExaminerService();
 	}
 	handleChange = (event) => {
 		let key = event.target.name;
 		let value = event.target.value;
-		this.props.setFieldsValues(key, value);
+		let index = event.target.selectedIndex;
+		if (key === 'course') {
+			this.props.setFieldsValues(key, this.props.courses[index - 1]._id);
+			this.setState({
+				courseName: value,
+			});
+		} else {
+			this.props.setFieldsValues(key, value);
+		}
 	};
 
 	handleSubmit(event) {
 		event.preventDefault();
 		let validation = validate.examDetailFields(this.props.fieldDetails);
-		if (validation.error) {
+		if (!validation.error) {
 			this.props.handleInputs(true);
 		}
 		this.props.setFieldsErrors(validation.tempState.errors);
 	}
 
+	componentDidMount() {
+		let state = {};
+		this.examinerService.viewCourses(state).then((res) => {
+			this.props.setCourses(res.data);
+		});
+	}
+
 	render() {
 		let errors = this.props.fieldDetails.errors;
-		let options = this.props.courseList.map((course) => (
+		let options = this.props.courses.map((course) => (
 			<option key={course._id}>
 				{course.name} ( {course.description} )
 			</option>
@@ -56,7 +76,7 @@ class ExamDetails extends Component {
 					<select
 						className='w-100 px-3 py-2 mb-2'
 						name='course'
-						value={this.props.fieldDetails.course}
+						value={this.state.courseName}
 						onChange={this.handleChange}
 					>
 						<option>Select course</option>
@@ -108,6 +128,7 @@ class ExamDetails extends Component {
 const mapStateToProps = (state) => {
 	return {
 		fieldDetails: state.examReducer.examDetails,
+		courses: state.examinerReducer.courses,
 	};
 };
 
@@ -124,6 +145,12 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({
 				type: ActionTypes.SET_EXAM_DETAILS_ERRORS,
 				errors: errors,
+			});
+		},
+		setCourses: (courses) => {
+			dispatch({
+				type: ActionTypes.SET_COURSES,
+				courses: courses,
 			});
 		},
 	};

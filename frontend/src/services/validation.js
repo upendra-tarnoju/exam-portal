@@ -40,32 +40,20 @@ let validateExamDate = (temp) => {
 	return temp;
 };
 
-let checkHoursAndMinutes = (
-	currentHour,
-	selectedHour,
-	currentMinute,
-	selectedMinute
-) => {
-	if (selectedHour < currentHour) return true;
-	else if (selectedMinute < currentMinute) return true;
-	else return false;
-};
-
 let validateExamTime = (temp) => {
 	let currentDate = new Date();
-	let currentHour = currentDate.getHours();
-	let currentMinute = currentDate.getMinutes();
-	let [startHour, startMinute] = temp.startTime.split(':');
+	let currentTime = `${('0' + currentDate.getHours()).slice(-2)}:${(
+		'0' + currentDate.getMinutes()
+	).slice(-2)}`;
+	currentDate = `${currentDate.getFullYear()}-${(
+		'0' +
+		(currentDate.getMonth() + 1)
+	).slice(-2)}-${('0' + currentDate.getDate()).slice(-2)}`;
+	let startTime = temp.startTime;
 
-	let checkStartTime = checkHoursAndMinutes(
-		currentHour,
-		startHour,
-		currentMinute,
-		startMinute
-	);
-
-	if (checkStartTime) temp.errors.startTime = '* Invalid start time';
-	else temp.errors.startTime = '';
+	if (currentTime <= startTime && currentDate <= temp.examDate)
+		temp.errors.startTime = '';
+	else temp.errors.startTime = '* Invalid start time';
 
 	if (temp.endTime < temp.startTime) {
 		temp.errors.endTime = '* End time cannot be less than start time';
