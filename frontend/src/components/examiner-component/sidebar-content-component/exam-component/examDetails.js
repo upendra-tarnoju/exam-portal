@@ -3,12 +3,15 @@ import { connect } from 'react-redux';
 import * as ActionTypes from '../../../../action';
 import validate from '../../../../services/validation';
 import ExaminerService from '../../../../services/examinerApi';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
+import { Typeahead } from 'react-bootstrap-typeahead';
 
 class ExamDetails extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			courseName: '',
+			selected: [],
 		};
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.examinerService = new ExaminerService();
@@ -39,17 +42,34 @@ class ExamDetails extends Component {
 	componentDidMount() {
 		let state = {};
 		this.examinerService.viewCourses(state).then((res) => {
+			res.data = res.data.map((data) => {
+				return {
+					name: data.name,
+					description: data.description,
+					id: data._id,
+				};
+			});
 			this.props.setCourses(res.data);
+			this.setState({ selected: [res.data[0]] });
 		});
 	}
 
+	filterByCallback = (option, data) => {
+		let text = data.text;
+		return (
+			option.description.toLowerCase().indexOf(text.toLowerCase()) !== -1 ||
+			option.name.toLowerCase().indexOf(text.toLowerCase()) !== -1
+		);
+	};
+
+	handleTypeAHeadChange = (selected) => {
+		this.setState({ selected });
+		this.props.setFieldsValues('course', selected.id);
+	};
+
 	render() {
 		let errors = this.props.fieldDetails.errors;
-		let options = this.props.courses.map((course) => (
-			<option key={course._id}>
-				{course.name} ( {course.description} )
-			</option>
-		));
+
 		return (
 			<div>
 				<div className='card-body'>
@@ -62,27 +82,32 @@ class ExamDetails extends Component {
 					<input
 						name='subject'
 						type='text'
-						className='w-100 px-3 py-2 mb-2'
+						className='form-control'
 						onChange={this.handleChange}
 						value={this.props.fieldDetails.subject}
 					></input>
-
 					<label className='w-100'>
 						Course{' '}
 						{errors.course ? (
 							<span className='text-danger'>{errors.course}</span>
 						) : null}
 					</label>
-					<select
-						className='w-100 px-3 py-2 mb-2'
-						name='course'
-						value={this.state.courseName}
-						onChange={this.handleChange}
-					>
-						<option>Select course</option>
-						{options}
-					</select>
-
+					<Typeahead
+						id='typeahead'
+						filterBy={this.filterByCallback}
+						defaultSelected={this.state.selected}
+						onChange={(selected) => this.handleTypeAHeadChange(selected)}
+						options={this.props.courses}
+						highlightOnlyResult={true}
+						labelKey='name'
+						renderMenuItemChildren={(option) => (
+							<div>
+								<div id={option.id}>
+									{option.name} ( {option.description} )
+								</div>
+							</div>
+						)}
+					/>
 					<label className='w-100'>
 						Exam code{' '}
 						{errors.examCode ? (
@@ -91,7 +116,7 @@ class ExamDetails extends Component {
 					</label>
 					<input
 						type='text'
-						className='w-100 px-3 py-2 mb-2'
+						className='form-control'
 						name='examCode'
 						onChange={this.handleChange}
 						value={this.props.fieldDetails.examCode}
@@ -108,7 +133,7 @@ class ExamDetails extends Component {
 						onChange={this.handleChange}
 						value={this.props.fieldDetails.password}
 						type='password'
-						className='w-100 px-3 py-2 mb-2'
+						className='form-control'
 					></input>
 				</div>
 				<div className='card-footer bg-white d-flex justify-content-end'>

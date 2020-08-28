@@ -7,7 +7,7 @@ class Exam extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			createExam: false,
+			createExam: true,
 			nextInputs: false,
 		};
 		this.examinerService = new ExaminerService();
