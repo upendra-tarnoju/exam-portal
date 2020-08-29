@@ -112,6 +112,18 @@ class ExaminerService {
 			},
 		});
 	};
+
+	getAllExams = () => {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'get',
+			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}/exam`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	};
 }
 
 export default ExaminerService;

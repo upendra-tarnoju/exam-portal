@@ -1,14 +1,19 @@
-import React, { Component } from 'react';
+import React, { Component, useContext } from 'react';
 import ExaminerService from '../../../../services/examinerApi';
 import ExamDetails from './examDetails';
 import ExamPeriod from './examPeriod';
+import Accordion from 'react-bootstrap/Accordion';
+import Card from 'react-bootstrap/Card';
+import style from './exam.module.css';
+import { useAccordionToggle, AccordionContext } from 'react-bootstrap';
 
 class Exam extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			createExam: true,
+			createExam: false,
 			nextInputs: false,
+			courses: [],
 		};
 		this.examinerService = new ExaminerService();
 		this.handleInputs = this.handleInputs.bind(this);
@@ -26,7 +31,51 @@ class Exam extends Component {
 		});
 	}
 
+	componentDidMount() {
+		this.examinerService
+			.getAllExams()
+			.then((res) => this.setState({ courses: res.data }));
+	}
+
+	CollapseAccordionButton({ eventKey, callback }) {
+		let currentEventKey = useContext(AccordionContext);
+		let changeOnClick = useAccordionToggle(
+			eventKey,
+			() => callback && callback(eventKey)
+		);
+		const isCurrentEventKey = currentEventKey === eventKey;
+		return (
+			<i
+				className={`
+						${
+							isCurrentEventKey ? 'fa fa-angle-up' : 'fa fa-angle-down'
+						} align-self-center ${style.iconSize}
+					`}
+				onClick={changeOnClick}
+			></i>
+		);
+	}
+
 	render() {
+		const allExams = this.state.courses.map((course, index) => {
+			return (
+				<Card key={course._id}>
+					<Card.Header>
+						<div className='d-flex justify-content-between'>
+							<span className={style.examHeading}>
+								{course.subject} ({course.examCode})
+							</span>
+							<this.CollapseAccordionButton
+								eventKey={`'${index}'`}
+							></this.CollapseAccordionButton>
+						</div>
+					</Card.Header>
+					<Accordion.Collapse eventKey={`'${index}'`}>
+						<Card.Body>Hello! I'm the body</Card.Body>
+					</Accordion.Collapse>
+				</Card>
+			);
+		});
 		return (
 			<div className='container pt-4'>
 				<div className='d-flex justify-content-end'>
@@ -59,7 +108,14 @@ class Exam extends Component {
 							<ExamPeriod handleInputs={this.handleInputs} />
 						)}
 					</div>
-				) : null}
+				) : (
+					<div className='mt-2'>
+						<p className={`${style.heading} text-center`}>
+							List of all created Exams
+						</p>
+						<Accordion>{allExams}</Accordion>
+					</div>
+				)}
 			</div>
 		);
 	}

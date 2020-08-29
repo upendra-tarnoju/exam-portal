@@ -27,6 +27,11 @@ const exams = {
 		let examObject = createExamObject(examDetails, userId);
 		return exam.create(examObject);
 	},
+
+	getAllExams: async (userId) => {
+		let allExams = await exam.get(userId);
+		return allExams;
+	},
 };
 
 module.exports = exams;

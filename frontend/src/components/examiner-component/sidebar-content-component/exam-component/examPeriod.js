@@ -98,7 +98,7 @@ class ExamPeriod extends Component {
 						value={this.state.totalMarks}
 						maxLength={4}
 						type='text'
-						className='w-100 px-3 py-2 mb-2'
+						className='form-control'
 					></input>
 
 					<label className='w-100'>
@@ -113,7 +113,7 @@ class ExamPeriod extends Component {
 						value={this.state.passingMarks}
 						type='text'
 						maxLength={4}
-						className='w-100 px-3 py-2 mb-2'
+						className='form-control'
 					></input>
 
 					<div className='d-flex justify-content-between'>
@@ -122,7 +122,7 @@ class ExamPeriod extends Component {
 							<input
 								name='examDate'
 								type='date'
-								className='w-100 px-3 py-2 mb-2'
+								className='form-control'
 								onChange={this.handleChange}
 								value={this.state.examDate}
 							></input>
@@ -132,7 +132,7 @@ class ExamPeriod extends Component {
 							<input
 								name='startTime'
 								type='time'
-								className='w-100 px-3 py-2 mb-2'
+								className='form-control'
 								onChange={this.handleChange}
 								value={this.state.startTime}
 							></input>
@@ -142,7 +142,7 @@ class ExamPeriod extends Component {
 							<input
 								name='endTime'
 								type='time'
-								className='w-100 px-3 py-2 mb-2'
+								className='form-control'
 								onChange={this.handleChange}
 								value={this.state.endTime}
 							></input>
@@ -192,7 +192,7 @@ class ExamPeriod extends Component {
 								value={this.state.duration}
 								type='text'
 								maxLength={4}
-								className='w-100 px-3 py-2 mb-2'
+								className='form-control'
 							></input>
 						</div>
 					) : null}
