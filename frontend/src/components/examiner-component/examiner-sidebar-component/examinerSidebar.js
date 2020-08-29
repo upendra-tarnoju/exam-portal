@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
-import cookie from 'js-cookie';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import * as actionTypes from '../../../action';
 import queryString from 'query-string';
 
+import UserService from '../../../services/userApi';
+import * as actionTypes from '../../../action';
+
 class ExaminerSidebar extends Component {
+	constructor(props) {
+		super(props);
+		this.userService = new UserService();
+	}
+
 	handleExaminerQueryParams(params) {
 		if (params.tab === 'exam') {
 			this.props.setExaminerTab('manageExam', 'Manage exam');
@@ -13,6 +19,7 @@ class ExaminerSidebar extends Component {
 			this.props.setExaminerTab('manageCourse', 'Manage course');
 		}
 	}
+
 	componentDidMount() {
 		let params = queryString.parse(this.props.location.search);
 		this.handleExaminerQueryParams(params);
@@ -21,63 +28,53 @@ class ExaminerSidebar extends Component {
 			this.handleExaminerQueryParams(params);
 		});
 	}
+
 	render() {
 		return (
-			<ul className='nav flex-column'>
-				<Link to='/examiner?tab=exam' className='text-decoration-none'>
-					<li
-						className={
+			<div className='bg-dark' id='sidebar-wrapper'>
+				<div className='text-center pt-4'>
+					<img
+						alt='logo'
+						src={require('../../../assets/logo.png')}
+						className='logo'
+					/>
+					<h4 className='text-center text-light font-weight-normal'>
+						Examin
+					</h4>
+				</div>
+				<div className='list-group list-group-flush'>
+					<Link
+						to='/examiner?tab=exam'
+						className={`list-group-item list-group-item-action bg-dark adminIcon ${
 							this.props.examinerTab === 'manageExam'
-								? `nav-item py-2 px-4 text-white iconHover`
-								: `nav-item py-2 px-4 text-white-50 iconHover`
-						}
+								? 'text-white'
+								: 'text-white-50'
+						}`}
 					>
-						<i
-							className={
-								this.props.examinerTab === 'manageExam'
-									? 'fa fa-book fa-lg text-white pr-3'
-									: 'fa fa-book fa-lg text-white-50 pr-3'
-							}
-							aria-hidden='true'
-						></i>{' '}
-						Exam
-					</li>
-				</Link>
-				<Link to='/examiner?tab=course' className='text-decoration-none'>
-					<li
-						className={
+						<i className='fa fa-book'></i> Exam
+					</Link>
+					<Link
+						to='/examiner?tab=course'
+						className={`list-group-item list-group-item-action bg-dark adminIcon ${
 							this.props.examinerTab === 'manageCourse'
-								? `nav-item py-2 px-4 text-white iconHover`
-								: `nav-item py-2 px-4 text-white-50 iconHover`
-						}
+								? 'text-white'
+								: 'text-white-50'
+						}`}
 					>
-						<i
-							className={
-								this.props.examinerTab === 'manageCourse'
-									? 'fa fa-certificate fa-lg text-white pr-3'
-									: 'fa fa-certificate fa-lg text-white-50 pr-3'
-							}
-							aria-hidden='true'
-						></i>{' '}
-						Courses
-					</li>
-				</Link>
-				<li
-					onClick={() => {
-						cookie.remove('token');
-						cookie.remove('type');
-						this.props.setAuthenticatedUser(false);
-						this.props.history.push('/login');
-					}}
-					className={`nav-item py-2 px-4 text-white-50 iconHover`}
-				>
-					<i
-						className='fa fa-sign-out fa-lg text-white-50 pr-3'
-						aria-hidden='true'
-					></i>{' '}
-					Log out
-				</li>
-			</ul>
+						<i className='fa fa-certificate'></i> Course
+					</Link>
+					<a
+						onClick={() => {
+							this.userService.removeCookie();
+							this.props.setAuthenticatedUser(false);
+							this.props.history.push('/login');
+						}}
+						className='list-group-item cursor-pointer list-group-item-action bg-dark text-white-50'
+					>
+						<i className='fa fa-sign-out'></i> Sign Out
+					</a>
+				</div>
+			</div>
 		);
 	}
 }

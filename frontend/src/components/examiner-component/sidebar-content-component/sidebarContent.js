@@ -1,15 +1,36 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+
 import Courses from './courses-component/courses';
 import Exam from './exam-component/exam';
+import * as ActionType from '../../../action';
 
 class SidebarContent extends Component {
+	constructor(props) {
+		super(props);
+		this.handleSidebar = this.handleSidebar.bind(this);
+	}
+
+	handleSidebar() {
+		let toggle = this.props.toggle;
+		this.props.setSidebar(!toggle);
+	}
+
 	render() {
 		return (
-			<div className='container-fluid p-0'>
-				<div className='panelHeading bg-dark text-white p-3 sticky-top'>
-					{this.props.panelHeading}
-				</div>
+			<div id='page-content-wrapper'>
+				<nav className='navbar navbar-expand-lg navbar-light bg-dark border-bottom justify-content-start'>
+					<button
+						type='button'
+						className='btn btn-primary'
+						onClick={this.handleSidebar}
+					>
+						<i className='fa fa-bars'></i>
+					</button>
+					<span className='ml-2 text-white'>
+						{this.props.panelHeading}
+					</span>
+				</nav>
 				{this.props.panelWindow === 'manageCourse' ? (
 					<Courses />
 				) : this.props.panelWindow === 'manageExam' ? (
@@ -24,7 +45,19 @@ const mapStateToProps = (state) => {
 	return {
 		panelWindow: state.examinerReducer.examinerTab,
 		panelHeading: state.examinerReducer.examinerHeading,
+		toggle: state.adminReducer.sidebarToggle,
 	};
 };
 
-export default connect(mapStateToProps, null)(SidebarContent);
+const mapDispatchToProps = (dispatch) => {
+	return {
+		setSidebar: (toggle) => {
+			dispatch({
+				type: ActionType.COLLAPSE_SIDEBAR,
+				toggle: toggle,
+			});
+		},
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SidebarContent);

@@ -48,7 +48,6 @@ class AdminSidebar extends Component {
 				<div className='list-group list-group-flush'>
 					<Link
 						to='/admin'
-						href='#'
 						className={`list-group-item list-group-item-action bg-dark adminIcon ${
 							this.props.panel === '' ? 'text-white' : 'text-white-50'
 						}`}
