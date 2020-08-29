@@ -7,6 +7,7 @@ const initialState = {
 		declined: 0,
 		pending: 0,
 	},
+	sidebarToggle: false,
 };
 
 const adminReducers = (state = initialState, action) => {
@@ -25,6 +26,11 @@ const adminReducers = (state = initialState, action) => {
 		return {
 			...state,
 			examinerCount: action.examinerCount,
+		};
+	} else if (action.type === 'collapse_sidebar') {
+		return {
+			...state,
+			sidebarToggle: action.toggle,
 		};
 	}
 	return state;

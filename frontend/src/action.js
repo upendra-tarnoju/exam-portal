@@ -6,3 +6,4 @@ export const SET_EXAMINER_TAB = 'set_examiner_tab';
 export const SET_COURSES = 'set_courses';
 export const SET_EXAM_DETAILS = 'set_exam_details';
 export const SET_EXAM_DETAILS_ERRORS = 'set_exam_details_errors';
+export const COLLAPSE_SIDEBAR = 'collapse_sidebar';

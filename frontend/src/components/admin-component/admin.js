@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import cookie from 'js-cookie';
-import styles from './admin.module.css';
-import AdminSidebar from './admin-sidebar-component/adminSidebar';
 import { connect } from 'react-redux';
 import JwtDecode from 'jwt-decode';
+
+import './admin.css';
+import AdminSidebar from './admin-sidebar-component/adminSidebar';
 import * as ActionTypes from '../../action';
 import SidebarContent from './sidebar-content-component/sidebarContent';
-import Sidebar from '../sidebar-component/sidebar';
 
 class Admin extends Component {
 	componentDidMount() {
@@ -30,17 +30,12 @@ class Admin extends Component {
 
 	render() {
 		return (
-			<div className='container-fluid'>
-				<div className='row'>
-					<div
-						className={`col-md-3 col-lg-2 bg-dark ${styles.sidenav} p-0`}
-					>
-						<Sidebar content={<AdminSidebar />} />
-					</div>
-					<main className='col-md-9 ml-sm-auto col-lg-10 p-0'>
-						<SidebarContent />
-					</main>
-				</div>
+			<div
+				className={`d-flex ${this.props.toggle ? 'toggled' : ''}`}
+				id='wrapper'
+			>
+				<AdminSidebar />
+				<SidebarContent />
 			</div>
 		);
 	}
@@ -49,6 +44,7 @@ class Admin extends Component {
 const mapStateToProps = (state) => {
 	return {
 		panel: state.adminReducer.panel,
+		toggle: state.adminReducer.sidebarToggle,
 	};
 };
 
