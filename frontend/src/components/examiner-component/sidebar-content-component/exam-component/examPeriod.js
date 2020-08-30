@@ -36,7 +36,7 @@ class ExamPeriod extends Component {
 			this.examinerService
 				.saveExamDetails(this.props.fieldDetails, this.state)
 				.then((response) => {
-					this.props.handleInputs(false);
+					this.props.handleInputs('nextInputs', false);
 				});
 		}
 
@@ -201,7 +201,7 @@ class ExamPeriod extends Component {
 					<button
 						type='button'
 						className='btn btn-primary mr-2'
-						onClick={() => this.props.handleInputs(false)}
+						onClick={() => this.props.handleInputs('nextInputs', false)}
 					>
 						Back
 					</button>

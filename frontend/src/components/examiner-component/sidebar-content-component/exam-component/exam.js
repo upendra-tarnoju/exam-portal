@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Table from 'react-bootstrap/Table';
 import Moment from 'react-moment';
+import moment from 'moment';
 
 import ExaminerService from '../../../../services/examinerApi';
 import ExamDetails from './examDetails';
@@ -14,28 +15,20 @@ class Exam extends Component {
 			createExam: false,
 			nextInputs: false,
 			courses: [],
-			editCourse: false,
+			editCourse: {
+				status: false,
+				index: '',
+			},
 		};
 		this.examinerService = new ExaminerService();
-		this.handleInputs = this.handleInputs.bind(this);
+		this.handleStates = this.handleStates.bind(this);
+		this.handleExamChange = this.handleExamChange.bind(this);
 	}
 
-	setInputScreen(status) {
+	handleStates(key, value) {
 		this.setState({
-			createExam: status,
+			[key]: value,
 		});
-	}
-
-	handleInputs(status) {
-		this.setState({
-			nextInputs: status,
-		});
-	}
-
-	formatDate(date) {
-		let year = new Intl.DateTimeFormat('en', {
-			year: 'numeric',
-		}).format(date);
 	}
 
 	componentDidMount() {
@@ -44,40 +37,158 @@ class Exam extends Component {
 		});
 	}
 
+	editExam(status, index) {
+		this.setState((prevState) => ({
+			...prevState,
+			editCourse: {
+				status: status,
+				index: index,
+			},
+		}));
+	}
+
+	handleExamChange(event) {
+		let key = event.target.name;
+		let value = event.target.value;
+		let { courses, editCourse } = this.state;
+		courses[editCourse.index][key] = value;
+		this.setState({
+			courses: courses,
+		});
+	}
+
 	render() {
 		const allExams = this.state.courses.map((course, index) => {
 			return (
 				<tr key={course._id}>
 					<td>{index + 1}</td>
-					<td>{course.subject}</td>
-					<td>{course.examCode}</td>
 					<td>
-						<Moment format='MMM Do, YYYY'>{course.examDate}</Moment>
+						{this.state.editCourse.index === index &&
+						this.state.editCourse.status ? (
+							<input
+								type='text'
+								name='subject'
+								className='w-100 form-control'
+								value={course.subject}
+								onChange={this.handleExamChange}
+							/>
+						) : (
+							course.subject
+						)}
 					</td>
-					<td>{course.totalMarks}</td>
-					<td>{course.passingMarks}</td>
 					<td>
-						<Moment format='HH:mm A'>{course.startTime}</Moment>
+						{this.state.editCourse.index === index &&
+						this.state.editCourse.status ? (
+							<input
+								type='text'
+								name='examCode'
+								className='w-100 form-control'
+								value={course.examCode}
+								onChange={this.handleExamChange}
+							/>
+						) : (
+							course.examCode
+						)}
 					</td>
 					<td>
-						<Moment format='hh:mm A'>{course.endTime}</Moment>
+						{this.state.editCourse.index === index &&
+						this.state.editCourse.status ? (
+							<input
+								type='date'
+								name='examDate'
+								value={moment(course.examDate).format('YYYY-MM-DD')}
+								onChange={this.handleExamChange}
+								className='w-100 form-control'
+							/>
+						) : (
+							<Moment format='MMM Do, YYYY'>{course.examDate}</Moment>
+						)}
+					</td>
+					<td>
+						{this.state.editCourse.index === index &&
+						this.state.editCourse.status ? (
+							<input
+								type='text'
+								name='totalMarks'
+								value={course.totalMarks}
+								onChange={this.handleExamChange}
+								className='w-100 form-control'
+							/>
+						) : (
+							<div className='text-right'>{course.totalMarks}</div>
+						)}
+					</td>
+					<td>
+						{this.state.editCourse.index === index &&
+						this.state.editCourse.status ? (
+							<input
+								type='text'
+								name='passingMarks'
+								value={course.passingMarks}
+								onChange={this.handleExamChange}
+								className='w-100 form-control'
+							/>
+						) : (
+							<div className='text-right'>{course.passingMarks}</div>
+						)}
+					</td>
+					<td>
+						{this.state.editCourse.index === index &&
+						this.state.editCourse.status ? (
+							<input
+								type='time'
+								name='startTime'
+								value={moment(course.startTime).format('HH:MM')}
+								onChange={this.handleExamChange}
+								className='w-100 form-control'
+							/>
+						) : (
+							<Moment format='HH:mm A'>{course.startTime}</Moment>
+						)}
+					</td>
+					<td>
+						{this.state.editCourse.index === index &&
+						this.state.editCourse.status ? (
+							<input
+								type='time'
+								name='endTime'
+								value={moment(course.endTime).format('HH:MM')}
+								onChange={this.handleExamChange}
+								className='w-100 form-control'
+							/>
+						) : (
+							<Moment format='HH:mm A'>{course.endTime}</Moment>
+						)}
 					</td>
 					<td className='d-flex justify-content-around'>
 						<i className='fa fa-trash-o cursor-pointer text-white align-self-center'></i>
-						<i className='fa fa-check-square-o cursor-pointer text-white align-self-center'></i>
-						<i className='fa fa-times cursor-pointer text-white align-self-center'></i>
+						{this.state.editCourse.index === index &&
+						this.state.editCourse.status ? (
+							<div>
+								<i
+									className='fa fa-times cursor-pointer text-white align-self-center ml-1 mr-1'
+									onClick={() => this.editExam(false, index)}
+								></i>
+								<i className='fa fa-floppy-o cursor-pointer text-white align-self-center'></i>
+							</div>
+						) : (
+							<i
+								className='fa fa-check-square-o cursor-pointer text-white align-self-center'
+								onClick={() => this.editExam(true, index)}
+							></i>
+						)}
 					</td>
 				</tr>
 			);
 		});
 		return (
-			<div className='container pt-4'>
+			<div className='p-4'>
 				<div className='d-flex justify-content-end'>
 					{this.state.createExam ? (
 						<button
 							type='button'
 							className='btn btn-danger'
-							onClick={() => this.setInputScreen(false)}
+							onClick={() => this.handleStates('createExam', false)}
 						>
 							Cancel
 						</button>
@@ -85,7 +196,7 @@ class Exam extends Component {
 						<button
 							type='submit'
 							className='btn btn-primary'
-							onClick={() => this.setInputScreen(true)}
+							onClick={() => this.handleStates('createExam', true)}
 						>
 							Create
 						</button>
@@ -97,9 +208,9 @@ class Exam extends Component {
 							<h3 className='font-weight-normal'>Create new Exam</h3>
 						</div>
 						{!this.state.nextInputs ? (
-							<ExamDetails handleInputs={this.handleInputs} />
+							<ExamDetails handleInputs={this.handleStates} />
 						) : (
-							<ExamPeriod handleInputs={this.handleInputs} />
+							<ExamPeriod handleInputs={this.handleStates} />
 						)}
 					</div>
 				) : (
@@ -114,8 +225,8 @@ class Exam extends Component {
 									<th>Subject</th>
 									<th>Exam code</th>
 									<th>Exam date</th>
-									<th>Total marks</th>
-									<th>Passing marks</th>
+									<th className='text-right'>Total marks</th>
+									<th className='text-right'>Passing marks</th>
 									<th>Start time</th>
 									<th>End time</th>
 									<th>Action</th>

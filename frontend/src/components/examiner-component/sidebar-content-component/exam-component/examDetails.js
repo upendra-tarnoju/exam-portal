@@ -34,7 +34,7 @@ class ExamDetails extends Component {
 		event.preventDefault();
 		let validation = validate.examDetailFields(this.props.fieldDetails);
 		if (!validation.error) {
-			this.props.handleInputs(true);
+			this.props.handleInputs('nextInputs', true);
 		}
 		this.props.setFieldsErrors(validation.tempState.errors);
 	}
