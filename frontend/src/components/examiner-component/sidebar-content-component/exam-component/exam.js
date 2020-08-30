@@ -19,6 +19,15 @@ class Exam extends Component {
 				status: false,
 				index: '',
 			},
+			input: {
+				subject: '',
+				examCode: '',
+				examDate: '',
+				totalMarks: '',
+				passingMarks: '',
+				startTime: '',
+				endTime: '',
+			},
 		};
 		this.examinerService = new ExaminerService();
 		this.handleStates = this.handleStates.bind(this);
@@ -44,20 +53,36 @@ class Exam extends Component {
 				status: status,
 				index: index,
 			},
+			input: prevState.courses[index],
 		}));
 	}
 
 	handleExamChange(event) {
+		let update = false;
 		let key = event.target.name;
 		let value = event.target.value;
-		let { courses, editCourse } = this.state;
-		courses[editCourse.index][key] = value;
-		this.setState({
-			courses: courses,
-		});
+		if (key === 'totalMarks' || key === 'passingMarks') {
+			let letters = /^[0-9\b]+$/;
+			if (letters.test(value) || value === '') {
+				update = true;
+			}
+		} else {
+			update = true;
+		}
+		if (update) {
+			this.setState((prevState) => ({
+				...prevState,
+				courses: prevState.courses,
+				input: {
+					...prevState.input,
+					[key]: value,
+				},
+			}));
+		}
 	}
 
 	render() {
+		let { input } = this.state;
 		const allExams = this.state.courses.map((course, index) => {
 			return (
 				<tr key={course._id}>
@@ -69,7 +94,7 @@ class Exam extends Component {
 								type='text'
 								name='subject'
 								className='w-100 form-control'
-								value={course.subject}
+								value={input.subject}
 								onChange={this.handleExamChange}
 							/>
 						) : (
@@ -83,7 +108,7 @@ class Exam extends Component {
 								type='text'
 								name='examCode'
 								className='w-100 form-control'
-								value={course.examCode}
+								value={input.examCode}
 								onChange={this.handleExamChange}
 							/>
 						) : (
@@ -96,7 +121,7 @@ class Exam extends Component {
 							<input
 								type='date'
 								name='examDate'
-								value={moment(course.examDate).format('YYYY-MM-DD')}
+								value={moment(input.examDate).format('YYYY-MM-DD')}
 								onChange={this.handleExamChange}
 								className='w-100 form-control'
 							/>
@@ -110,9 +135,9 @@ class Exam extends Component {
 							<input
 								type='text'
 								name='totalMarks'
-								value={course.totalMarks}
+								value={input.totalMarks}
 								onChange={this.handleExamChange}
-								className='w-100 form-control'
+								className='w-100 form-control text-right'
 							/>
 						) : (
 							<div className='text-right'>{course.totalMarks}</div>
@@ -124,9 +149,9 @@ class Exam extends Component {
 							<input
 								type='text'
 								name='passingMarks'
-								value={course.passingMarks}
+								value={input.passingMarks}
 								onChange={this.handleExamChange}
-								className='w-100 form-control'
+								className='w-100 form-control text-right'
 							/>
 						) : (
 							<div className='text-right'>{course.passingMarks}</div>
@@ -138,7 +163,7 @@ class Exam extends Component {
 							<input
 								type='time'
 								name='startTime'
-								value={moment(course.startTime).format('HH:MM')}
+								value={moment(input.startTime).format('HH:MM')}
 								onChange={this.handleExamChange}
 								className='w-100 form-control'
 							/>
@@ -152,7 +177,7 @@ class Exam extends Component {
 							<input
 								type='time'
 								name='endTime'
-								value={moment(course.endTime).format('HH:MM')}
+								value={moment(input.endTime).format('HH:MM')}
 								onChange={this.handleExamChange}
 								className='w-100 form-control'
 							/>
@@ -234,6 +259,13 @@ class Exam extends Component {
 							</thead>
 							<tbody>{allExams}</tbody>
 						</Table>
+						{this.state.editCourse.status ? (
+							<div className='d-flex justify-content-end'>
+								<button type='button' className='btn btn-primary'>
+									Update
+								</button>
+							</div>
+						) : null}
 					</div>
 				)}
 			</div>
