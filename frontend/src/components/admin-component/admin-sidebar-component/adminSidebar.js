@@ -3,7 +3,6 @@ import { withRouter, Link } from 'react-router-dom';
 import queryString from 'query-string';
 import { connect } from 'react-redux';
 
-import styles from './adminSidebar.module.css';
 import * as actionTypes from '../../../action';
 import AdminService from '../../../services/adminApi';
 import UserService from '../../../services/userApi';
@@ -35,98 +34,68 @@ class AdminSidebar extends Component {
 	}
 	render() {
 		return (
-			<ul className='nav flex-column'>
-				<Link to='/admin' className='text-decoration-none'>
-					<li
-						className={
-							this.props.panel === ''
-								? `nav-item py-2 px-4 text-white ${styles.iconHover}`
-								: `nav-item py-2 px-4 text-white-50 ${styles.iconHover}`
-						}
+			<div className='bg-dark' id='sidebar-wrapper'>
+				<div className='text-center pt-4'>
+					<img
+						alt='logo'
+						src={require('../../../assets/logo.png')}
+						className='logo'
+					/>
+					<h4 className='text-center text-light font-weight-normal'>
+						Examin
+					</h4>
+				</div>
+				<div className='list-group list-group-flush'>
+					<Link
+						to='/admin'
+						className={`list-group-item list-group-item-action bg-dark adminIcon ${
+							this.props.panel === '' ? 'text-white' : 'text-white-50'
+						}`}
 					>
-						<i
-							className={
-								this.props.panel === ''
-									? 'fa fa-desktop fa-lg text-white pr-3'
-									: 'fa fa-desktop fa-lg text-white-50 pr-3'
-							}
-							aria-hidden='true'
-						></i>{' '}
-						Dashboard
-					</li>
-				</Link>
-				<Link to='/admin?tab=examiner' className='text-decoration-none'>
-					<li
-						className={
+						<i className='fa fa-desktop'></i> Dashboard
+					</Link>
+					<Link
+						to='/admin?tab=examiner'
+						className={`list-group-item list-group-item-action bg-dark ${
 							this.props.panel === 'examiner'
-								? `nav-item py-2 px-4 text-white ${styles.iconHover}`
-								: `nav-item py-2 px-4 text-white-50 ${styles.iconHover}`
-						}
+								? 'text-white'
+								: 'text-white-50'
+						}`}
 					>
-						<i
-							className={
-								this.props.panel === 'examiner'
-									? 'fa fa-user-circle fa-lg text-white pr-3'
-									: 'fa fa-user-circle fa-lg text-white-50 pr-3'
-							}
-							aria-hidden='true'
-						></i>{' '}
-						Examiner
-					</li>
-				</Link>
-				<Link to='/admin?tab=exam' className='text-decoration-none'>
-					<li
-						className={
+						<i className='fa fa-user-circle'></i> Examiners
+					</Link>
+					<Link
+						to='/admin?tab=exam'
+						className={`list-group-item list-group-item-action bg-dark ${
 							this.props.panel === 'exam'
-								? `nav-item py-2 px-4 text-white ${styles.iconHover}`
-								: `nav-item py-2 px-4 text-white-50 ${styles.iconHover}`
-						}
+								? 'text-white'
+								: 'text-white-50'
+						}`}
 					>
-						<i
-							className={
-								this.props.panel === 'exam'
-									? 'fa fa-book fa-lg text-white pr-3'
-									: 'fa fa-book fa-lg text-white-50 pr-3'
-							}
-							aria-hidden='true'
-						></i>{' '}
-						Exam
-					</li>
-				</Link>
-				<Link to='/admin?tab=setting' className='text-decoration-none'>
-					<li
-						className={
+						<i className='fa fa-book'></i> Exam
+					</Link>
+					<Link
+						to='/admin?tab=setting'
+						className={`list-group-item list-group-item-action bg-dark ${
 							this.props.panel === 'settings'
-								? `nav-item py-2 px-4 text-white ${styles.iconHover}`
-								: `nav-item py-2 px-4 text-white-50 ${styles.iconHover}`
-						}
+								? 'text-white'
+								: 'text-white-50'
+						}`}
 					>
-						<i
-							className={
-								this.props.panel === 'settings'
-									? 'fa fa-cog fa-lg text-white pr-3'
-									: 'fa fa-cog fa-lg text-white-50 pr-3'
-							}
-							aria-hidden='true'
-						></i>{' '}
-						Settings
-					</li>
-				</Link>
-				<li
-					onClick={() => {
-						this.userService.removeCookie();
-						this.props.setAuthenticatedUser(false);
-						this.props.history.push('/login');
-					}}
-					className={`nav-item py-2 px-4 text-white-50 ${styles.iconHover}`}
-				>
-					<i
-						className='fa fa-sign-out fa-lg text-white-50 pr-3'
-						aria-hidden='true'
-					></i>{' '}
-					Log out
-				</li>
-			</ul>
+						<i className='fa fa-cog'></i> Settings
+					</Link>
+					<a
+						onClick={() => {
+							this.userService.removeCookie();
+							this.props.setAuthenticatedUser(false);
+							this.props.history.push('/login');
+						}}
+						className='list-group-item cursor-pointer list-group-item-action bg-dark text-white-50'
+					>
+						<i className='fa fa-sign-out'></i> Sign Out
+					</a>
+				</div>
+			</div>
 		);
 	}
 }
