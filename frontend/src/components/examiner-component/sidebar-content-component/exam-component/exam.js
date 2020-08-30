@@ -1,11 +1,11 @@
-import React, { Component, useContext } from 'react';
+import React, { Component } from 'react';
+import Table from 'react-bootstrap/Table';
+import Moment from 'react-moment';
+
 import ExaminerService from '../../../../services/examinerApi';
 import ExamDetails from './examDetails';
 import ExamPeriod from './examPeriod';
-import Accordion from 'react-bootstrap/Accordion';
-import Card from 'react-bootstrap/Card';
 import style from './exam.module.css';
-import { useAccordionToggle, AccordionContext } from 'react-bootstrap';
 
 class Exam extends Component {
 	constructor(props) {
@@ -14,6 +14,7 @@ class Exam extends Component {
 			createExam: false,
 			nextInputs: false,
 			courses: [],
+			editCourse: false,
 		};
 		this.examinerService = new ExaminerService();
 		this.handleInputs = this.handleInputs.bind(this);
@@ -31,49 +32,42 @@ class Exam extends Component {
 		});
 	}
 
-	componentDidMount() {
-		this.examinerService
-			.getAllExams()
-			.then((res) => this.setState({ courses: res.data }));
+	formatDate(date) {
+		let year = new Intl.DateTimeFormat('en', {
+			year: 'numeric',
+		}).format(date);
 	}
 
-	CollapseAccordionButton({ eventKey, callback }) {
-		let currentEventKey = useContext(AccordionContext);
-		let changeOnClick = useAccordionToggle(
-			eventKey,
-			() => callback && callback(eventKey)
-		);
-		const isCurrentEventKey = currentEventKey === eventKey;
-		return (
-			<i
-				className={`
-						${
-							isCurrentEventKey ? 'fa fa-angle-up' : 'fa fa-angle-down'
-						} align-self-center ${style.iconSize}
-					`}
-				onClick={changeOnClick}
-			></i>
-		);
+	componentDidMount() {
+		this.examinerService.getAllExams().then((res) => {
+			this.setState({ courses: res.data });
+		});
 	}
 
 	render() {
 		const allExams = this.state.courses.map((course, index) => {
 			return (
-				<Card key={course._id}>
-					<Card.Header>
-						<div className='d-flex justify-content-between'>
-							<span className={style.examHeading}>
-								{course.subject} ({course.examCode})
-							</span>
-							<this.CollapseAccordionButton
-								eventKey={`'${index}'`}
-							></this.CollapseAccordionButton>
-						</div>
-					</Card.Header>
-					<Accordion.Collapse eventKey={`'${index}'`}>
-						<Card.Body>Hello! I'm the body</Card.Body>
-					</Accordion.Collapse>
-				</Card>
+				<tr key={course._id}>
+					<td>{index + 1}</td>
+					<td>{course.subject}</td>
+					<td>{course.examCode}</td>
+					<td>
+						<Moment format='MMM Do, YYYY'>{course.examDate}</Moment>
+					</td>
+					<td>{course.totalMarks}</td>
+					<td>{course.passingMarks}</td>
+					<td>
+						<Moment format='HH:mm A'>{course.startTime}</Moment>
+					</td>
+					<td>
+						<Moment format='hh:mm A'>{course.endTime}</Moment>
+					</td>
+					<td className='d-flex justify-content-around'>
+						<i className='fa fa-trash-o cursor-pointer text-white align-self-center'></i>
+						<i className='fa fa-check-square-o cursor-pointer text-white align-self-center'></i>
+						<i className='fa fa-times cursor-pointer text-white align-self-center'></i>
+					</td>
+				</tr>
 			);
 		});
 		return (
@@ -113,7 +107,22 @@ class Exam extends Component {
 						<p className={`${style.heading} text-center`}>
 							List of all created Exams
 						</p>
-						<Accordion>{allExams}</Accordion>
+						<Table striped bordered hover variant='dark'>
+							<thead>
+								<tr>
+									<th>S.No</th>
+									<th>Subject</th>
+									<th>Exam code</th>
+									<th>Exam date</th>
+									<th>Total marks</th>
+									<th>Passing marks</th>
+									<th>Start time</th>
+									<th>End time</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>{allExams}</tbody>
+						</Table>
 					</div>
 				)}
 			</div>
