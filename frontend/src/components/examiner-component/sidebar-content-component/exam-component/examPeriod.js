@@ -32,7 +32,6 @@ class ExamPeriod extends Component {
 
 	handleSubmit(event) {
 		event.preventDefault();
-		console.log('heeee');
 		let validation = validate.examDurationFields(this.state);
 		if (!validation.error) {
 			this.examinerService
