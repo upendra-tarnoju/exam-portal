@@ -2,18 +2,20 @@ import React, { Component } from 'react';
 import Table from 'react-bootstrap/Table';
 import Moment from 'react-moment';
 import moment from 'moment';
+import { connect } from 'react-redux';
 
 import ExaminerService from '../../../../services/examinerApi';
 import ExamDetails from './examDetails';
 import ExamPeriod from './examPeriod';
 import style from './exam.module.css';
+import * as ActionTypes from '../../../../action';
 
 class Exam extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			createExam: false,
-			nextInputs: false,
+			nextInputs: true,
 			courses: [],
 			editCourse: {
 				status: false,
@@ -35,6 +37,9 @@ class Exam extends Component {
 	}
 
 	handleStates(key, value) {
+		if (key === 'createExam' && value === false) {
+			this.props.clearExamInputs();
+		}
 		this.setState({
 			[key]: value,
 		});
@@ -189,13 +194,10 @@ class Exam extends Component {
 						<i className='fa fa-trash-o cursor-pointer text-white align-self-center'></i>
 						{this.state.editCourse.index === index &&
 						this.state.editCourse.status ? (
-							<div>
-								<i
-									className='fa fa-times cursor-pointer text-white align-self-center ml-1 mr-1'
-									onClick={() => this.editExam(false, index)}
-								></i>
-								<i className='fa fa-floppy-o cursor-pointer text-white align-self-center'></i>
-							</div>
+							<i
+								className='fa fa-times cursor-pointer text-white align-self-center ml-1 mr-1'
+								onClick={() => this.editExam(false, index)}
+							></i>
 						) : (
 							<i
 								className='fa fa-check-square-o cursor-pointer text-white align-self-center'
@@ -261,8 +263,11 @@ class Exam extends Component {
 						</Table>
 						{this.state.editCourse.status ? (
 							<div className='d-flex justify-content-end'>
-								<button type='button' className='btn btn-primary'>
+								<button type='button' className='btn btn-primary mr-2'>
 									Update
+								</button>
+								<button type='button' className='btn btn-danger'>
+									Cancel
 								</button>
 							</div>
 						) : null}
@@ -273,4 +278,13 @@ class Exam extends Component {
 	}
 }
 
-export default Exam;
+const mapDispatchToProps = (dispatch) => {
+	return {
+		clearExamInputs: () => {
+			dispatch({
+				type: ActionTypes.CLEAR_EXAM_DETAILS_FIELDS,
+			});
+		},
+	};
+};
+export default connect(null, mapDispatchToProps)(Exam);
