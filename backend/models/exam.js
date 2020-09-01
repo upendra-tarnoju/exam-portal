@@ -13,6 +13,12 @@ class Exams {
 	get = (id) => {
 		return this.examModel.find({ examinerId: id });
 	};
+
+	update = (id, data) => {
+		return this.examModel.findOneAndUpdate({ examinerId: id }, data, {
+			new: true,
+		});
+	};
 }
 
 module.exports = new Exams();

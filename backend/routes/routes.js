@@ -60,5 +60,11 @@ module.exports = () => {
 		examController.getExamDetails
 	);
 
+	router.patch(
+		'/examiner/exam',
+		passport.authenticate('jwt'),
+		examController.updateExamDetails
+	);
+
 	return router;
 };

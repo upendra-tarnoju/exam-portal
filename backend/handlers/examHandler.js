@@ -29,8 +29,17 @@ const exams = {
 	},
 
 	getAllExams: async (userId) => {
-		let allExams = await exam.get(userId);
+		let allExams = await exam
+			.get(userId)
+			.select({ password: 0, createdAt: 0 });
 		return allExams;
+	},
+
+	updateExam: async (user, examDetails) => {
+		let updatedExam = await exam
+			.update(user, examDetails)
+			.select({ password: 0, createdAt: 0 });
+		return updatedExam;
 	},
 };
 

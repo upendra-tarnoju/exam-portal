@@ -32,6 +32,7 @@ class Exam extends Component {
 		this.examinerService = new ExaminerService();
 		this.handleStates = this.handleStates.bind(this);
 		this.handleExamChange = this.handleExamChange.bind(this);
+		this.updateCourse = this.updateCourse.bind(this);
 	}
 
 	handleStates(key, value) {
@@ -79,6 +80,24 @@ class Exam extends Component {
 				},
 			}));
 		}
+	}
+
+	updateCourse() {
+		this.examinerService.updateExam(this.state.input).then((response) => {
+			console.log(response.data);
+			let prevCourses = this.state.courses;
+			let index = this.state.editCourse.index;
+			prevCourses[index] = response.data;
+			console.log(prevCourses);
+			this.setState((prevState) => ({
+				...prevState,
+				editCourse: {
+					status: false,
+					index: '',
+				},
+				courses: prevCourses,
+			}));
+		});
 	}
 
 	render() {
@@ -261,7 +280,11 @@ class Exam extends Component {
 						</Table>
 						{this.state.editCourse.status ? (
 							<div className='d-flex justify-content-end'>
-								<button type='button' className='btn btn-primary'>
+								<button
+									type='button'
+									className='btn btn-primary mr-2'
+									onClick={this.updateCourse}
+								>
 									Update
 								</button>
 							</div>
