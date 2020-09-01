@@ -2,13 +2,18 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Moment from 'react-moment';
 import moment from 'moment';
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Tooltip, OverlayTrigger, Modal, Button } from 'react-bootstrap';
+
 import * as ActionTypes from '../../../../action';
 
 class ExamTable extends Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			showDialog: false,
+		};
 		this.handleExamChange = this.handleExamChange.bind(this);
+		this.ShowDeleteDialog = this.ShowDeleteDialog.bind(this);
 	}
 
 	editExam(status, index) {
@@ -33,6 +38,33 @@ class ExamTable extends Component {
 		if (update) {
 			this.props.updateExamInputs(key, value);
 		}
+	}
+
+	handleDeleteDialog(showDialog) {
+		this.setState({ showDialog });
+	}
+
+	ShowDeleteDialog() {
+		return (
+			<Modal
+				show={this.state.showDialog}
+				onHide={() => this.handleDeleteDialog(false)}
+				aria-labelledby='contained-modal-title-vcenter'
+				centered
+			>
+				<Modal.Header closeButton>Caution</Modal.Header>
+				<Modal.Body>Do you want to delete this exam ?</Modal.Body>
+				<Modal.Footer>
+					<Button
+						variant='secondary'
+						onClick={() => this.handleDeleteDialog(false)}
+					>
+						Close
+					</Button>
+					<Button variant='primary'>Delete</Button>
+				</Modal.Footer>
+			</Modal>
+		);
 	}
 
 	render() {
@@ -136,7 +168,10 @@ class ExamTable extends Component {
 						placement='bottom'
 						overlay={<Tooltip id='button-tooltip'>Delete</Tooltip>}
 					>
-						<i className='fa fa-trash-o cursor-pointer text-white align-self-center'></i>
+						<i
+							className='fa fa-trash-o cursor-pointer text-white align-self-center'
+							onClick={() => this.handleDeleteDialog(true)}
+						></i>
 					</OverlayTrigger>
 					<OverlayTrigger
 						placement='bottom'
@@ -168,6 +203,7 @@ class ExamTable extends Component {
 						</OverlayTrigger>
 					)}
 				</td>
+				<this.ShowDeleteDialog />
 			</tr>
 		);
 	}
