@@ -30,6 +30,17 @@ const examReducers = (state = initialState, action) => {
 				errors: action.errors,
 			},
 		};
+	} else if (action.type === 'clear_exam_details_fields') {
+		return {
+			...state,
+			examDetails: {
+				...state.examDetails,
+				course: '',
+				examCode: '',
+				password: '',
+				subject: '',
+			},
+		};
 	}
 	return state;
 };

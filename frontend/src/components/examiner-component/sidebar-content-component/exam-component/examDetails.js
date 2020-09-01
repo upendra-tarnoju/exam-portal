@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
+import { Typeahead } from 'react-bootstrap-typeahead';
+
 import * as ActionTypes from '../../../../action';
 import validate from '../../../../services/validation';
 import ExaminerService from '../../../../services/examinerApi';
-import 'react-bootstrap-typeahead/css/Typeahead.css';
-import { Typeahead } from 'react-bootstrap-typeahead';
 
 class ExamDetails extends Component {
 	constructor(props) {
@@ -71,7 +72,7 @@ class ExamDetails extends Component {
 		let errors = this.props.fieldDetails.errors;
 
 		return (
-			<div>
+			<form onSubmit={this.handleSubmit}>
 				<div className='card-body'>
 					<label className='w-100'>
 						Subject{' '}
@@ -137,15 +138,11 @@ class ExamDetails extends Component {
 					></input>
 				</div>
 				<div className='card-footer bg-white d-flex justify-content-end'>
-					<button
-						type='submit'
-						className='btn btn-primary'
-						onClick={this.handleSubmit}
-					>
+					<button type='submit' className='btn btn-primary'>
 						Next
 					</button>
 				</div>
-			</div>
+			</form>
 		);
 	}
 }

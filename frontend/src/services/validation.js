@@ -40,6 +40,14 @@ let validateExamDate = (temp) => {
 	return temp;
 };
 
+let validatePassingMarks = (temp) => {
+	if (temp.totalMarks < temp.passingMarks) {
+		temp.errors.passingMarks =
+			'* Passing marks cannot be greater than total marks';
+	} else temp.errors.passingMarks = '';
+	return temp;
+};
+
 let validateExamTime = (temp) => {
 	let currentDate = new Date();
 	let currentTime = `${('0' + currentDate.getHours()).slice(-2)}:${(
@@ -51,9 +59,14 @@ let validateExamTime = (temp) => {
 	).slice(-2)}-${('0' + currentDate.getDate()).slice(-2)}`;
 	let startTime = temp.startTime;
 
-	if (currentTime <= startTime && currentDate <= temp.examDate)
+	if (currentDate === temp.examDate) {
+		if (currentTime <= startTime) temp.errors.startTime = '';
+		else temp.errors.startTime = '* Invalid start time';
+	} else if (currentDate < temp.examDate) {
 		temp.errors.startTime = '';
-	else temp.errors.startTime = '* Invalid start time';
+	} else {
+		temp.errors.startTime = '* Invalid start time';
+	}
 
 	if (temp.endTime < temp.startTime) {
 		temp.errors.endTime = '* End time cannot be less than start time';
@@ -80,7 +93,6 @@ let validateFields = (key, temp) => {
 		case 'firstName':
 		case 'lastName':
 		case 'totalMarks':
-		case 'passingMarks':
 			temp['errors'][key] = checkEmptyField(temp[key]);
 			return temp;
 
@@ -104,6 +116,12 @@ let validateFields = (key, temp) => {
 				if (temp['errors'][key] === '') {
 					temp = validateExamDuration(temp);
 				}
+			}
+			return temp;
+		case 'passingMarks':
+			temp['errors'][key] = checkEmptyField(temp[key]);
+			if (temp['errors'][key] === '') {
+				temp = validatePassingMarks(temp);
 			}
 			return temp;
 

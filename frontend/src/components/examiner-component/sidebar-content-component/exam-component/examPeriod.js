@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+
 import validate from '../../../../services/validation';
 import ExaminerService from '../../../../services/examinerApi';
 
@@ -37,6 +38,7 @@ class ExamPeriod extends Component {
 				.saveExamDetails(this.props.fieldDetails, this.state)
 				.then((response) => {
 					this.props.handleInputs('nextInputs', false);
+					this.props.handleInputs('createExam', false);
 				});
 		}
 
@@ -84,7 +86,7 @@ class ExamPeriod extends Component {
 	render() {
 		let errors = this.state.errors;
 		return (
-			<div>
+			<form onSubmit={this.handleSubmit}>
 				<div className='card-body'>
 					<label className='w-100'>
 						Total marks{' '}
@@ -115,9 +117,8 @@ class ExamPeriod extends Component {
 						maxLength={4}
 						className='form-control'
 					></input>
-
-					<div className='d-flex justify-content-between'>
-						<div className='flex-column mr-2'>
+					<div className='row'>
+						<div className='col-md-4'>
 							<label>Exam date</label>
 							<input
 								name='examDate'
@@ -127,7 +128,7 @@ class ExamPeriod extends Component {
 								value={this.state.examDate}
 							></input>
 						</div>
-						<div className='flex-column mr-2'>
+						<div className='col-md-4'>
 							<label>Start time</label>
 							<input
 								name='startTime'
@@ -137,7 +138,7 @@ class ExamPeriod extends Component {
 								value={this.state.startTime}
 							></input>
 						</div>
-						<div className='flex-column'>
+						<div className='col-md-4'>
 							<label>End time</label>
 							<input
 								name='endTime'
@@ -205,15 +206,11 @@ class ExamPeriod extends Component {
 					>
 						Back
 					</button>
-					<button
-						type='button'
-						className='btn btn-success'
-						onClick={this.handleSubmit}
-					>
+					<button type='submit' className='btn btn-success'>
 						Create
 					</button>
 				</div>
-			</div>
+			</form>
 		);
 	}
 }
