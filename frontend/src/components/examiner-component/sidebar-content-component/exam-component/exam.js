@@ -1,14 +1,12 @@
-import React, { Component } from 'react';
-import Table from 'react-bootstrap/Table';
-import Moment from 'react-moment';
-import moment from 'moment';
+import React, { Component, createRef } from 'react';
 import { connect } from 'react-redux';
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import Table from 'react-bootstrap/Table';
 
 import ExaminerService from '../../../../services/examinerApi';
 import ExamDetails from './examDetails';
 import ExamPeriod from './examPeriod';
 import style from './exam.module.css';
+import ExamTable from './examTable';
 import * as ActionTypes from '../../../../action';
 
 class Exam extends Component {
@@ -16,27 +14,13 @@ class Exam extends Component {
 		super(props);
 		this.state = {
 			createExam: false,
-			nextInputs: true,
-			courses: [],
-			editCourse: {
-				status: false,
-				index: '',
-			},
-			input: {
-				subject: '',
-				examCode: '',
-				examDate: '',
-				totalMarks: '',
-				passingMarks: '',
-				startTime: '',
-				endTime: '',
-			},
+			nextInputs: false,
 		};
 		this.examinerService = new ExaminerService();
-		this.handleStates = this.handleStates.bind(this);
-		this.handleExamChange = this.handleExamChange.bind(this);
-		this.updateCourse = this.updateCourse.bind(this);
+		this.updateExam = this.updateExam.bind(this);
 	}
+
+	wrapper = createRef();
 
 	handleStates(key, value) {
 		if (key === 'createExam' && value === false) {
@@ -49,212 +33,26 @@ class Exam extends Component {
 
 	componentDidMount() {
 		this.examinerService.getAllExams().then((res) => {
-			this.setState({ courses: res.data });
+			this.props.setExamList(res.data);
 		});
 	}
 
-	editExam(status, index) {
-		this.setState((prevState) => ({
-			...prevState,
-			editCourse: {
-				status: status,
-				index: index,
-			},
-			input: prevState.courses[index],
-		}));
-	}
-
-	handleExamChange(event) {
-		let update = false;
-		let key = event.target.name;
-		let value = event.target.value;
-		if (key === 'totalMarks' || key === 'passingMarks') {
-			let letters = /^[0-9\b]+$/;
-			if (letters.test(value) || value === '') {
-				update = true;
-			}
-		} else {
-			update = true;
-		}
-		if (update) {
-			this.setState((prevState) => ({
-				...prevState,
-				courses: prevState.courses,
-				input: {
-					...prevState.input,
-					[key]: value,
-				},
-			}));
-		}
-	}
-
-	updateCourse() {
-		this.examinerService.updateExam(this.state.input).then((response) => {
-			console.log(response.data);
-			let prevCourses = this.state.courses;
-			let index = this.state.editCourse.index;
-			prevCourses[index] = response.data;
-			console.log(prevCourses);
-			this.setState((prevState) => ({
-				...prevState,
-				editCourse: {
-					status: false,
-					index: '',
-				},
-				courses: prevCourses,
-			}));
+	updateExam() {
+		this.examinerService.updateExam(this.props.inputs).then((response) => {
+			let prevExams = this.props.examsList;
+			let index = this.props.selectedExamIndex;
+			prevExams[index] = response.data;
+			this.props.editExam(false, '');
+			this.props.setExamList(prevExams);
 		});
 	}
 
 	render() {
-		let { input } = this.state;
-		const allExams = this.state.courses.map((course, index) => {
-			return (
-				<tr key={course._id}>
-					<td>{index + 1}</td>
-					<td>
-						{this.state.editCourse.index === index &&
-						this.state.editCourse.status ? (
-							<input
-								type='text'
-								name='subject'
-								className='w-100 form-control'
-								value={input.subject}
-								onChange={this.handleExamChange}
-							/>
-						) : (
-							course.subject
-						)}
-					</td>
-					<td>
-						{this.state.editCourse.index === index &&
-						this.state.editCourse.status ? (
-							<input
-								type='text'
-								name='examCode'
-								className='w-100 form-control'
-								value={input.examCode}
-								onChange={this.handleExamChange}
-							/>
-						) : (
-							course.examCode
-						)}
-					</td>
-					<td>
-						{this.state.editCourse.index === index &&
-						this.state.editCourse.status ? (
-							<input
-								type='date'
-								name='examDate'
-								value={moment(input.examDate).format('YYYY-MM-DD')}
-								onChange={this.handleExamChange}
-								className='w-100 form-control'
-							/>
-						) : (
-							<Moment format='MMM Do, YYYY'>{course.examDate}</Moment>
-						)}
-					</td>
-					<td>
-						{this.state.editCourse.index === index &&
-						this.state.editCourse.status ? (
-							<input
-								type='text'
-								name='totalMarks'
-								value={input.totalMarks}
-								onChange={this.handleExamChange}
-								className='w-100 form-control text-right'
-							/>
-						) : (
-							<div className='text-right'>{course.totalMarks}</div>
-						)}
-					</td>
-					<td>
-						{this.state.editCourse.index === index &&
-						this.state.editCourse.status ? (
-							<input
-								type='text'
-								name='passingMarks'
-								value={input.passingMarks}
-								onChange={this.handleExamChange}
-								className='w-100 form-control text-right'
-							/>
-						) : (
-							<div className='text-right'>{course.passingMarks}</div>
-						)}
-					</td>
-					<td>
-						{this.state.editCourse.index === index &&
-						this.state.editCourse.status ? (
-							<input
-								type='time'
-								name='startTime'
-								value={moment(input.startTime).format('HH:MM')}
-								onChange={this.handleExamChange}
-								className='w-100 form-control'
-							/>
-						) : (
-							<Moment format='HH:mm A'>{course.startTime}</Moment>
-						)}
-					</td>
-					<td>
-						{this.state.editCourse.index === index &&
-						this.state.editCourse.status ? (
-							<input
-								type='time'
-								name='endTime'
-								value={moment(input.endTime).format('HH:MM')}
-								onChange={this.handleExamChange}
-								className='w-100 form-control'
-							/>
-						) : (
-							<Moment format='HH:mm A'>{course.endTime}</Moment>
-						)}
-					</td>
-					<td className='d-flex justify-content-around'>
-						<OverlayTrigger
-							placement='bottom'
-							overlay={<Tooltip id='button-tooltip'>Delete</Tooltip>}
-						>
-							<i className='fa fa-trash-o cursor-pointer text-white align-self-center'></i>
-						</OverlayTrigger>
-						<OverlayTrigger
-							placement='bottom'
-							overlay={
-								<Tooltip id='button-tooltip'>Add Questions</Tooltip>
-							}
-						>
-							<i className='fa fa-plus cursor-pointer text-white align-self-center'></i>
-						</OverlayTrigger>
-						{this.state.editCourse.index === index &&
-						this.state.editCourse.status ? (
-							<OverlayTrigger
-								placement='bottom'
-								overlay={<Tooltip id='button-tooltip'>Cancel</Tooltip>}
-							>
-								<i
-									className='fa fa-times cursor-pointer text-white align-self-center ml-1 mr-1'
-									onClick={() => this.editExam(false, index)}
-								></i>
-							</OverlayTrigger>
-						) : (
-							<OverlayTrigger
-								placement='bottom'
-								overlay={
-									<Tooltip id='button-tooltip'>Update exam</Tooltip>
-								}
-							>
-								<i
-									className='fa fa-check-square-o cursor-pointer text-white align-self-center'
-									onClick={() => this.editExam(true, index)}
-								></i>
-							</OverlayTrigger>
-						)}
-					</td>
-				</tr>
-			);
+		const allExams = this.props.examsList.map((exam, index) => {
+			return <ExamTable exam={exam} index={index} key={exam._id} />;
 		});
 		return (
-			<div className='p-4'>
+			<div className='p-4' ref={this.wrapper}>
 				<div className='d-flex justify-content-end'>
 					{this.state.createExam ? (
 						<button
@@ -306,12 +104,12 @@ class Exam extends Component {
 							</thead>
 							<tbody>{allExams}</tbody>
 						</Table>
-						{this.state.editCourse.status ? (
+						{this.props.editExam ? (
 							<div className='d-flex justify-content-end'>
 								<button
 									type='button'
 									className='btn btn-primary mr-2'
-									onClick={this.updateCourse}
+									onClick={this.updateExam}
 								>
 									Update
 								</button>
@@ -327,6 +125,15 @@ class Exam extends Component {
 	}
 }
 
+const mapStateToProps = (state) => {
+	return {
+		editExam: state.examReducer.editExam,
+		selectedExamIndex: state.examReducer.selectedExamIndex,
+		examsList: state.examReducer.examsList,
+		inputs: state.examReducer.editExamInputs,
+	};
+};
+
 const mapDispatchToProps = (dispatch) => {
 	return {
 		clearExamInputs: () => {
@@ -334,6 +141,19 @@ const mapDispatchToProps = (dispatch) => {
 				type: ActionTypes.CLEAR_EXAM_DETAILS_FIELDS,
 			});
 		},
+		setExamList: (examList) => {
+			dispatch({
+				type: ActionTypes.SET_EXAM_LIST,
+				examList: examList,
+			});
+		},
+		editExam: (status, index) => {
+			dispatch({
+				type: ActionTypes.EDIT_EXAM_STATUS,
+				status: status,
+				index: index,
+			});
+		},
 	};
 };
-export default connect(null, mapDispatchToProps)(Exam);
+export default connect(mapStateToProps, mapDispatchToProps)(Exam);
