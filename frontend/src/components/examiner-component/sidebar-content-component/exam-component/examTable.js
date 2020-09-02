@@ -5,15 +5,19 @@ import moment from 'moment';
 import { Tooltip, OverlayTrigger, Modal, Button } from 'react-bootstrap';
 
 import * as ActionTypes from '../../../../action';
+import ExaminerService from '../../../../services/examinerApi';
 
 class ExamTable extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			showDialog: false,
+			deleteIndex: '',
 		};
 		this.handleExamChange = this.handleExamChange.bind(this);
 		this.ShowDeleteDialog = this.ShowDeleteDialog.bind(this);
+		this.deleteExam = this.deleteExam.bind(this);
+		this.examinerService = new ExaminerService();
 	}
 
 	editExam(status, index) {
@@ -40,8 +44,15 @@ class ExamTable extends Component {
 		}
 	}
 
-	handleDeleteDialog(showDialog) {
-		this.setState({ showDialog });
+	handleDeleteDialog(showDialog, deleteIndex) {
+		this.setState({ showDialog, deleteIndex });
+	}
+
+	deleteExam() {
+		let examId = this.props.examsList[this.state.deleteIndex]._id;
+		this.examinerService.deleteExam(examId).then((response) => {
+			console.log(response);
+		});
 	}
 
 	ShowDeleteDialog() {
@@ -61,7 +72,9 @@ class ExamTable extends Component {
 					>
 						Close
 					</Button>
-					<Button variant='primary'>Delete</Button>
+					<Button variant='primary' onClick={this.deleteExam}>
+						Delete
+					</Button>
 				</Modal.Footer>
 			</Modal>
 		);
@@ -170,7 +183,7 @@ class ExamTable extends Component {
 					>
 						<i
 							className='fa fa-trash-o cursor-pointer text-white align-self-center'
-							onClick={() => this.handleDeleteDialog(true)}
+							onClick={() => this.handleDeleteDialog(true, index)}
 						></i>
 					</OverlayTrigger>
 					<OverlayTrigger

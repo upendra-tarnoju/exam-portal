@@ -19,6 +19,10 @@ class Exams {
 			new: true,
 		});
 	};
+
+	deleteById = (id) => {
+		return this.examModel.findByIdAndDelete(id);
+	};
 }
 
 module.exports = new Exams();

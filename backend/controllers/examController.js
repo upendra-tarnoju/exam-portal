@@ -20,6 +20,12 @@ const exam = {
 		let updatedExam = await examHandler.updateExam(userId, examDetails);
 		res.status(200).send(updatedExam);
 	},
+	deleteExam: async (req, res) => {
+		let userId = req.user._id;
+		let examId = req.query.examId;
+		let deletedExam = await examHandler.deleteExam(userId, examId);
+		res.status(200).send(deletedExam);
+	},
 };
 
 module.exports = exam;

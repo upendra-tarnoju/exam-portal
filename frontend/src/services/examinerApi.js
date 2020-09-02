@@ -137,6 +137,19 @@ class ExaminerService {
 			params: data,
 		});
 	};
+
+	deleteExam = (examId) => {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'delete',
+			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}/exam`,
+			params: { examId },
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	};
 }
 
 export default ExaminerService;

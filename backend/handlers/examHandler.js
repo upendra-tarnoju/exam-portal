@@ -41,6 +41,11 @@ const exams = {
 			.select({ password: 0, createdAt: 0 });
 		return updatedExam;
 	},
+
+	deleteExam: async (userId, examId) => {
+		let deletedExam = await exam.deleteById(examId);
+		return deletedExam;
+	},
 };
 
 module.exports = exams;
