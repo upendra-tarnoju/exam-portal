@@ -5,7 +5,9 @@ const exam = {
 		let data = req.body;
 		let userId = req.user._id;
 		examHandler.saveExamDetails(data, userId).then((response) => {
-			res.status(200).send({ msg: 'Exam created' });
+			delete response.password;
+			delete response.createdAt;
+			res.status(200).send(response);
 		});
 	},
 	getExamDetails: async (req, res) => {

@@ -66,7 +66,11 @@ module.exports = () => {
 		examController.updateExamDetails
 	);
 
-	router.delete('/examiner/exam', passport.authenticate('jwt'));
+	router.delete(
+		'/examiner/exam',
+		passport.authenticate('jwt'),
+		examController.deleteExam
+	);
 
 	return router;
 };
