@@ -54,7 +54,8 @@ class ExamTable extends Component {
 			let updatedExams = this.props.examsList.filter(
 				(exam) => exam._id !== response.data._id
 			);
-			// this.props.setExamList(updatedExams);
+			console.log(updatedExams);
+			this.props.setExamList(updatedExams);
 		});
 	}
 
@@ -261,7 +262,7 @@ const mapDispatchToProps = (dispatch) => {
 		setExamList: (examsList) => {
 			dispatch({
 				type: ActionTypes.SET_EXAM_LIST,
-				examsList: examsList,
+				examList: examsList,
 			});
 		},
 	};

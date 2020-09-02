@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import validate from '../../../../services/validation';
 import ExaminerService from '../../../../services/examinerApi';
+import * as ActionTypes from '../../../../action';
 
 class ExamPeriod extends Component {
 	constructor(props) {
@@ -219,7 +220,19 @@ const mapStateToProps = (state) => {
 	return {
 		fieldDetails: state.examReducer.examDetails,
 		courses: state.examinerReducer.courses,
+		examsList: state.examReducer.examsList,
 	};
 };
 
-export default connect(mapStateToProps)(ExamPeriod);
+const mapDispatchToProps = (dispatch) => {
+	return {
+		setExamList: (examList) => {
+			dispatch({
+				type: ActionTypes.SET_EXAM_LIST,
+				examList: examList,
+			});
+		},
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ExamPeriod);
