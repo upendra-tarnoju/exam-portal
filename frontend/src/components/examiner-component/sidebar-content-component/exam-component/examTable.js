@@ -51,7 +51,10 @@ class ExamTable extends Component {
 	deleteExam() {
 		let examId = this.props.examsList[this.state.deleteIndex]._id;
 		this.examinerService.deleteExam(examId).then((response) => {
-			console.log(response);
+			let updatedExams = this.props.examsList.filter(
+				(exam) => exam._id !== response.data._id
+			);
+			// this.props.setExamList(updatedExams);
 		});
 	}
 
@@ -179,9 +182,11 @@ class ExamTable extends Component {
 				<td className='d-flex justify-content-around'>
 					<OverlayTrigger
 						placement='bottom'
+						// key={exam._id}
 						overlay={<Tooltip id='button-tooltip'>Delete</Tooltip>}
 					>
 						<i
+							ref={this.wrapper1}
 							className='fa fa-trash-o cursor-pointer text-white align-self-center'
 							onClick={() => this.handleDeleteDialog(true, index)}
 						></i>
@@ -198,7 +203,7 @@ class ExamTable extends Component {
 							overlay={<Tooltip id='button-tooltip'>Cancel</Tooltip>}
 						>
 							<i
-								className='fa fa-times cursor-pointer text-white align-self-center ml-1 mr-1'
+								className='fa fa-times cursor-pointer text-white align-self-center'
 								onClick={() => this.editExam(false, '')}
 							></i>
 						</OverlayTrigger>
@@ -251,6 +256,12 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({
 				type: ActionTypes.SET_EXAM_INPUTS,
 				inputs: inputs,
+			});
+		},
+		setExamList: (examsList) => {
+			dispatch({
+				type: ActionTypes.SET_EXAM_LIST,
+				examsList: examsList,
 			});
 		},
 	};

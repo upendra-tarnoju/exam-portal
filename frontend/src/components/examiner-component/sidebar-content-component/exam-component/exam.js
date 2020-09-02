@@ -1,4 +1,4 @@
-import React, { Component, createRef } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Table from 'react-bootstrap/Table';
 
@@ -18,9 +18,8 @@ class Exam extends Component {
 		};
 		this.examinerService = new ExaminerService();
 		this.updateExam = this.updateExam.bind(this);
+		this.handleStates = this.handleStates.bind(this);
 	}
-
-	wrapper = createRef();
 
 	handleStates(key, value) {
 		if (key === 'createExam' && value === false) {
@@ -52,7 +51,7 @@ class Exam extends Component {
 			return <ExamTable exam={exam} index={index} key={exam._id} />;
 		});
 		return (
-			<div className='p-4' ref={this.wrapper}>
+			<div className='p-4'>
 				<div className='d-flex justify-content-end'>
 					{this.state.createExam ? (
 						<button
@@ -104,7 +103,7 @@ class Exam extends Component {
 							</thead>
 							<tbody>{allExams}</tbody>
 						</Table>
-						{this.props.editExam ? (
+						{this.props.editExamStatus ? (
 							<div className='d-flex justify-content-end'>
 								<button
 									type='button'
@@ -127,7 +126,7 @@ class Exam extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		editExam: state.examReducer.editExam,
+		editExamStatus: state.examReducer.editExam,
 		selectedExamIndex: state.examReducer.selectedExamIndex,
 		examsList: state.examReducer.examsList,
 		inputs: state.examReducer.editExamInputs,

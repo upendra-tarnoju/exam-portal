@@ -50,7 +50,7 @@ class ExamPeriod extends Component {
 		this.setState({
 			examDate: `${curr.getFullYear()}-${('0' + (curr.getMonth() + 1)).slice(
 				-2
-			)}-${curr.getDate()}`,
+			)}-${('0' + curr.getDate()).slice(-2)}`,
 			startTime: `${('0' + curr.getHours()).slice(-2)}:${(
 				'0' + curr.getMinutes()
 			).slice(-2)}`,

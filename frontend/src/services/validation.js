@@ -33,7 +33,7 @@ let validateExamDate = (temp) => {
 	currentDate = `${currentDate.getFullYear()}-${(
 		'0' +
 		(currentDate.getMonth() + 1)
-	).slice(-2)}-${currentDate.getDate()}`;
+	).slice(-2)}-${('0' + currentDate.getDate()).slice(-2)}`;
 	if (selectedDate < currentDate) {
 		temp.errors.examDate = "* Selected date cannot be less than today's date";
 	}
@@ -41,7 +41,9 @@ let validateExamDate = (temp) => {
 };
 
 let validatePassingMarks = (temp) => {
-	if (temp.totalMarks < temp.passingMarks) {
+	let totalMarks = parseInt(temp.totalMarks, 10);
+	let passingMarks = parseInt(temp.passingMarks, 10);
+	if (totalMarks < passingMarks) {
 		temp.errors.passingMarks =
 			'* Passing marks cannot be greater than total marks';
 	} else temp.errors.passingMarks = '';
