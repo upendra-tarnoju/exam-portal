@@ -38,6 +38,9 @@ class ExamPeriod extends Component {
 			this.examinerService
 				.saveExamDetails(this.props.fieldDetails, this.state)
 				.then((response) => {
+					let exams = this.props.examsList;
+					exams.push(response.data);
+					this.props.setExamList(exams);
 					this.props.handleInputs('nextInputs', false);
 					this.props.handleInputs('createExam', false);
 				});

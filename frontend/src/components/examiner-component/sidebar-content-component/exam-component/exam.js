@@ -101,7 +101,17 @@ class Exam extends Component {
 									<th>Action</th>
 								</tr>
 							</thead>
-							<tbody>{allExams}</tbody>
+							<tbody>
+								{this.props.examsList.map((exam, index) => {
+									return (
+										<ExamTable
+											exam={exam}
+											index={index}
+											key={exam._id}
+										/>
+									);
+								})}
+							</tbody>
 						</Table>
 						{this.props.editExamStatus ? (
 							<div className='d-flex justify-content-end'>
