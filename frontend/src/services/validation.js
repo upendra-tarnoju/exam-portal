@@ -35,22 +35,22 @@ let validateExamDate = (temp) => {
 		(currentDate.getMonth() + 1)
 	).slice(-2)}-${('0' + currentDate.getDate()).slice(-2)}`;
 	if (selectedDate < currentDate) {
-		temp.errors.examDate = "* Selected date cannot be less than today's date";
+		console.log('error');
+		return "* Selected date cannot be less than today's date";
 	}
-	return temp;
+	return '';
 };
 
 let validatePassingMarks = (temp) => {
 	let totalMarks = parseInt(temp.totalMarks, 10);
 	let passingMarks = parseInt(temp.passingMarks, 10);
 	if (totalMarks < passingMarks) {
-		temp.errors.passingMarks =
-			'* Passing marks cannot be greater than total marks';
-	} else temp.errors.passingMarks = '';
-	return temp;
+		return '* Passing marks cannot be greater than total marks';
+	} else return '';
 };
 
 let validateExamTime = (temp) => {
+	let examTimeError = {};
 	let currentDate = new Date();
 	let currentTime = `${('0' + currentDate.getHours()).slice(-2)}:${(
 		'0' + currentDate.getMinutes()
@@ -62,19 +62,19 @@ let validateExamTime = (temp) => {
 	let startTime = temp.startTime;
 
 	if (currentDate === temp.examDate) {
-		if (currentTime <= startTime) temp.errors.startTime = '';
-		else temp.errors.startTime = '* Invalid start time';
+		if (currentTime <= startTime) examTimeError['startTime'] = '';
+		else examTimeError['startTime'] = '* Invalid start time';
 	} else if (currentDate < temp.examDate) {
-		temp.errors.startTime = '';
+		examTimeError['startTime'] = '';
 	} else {
-		temp.errors.startTime = '* Invalid start time';
+		examTimeError['startTime'] = '* Invalid start time';
 	}
 
 	if (temp.endTime < temp.startTime) {
-		temp.errors.endTime = '* End time cannot be less than start time';
-	} else temp.errors.endTime = '';
+		examTimeError['endTime'] = '* End time cannot be less than start time';
+	} else examTimeError['endTime'] = '';
 
-	return temp;
+	return examTimeError;
 };
 
 let validateExamDuration = (temp) => {
@@ -123,7 +123,7 @@ let validateFields = (key, temp) => {
 		case 'passingMarks':
 			temp['errors'][key] = checkEmptyField(temp[key]);
 			if (temp['errors'][key] === '') {
-				temp = validatePassingMarks(temp);
+				temp['errors'][key] = validatePassingMarks(temp);
 			}
 			return temp;
 
@@ -202,9 +202,10 @@ const examDurationFields = (temp) => {
 		let key = keys[index];
 		if (key === 'password') {
 		} else if (key === 'examDate') {
-			temp = validateExamDate(temp);
+			temp.errors.examDate = validateExamDate(temp);
 		} else if (key === 'startTime' || key === 'endTime') {
-			temp = validateExamTime(temp);
+			let examTimeError = validateExamTime(temp);
+			temp['errors'][key] = examTimeError[key];
 		} else {
 			temp = validateFields(key, temp);
 		}
@@ -219,9 +220,40 @@ const examDurationFields = (temp) => {
 	return { tempState: temp, error: error };
 };
 
+const updateExamFields = (temp) => {
+	let errorObject = {};
+	let error;
+	let keys = Object.keys(temp);
+	for (let index in keys) {
+		let key = keys[index];
+		if (
+			key === 'subject' ||
+			key === 'examCode' ||
+			key === 'totalMarks' ||
+			key === 'passingMarks'
+		) {
+			error = checkEmptyField(temp[key]);
+			if (error) {
+				errorObject[key] = `${error} ${key}`;
+			} else errorObject[key] = '';
+		}
+		if (key === 'passingMarks') {
+			if (errorObject[key] === '') {
+				errorObject[key] = validatePassingMarks(temp);
+			}
+		} else if (key === 'examDate') {
+			errorObject[key] = validateExamDate(temp);
+		} else if (key === 'startTime' || key === 'endTime') {
+			errorObject[key] = validateExamTime(temp);
+		}
+	}
+	return errorObject;
+};
+
 export default {
 	signUpFields,
 	loginFields,
 	examDetailFields,
 	examDurationFields,
+	updateExamFields,
 };

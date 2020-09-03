@@ -54,7 +54,6 @@ class ExamTable extends Component {
 			let updatedExams = this.props.examsList.filter(
 				(exam) => exam._id !== response.data._id
 			);
-			console.log(updatedExams);
 			this.props.setExamList(updatedExams);
 		});
 	}
@@ -183,7 +182,6 @@ class ExamTable extends Component {
 				<td className='d-flex justify-content-around'>
 					<OverlayTrigger
 						placement='bottom'
-						// key={exam._id}
 						overlay={<Tooltip id='button-tooltip'>Delete</Tooltip>}
 					>
 						<i

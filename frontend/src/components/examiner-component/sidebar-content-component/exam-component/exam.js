@@ -8,6 +8,7 @@ import ExamPeriod from './examPeriod';
 import style from './exam.module.css';
 import ExamTable from './examTable';
 import * as ActionTypes from '../../../../action';
+import validate from '../../../../services/validation';
 
 class Exam extends Component {
 	constructor(props) {
@@ -37,6 +38,7 @@ class Exam extends Component {
 	}
 
 	updateExam() {
+		let validation = validate.updateExamFields(this.props.inputs);
 		this.examinerService.updateExam(this.props.inputs).then((response) => {
 			let prevExams = this.props.examsList;
 			let index = this.props.selectedExamIndex;
@@ -101,17 +103,7 @@ class Exam extends Component {
 									<th>Action</th>
 								</tr>
 							</thead>
-							<tbody>
-								{this.props.examsList.map((exam, index) => {
-									return (
-										<ExamTable
-											exam={exam}
-											index={index}
-											key={exam._id}
-										/>
-									);
-								})}
-							</tbody>
+							<tbody>{allExams}</tbody>
 						</Table>
 						{this.props.editExamStatus ? (
 							<div className='d-flex justify-content-end'>
@@ -121,9 +113,6 @@ class Exam extends Component {
 									onClick={this.updateExam}
 								>
 									Update
-								</button>
-								<button type='button' className='btn btn-danger'>
-									Cancel
 								</button>
 							</div>
 						) : null}
