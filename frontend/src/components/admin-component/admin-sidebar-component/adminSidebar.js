@@ -85,6 +85,7 @@ class AdminSidebar extends Component {
 						<i className='fa fa-cog'></i> Settings
 					</Link>
 					<a
+						href='/login'
 						onClick={() => {
 							this.userService.removeCookie();
 							this.props.setAuthenticatedUser(false);

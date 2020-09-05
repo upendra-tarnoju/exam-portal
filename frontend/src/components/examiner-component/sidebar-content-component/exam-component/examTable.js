@@ -14,6 +14,7 @@ class ExamTable extends Component {
 		this.state = {
 			showDialog: false,
 			deleteIndex: '',
+			currentDate: moment(Date()).format('YYYY-MM-DD'),
 		};
 		this.handleExamChange = this.handleExamChange.bind(this);
 		this.ShowDeleteDialog = this.ShowDeleteDialog.bind(this);

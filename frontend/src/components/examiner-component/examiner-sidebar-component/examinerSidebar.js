@@ -64,6 +64,7 @@ class ExaminerSidebar extends Component {
 						<i className='fa fa-certificate'></i> Course
 					</Link>
 					<a
+						href='/login'
 						onClick={() => {
 							this.userService.removeCookie();
 							this.props.setAuthenticatedUser(false);
