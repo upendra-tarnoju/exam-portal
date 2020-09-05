@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import Table from 'react-bootstrap/Table';
 
 import ExaminerService from '../../../../services/examinerApi';
-import ExamDetails from './examDetails';
-import ExamPeriod from './examPeriod';
+import ExamDetails from './exam-inputs-component/examDetails';
+import ExamPeriod from './exam-inputs-component/examPeriod';
 import style from './exam.module.css';
 import ExamTable from './examTable';
 import * as ActionTypes from '../../../../action';
