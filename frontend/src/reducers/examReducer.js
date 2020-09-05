@@ -74,11 +74,20 @@ const examReducers = (state = initialState, action) => {
 			},
 		};
 	} else if (action.type === 'set_exam_inputs') {
-		action.inputs.startTime = moment(action.inputs.startTime).format('HH:MM');
-		action.inputs.endTime = moment(action.inputs.endTime).format('HH:MM');
+		let inputs = action.inputs;
+		let startTime = moment(inputs.startTime).format('HH:MM');
+		let endTime = moment(inputs.endTime).format('HH:MM');
 		return {
 			...state,
-			editExamInputs: action.inputs,
+			editExamInputs: {
+				subject: inputs.subject,
+				examCode: inputs.examCode,
+				examDate: inputs.examDate,
+				totalMarks: inputs.totalMarks,
+				passingMarks: inputs.passingMarks,
+				startTime: startTime,
+				endTime: endTime,
+			},
 		};
 	}
 	return state;

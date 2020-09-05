@@ -25,7 +25,8 @@ class ExamTable extends Component {
 	editExam(status, index) {
 		this.props.editExam(status, index);
 		if (status) {
-			this.props.setExamInputs(this.props.examsList[index]);
+			let particularExam = this.props.examsList[index];
+			this.props.setExamInputs(particularExam);
 		}
 	}
 
@@ -202,7 +203,7 @@ class ExamTable extends Component {
 							</span>
 						</div>
 					) : (
-						<Moment format='HH:mm A'>{exam.startTime}</Moment>
+						<Moment format='hh:mm A'>{exam.startTime}</Moment>
 					)}
 				</td>
 				<td>
@@ -220,7 +221,7 @@ class ExamTable extends Component {
 							</span>
 						</div>
 					) : (
-						<Moment format='HH:mm A'>{exam.endTime}</Moment>
+						<Moment format='hh:mm A'>{exam.endTime}</Moment>
 					)}
 				</td>
 				<td className='d-flex justify-content-around'>
