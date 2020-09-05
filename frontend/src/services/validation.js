@@ -244,10 +244,18 @@ const updateExamFields = (temp) => {
 		} else if (key === 'examDate') {
 			errorObject[key] = validateExamDate(temp);
 		} else if (key === 'startTime' || key === 'endTime') {
-			errorObject[key] = validateExamTime(temp);
+			errorObject[key] = validateExamTime(temp)[key];
 		}
 	}
-	return errorObject;
+
+	let values = Object.values(errorObject);
+	for (let index in values) {
+		if (values[index].length > 1) {
+			error = true;
+			break;
+		}
+	}
+	return { errorObject: errorObject, error: error };
 };
 
 export default {

@@ -16,6 +16,7 @@ class Exam extends Component {
 		this.state = {
 			createExam: false,
 			nextInputs: false,
+			inputErrors: {},
 		};
 		this.examinerService = new ExaminerService();
 		this.updateExam = this.updateExam.bind(this);
@@ -36,21 +37,30 @@ class Exam extends Component {
 			this.props.setExamList(res.data);
 		});
 	}
-
 	updateExam() {
 		let validation = validate.updateExamFields(this.props.inputs);
-		this.examinerService.updateExam(this.props.inputs).then((response) => {
-			let prevExams = this.props.examsList;
-			let index = this.props.selectedExamIndex;
-			prevExams[index] = response.data;
-			this.props.editExam(false, '');
-			this.props.setExamList(prevExams);
-		});
+		this.setState({ inputErrors: validation.errorObject });
+		if (!validation.error) {
+			this.examinerService.updateExam(this.props.inputs).then((response) => {
+				let prevExams = this.props.examsList;
+				let index = this.props.selectedExamIndex;
+				prevExams[index] = response.data;
+				this.props.editExam(false, '');
+				this.props.setExamList(prevExams);
+			});
+		}
 	}
 
 	render() {
 		const allExams = this.props.examsList.map((exam, index) => {
-			return <ExamTable exam={exam} index={index} key={exam._id} />;
+			return (
+				<ExamTable
+					exam={exam}
+					index={index}
+					key={exam._id}
+					errors={this.state.inputErrors}
+				/>
+			);
 		});
 		return (
 			<div className='p-4'>

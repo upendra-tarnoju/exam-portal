@@ -1,3 +1,4 @@
+import moment from 'moment';
 const initialState = {
 	editExam: false,
 	selectedExamIndex: '',
@@ -73,6 +74,8 @@ const examReducers = (state = initialState, action) => {
 			},
 		};
 	} else if (action.type === 'set_exam_inputs') {
+		action.inputs.startTime = moment(action.inputs.startTime).format('HH:MM');
+		action.inputs.endTime = moment(action.inputs.endTime).format('HH:MM');
 		return {
 			...state,
 			editExamInputs: action.inputs,

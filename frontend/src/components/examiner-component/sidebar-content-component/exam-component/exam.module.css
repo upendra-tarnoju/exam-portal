@@ -10,3 +10,8 @@
 .examHeading {
 	font-size: 1.4rem;
 }
+
+.errorText {
+	font-family: 'Raleway';
+	font-size: 12px;
+}

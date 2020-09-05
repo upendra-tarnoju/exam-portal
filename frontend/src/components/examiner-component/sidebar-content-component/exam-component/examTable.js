@@ -6,6 +6,7 @@ import { Tooltip, OverlayTrigger, Modal, Button } from 'react-bootstrap';
 
 import * as ActionTypes from '../../../../action';
 import ExaminerService from '../../../../services/examinerApi';
+import styles from './exam.module.css';
 
 class ExamTable extends Component {
 	constructor(props) {
@@ -84,97 +85,139 @@ class ExamTable extends Component {
 	}
 
 	render() {
-		let { exam, index, selectedExamIndex, editExam, input } = this.props;
+		let {
+			exam,
+			index,
+			selectedExamIndex,
+			editExam,
+			input,
+			errors,
+		} = this.props;
 		return (
 			<tr key={exam._id}>
 				<td>{index + 1}</td>
 				<td>
 					{selectedExamIndex === index && editExam ? (
-						<input
-							type='text'
-							name='subject'
-							className='w-100 form-control'
-							value={input.subject}
-							onChange={this.handleExamChange}
-						/>
+						<div className='d-flex flex-column'>
+							<input
+								type='text'
+								name='subject'
+								className='w-100 form-control form-control-sm'
+								value={input.subject}
+								onChange={this.handleExamChange}
+							/>
+							<span className={`${styles.errorText} text-danger mt-1`}>
+								{errors.subject}
+							</span>
+						</div>
 					) : (
 						exam.subject
 					)}
 				</td>
 				<td>
 					{selectedExamIndex === index && editExam ? (
-						<input
-							type='text'
-							name='examCode'
-							className='w-100 form-control'
-							value={input.examCode}
-							onChange={this.handleExamChange}
-						/>
+						<div className='d-flex flex-column'>
+							<input
+								type='text'
+								name='examCode'
+								className='w-100 form-control form-control-sm'
+								value={input.examCode}
+								onChange={this.handleExamChange}
+							/>
+							<span className={`${styles.errorText} text-danger mt-1`}>
+								{errors.examCode}
+							</span>
+						</div>
 					) : (
 						exam.examCode
 					)}
 				</td>
 				<td>
 					{selectedExamIndex === index && editExam ? (
-						<input
-							type='date'
-							name='examDate'
-							value={moment(input.examDate).format('YYYY-MM-DD')}
-							onChange={this.handleExamChange}
-							className='w-100 form-control'
-						/>
+						<div className='d-flex flex-column'>
+							<input
+								type='date'
+								name='examDate'
+								value={moment(input.examDate).format('YYYY-MM-DD')}
+								onChange={this.handleExamChange}
+								className='w-100 form-control form-control-sm'
+							/>
+							<span className={`${styles.errorText} text-danger mt-1`}>
+								{errors.examDate}
+							</span>
+						</div>
 					) : (
 						<Moment format='MMM Do, YYYY'>{exam.examDate}</Moment>
 					)}
 				</td>
 				<td>
 					{selectedExamIndex === index && editExam ? (
-						<input
-							type='text'
-							name='totalMarks'
-							value={input.totalMarks}
-							onChange={this.handleExamChange}
-							className='w-100 form-control text-right'
-						/>
+						<div className='d-flex flex-column'>
+							<input
+								type='text'
+								name='totalMarks'
+								value={input.totalMarks}
+								onChange={this.handleExamChange}
+								className='w-100 form-control text-right form-control-sm'
+							/>
+							<span className={`${styles.errorText} text-danger mt-1`}>
+								{errors.totalMarks}
+							</span>
+						</div>
 					) : (
 						<div className='text-right'>{exam.totalMarks}</div>
 					)}
 				</td>
 				<td>
 					{selectedExamIndex === index && editExam ? (
-						<input
-							type='text'
-							name='passingMarks'
-							value={input.passingMarks}
-							onChange={this.handleExamChange}
-							className='w-100 form-control text-right'
-						/>
+						<div className='d-flex flex-column'>
+							<input
+								type='text'
+								name='passingMarks'
+								value={input.passingMarks}
+								onChange={this.handleExamChange}
+								className='w-100 form-control text-right form-control-sm'
+							/>
+							<span className={`${styles.errorText} text-danger mt-1`}>
+								{errors.passingMarks}
+							</span>
+						</div>
 					) : (
 						<div className='text-right'>{exam.passingMarks}</div>
 					)}
 				</td>
 				<td>
 					{selectedExamIndex === index && editExam ? (
-						<input
-							type='time'
-							name='startTime'
-							value={moment(input.startTime).format('HH:MM')}
-							onChange={this.handleExamChange}
-							className='w-100 form-control'
-						/>
+						<div className='d-flex flex-column'>
+							<input
+								type='time'
+								name='startTime'
+								value={input.startTime}
+								onChange={this.handleExamChange}
+								className='w-100 form-control form-control-sm'
+							/>
+							<span className={`${styles.errorText} text-danger mt-1`}>
+								{errors.startTime}
+							</span>
+						</div>
 					) : (
 						<Moment format='HH:mm A'>{exam.startTime}</Moment>
 					)}
 				</td>
 				<td>
 					{selectedExamIndex === index && editExam ? (
-						<input
-							type='time'
-							name='endTime'
-							value={moment(input.endTime).format('HH:MM')}
-							onChange={this.handleExamChange}
-							className='w-100 form-control'
-						/>
+						<div className='d-flex flex-column'>
+							<input
+								type='time'
+								name='endTime'
+								value={input.endTime}
+								onChange={this.handleExamChange}
+								className='w-100 form-control form-control-sm'
+							/>
+							<span className={`${styles.errorText} text-danger mt-1`}>
+								{errors.endTime}
+							</span>
+						</div>
 					) : (
 						<Moment format='HH:mm A'>{exam.endTime}</Moment>
 					)}
