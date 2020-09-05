@@ -13,20 +13,29 @@ class ExamTable extends Component {
 		super(props);
 		this.state = {
 			showDialog: false,
+			showEditDialog: false,
 			deleteIndex: '',
-			currentDate: moment(Date()).format('YYYY-MM-DD'),
 		};
 		this.handleExamChange = this.handleExamChange.bind(this);
 		this.ShowDeleteDialog = this.ShowDeleteDialog.bind(this);
+		this.ShowEditDialog = this.ShowEditDialog.bind(this);
 		this.deleteExam = this.deleteExam.bind(this);
 		this.examinerService = new ExaminerService();
 	}
 
 	editExam(status, index) {
 		this.props.editExam(status, index);
-		if (status) {
-			let particularExam = this.props.examsList[index];
-			this.props.setExamInputs(particularExam);
+		if (status && index !== '') {
+			let currentDate = moment(Date()).format('YYYY-MM-DD');
+			let examDate = this.props.examsList[index].examDate;
+			if (examDate >= currentDate) {
+				if (status) {
+					let particularExam = this.props.examsList[index];
+					this.props.setExamInputs(particularExam);
+				}
+			} else {
+				this.setState({ showEditDialog: true });
+			}
 		}
 	}
 
@@ -49,6 +58,10 @@ class ExamTable extends Component {
 
 	handleDeleteDialog(showDialog, deleteIndex) {
 		this.setState({ showDialog, deleteIndex });
+	}
+
+	handleEditDialog(showEditDialog) {
+		this.setState({ showEditDialog });
 	}
 
 	deleteExam() {
@@ -80,6 +93,27 @@ class ExamTable extends Component {
 					</Button>
 					<Button variant='primary' onClick={this.deleteExam}>
 						Delete
+					</Button>
+				</Modal.Footer>
+			</Modal>
+		);
+	}
+
+	ShowEditDialog() {
+		return (
+			<Modal
+				show={this.state.showEditDialog}
+				onHide={() => this.handleEditDialog(false)}
+				centered
+			>
+				<Modal.Header closeButton>Warning</Modal.Header>
+				<Modal.Body>You cannot edit expired exam.</Modal.Body>
+				<Modal.Footer>
+					<Button
+						variant='primary'
+						onClick={() => this.handleEditDialog(false)}
+					>
+						Close
 					</Button>
 				</Modal.Footer>
 			</Modal>
@@ -140,7 +174,10 @@ class ExamTable extends Component {
 							<input
 								type='date'
 								name='examDate'
-								value={moment(input.examDate).format('YYYY-MM-DD')}
+								value={moment(
+									input.examDate.value,
+									'YYYY-MM-DD'
+								).format('YYYY-MM-DD')}
 								onChange={this.handleExamChange}
 								className='w-100 form-control form-control-sm'
 							/>
@@ -230,7 +267,6 @@ class ExamTable extends Component {
 						overlay={<Tooltip id='button-tooltip'>Delete</Tooltip>}
 					>
 						<i
-							ref={this.wrapper1}
 							className='fa fa-trash-o cursor-pointer text-white align-self-center'
 							onClick={() => this.handleDeleteDialog(true, index)}
 						></i>
@@ -266,6 +302,7 @@ class ExamTable extends Component {
 					)}
 				</td>
 				<this.ShowDeleteDialog />
+				<this.ShowEditDialog />
 			</tr>
 		);
 	}

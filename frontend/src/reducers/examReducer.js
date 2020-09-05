@@ -16,13 +16,13 @@ const initialState = {
 		},
 	},
 	editExamInputs: {
-		subject: '',
-		examCode: '',
-		examDate: '',
-		totalMarks: '',
-		passingMarks: '',
-		startTime: '',
-		endTime: '',
+		subject: { value: '', isChanged: false },
+		examCode: { value: '', isChanged: false },
+		examDate: { value: '', isChanged: false },
+		totalMarks: { value: '', isChanged: false },
+		passingMarks: { value: '', isChanged: false },
+		startTime: { value: '', isChanged: false },
+		endTime: { value: '', isChanged: false },
 	},
 };
 
