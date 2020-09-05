@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Moment from 'react-moment';
 import moment from 'moment';
 import { Tooltip, OverlayTrigger, Modal, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 import * as ActionTypes from '../../../../action';
 import ExaminerService from '../../../../services/examinerApi';
@@ -294,10 +295,12 @@ class ExamTable extends Component {
 								<Tooltip id='button-tooltip'>Update exam</Tooltip>
 							}
 						>
-							<i
-								className='fa fa-check-square-o cursor-pointer text-white align-self-center'
-								onClick={() => this.editExam(true, index)}
-							></i>
+							<Link to={`/examiner/exam/${exam._id}`}>
+								<i
+									className='fa fa-check-square-o cursor-pointer text-white align-self-center'
+									// onClick={() => this.editExam(true, index)}
+								></i>
+							</Link>
 						</OverlayTrigger>
 					)}
 				</td>
