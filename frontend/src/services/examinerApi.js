@@ -137,16 +137,16 @@ class ExaminerService {
 		});
 	};
 
-	updateExam = (data) => {
+	updateExam = (examId, data) => {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'patch',
-			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}/exam`,
+			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}/exam/${examId}`,
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,
 			},
-			params: data,
+			data: data,
 		});
 	};
 
