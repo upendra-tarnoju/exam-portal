@@ -14,8 +14,8 @@ class Exams {
 		return this.examModel.find(data);
 	};
 
-	update = (id, data) => {
-		return this.examModel.findOneAndUpdate({ examinerId: id }, data, {
+	update = (examId, data) => {
+		return this.examModel.findByIdAndUpdate(examId, data, {
 			new: true,
 		});
 	};

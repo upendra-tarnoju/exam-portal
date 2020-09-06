@@ -18,9 +18,14 @@ const exam = {
 	},
 	updateExamDetails: async (req, res) => {
 		let userId = req.user._id;
-		let examDetails = req.query;
-		let updatedExam = await examHandler.updateExam(userId, examDetails);
-		res.status(200).send(updatedExam);
+		let examDetails = req.body;
+		let examId = req.params.examId;
+		let updatedExam = await examHandler.updateExam(
+			userId,
+			examId,
+			examDetails
+		);
+		res.status(updatedExam.status).send(updatedExam.data);
 	},
 	deleteExam: async (req, res) => {
 		let userId = req.user._id;

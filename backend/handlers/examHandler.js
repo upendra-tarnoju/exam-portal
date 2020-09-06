@@ -2,11 +2,6 @@ let { exam } = require('../models');
 const bcrypt = require('bcryptjs');
 const moment = require('moment');
 
-let checkExistingExamCode = async (examinerId, examCode) => {
-	let data = await exam.get({ examCode: examCode });
-	if (data.length == 0) return false;
-	else return true;
-};
 let createExamObject = (data, userId) => {
 	let salt = bcrypt.genSaltSync(10);
 	let hash = bcrypt.hashSync(data.password, salt);
@@ -26,6 +21,14 @@ let createExamObject = (data, userId) => {
 		object.duration = data.duration;
 	}
 	return object;
+};
+
+let setErrorMessages = (key) => {
+	if (key === 'examCode') {
+		return 'Exam code already existed';
+	} else if (key === 'subject') {
+		return 'Subject already existed';
+	}
 };
 
 const exams = {
@@ -49,23 +52,36 @@ const exams = {
 		return examDetails;
 	},
 
-	updateExam: async (user, examDetails) => {
-		console.log(examDetails);
-		examDetails.startTime = new Date(
-			`${moment(examDetails.examDate).format('YYYY-MM-DD')} ${
-				examDetails.startTime
-			}`
-		);
-		examDetails.endTime = new Date(
-			`${moment(examDetails.examDate).format('YYYY-MM-DD')} ${
-				examDetails.endTime
-			}`
-		);
-
-		let examCodeCheck = await checkExistingExamCode(
-			examDetails.examinerId,
-			examDetails.examCode
-		);
+	updateExam: async (userId, examId, examDetails) => {
+		let key = Object.keys(examDetails)[0];
+		examDetails['examinerId'] = userId;
+		let updatedExam;
+		if (key === 'examCode' || key === 'subject') {
+			let existingExam = await exam.get(examDetails);
+			if (existingExam.length === 0) {
+				updatedExam = await exam
+					.update(examId, examDetails)
+					.select({ [key]: 1 });
+				return { status: 200, data: updatedExam };
+			} else {
+				return { status: 409, data: { msg: setErrorMessages(key) } };
+			}
+		}
+		// console.log(examDetails);
+		// examDetails.startTime = new Date(
+		// 	`${moment(examDetails.examDate).format('YYYY-MM-DD')} ${
+		// 		examDetails.startTime
+		// 	}`
+		// );
+		// examDetails.endTime = new Date(
+		// 	`${moment(examDetails.examDate).format('YYYY-MM-DD')} ${
+		// 		examDetails.endTime
+		// 	}`
+		// );
+		// let examCodeCheck = await checkExistingExamCode(
+		// 	examDetails.examinerId,
+		// 	examDetails.examCode
+		// );
 		// let updatedExam = await exam
 		// 	.update(user, examDetails)
 		// 	.select({ password: 0, createdAt: 0 });
