@@ -1,6 +1,12 @@
 let { exam } = require('../models');
 const bcrypt = require('bcryptjs');
+const moment = require('moment');
 
+let checkExistingExamCode = async (examinerId, examCode) => {
+	let data = await exam.get({ examCode: examCode });
+	if (data.length == 0) return false;
+	else return true;
+};
 let createExamObject = (data, userId) => {
 	let salt = bcrypt.genSaltSync(10);
 	let hash = bcrypt.hashSync(data.password, salt);
@@ -30,16 +36,40 @@ const exams = {
 
 	getAllExams: async (userId) => {
 		let allExams = await exam
-			.get(userId)
-			.select({ password: 0, createdAt: 0 });
+			.get({ examinerId: userId })
+			.select({ password: 0, createdAt: 0 })
+			.sort({ examDate: -1 });
 		return allExams;
 	},
 
-	updateExam: async (user, examDetails) => {
-		let updatedExam = await exam
-			.update(user, examDetails)
+	getParticularExam: async (examId) => {
+		let examDetails = await exam
+			.getById(examId)
 			.select({ password: 0, createdAt: 0 });
-		return updatedExam;
+		return examDetails;
+	},
+
+	updateExam: async (user, examDetails) => {
+		console.log(examDetails);
+		examDetails.startTime = new Date(
+			`${moment(examDetails.examDate).format('YYYY-MM-DD')} ${
+				examDetails.startTime
+			}`
+		);
+		examDetails.endTime = new Date(
+			`${moment(examDetails.examDate).format('YYYY-MM-DD')} ${
+				examDetails.endTime
+			}`
+		);
+
+		let examCodeCheck = await checkExistingExamCode(
+			examDetails.examinerId,
+			examDetails.examCode
+		);
+		// let updatedExam = await exam
+		// 	.update(user, examDetails)
+		// 	.select({ password: 0, createdAt: 0 });
+		// return updatedExam;
 	},
 
 	deleteExam: async (userId, examId) => {

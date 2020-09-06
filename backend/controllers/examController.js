@@ -28,6 +28,12 @@ const exam = {
 		let deletedExam = await examHandler.deleteExam(userId, examId);
 		res.status(200).send(deletedExam);
 	},
+
+	getParticularExam: async (req, res) => {
+		let examId = req.params.examId;
+		let exam = await examHandler.getParticularExam(examId);
+		res.status(200).send(exam);
+	},
 };
 
 module.exports = exam;
