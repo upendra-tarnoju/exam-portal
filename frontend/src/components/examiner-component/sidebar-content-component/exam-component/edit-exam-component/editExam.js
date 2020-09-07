@@ -5,6 +5,7 @@ import moment from 'moment';
 import ExamDetails from './accordion/examDetails';
 import ExamMarks from './accordion/examMarks';
 import validation from '../../../../../services/validation';
+import ExamTime from './accordion/examTime';
 
 class EditExam extends React.Component {
 	constructor(props) {
@@ -14,9 +15,9 @@ class EditExam extends React.Component {
 			subject: { prev: '', new: '', collapse: false, msg: '' },
 			totalMarks: { prev: '', new: '', collapse: false, msg: '' },
 			passingMarks: { prev: '', new: '', collapse: false, msg: '' },
-			examDate: { prev: '', new: '' },
-			startTime: { prev: '', new: '' },
-			endTime: { prev: '', new: '' },
+			examDate: { prev: '', new: '', collapse: false, msg: '' },
+			startTime: { prev: '', new: '', collapse: false, msg: '' },
+			endTime: { prev: '', new: '', collapse: false, msg: '' },
 			password: {
 				current: { prev: '', new: '' },
 				new: { prev: '', new: '' },
@@ -129,6 +130,12 @@ class EditExam extends React.Component {
 					updateExamDetails={this.updateExamDetails}
 				/>
 				<ExamMarks
+					state={this.state}
+					handleExamChange={this.handleExamChange}
+					handleCollapseChange={this.handleCollapseChange}
+					updateExamDetails={this.updateExamDetails}
+				/>
+				<ExamTime
 					state={this.state}
 					handleExamChange={this.handleExamChange}
 					handleCollapseChange={this.handleCollapseChange}
