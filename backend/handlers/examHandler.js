@@ -28,6 +28,8 @@ let setErrorMessages = (key) => {
 		return 'Exam code already existed';
 	} else if (key === 'subject') {
 		return 'Subject already existed';
+	} else if (key === 'passingMarks') {
+		return 'Passing marks cannot be greater than total marks';
 	}
 };
 
@@ -66,6 +68,24 @@ const exams = {
 			} else {
 				return { status: 409, data: { msg: setErrorMessages(key) } };
 			}
+		} else if (key === 'passingMarks') {
+			let existingExam = await exam
+				.getById(examId)
+				.select({ totalMarks: 1 });
+			if (existingExam.totalMarks < examDetails.passingMarks) {
+				return { status: 400, data: { msg: setErrorMessages(key) } };
+			} else {
+				updatedExam = await exam
+					.update(examId, examDetails)
+					.select({ [key]: 1 });
+
+				return { status: 200, data: updatedExam };
+			}
+		} else {
+			updatedExam = await exam
+				.update(examId, examDetails)
+				.select({ [key]: 1 });
+			return { status: 200, data: updatedExam };
 		}
 		// console.log(examDetails);
 		// examDetails.startTime = new Date(

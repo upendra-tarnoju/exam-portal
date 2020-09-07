@@ -25,6 +25,7 @@ const exam = {
 			examId,
 			examDetails
 		);
+		console.log(updatedExam);
 		res.status(updatedExam.status).send(updatedExam.data);
 	},
 	deleteExam: async (req, res) => {
