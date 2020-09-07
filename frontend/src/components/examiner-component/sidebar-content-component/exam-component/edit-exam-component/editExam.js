@@ -3,6 +3,8 @@ import styles from '../exam.module.css';
 import ExaminerService from '../../../../../services/examinerApi';
 import moment from 'moment';
 import ExamDetails from './accordion/examDetails';
+import ExamMarks from './accordion/examMarks';
+import validation from '../../../../../services/validation';
 
 class EditExam extends React.Component {
 	constructor(props) {
@@ -10,8 +12,8 @@ class EditExam extends React.Component {
 		this.state = {
 			examCode: { prev: '', new: '', collapse: false, msg: '' },
 			subject: { prev: '', new: '', collapse: false, msg: '' },
-			totalMarks: { prev: '', new: '' },
-			passingMarks: { prev: '', new: '' },
+			totalMarks: { prev: '', new: '', collapse: false, msg: '' },
+			passingMarks: { prev: '', new: '', collapse: false, msg: '' },
 			examDate: { prev: '', new: '' },
 			startTime: { prev: '', new: '' },
 			endTime: { prev: '', new: '' },
@@ -59,23 +61,10 @@ class EditExam extends React.Component {
 			let startTime = moment(exam.startTime).format('HH:MM');
 			let endTime = moment(exam.endTime).format('HH:MM');
 			this.setState({
-				examCode: {
-					prev: exam.examCode,
-					new: exam.examCode,
-					collapse: false,
-					msg: '',
-				},
-				subject: {
-					prev: exam.subject,
-					new: exam.subject,
-					collapse: false,
-					msg: '',
-				},
+				examCode: { prev: exam.examCode, new: exam.examCode },
+				subject: { prev: exam.subject, new: exam.subject },
 				totalMarks: { prev: exam.totalMarks, new: exam.totalMarks },
-				passingMarks: {
-					prev: exam.passingMarks,
-					new: exam.passingMarks,
-				},
+				passingMarks: { prev: exam.passingMarks, new: exam.passingMarks },
 				examDate: { prev: examDate, new: examDate },
 				startTime: { prev: startTime, new: startTime },
 				endTime: { prev: endTime, new: endTime },
@@ -97,25 +86,36 @@ class EditExam extends React.Component {
 	updateExamDetails(data) {
 		let key = Object.keys(data)[0];
 		let examId = this.props.match.params.examId;
-		this.examinerService
-			.updateExam(examId, data)
-			.then((response) => {
-				this.setState({
-					[key]: {
-						prev: response.data[key],
-						new: response.data[key],
-						collapse: false,
-					},
+		let validationState = validation.updateExamFields(data);
+		console.log(validationState);
+		if (validationState.error === '') {
+			this.examinerService
+				.updateExam(examId, data)
+				.then((response) => {
+					this.setState({
+						[key]: {
+							prev: response.data[key],
+							new: response.data[key],
+							collapse: false,
+						},
+					});
+				})
+				.catch((error) => {
+					this.setState((prevState) => ({
+						[key]: {
+							...prevState[key],
+							msg: error.response.data.msg,
+						},
+					}));
 				});
-			})
-			.catch((error) => {
-				this.setState((prevState) => ({
-					[key]: {
-						...prevState[key],
-						msg: error.response.data.msg,
-					},
-				}));
-			});
+		} else {
+			this.setState((prevState) => ({
+				[key]: {
+					...prevState[key],
+					msg: validationState.error,
+				},
+			}));
+		}
 	}
 
 	render() {
@@ -123,6 +123,12 @@ class EditExam extends React.Component {
 			<div className='container w-50 my-5'>
 				<h3 className={`text-center ${styles.heading}`}>Edit exam</h3>
 				<ExamDetails
+					state={this.state}
+					handleExamChange={this.handleExamChange}
+					handleCollapseChange={this.handleCollapseChange}
+					updateExamDetails={this.updateExamDetails}
+				/>
+				<ExamMarks
 					state={this.state}
 					handleExamChange={this.handleExamChange}
 					handleCollapseChange={this.handleCollapseChange}

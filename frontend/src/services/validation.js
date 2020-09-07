@@ -221,41 +221,18 @@ const examDurationFields = (temp) => {
 };
 
 const updateExamFields = (temp) => {
-	let errorObject = {};
-	let error;
-	let keys = Object.keys(temp);
-	for (let index in keys) {
-		let key = keys[index];
-		if (
-			key === 'subject' ||
-			key === 'examCode' ||
-			key === 'totalMarks' ||
-			key === 'passingMarks'
-		) {
-			error = checkEmptyField(temp[key]);
-			if (error) {
-				errorObject[key] = `${error} ${key}`;
-			} else errorObject[key] = '';
-		}
-		if (key === 'passingMarks') {
-			if (errorObject[key] === '') {
-				errorObject[key] = validatePassingMarks(temp);
-			}
-		} else if (key === 'examDate') {
-			errorObject[key] = validateExamDate(temp);
-		} else if (key === 'startTime' || key === 'endTime') {
-			errorObject[key] = validateExamTime(temp)[key];
-		}
-	}
+	let key = Object.keys(temp)[0];
+	switch (key) {
+		case 'subject':
+		case 'examCode':
+		case 'totalMarks':
+			temp.error = checkEmptyField(temp[key]);
+			return temp;
 
-	let values = Object.values(errorObject);
-	for (let index in values) {
-		if (values[index].length > 1) {
-			error = true;
-			break;
-		}
+		default:
+			temp.error = '';
+			return temp;
 	}
-	return { errorObject: errorObject, error: error };
 };
 
 export default {

@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
 
-const ExamDetails = ({
+const ExamMarks = ({
 	state,
 	handleExamChange,
 	handleCollapseChange,
@@ -17,33 +17,34 @@ const ExamDetails = ({
 					variant='link'
 					eventKey='0'
 				>
-					Exam details
+					Exam marks
 				</Accordion.Toggle>
 				<Accordion.Collapse eventKey='0'>
 					<Card.Body>
 						<div className='container'>
 							<div className='d-flex justify-content-between flex-row'>
-								<label>Subject</label>
-								<p>{state.subject.prev}</p>
+								<label>Total marks</label>
+								<p>{state.totalMarks.prev}</p>
 								<p
 									className='cursor-pointer edit-text'
-									onClick={() => handleCollapseChange('subject')}
+									onClick={() => handleCollapseChange('totalMarks')}
 								>
 									Edit
 								</p>
 							</div>
-							<Collapse in={state.subject.collapse}>
+							<Collapse in={state.totalMarks.collapse}>
 								<div className='row'>
 									<div className='col-md-10'>
 										<input
 											type='text'
-											name='subject'
+											name='totalMarks'
+											maxLength={4}
 											className='w-100 form-control mr-2'
-											value={state.subject.new}
+											value={state.totalMarks.new}
 											onChange={handleExamChange}
 										/>
-										{state.subject.msg ? (
-											<span>{state.subject.msg}</span>
+										{state.totalMarks.msg ? (
+											<span>{state.totalMarks.msg}</span>
 										) : null}
 									</div>
 									<div className='col-md-2'>
@@ -51,10 +52,11 @@ const ExamDetails = ({
 											type='button'
 											className='btn btn-primary'
 											onClick={
-												state.subject.new != null
+												state.totalMarks.new != null
 													? () =>
 															updateExamDetails({
-																subject: state.subject.new,
+																totalMarks:
+																	state.totalMarks.new,
 															})
 													: null
 											}
@@ -65,27 +67,28 @@ const ExamDetails = ({
 								</div>
 							</Collapse>
 							<div className='d-flex justify-content-between flex-row mt-2'>
-								<label>Exam code</label>
-								<p>{state.examCode.prev}</p>
+								<label>Passing marks</label>
+								<p>{state.passingMarks.prev}</p>
 								<p
 									className='cursor-pointer edit-text'
-									onClick={() => handleCollapseChange('examCode')}
+									onClick={() => handleCollapseChange('passingMarks')}
 								>
 									Edit
 								</p>
 							</div>
-							<Collapse in={state.examCode.collapse}>
+							<Collapse in={state.passingMarks.collapse}>
 								<div className='row'>
 									<div className='col-md-10'>
 										<input
 											type='text'
-											name='examCode'
+											name='passingMarks'
+											maxLength={4}
 											className='w-100 form-control mr-2'
-											value={state.examCode.new}
+											value={state.passingMarks.new}
 											onChange={handleExamChange}
 										/>
-										{state.examCode.msg ? (
-											<span>{state.examCode.msg}</span>
+										{state.passingMarks.msg ? (
+											<span>{state.passingMarks.msg}</span>
 										) : null}
 									</div>
 									<div className='col-md-2'>
@@ -93,10 +96,11 @@ const ExamDetails = ({
 											type='button'
 											className='btn btn-primary'
 											onClick={
-												state.examCode.new != null
+												state.passingMarks.new != null
 													? () =>
 															updateExamDetails({
-																examCode: state.examCode.new,
+																passingMarks:
+																	state.passingMarks.new,
 															})
 													: null
 											}
@@ -114,4 +118,4 @@ const ExamDetails = ({
 	);
 };
 
-export default ExamDetails;
+export default ExamMarks;
