@@ -6,6 +6,7 @@ import ExamDetails from './accordion/examDetails';
 import ExamMarks from './accordion/examMarks';
 import validation from '../../../../../services/validation';
 import ExamTime from './accordion/examTime';
+import ExamPassword from './accordion/examPassword';
 
 class EditExam extends React.Component {
 	constructor(props) {
@@ -18,16 +19,16 @@ class EditExam extends React.Component {
 			examDate: { prev: '', new: '', collapse: false, msg: '' },
 			startTime: { prev: '', new: '', collapse: false, msg: '' },
 			endTime: { prev: '', new: '', collapse: false, msg: '' },
-			password: {
-				current: { prev: '', new: '' },
-				new: { prev: '', new: '' },
-				confirm: { prev: '', new: '' },
-			},
+			password: { collapse: false },
+			current: { value: '', msg: '' },
+			new: { value: '', msg: '' },
+			reTypeNew: { value: '', msg: '' },
 		};
 		this.handleExamChange = this.handleExamChange.bind(this);
 		this.handleCollapseChange = this.handleCollapseChange.bind(this);
 		this.updateExamDetails = this.updateExamDetails.bind(this);
 		this.examinerService = new ExaminerService();
+		this.handlePasswordChange = this.handlePasswordChange.bind(this);
 	}
 
 	handleExamChange(event) {
@@ -52,6 +53,17 @@ class EditExam extends React.Component {
 		}
 	}
 
+	handlePasswordChange(event) {
+		let key = event.target.name;
+		let value = event.target.value;
+		this.setState((prevState) => ({
+			[key]: {
+				...prevState[key],
+				value: value,
+			},
+		}));
+	}
+
 	componentDidMount() {
 		let examId = this.props.match.params.examId;
 		this.examinerService.getParticularExam(examId).then((res) => {
@@ -74,21 +86,30 @@ class EditExam extends React.Component {
 	}
 
 	handleCollapseChange(key) {
-		this.setState((prevState) => ({
-			[key]: {
-				...prevState[key],
-				collapse: !prevState[key].collapse,
-				new: prevState[key].collapse === true ? prevState[key].prev : null,
-				msg: '',
-			},
-		}));
+		if (key === 'password') {
+			this.setState((prevState) => ({
+				[key]: {
+					collapse: !prevState[key].collapse,
+				},
+			}));
+		} else {
+			this.setState((prevState) => ({
+				[key]: {
+					...prevState[key],
+					collapse: !prevState[key].collapse,
+					new:
+						prevState[key].collapse === true ? prevState[key].prev : null,
+					msg: '',
+				},
+			}));
+		}
 	}
 
 	updateExamDetails(data) {
 		let key = Object.keys(data)[0];
 		let examId = this.props.match.params.examId;
 		let validationState = validation.updateExamFields(data);
-		console.log(validationState);
+
 		if (validationState.error === '') {
 			this.examinerService
 				.updateExam(examId, data)
@@ -138,6 +159,12 @@ class EditExam extends React.Component {
 				<ExamTime
 					state={this.state}
 					handleExamChange={this.handleExamChange}
+					handleCollapseChange={this.handleCollapseChange}
+					updateExamDetails={this.updateExamDetails}
+				/>
+				<ExamPassword
+					state={this.state}
+					handlePasswordChange={this.handlePasswordChange}
 					handleCollapseChange={this.handleCollapseChange}
 					updateExamDetails={this.updateExamDetails}
 				/>

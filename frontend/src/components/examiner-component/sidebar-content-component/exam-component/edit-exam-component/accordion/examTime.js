@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
+import Moment from 'react-moment';
 
 const ExamTime = ({
 	state,
@@ -24,7 +25,11 @@ const ExamTime = ({
 						<div className='container'>
 							<div className='d-flex justify-content-between flex-row'>
 								<label>Exam date</label>
-								<p>{state.examDate.prev}</p>
+								<p>
+									<Moment format='MMM Do, YYYY'>
+										{state.examDate.prev}
+									</Moment>
+								</p>
 								<p
 									className='cursor-pointer edit-text'
 									onClick={() => handleCollapseChange('examDate')}
@@ -67,7 +72,11 @@ const ExamTime = ({
 							</Collapse>
 							<div className='d-flex justify-content-between flex-row mt-2'>
 								<label>Start time</label>
-								<p>{state.startTime.prev}</p>
+								<p>
+									<Moment parse='HH:mm' format='hh:mm A'>
+										{state.startTime.prev}
+									</Moment>
+								</p>
 								<p
 									className='cursor-pointer edit-text'
 									onClick={() => handleCollapseChange('startTime')}
@@ -110,7 +119,11 @@ const ExamTime = ({
 							</Collapse>
 							<div className='d-flex justify-content-between flex-row mt-2'>
 								<label>End time</label>
-								<p>{state.endTime.prev}</p>
+								<p>
+									<Moment parse='HH:mm' format='hh:mm A'>
+										{state.endTime.prev}
+									</Moment>
+								</p>
 								<p
 									className='cursor-pointer edit-text'
 									onClick={() => handleCollapseChange('endTime')}

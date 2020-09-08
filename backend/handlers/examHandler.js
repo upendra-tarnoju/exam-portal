@@ -78,34 +78,25 @@ const exams = {
 				updatedExam = await exam
 					.update(examId, examDetails)
 					.select({ [key]: 1 });
-
 				return { status: 200, data: updatedExam };
 			}
+		} else if (key === 'startTime' || key === 'endTime') {
+			let existingExam = await exam.getById(examId).select({ examDate: 1 });
+			examDetails[key] = new Date(
+				`${moment(existingExam.examDate).format('YYYY-MM-DD')} ${
+					examDetails[key]
+				}`
+			);
+			updatedExam = await exam
+				.update(examId, examDetails)
+				.select({ [key]: 1 });
+			return { status: 200, data: updatedExam };
 		} else {
 			updatedExam = await exam
 				.update(examId, examDetails)
 				.select({ [key]: 1 });
 			return { status: 200, data: updatedExam };
 		}
-		// console.log(examDetails);
-		// examDetails.startTime = new Date(
-		// 	`${moment(examDetails.examDate).format('YYYY-MM-DD')} ${
-		// 		examDetails.startTime
-		// 	}`
-		// );
-		// examDetails.endTime = new Date(
-		// 	`${moment(examDetails.examDate).format('YYYY-MM-DD')} ${
-		// 		examDetails.endTime
-		// 	}`
-		// );
-		// let examCodeCheck = await checkExistingExamCode(
-		// 	examDetails.examinerId,
-		// 	examDetails.examCode
-		// );
-		// let updatedExam = await exam
-		// 	.update(user, examDetails)
-		// 	.select({ password: 0, createdAt: 0 });
-		// return updatedExam;
 	},
 
 	deleteExam: async (userId, examId) => {

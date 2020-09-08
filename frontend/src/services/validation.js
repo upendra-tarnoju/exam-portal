@@ -87,6 +87,28 @@ let validateExamDuration = (temp) => {
 	return temp;
 };
 
+let validateExamPassword = (temp) => {
+	let error = '';
+	temp['current'].msg = checkEmptyField(temp['current'].value);
+	temp['new'].msg = checkEmptyField(temp['new'].value);
+	temp['reTypeNew'].msg = checkEmptyField(temp['reTypeNew'].value);
+	if (temp['current'].msg || temp['new'].msg || temp['reTypeNew'].msg) {
+		error = 'error';
+	}
+	if (temp['new'].value !== '' && temp['reTypeNew'].value !== '') {
+		if (temp['new'].value.length < 6) {
+			error = 'error';
+			temp['new'].msg = 'Minimum password length should be 6';
+		} else error = '';
+		if (temp['new'].value !== temp['reTypeNew'].value) {
+			error = 'error';
+			temp['reTypeNew'].msg = 'Password does not matched';
+		} else error = '';
+	}
+	temp['error'] = error;
+	return temp;
+};
+
 let validateFields = (key, temp) => {
 	switch (key) {
 		case 'subject':
@@ -227,6 +249,10 @@ const updateExamFields = (temp) => {
 		case 'examCode':
 		case 'totalMarks':
 			temp.error = checkEmptyField(temp[key]);
+			return temp;
+
+		case 'password':
+			temp = validateExamPassword(temp.password);
 			return temp;
 
 		default:
