@@ -19,7 +19,7 @@ class EditExam extends React.Component {
 			examDate: { prev: '', new: '', collapse: false, msg: '' },
 			startTime: { prev: '', new: '', collapse: false, msg: '' },
 			endTime: { prev: '', new: '', collapse: false, msg: '' },
-			password: { collapse: false },
+			password: { collapse: false, msg: '' },
 			current: { value: '', msg: '' },
 			new: { value: '', msg: '' },
 			reTypeNew: { value: '', msg: '' },
@@ -131,12 +131,29 @@ class EditExam extends React.Component {
 					}));
 				});
 		} else {
-			this.setState((prevState) => ({
-				[key]: {
-					...prevState[key],
-					msg: validationState.error,
-				},
-			}));
+			if (key !== 'password') {
+				this.setState((prevState) => ({
+					[key]: {
+						...prevState[key],
+						msg: validationState.error,
+					},
+				}));
+			} else {
+				this.setState((prevState) => ({
+					current: {
+						...prevState.current,
+						msg: validationState.current.msg,
+					},
+					new: {
+						...prevState.new,
+						msg: validationState.new.msg,
+					},
+					reTypeNew: {
+						...prevState.reTypeNew,
+						msg: validationState.reTypeNew.msg,
+					},
+				}));
+			}
 		}
 	}
 

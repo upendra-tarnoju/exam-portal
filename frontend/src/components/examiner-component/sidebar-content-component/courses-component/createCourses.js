@@ -11,14 +11,8 @@ class CreateCourses extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			name: {
-				value: '',
-				error: '',
-			},
-			description: {
-				value: '',
-				error: '',
-			},
+			name: { value: '', error: '' },
+			description: { value: '', error: '' },
 			error: '',
 		};
 		this.handleChange = this.handleChange.bind(this);
@@ -50,8 +44,7 @@ class CreateCourses extends Component {
 
 	handleSubmit = (event) => {
 		event.preventDefault();
-		let validationMethod = 'empty_fields';
-		let validationState = validateInputs(this.state, validationMethod);
+		let validationState = validateInputs.courseFields(this.state);
 		if (!validationState.error) {
 			if (this.props.name === '' && this.props.description === '') {
 				this.examinerService

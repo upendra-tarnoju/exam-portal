@@ -35,7 +35,6 @@ let validateExamDate = (temp) => {
 		(currentDate.getMonth() + 1)
 	).slice(-2)}-${('0' + currentDate.getDate()).slice(-2)}`;
 	if (selectedDate < currentDate) {
-		console.log('error');
 		return "* Selected date cannot be less than today's date";
 	}
 	return '';
@@ -261,10 +260,23 @@ const updateExamFields = (temp) => {
 	}
 };
 
+const courseFields = (temp) => {
+	let error = false;
+
+	temp.name.error = checkEmptyField(temp.name.value);
+	temp.description.error = checkEmptyField(temp.description.value);
+
+	if (temp.name.error !== '' || temp.description.error !== '') {
+		error = true;
+	}
+	return { tempState: temp, error: error };
+};
+
 export default {
 	signUpFields,
 	loginFields,
 	examDetailFields,
 	examDurationFields,
 	updateExamFields,
+	courseFields,
 };

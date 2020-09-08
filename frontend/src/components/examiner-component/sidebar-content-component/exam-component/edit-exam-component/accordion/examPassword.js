@@ -23,7 +23,14 @@ const ExamPassword = ({
 					<Card.Body>
 						<div className='container'>
 							<div className='d-flex justify-content-between flex-row'>
-								<label>Password</label>
+								<label>
+									Password{' '}
+									{state.password.msg ? (
+										<span className='text-danger'>
+											* {state.password.msg}
+										</span>
+									) : null}
+								</label>
 								<p
 									className='cursor-pointer edit-text'
 									onClick={() => handleCollapseChange('password')}
@@ -34,7 +41,14 @@ const ExamPassword = ({
 							<Collapse in={state.password.collapse}>
 								<form>
 									<div className='form-group'>
-										<label>Current</label>
+										<label>
+											Current{' '}
+											{state.current.msg ? (
+												<span className='text-danger'>
+													{state.current.msg}
+												</span>
+											) : null}
+										</label>
 										<input
 											type='password'
 											name='current'
@@ -44,7 +58,14 @@ const ExamPassword = ({
 										/>
 									</div>
 									<div className='form-group'>
-										<label>New</label>
+										<label>
+											New{' '}
+											{state.new.msg ? (
+												<span className='text-danger'>
+													{state.new.msg}
+												</span>
+											) : null}
+										</label>
 										<input
 											type='password'
 											name='new'
@@ -54,7 +75,14 @@ const ExamPassword = ({
 										/>
 									</div>
 									<div className='form-group'>
-										<label>Re-type new</label>
+										<label>
+											Re-type new{' '}
+											{state.reTypeNew.msg ? (
+												<span className='text-danger'>
+													{state.reTypeNew.msg}
+												</span>
+											) : null}
+										</label>
 										<input
 											type='password'
 											name='reTypeNew'
