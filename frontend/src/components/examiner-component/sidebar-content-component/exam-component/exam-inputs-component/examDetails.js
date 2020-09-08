@@ -65,7 +65,7 @@ class ExamDetails extends Component {
 
 	handleTypeAHeadChange = (selected) => {
 		this.setState({ selected });
-		this.props.setFieldsValues('course', selected.id);
+		this.props.setFieldsValues('course', selected[0].id);
 	};
 
 	render() {

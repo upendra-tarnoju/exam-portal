@@ -2,6 +2,8 @@ import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
 
+import styles from '../../exam.module.css';
+
 const ExamPassword = ({
 	state,
 	handlePasswordChange,
@@ -12,7 +14,7 @@ const ExamPassword = ({
 		<Accordion defaultActiveKey='0'>
 			<Card className='mb-2'>
 				<Accordion.Toggle
-					className='bg-dark text-white'
+					className={`bg-dark text-white ${styles.accordionHeading}`}
 					as={Card.Header}
 					variant='link'
 					eventKey='0'
@@ -23,7 +25,7 @@ const ExamPassword = ({
 					<Card.Body>
 						<div className='container'>
 							<div className='d-flex justify-content-between flex-row'>
-								<label>
+								<label className={`mb-0 ${styles.editExamHeading}`}>
 									Password{' '}
 									{state.password.msg ? (
 										<span className='text-danger'>
