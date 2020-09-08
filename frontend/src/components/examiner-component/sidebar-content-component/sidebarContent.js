@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Route, withRouter, Switch } from 'react-router-dom';
 
 import Courses from './courses-component/courses';
 import Exam from './exam-component/exam';
 import * as ActionType from '../../../action';
-import { Route, withRouter, Switch } from 'react-router-dom';
-
 import EditExam from './exam-component/edit-exam-component/editExam';
+import Questions from './questions-component/questions';
 
 class SidebarContent extends Component {
 	constructor(props) {
@@ -40,14 +40,9 @@ class SidebarContent extends Component {
 						path='/examiner/exam/:examId'
 						component={EditExam}
 					></Route>
-
 					<Route path='/examiner/course' component={Courses}></Route>
+					<Route path='/examiner/questions' component={Questions}></Route>
 				</Switch>
-				{/* {this.props.panelWindow === 'manageCourse' ? (
-					<Courses />
-				) : this.props.panelWindow === 'manageExam' ? (
-					<Exam />
-				) : null} */}
 			</div>
 		);
 	}
@@ -55,7 +50,6 @@ class SidebarContent extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		panelWindow: state.examinerReducer.examinerTab,
 		panelHeading: state.examinerReducer.examinerHeading,
 		toggle: state.adminReducer.sidebarToggle,
 	};
