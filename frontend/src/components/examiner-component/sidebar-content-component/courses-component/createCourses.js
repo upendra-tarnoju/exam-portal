@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import Modal from 'react-bootstrap/Modal';
-import styles from './courses.module.css';
+import { connect } from 'react-redux';
+
 import validateInputs from '../../../../services/validation';
 import ExaminerService from '../../../../services/examinerApi';
 import * as ActionTypes from '../../../../action';
-import { connect } from 'react-redux';
+import styles from './courses.module.css';
 
 class CreateCourses extends Component {
 	constructor(props) {

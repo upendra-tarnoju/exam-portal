@@ -7,7 +7,4 @@ export const SET_EXAM_DETAILS = 'set_exam_details';
 export const SET_EXAM_DETAILS_ERRORS = 'set_exam_details_errors';
 export const COLLAPSE_SIDEBAR = 'collapse_sidebar';
 export const CLEAR_EXAM_DETAILS_FIELDS = 'clear_exam_details_fields';
-export const EDIT_EXAM_STATUS = 'edit_exam_status';
 export const SET_EXAM_LIST = 'set_exam_list';
-export const EDIT_EXAM_INPUTS = 'edit_exam_inputs';
-export const SET_EXAM_INPUTS = 'set_exam_inputs';

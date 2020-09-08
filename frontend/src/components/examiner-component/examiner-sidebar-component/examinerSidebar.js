@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-// import queryString from 'query-string';
 
 import UserService from '../../../services/userApi';
 import * as actionTypes from '../../../action';
@@ -41,7 +40,6 @@ class ExaminerSidebar extends Component {
 					<Link
 						to='/examiner/exam'
 						className={`list-group-item list-group-item-action bg-dark adminIcon ${
-							// this.props.examinerTab === 'manageExam'
 							this.state.selectedTab === 'exam'
 								? 'text-white'
 								: 'text-white-50'
@@ -76,12 +74,6 @@ class ExaminerSidebar extends Component {
 	}
 }
 
-const mapStateToProps = (state) => {
-	return {
-		examinerTab: state.examinerReducer.examinerTab,
-	};
-};
-
 const mapDispatchToProps = (dispatch) => {
 	return {
 		setAuthenticatedUser: (authenticatedState) => {
@@ -93,6 +85,4 @@ const mapDispatchToProps = (dispatch) => {
 	};
 };
 
-export default withRouter(
-	connect(mapStateToProps, mapDispatchToProps)(ExaminerSidebar)
-);
+export default withRouter(connect(null, mapDispatchToProps)(ExaminerSidebar));
