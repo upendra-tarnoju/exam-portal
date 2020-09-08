@@ -3,12 +3,11 @@ import { connect } from 'react-redux';
 import Table from 'react-bootstrap/Table';
 
 import ExaminerService from '../../../../services/examinerApi';
-import ExamDetails from './examDetails';
-import ExamPeriod from './examPeriod';
+import ExamDetails from './exam-inputs-component/examDetails';
+import ExamPeriod from './exam-inputs-component/examPeriod';
 import style from './exam.module.css';
 import ExamTable from './examTable';
 import * as ActionTypes from '../../../../action';
-import validate from '../../../../services/validation';
 
 class Exam extends Component {
 	constructor(props) {
@@ -19,7 +18,6 @@ class Exam extends Component {
 			inputErrors: {},
 		};
 		this.examinerService = new ExaminerService();
-		this.updateExam = this.updateExam.bind(this);
 		this.handleStates = this.handleStates.bind(this);
 	}
 
@@ -36,19 +34,6 @@ class Exam extends Component {
 		this.examinerService.getAllExams().then((res) => {
 			this.props.setExamList(res.data);
 		});
-	}
-	updateExam() {
-		let validation = validate.updateExamFields(this.props.inputs);
-		this.setState({ inputErrors: validation.errorObject });
-		if (!validation.error) {
-			this.examinerService.updateExam(this.props.inputs).then((response) => {
-				let prevExams = this.props.examsList;
-				let index = this.props.selectedExamIndex;
-				prevExams[index] = response.data;
-				this.props.editExam(false, '');
-				this.props.setExamList(prevExams);
-			});
-		}
 	}
 
 	render() {
@@ -115,17 +100,6 @@ class Exam extends Component {
 							</thead>
 							<tbody>{allExams}</tbody>
 						</Table>
-						{this.props.editExamStatus ? (
-							<div className='d-flex justify-content-end'>
-								<button
-									type='button'
-									className='btn btn-primary mr-2'
-									onClick={this.updateExam}
-								>
-									Update
-								</button>
-							</div>
-						) : null}
 					</div>
 				)}
 			</div>
@@ -135,7 +109,6 @@ class Exam extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		editExamStatus: state.examReducer.editExam,
 		selectedExamIndex: state.examReducer.selectedExamIndex,
 		examsList: state.examReducer.examsList,
 		inputs: state.examReducer.editExamInputs,
@@ -153,13 +126,6 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({
 				type: ActionTypes.SET_EXAM_LIST,
 				examList: examList,
-			});
-		},
-		editExam: (status, index) => {
-			dispatch({
-				type: ActionTypes.EDIT_EXAM_STATUS,
-				status: status,
-				index: index,
 			});
 		},
 	};

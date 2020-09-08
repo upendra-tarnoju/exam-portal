@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import queryString from 'query-string';
 
 import UserService from '../../../services/userApi';
 import * as actionTypes from '../../../action';
@@ -9,23 +8,18 @@ import * as actionTypes from '../../../action';
 class ExaminerSidebar extends Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			selectedTab: '',
+		};
 		this.userService = new UserService();
 	}
 
-	handleExaminerQueryParams(params) {
-		if (params.tab === 'exam') {
-			this.props.setExaminerTab('manageExam', 'Manage exam');
-		} else if (params.tab === 'course') {
-			this.props.setExaminerTab('manageCourse', 'Manage course');
-		}
-	}
-
 	componentDidMount() {
-		let params = queryString.parse(this.props.location.search);
-		this.handleExaminerQueryParams(params);
+		let pathName = this.props.location.pathname.split('/')[2];
+		this.setState({ selectedTab: pathName });
 		this.props.history.listen((location, action) => {
-			let params = queryString.parse(location.search);
-			this.handleExaminerQueryParams(params);
+			let pathName = location.pathname.split('/')[2];
+			this.setState({ selectedTab: pathName });
 		});
 	}
 
@@ -44,9 +38,9 @@ class ExaminerSidebar extends Component {
 				</div>
 				<div className='list-group list-group-flush'>
 					<Link
-						to='/examiner?tab=exam'
+						to='/examiner/exam'
 						className={`list-group-item list-group-item-action bg-dark adminIcon ${
-							this.props.examinerTab === 'manageExam'
+							this.state.selectedTab === 'exam'
 								? 'text-white'
 								: 'text-white-50'
 						}`}
@@ -54,9 +48,9 @@ class ExaminerSidebar extends Component {
 						<i className='fa fa-book'></i> Exam
 					</Link>
 					<Link
-						to='/examiner?tab=course'
+						to='/examiner/course'
 						className={`list-group-item list-group-item-action bg-dark adminIcon ${
-							this.props.examinerTab === 'manageCourse'
+							this.state.selectedTab === 'course'
 								? 'text-white'
 								: 'text-white-50'
 						}`}
@@ -80,12 +74,6 @@ class ExaminerSidebar extends Component {
 	}
 }
 
-const mapStateToProps = (state) => {
-	return {
-		examinerTab: state.examinerReducer.examinerTab,
-	};
-};
-
 const mapDispatchToProps = (dispatch) => {
 	return {
 		setAuthenticatedUser: (authenticatedState) => {
@@ -94,16 +82,7 @@ const mapDispatchToProps = (dispatch) => {
 				authenticated: authenticatedState,
 			});
 		},
-		setExaminerTab: (tabValue, heading) => {
-			dispatch({
-				type: actionTypes.SET_EXAMINER_TAB,
-				tab: tabValue,
-				heading: heading,
-			});
-		},
 	};
 };
 
-export default withRouter(
-	connect(mapStateToProps, mapDispatchToProps)(ExaminerSidebar)
-);
+export default withRouter(connect(null, mapDispatchToProps)(ExaminerSidebar));

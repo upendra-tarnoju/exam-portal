@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { Typeahead } from 'react-bootstrap-typeahead';
 
-import * as ActionTypes from '../../../../action';
-import validate from '../../../../services/validation';
-import ExaminerService from '../../../../services/examinerApi';
+import * as ActionTypes from '../../../../../action';
+import validate from '../../../../../services/validation';
+import ExaminerService from '../../../../../services/examinerApi';
 
 class ExamDetails extends Component {
 	constructor(props) {

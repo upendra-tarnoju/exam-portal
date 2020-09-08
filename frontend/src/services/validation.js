@@ -87,6 +87,28 @@ let validateExamDuration = (temp) => {
 	return temp;
 };
 
+let validateExamPassword = (temp) => {
+	let error = '';
+	temp['current'].msg = checkEmptyField(temp['current'].value);
+	temp['new'].msg = checkEmptyField(temp['new'].value);
+	temp['reTypeNew'].msg = checkEmptyField(temp['reTypeNew'].value);
+	if (temp['current'].msg || temp['new'].msg || temp['reTypeNew'].msg) {
+		error = 'error';
+	}
+	if (temp['new'].value !== '' && temp['reTypeNew'].value !== '') {
+		if (temp['new'].value.length < 6) {
+			error = 'error';
+			temp['new'].msg = 'Minimum password length should be 6';
+		} else error = '';
+		if (temp['new'].value !== temp['reTypeNew'].value) {
+			error = 'error';
+			temp['reTypeNew'].msg = 'Password does not matched';
+		} else error = '';
+	}
+	temp['error'] = error;
+	return temp;
+};
+
 let validateFields = (key, temp) => {
 	switch (key) {
 		case 'subject':
@@ -221,41 +243,22 @@ const examDurationFields = (temp) => {
 };
 
 const updateExamFields = (temp) => {
-	let errorObject = {};
-	let error;
-	let keys = Object.keys(temp);
-	for (let index in keys) {
-		let key = keys[index];
-		if (
-			key === 'subject' ||
-			key === 'examCode' ||
-			key === 'totalMarks' ||
-			key === 'passingMarks'
-		) {
-			error = checkEmptyField(temp[key]);
-			if (error) {
-				errorObject[key] = `${error} ${key}`;
-			} else errorObject[key] = '';
-		}
-		if (key === 'passingMarks') {
-			if (errorObject[key] === '') {
-				errorObject[key] = validatePassingMarks(temp);
-			}
-		} else if (key === 'examDate') {
-			errorObject[key] = validateExamDate(temp);
-		} else if (key === 'startTime' || key === 'endTime') {
-			errorObject[key] = validateExamTime(temp)[key];
-		}
-	}
+	let key = Object.keys(temp)[0];
+	switch (key) {
+		case 'subject':
+		case 'examCode':
+		case 'totalMarks':
+			temp.error = checkEmptyField(temp[key]);
+			return temp;
 
-	let values = Object.values(errorObject);
-	for (let index in values) {
-		if (values[index].length > 1) {
-			error = true;
-			break;
-		}
+		case 'password':
+			temp = validateExamPassword(temp.password);
+			return temp;
+
+		default:
+			temp.error = '';
+			return temp;
 	}
-	return { errorObject: errorObject, error: error };
 };
 
 export default {

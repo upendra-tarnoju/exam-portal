@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import styles from './courses.module.css';
+import { connect } from 'react-redux';
+
+import * as ActionTypes from '../../../../action';
 import CreateCourses from './createCourses';
 import Alert from 'react-bootstrap/Alert';
-import * as ActionTypes from '../../../../action';
-import { connect } from 'react-redux';
 import ExaminerService from '../../../../services/examinerApi';
 
 class Courses extends Component {

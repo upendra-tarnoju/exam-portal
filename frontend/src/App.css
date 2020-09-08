@@ -32,7 +32,12 @@
 	cursor: pointer;
 	color: white !important;
 }
+
 .panelHeading {
 	font-family: 'Raleway';
 	font-size: 20px;
+}
+
+.edit-text:hover {
+	color: #007bff;
 }

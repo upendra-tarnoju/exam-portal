@@ -1,6 +1,4 @@
-import moment from 'moment';
 const initialState = {
-	editExam: false,
 	selectedExamIndex: '',
 	examsList: [],
 	examDetails: {
@@ -14,15 +12,6 @@ const initialState = {
 			examCode: '',
 			password: '',
 		},
-	},
-	editExamInputs: {
-		subject: '',
-		examCode: '',
-		examDate: '',
-		totalMarks: '',
-		passingMarks: '',
-		startTime: '',
-		endTime: '',
 	},
 };
 
@@ -54,31 +43,10 @@ const examReducers = (state = initialState, action) => {
 				subject: '',
 			},
 		};
-	} else if (action.type === 'edit_exam_status') {
-		return {
-			...state,
-			editExam: action.status,
-			selectedExamIndex: action.index,
-		};
 	} else if (action.type === 'set_exam_list') {
 		return {
 			...state,
 			examsList: action.examList,
-		};
-	} else if (action.type === 'edit_exam_inputs') {
-		return {
-			...state,
-			editExamInputs: {
-				...state.editExamInputs,
-				[action.key]: action.value,
-			},
-		};
-	} else if (action.type === 'set_exam_inputs') {
-		action.inputs.startTime = moment(action.inputs.startTime).format('HH:MM');
-		action.inputs.endTime = moment(action.inputs.endTime).format('HH:MM');
-		return {
-			...state,
-			editExamInputs: action.inputs,
 		};
 	}
 	return state;

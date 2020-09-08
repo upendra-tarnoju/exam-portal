@@ -4,6 +4,9 @@ import { connect } from 'react-redux';
 import Courses from './courses-component/courses';
 import Exam from './exam-component/exam';
 import * as ActionType from '../../../action';
+import { Route, withRouter, Switch } from 'react-router-dom';
+
+import EditExam from './exam-component/edit-exam-component/editExam';
 
 class SidebarContent extends Component {
 	constructor(props) {
@@ -31,11 +34,20 @@ class SidebarContent extends Component {
 						{this.props.panelHeading}
 					</span>
 				</nav>
-				{this.props.panelWindow === 'manageCourse' ? (
+				<Switch>
+					<Route exact path='/examiner/exam' component={Exam}></Route>
+					<Route
+						path='/examiner/exam/:examId'
+						component={EditExam}
+					></Route>
+
+					<Route path='/examiner/course' component={Courses}></Route>
+				</Switch>
+				{/* {this.props.panelWindow === 'manageCourse' ? (
 					<Courses />
 				) : this.props.panelWindow === 'manageExam' ? (
 					<Exam />
-				) : null}
+				) : null} */}
 			</div>
 		);
 	}
@@ -60,4 +72,6 @@ const mapDispatchToProps = (dispatch) => {
 	};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SidebarContent);
+export default withRouter(
+	connect(mapStateToProps, mapDispatchToProps)(SidebarContent)
+);

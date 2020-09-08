@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import validate from '../../../../services/validation';
-import ExaminerService from '../../../../services/examinerApi';
-import * as ActionTypes from '../../../../action';
+import validate from '../../../../../services/validation';
+import ExaminerService from '../../../../../services/examinerApi';
+import * as ActionTypes from '../../../../../action';
 
 class ExamPeriod extends Component {
 	constructor(props) {

@@ -10,18 +10,22 @@ class Exams {
 		return examData.save();
 	};
 
-	get = (id) => {
-		return this.examModel.find({ examinerId: id });
+	get = (data) => {
+		return this.examModel.find(data);
 	};
 
-	update = (id, data) => {
-		return this.examModel.findOneAndUpdate({ examinerId: id }, data, {
+	update = (examId, data) => {
+		return this.examModel.findByIdAndUpdate(examId, data, {
 			new: true,
 		});
 	};
 
 	deleteById = (id) => {
 		return this.examModel.findByIdAndDelete(id);
+	};
+
+	getById = (id) => {
+		return this.examModel.findById(id);
 	};
 }
 
