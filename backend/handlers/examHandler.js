@@ -91,6 +91,27 @@ const exams = {
 				.update(examId, examDetails)
 				.select({ [key]: 1 });
 			return { status: 200, data: updatedExam };
+		} else if (key === 'password') {
+			let existingExam = await exam.getById(examId).select({ password: 1 });
+			let passwordStatus = bcrypt.compareSync(
+				examDetails.password.current.value,
+				existingExam.password
+			);
+			if (passwordStatus) {
+				let salt = bcrypt.genSaltSync(10);
+				let hashedPassword = bcrypt.hashSync(
+					examDetails.password.new.value,
+					salt
+				);
+				let updatedExam = await exam
+					.update(examId, { password: hashedPassword })
+					.select({ _id: 1 });
+				return {
+					status: 200,
+					data: { msg: 'Password changed successfully' },
+				};
+			} else
+				return { status: 400, data: { msg: 'Incorrect current password' } };
 		} else {
 			updatedExam = await exam
 				.update(examId, examDetails)
