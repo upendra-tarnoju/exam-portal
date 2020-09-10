@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import validate from '../../../../../services/validation';
-import ExaminerService from '../../../../../services/examinerApi';
+import ExamService from '../../../../../services/examApi';
 import * as ActionTypes from '../../../../../action';
 
 class ExamPeriod extends Component {
@@ -28,14 +28,14 @@ class ExamPeriod extends Component {
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleCheckBox = this.handleCheckBox.bind(this);
-		this.examinerService = new ExaminerService();
+		this.examService = new ExamService();
 	}
 
 	handleSubmit(event) {
 		event.preventDefault();
 		let validation = validate.examDurationFields(this.state);
 		if (!validation.error) {
-			this.examinerService
+			this.examService
 				.saveExamDetails(this.props.fieldDetails, this.state)
 				.then((response) => {
 					let exams = this.props.examsList;

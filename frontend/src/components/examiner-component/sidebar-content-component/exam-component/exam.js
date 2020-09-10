@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Table from 'react-bootstrap/Table';
 
-import ExaminerService from '../../../../services/examinerApi';
+import ExamService from '../../../../services/examApi';
 import ExamDetails from './exam-inputs-component/examDetails';
 import ExamPeriod from './exam-inputs-component/examPeriod';
 import style from './exam.module.css';
@@ -17,7 +17,7 @@ class Exam extends Component {
 			nextInputs: false,
 			inputErrors: {},
 		};
-		this.examinerService = new ExaminerService();
+		this.examService = new ExamService();
 		this.handleStates = this.handleStates.bind(this);
 	}
 
@@ -31,7 +31,7 @@ class Exam extends Component {
 	}
 
 	componentDidMount() {
-		this.examinerService.getAllExams().then((res) => {
+		this.examService.getAllExams().then((res) => {
 			this.props.setExamList(res.data);
 		});
 	}
