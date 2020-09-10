@@ -38,8 +38,8 @@ class Course {
 		let nameRegExp = new RegExp(name);
 		let descRegExp = new RegExp(description);
 		return this.courseModel.find({
-			name: { $regex: nameRegExp },
-			description: { $regex: descRegExp },
+			name: { $regex: nameRegExp, $options: 'i' },
+			description: { $regex: descRegExp, $options: 'i' },
 		});
 	};
 

@@ -11,6 +11,7 @@ class Courses extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			search: false,
 			modal: false,
 			modalType: '',
 			alert: false,
@@ -27,6 +28,8 @@ class Courses extends Component {
 		};
 		this.changePageSize = this.changePageSize.bind(this);
 		this.examinerService = new ExaminerService();
+		this.handleSearch = this.handleSearch.bind(this);
+		this.clearSearch = this.clearSearch.bind(this);
 	}
 
 	handleCourseModal = (modal, modalType) => {
@@ -56,6 +59,23 @@ class Courses extends Component {
 		this.examinerService.deleteCourse(courseId).then((response) => {
 			this.viewCourses();
 		});
+	}
+
+	handleSearch(search) {
+		this.setState({
+			search: search,
+		});
+	}
+
+	clearSearch() {
+		this.setState(
+			{
+				search: false,
+				pageIndex: 0,
+				pageSize: 5,
+			},
+			() => this.viewCourses()
+		);
 	}
 
 	viewCourses() {
@@ -165,11 +185,20 @@ class Courses extends Component {
 					</button>
 					<button
 						type='button'
-						className='btn btn-success'
+						className='btn btn-success mr-2'
 						onClick={() => this.handleCourseModal(true, 'search')}
 					>
 						Search
 					</button>
+					{this.state.search ? (
+						<button
+							type='button'
+							className='btn btn-danger'
+							onClick={this.clearSearch}
+						>
+							Clear search
+						</button>
+					) : null}
 				</div>
 				<Alert
 					variant='success'
@@ -228,6 +257,7 @@ class Courses extends Component {
 					show={this.state.modal}
 					closeModal={this.handleCourseModal}
 					handleAlert={this.handleAlert}
+					handleSearch={this.handleSearch}
 					modalType={this.state.modalType}
 					name={this.state.name}
 					description={this.state.description}

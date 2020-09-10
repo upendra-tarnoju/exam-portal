@@ -90,6 +90,7 @@ class CourseModal extends Component {
 						let searchedCourse = res.data;
 						this.props.setCourses(searchedCourse);
 						this.props.closeModal();
+						this.props.handleSearch(true);
 					});
 			}
 		} else {
