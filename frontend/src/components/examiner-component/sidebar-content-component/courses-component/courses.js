@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import * as ActionTypes from '../../../../action';
 import CourseModal from './courseModal';
 import Alert from 'react-bootstrap/Alert';
-import ExaminerService from '../../../../services/examinerApi';
+import CourseService from '../../../../services/courseApi';
 
 class Courses extends Component {
 	constructor(props) {
@@ -27,7 +27,7 @@ class Courses extends Component {
 			courseId: '',
 		};
 		this.changePageSize = this.changePageSize.bind(this);
-		this.examinerService = new ExaminerService();
+		this.courseService = new CourseService();
 		this.handleSearch = this.handleSearch.bind(this);
 		this.clearSearch = this.clearSearch.bind(this);
 	}
@@ -56,7 +56,7 @@ class Courses extends Component {
 	};
 
 	deleteCourse(courseId) {
-		this.examinerService.deleteCourse(courseId).then((response) => {
+		this.courseService.deleteCourse(courseId).then((response) => {
 			this.viewCourses();
 		});
 	}
@@ -79,7 +79,7 @@ class Courses extends Component {
 	}
 
 	viewCourses() {
-		this.examinerService
+		this.courseService
 			.viewCourses({
 				pageSize: this.state.pageSize,
 				pageIndex: this.state.pageIndex,

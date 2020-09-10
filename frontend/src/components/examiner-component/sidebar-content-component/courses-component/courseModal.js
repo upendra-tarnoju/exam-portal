@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import { connect } from 'react-redux';
 
 import validateInputs from '../../../../services/validation';
-import ExaminerService from '../../../../services/examinerApi';
+import CourseService from '../../../../services/courseApi';
 import * as ActionTypes from '../../../../action';
 import styles from './courses.module.css';
 
@@ -17,7 +17,7 @@ class CourseModal extends Component {
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
-		this.examinerService = new ExaminerService();
+		this.courseService = new CourseService();
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -52,7 +52,7 @@ class CourseModal extends Component {
 
 		if (!validationState.error) {
 			if (this.props.modalType === 'create') {
-				this.examinerService
+				this.courseService
 					.createCourse(this.state)
 					.then((res) => {
 						this.props.closeModal();
@@ -64,7 +64,7 @@ class CourseModal extends Component {
 						});
 					});
 			} else if (this.props.modalType === 'update') {
-				this.examinerService
+				this.courseService
 					.editCourse(this.props.courseId, this.state)
 					.then((res) => {
 						let name = res.data.course.name;
@@ -79,7 +79,7 @@ class CourseModal extends Component {
 						this.props.handleAlert(true, res.data.msg);
 					});
 			} else {
-				this.examinerService
+				this.courseService
 					.viewCourses({
 						search: {
 							name: this.state.name.value,
