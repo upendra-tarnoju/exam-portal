@@ -3,6 +3,8 @@ import { Card, Collapse } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
 import Moment from 'react-moment';
 
+import styles from '../../exam.module.css';
+
 const ExamTime = ({
 	state,
 	handleExamChange,
@@ -13,7 +15,7 @@ const ExamTime = ({
 		<Accordion defaultActiveKey='0'>
 			<Card className='mb-2'>
 				<Accordion.Toggle
-					className='bg-dark text-white'
+					className={`bg-dark text-white ${styles.accordionHeading}`}
 					as={Card.Header}
 					variant='link'
 					eventKey='0'
@@ -24,14 +26,18 @@ const ExamTime = ({
 					<Card.Body>
 						<div className='container'>
 							<div className='d-flex justify-content-between flex-row'>
-								<label>Exam date</label>
-								<p>
-									<Moment format='MMM Do, YYYY'>
-										{state.examDate.prev}
-									</Moment>
-								</p>
+								<div className='flex-column'>
+									<label className={`mb-0 ${styles.editExamHeading}`}>
+										Exam date
+									</label>
+									<p className={styles.editExamContent}>
+										<Moment format='MMM Do, YYYY'>
+											{state.examDate.prev}
+										</Moment>
+									</p>
+								</div>
 								<p
-									className='cursor-pointer edit-text'
+									className='cursor-pointer edit-text align-self-center'
 									onClick={() => handleCollapseChange('examDate')}
 								>
 									Edit
@@ -71,14 +77,18 @@ const ExamTime = ({
 								</div>
 							</Collapse>
 							<div className='d-flex justify-content-between flex-row mt-2'>
-								<label>Start time</label>
-								<p>
-									<Moment parse='HH:mm' format='hh:mm A'>
-										{state.startTime.prev}
-									</Moment>
-								</p>
+								<div className='flex-column'>
+									<label className={`mb-0 ${styles.editExamHeading}`}>
+										Start time
+									</label>
+									<p className={styles.editExamContent}>
+										<Moment parse='HH:mm' format='hh:mm A'>
+											{state.startTime.prev}
+										</Moment>
+									</p>
+								</div>
 								<p
-									className='cursor-pointer edit-text'
+									className='cursor-pointer edit-text align-self-center'
 									onClick={() => handleCollapseChange('startTime')}
 								>
 									Edit
@@ -118,14 +128,18 @@ const ExamTime = ({
 								</div>
 							</Collapse>
 							<div className='d-flex justify-content-between flex-row mt-2'>
-								<label>End time</label>
-								<p>
-									<Moment parse='HH:mm' format='hh:mm A'>
-										{state.endTime.prev}
-									</Moment>
-								</p>
+								<div className='flex-column'>
+									<label className={`mb-0 ${styles.editExamHeading}`}>
+										End time
+									</label>
+									<p className={styles.editExamContent}>
+										<Moment parse='HH:mm' format='hh:mm A'>
+											{state.endTime.prev}
+										</Moment>
+									</p>
+								</div>
 								<p
-									className='cursor-pointer edit-text'
+									className='cursor-pointer edit-text align-self-center'
 									onClick={() => handleCollapseChange('endTime')}
 								>
 									Edit

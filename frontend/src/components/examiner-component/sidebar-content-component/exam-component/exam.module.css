@@ -15,3 +15,16 @@
 	font-family: 'Raleway';
 	font-size: 12px;
 }
+
+.editExamHeading {
+	font-size: 18px;
+}
+
+.editExamContent {
+	font-size: 14px;
+}
+
+.accordionHeading {
+	font-family: 'Raleway';
+	font-weight: bold;
+}

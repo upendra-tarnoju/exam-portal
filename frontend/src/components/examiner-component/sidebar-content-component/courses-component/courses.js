@@ -3,7 +3,7 @@ import styles from './courses.module.css';
 import { connect } from 'react-redux';
 
 import * as ActionTypes from '../../../../action';
-import CreateCourses from './createCourses';
+import CourseModal from './courseModal';
 import Alert from 'react-bootstrap/Alert';
 import ExaminerService from '../../../../services/examinerApi';
 
@@ -11,7 +11,9 @@ class Courses extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			create: false,
+			search: false,
+			modal: false,
+			modalType: '',
 			alert: false,
 			msg: '',
 			courses: [],
@@ -26,12 +28,14 @@ class Courses extends Component {
 		};
 		this.changePageSize = this.changePageSize.bind(this);
 		this.examinerService = new ExaminerService();
+		this.handleSearch = this.handleSearch.bind(this);
+		this.clearSearch = this.clearSearch.bind(this);
 	}
 
-	handleCreate = (status) => {
-		this.setState({
-			create: status,
-		});
+	handleCourseModal = (modal, modalType) => {
+		if (modalType === 'create' || modalType === 'search')
+			this.setState({ modal, modalType, name: '', description: '' });
+		else this.setState({ modal, modalType });
 	};
 
 	handleAlert = (status, msg) => {
@@ -43,7 +47,8 @@ class Courses extends Component {
 
 	editCourse = (name, description, id) => {
 		this.setState({
-			create: true,
+			modal: true,
+			modalType: 'update',
 			name: name,
 			description: description,
 			courseId: id,
@@ -56,18 +61,40 @@ class Courses extends Component {
 		});
 	}
 
-	viewCourses() {
-		this.examinerService.viewCourses(this.state).then((response) => {
-			let maxIndex;
-			if (response.data.totalCourses < this.state.maxSizeIndex)
-				maxIndex = response.data.totalCourses;
-			else maxIndex = this.state.maxSizeIndex;
-			this.props.setCourses(response.data.courses);
-			this.setState({
-				maxSizeIndex: maxIndex,
-				totalCount: response.data.totalCourses,
-			});
+	handleSearch(search) {
+		this.setState({
+			search: search,
 		});
+	}
+
+	clearSearch() {
+		this.setState(
+			{
+				search: false,
+				pageIndex: 0,
+				pageSize: 5,
+			},
+			() => this.viewCourses()
+		);
+	}
+
+	viewCourses() {
+		this.examinerService
+			.viewCourses({
+				pageSize: this.state.pageSize,
+				pageIndex: this.state.pageIndex,
+			})
+			.then((response) => {
+				let maxIndex;
+				if (response.data.totalCourses < this.state.maxSizeIndex)
+					maxIndex = response.data.totalCourses;
+				else maxIndex = this.state.maxSizeIndex;
+				this.props.setCourses(response.data.courses);
+				this.setState({
+					maxSizeIndex: maxIndex,
+					totalCount: response.data.totalCourses,
+				});
+			});
 	}
 
 	componentDidMount() {
@@ -151,11 +178,27 @@ class Courses extends Component {
 				<div className='d-flex justify-content-end py-4'>
 					<button
 						type='button'
-						className='btn btn-primary'
-						onClick={() => this.handleCreate(true)}
+						className='btn btn-primary mr-2'
+						onClick={() => this.handleCourseModal(true, 'create')}
 					>
 						Create
 					</button>
+					<button
+						type='button'
+						className='btn btn-success mr-2'
+						onClick={() => this.handleCourseModal(true, 'search')}
+					>
+						Search
+					</button>
+					{this.state.search ? (
+						<button
+							type='button'
+							className='btn btn-danger'
+							onClick={this.clearSearch}
+						>
+							Clear search
+						</button>
+					) : null}
 				</div>
 				<Alert
 					variant='success'
@@ -210,10 +253,12 @@ class Courses extends Component {
 						</div>
 					</div>
 				)}
-				<CreateCourses
-					show={this.state.create}
-					closeModal={this.handleCreate}
+				<CourseModal
+					show={this.state.modal}
+					closeModal={this.handleCourseModal}
 					handleAlert={this.handleAlert}
+					handleSearch={this.handleSearch}
+					modalType={this.state.modalType}
 					name={this.state.name}
 					description={this.state.description}
 					courseId={this.state.courseId}

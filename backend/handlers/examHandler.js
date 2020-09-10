@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const moment = require('moment');
 
 let createExamObject = (data, userId) => {
+	console.log(data);
 	let salt = bcrypt.genSaltSync(10);
 	let hash = bcrypt.hashSync(data.password, salt);
 	let object = {
@@ -42,7 +43,7 @@ const exams = {
 	getAllExams: async (userId) => {
 		let allExams = await exam
 			.get({ examinerId: userId })
-			.select({ password: 0, createdAt: 0 })
+			.select({ password: 0 })
 			.sort({ examDate: -1 });
 		return allExams;
 	},

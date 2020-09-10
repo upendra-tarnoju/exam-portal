@@ -77,10 +77,7 @@ class ExaminerService {
 		return axios({
 			method: 'get',
 			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}/course`,
-			params: {
-				pageIndex: state.pageIndex,
-				pageSize: state.pageSize,
-			},
+			params: state,
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,

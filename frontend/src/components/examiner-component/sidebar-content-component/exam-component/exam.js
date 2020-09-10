@@ -95,6 +95,7 @@ class Exam extends Component {
 									<th className='text-right'>Passing marks</th>
 									<th>Start time</th>
 									<th>End time</th>
+									<th>Created at</th>
 									<th>Action</th>
 								</tr>
 							</thead>

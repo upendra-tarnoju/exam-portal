@@ -33,8 +33,7 @@ const examiner = {
 
 	getCourses: async (req, res) => {
 		let userId = req.user._id;
-		let length = Object.keys(req.query).length;
-		if (length != 0) {
+		if ('pageIndex' in req.query) {
 			let pageIndex = parseInt(req.query.pageIndex);
 			let pageSize = parseInt(req.query.pageSize);
 			let courses = await examinerHandler.getCourses(
@@ -44,6 +43,13 @@ const examiner = {
 			);
 			let totalCourses = await examinerHandler.getCoursesLength(userId);
 			res.status(200).send({ courses, totalCourses });
+		} else if ('search' in req.query) {
+			let query = JSON.parse(req.query.search);
+			let searchedCourse = await examinerHandler.searchCourse(
+				query.name,
+				query.description
+			);
+			res.status(200).send(searchedCourse);
 		} else {
 			let courses = await examinerHandler.getAllCourses(userId);
 			res.status(200).send(courses);
