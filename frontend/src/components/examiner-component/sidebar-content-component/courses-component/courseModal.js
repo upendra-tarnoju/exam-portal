@@ -7,7 +7,7 @@ import ExaminerService from '../../../../services/examinerApi';
 import * as ActionTypes from '../../../../action';
 import styles from './courses.module.css';
 
-class CreateCourses extends Component {
+class CourseModal extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -23,11 +23,11 @@ class CreateCourses extends Component {
 	componentWillReceiveProps(nextProps) {
 		this.setState({
 			name: {
-				...this.state.name,
+				error: '',
 				value: nextProps.name,
 			},
 			description: {
-				...this.state.description,
+				error: '',
 				value: nextProps.description,
 			},
 		});
@@ -44,9 +44,14 @@ class CreateCourses extends Component {
 
 	handleSubmit = (event) => {
 		event.preventDefault();
-		let validationState = validateInputs.courseFields(this.state);
+		let validationState = {};
+		if (this.props.modalType === 'search') validationState.error = false;
+		else {
+			validationState = validateInputs.courseFields(this.state);
+		}
+
 		if (!validationState.error) {
-			if (this.props.name === '' && this.props.description === '') {
+			if (this.props.modalType === 'create') {
 				this.examinerService
 					.createCourse(this.state)
 					.then((res) => {
@@ -58,7 +63,7 @@ class CreateCourses extends Component {
 							error: err.response.data.msg,
 						});
 					});
-			} else {
+			} else if (this.props.modalType === 'update') {
 				this.examinerService
 					.editCourse(this.props.courseId, this.state)
 					.then((res) => {
@@ -72,6 +77,19 @@ class CreateCourses extends Component {
 						this.props.setCourses(updatedCourse);
 						this.props.closeModal();
 						this.props.handleAlert(true, res.data.msg);
+					});
+			} else {
+				this.examinerService
+					.viewCourses({
+						search: {
+							name: this.state.name.value,
+							description: this.state.description.value,
+						},
+					})
+					.then((res) => {
+						let searchedCourse = res.data;
+						this.props.setCourses(searchedCourse);
+						this.props.closeModal();
 					});
 			}
 		} else {
@@ -87,9 +105,11 @@ class CreateCourses extends Component {
 				centered
 			>
 				<Modal.Header closeButton className={styles.createCourseHeading}>
-					{this.props.name === '' && this.props.description === ''
+					{this.props.modalType === 'create'
 						? 'Create new course'
-						: 'Update course'}
+						: this.props.modalType === 'update'
+						? 'Update course'
+						: 'Search course'}
 				</Modal.Header>
 				<Modal.Body>
 					<div className='container'>
@@ -134,10 +154,11 @@ class CreateCourses extends Component {
 							/>
 							<div className='d-flex justify-content-end pt-2'>
 								<button type='submit' className='btn btn-primary'>
-									{this.props.name === '' &&
-									this.props.description === ''
+									{this.props.modalType === 'create'
 										? 'Create'
-										: 'Update'}
+										: this.props.modalType === 'update'
+										? 'Update'
+										: 'Search'}
 								</button>
 							</div>
 						</form>
@@ -164,4 +185,4 @@ const mapDispatchToProps = (dispatch) => {
 		},
 	};
 };
-export default connect(mapStateToProps, mapDispatchToProps)(CreateCourses);
+export default connect(mapStateToProps, mapDispatchToProps)(CourseModal);

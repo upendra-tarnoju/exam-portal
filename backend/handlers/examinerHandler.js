@@ -48,6 +48,13 @@ const examiner = {
 		let deletedCourse = await course.delete(courseId).select({ _id: 1 });
 		return deletedCourse;
 	},
+
+	searchCourse: async (name, description) => {
+		let searchCourse = await course
+			.search(name, description)
+			.select({ name: 1, description: 1 });
+		return searchCourse;
+	},
 };
 
 module.exports = examiner;

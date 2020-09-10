@@ -34,6 +34,15 @@ class Course {
 		);
 	};
 
+	search = (name, description) => {
+		let nameRegExp = new RegExp(name);
+		let descRegExp = new RegExp(description);
+		return this.courseModel.find({
+			name: { $regex: nameRegExp },
+			description: { $regex: descRegExp },
+		});
+	};
+
 	delete = (courseId) => {
 		return this.courseModel.findByIdAndRemove(courseId);
 	};
