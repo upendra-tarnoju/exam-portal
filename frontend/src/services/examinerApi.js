@@ -23,6 +23,18 @@ class ExaminerService {
 			},
 		});
 	};
+
+	getExaminerDetails = () => {
+		let token = this.userService.getToken();
+		return axios({
+			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}`,
+			method: 'get',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	};
 }
 
 export default ExaminerService;

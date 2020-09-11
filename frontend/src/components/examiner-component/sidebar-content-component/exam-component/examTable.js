@@ -124,7 +124,9 @@ class ExamTable extends Component {
 						placement='bottom'
 						overlay={<Tooltip id='button-tooltip'>Add Questions</Tooltip>}
 					>
-						<i className='fa fa-plus cursor-pointer text-white align-self-center'></i>
+						<Link to={`/examiner/exam/${exam._id}/questions`}>
+							<i className='fa fa-plus cursor-pointer text-white align-self-center'></i>
+						</Link>
 					</OverlayTrigger>
 					<OverlayTrigger
 						placement='bottom'

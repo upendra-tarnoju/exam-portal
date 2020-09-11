@@ -37,11 +37,15 @@ class SidebarContent extends Component {
 				<Switch>
 					<Route exact path='/examiner/exam' component={Exam}></Route>
 					<Route
+						exact
 						path='/examiner/exam/:examId'
 						component={EditExam}
 					></Route>
 					<Route path='/examiner/course' component={Courses}></Route>
-					<Route path='/examiner/questions' component={Questions}></Route>
+					<Route
+						path='/examiner/exam/:examId/questions'
+						component={Questions}
+					></Route>
 				</Switch>
 			</div>
 		);
