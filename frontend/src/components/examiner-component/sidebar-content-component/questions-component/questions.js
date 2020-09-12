@@ -10,11 +10,10 @@ class Questions extends React.Component {
 			question: { value: '', error: '' },
 			optionsType: { value: '', error: '' },
 			options: { value: [], error: '' },
-			correctAnswer: { show: false },
+			correctAnswer: { show: false, value: [], error: '' },
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.handleOptionTypeChange = this.handleOptionTypeChange.bind(this);
-		this.showOptionInputs = this.showOptionInputs.bind(this);
 		this.createQuestion = this.createQuestion.bind(this);
 	}
 
@@ -22,6 +21,7 @@ class Questions extends React.Component {
 		let key = event.target.name;
 		let value = event.target.value;
 		let regex = /\d/g;
+		let arr = [];
 		if (regex.test(key)) {
 			let optionNo = parseInt(key[key.length - 1], 10);
 			let totalOptions = this.state.options.value;
@@ -29,20 +29,35 @@ class Questions extends React.Component {
 			key = 'options';
 			value = totalOptions;
 		} else if (key === 'options') {
-			let arr = [];
 			let size = parseInt(value, 10);
 			for (let i = 0; i < size; i++) {
 				let innerKey = `option${i + 1}`;
 				arr[i] = { [innerKey]: { value: '', error: '' } };
 			}
 			value = arr;
+		} else if (key === 'single') {
+			arr.push(value);
+			key = 'correctAnswer';
+			value = arr;
+		} else if (key === 'multiple') {
+			let values = event.target.options;
+			for (let i = 0; i < values.length; i++) {
+				if (values[i].selected) {
+					arr.push(values[i].value);
+				}
+			}
+			key = 'correctAnswer';
+			value = arr;
 		}
-		this.setState((prevState) => ({
-			[key]: {
-				...prevState[key],
-				value: value,
-			},
-		}));
+		this.setState(
+			(prevState) => ({
+				[key]: {
+					...prevState[key],
+					value: value,
+				},
+			}),
+			console.log(this.state)
+		);
 	}
 
 	handleOptionTypeChange(event) {
@@ -54,6 +69,7 @@ class Questions extends React.Component {
 		}
 		this.setState((prevState) => ({
 			correctAnswer: {
+				...prevState['correctAnswer'],
 				show: show,
 			},
 			[key]: {
@@ -63,26 +79,10 @@ class Questions extends React.Component {
 		}));
 	}
 
-	showOptionInputs() {
-		return this.state.options.map((option, index) => {
-			return (
-				<div className='form-group'>
-					<label>Option {index + 1}</label>
-					<input
-						type='text'
-						className='form-control'
-						name={`option ${index + 1}`}
-					/>
-				</div>
-			);
-		});
-	}
-
 	createQuestion(event) {
 		event.preventDefault();
 		let validationState = validateInputs.createQuestionFields(this.state);
 		if (validationState.error) {
-			console.log(validationState.tempState);
 			this.setState(validationState.tempState);
 		}
 	}
@@ -138,6 +138,14 @@ class Questions extends React.Component {
 										<option value='multiple'>Multiple</option>
 									</select>
 								</div>
+								<div class='form-group'>
+									<label for='exampleFormControlFile1'>Image</label>
+									<input
+										type='file'
+										class='form-control-file'
+										id='exampleFormControlFile1'
+									/>
+								</div>
 								<div className='form-group'>
 									<label>
 										Total Options
@@ -184,30 +192,66 @@ class Questions extends React.Component {
 										</div>
 									);
 								})}
-								{this.state.correctAnswer.show ? (
+								{this.state.correctAnswer.show &&
+								this.state.options.value.length !== 0 ? (
 									this.state.optionsType.value === 'single' ? (
 										<div className='form-group'>
-											<label>Correct answer</label>
+											<label>
+												Correct answer
+												{this.state.correctAnswer.error ? (
+													<span className='text-danger'>
+														{this.state.correctAnswer.error}
+													</span>
+												) : null}
+											</label>
 											<select
 												className='form-control'
-												name='options'
+												name='single'
+												onChange={this.handleChange}
 											>
-												<option value='0'>Select number</option>
-												<option value='1'>1</option>
+												<option>Select correct option</option>
+												{this.state.options.value.map(
+													(option, index) => {
+														let key = Object.keys(option)[0];
+														return (
+															<option
+																key={key}
+																value={`option${index + 1}`}
+															>
+																Option {index + 1}
+															</option>
+														);
+													}
+												)}
 											</select>
 										</div>
 									) : (
 										<div className='form-group'>
-											<label>Correct answer</label>
+											<label>
+												Correct answer
+												{this.state.correctAnswer.error ? (
+													<span className='text-danger'>
+														{this.state.correctAnswer.error}
+													</span>
+												) : null}
+											</label>
 											<select
 												multiple
 												size='2'
 												className='form-control'
-												name='options'
+												name='multiple'
+												onChange={this.handleChange}
 											>
-												<option value='0'>Select number</option>
-												<option value='1'>1</option>
-												<option value='1'>1</option>
+												{this.state.options.value.map(
+													(option, index) => {
+														let key = Object.keys(option)[0];
+														return (
+															<option key={key} value={key}>
+																Option {index + 1}
+															</option>
+														);
+													}
+												)}
 											</select>
 										</div>
 									)

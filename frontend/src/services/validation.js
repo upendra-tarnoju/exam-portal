@@ -290,13 +290,20 @@ const createQuestionFields = (temp) => {
 			if (temp[key].error !== '') {
 				error = true;
 			}
-		} else if (key === 'options') {
+		} else if (key === 'options' || key === 'correctAnswer') {
+			console.log(temp[key]);
 			if (temp[key].value.length === 0) {
 				temp[key].error = '* Required';
 			} else {
 				temp[key].error = '';
-				temp[key].value = validateQuestions(temp[key].value);
-				console.log(temp[key]);
+				if (key === 'options')
+					temp[key].value = validateQuestions(temp[key].value);
+			}
+		} else if (key === 'correctAnswer') {
+			if (temp[key].value.length === 0) {
+				temp[key].error = '* Required';
+			} else {
+				temp[key].error = '';
 			}
 		}
 	}
