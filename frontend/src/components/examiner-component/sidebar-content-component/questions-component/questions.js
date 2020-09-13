@@ -2,6 +2,7 @@ import React from 'react';
 
 import styles from './question.module.css';
 import validateInputs from '../../../../services/validation';
+import QuestionService from '../../../../services/questionApi';
 
 class Questions extends React.Component {
 	constructor(props) {
@@ -11,10 +12,13 @@ class Questions extends React.Component {
 			optionsType: { value: '', error: '' },
 			options: { value: [], error: '' },
 			correctAnswer: { show: false, value: [], error: '' },
+			image: { value: '' },
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.handleOptionTypeChange = this.handleOptionTypeChange.bind(this);
 		this.createQuestion = this.createQuestion.bind(this);
+		this.handleFileChange = this.handleFileChange.bind(this);
+		this.questionService = new QuestionService();
 	}
 
 	handleChange(event) {
@@ -49,15 +53,12 @@ class Questions extends React.Component {
 			key = 'correctAnswer';
 			value = arr;
 		}
-		this.setState(
-			(prevState) => ({
-				[key]: {
-					...prevState[key],
-					value: value,
-				},
-			}),
-			console.log(this.state)
-		);
+		this.setState((prevState) => ({
+			[key]: {
+				...prevState[key],
+				value: value,
+			},
+		}));
 	}
 
 	handleOptionTypeChange(event) {
@@ -79,11 +80,35 @@ class Questions extends React.Component {
 		}));
 	}
 
+	handleFileChange(event) {
+		let file = event.target.files[0];
+		this.setState({
+			image: {
+				value: file,
+			},
+		});
+	}
+
 	createQuestion(event) {
 		event.preventDefault();
+		let examId = this.props.match.params.examId;
 		let validationState = validateInputs.createQuestionFields(this.state);
 		if (validationState.error) {
 			this.setState(validationState.tempState);
+		} else {
+			let formData = new FormData();
+			for (let key in this.state) {
+				if (key === 'options') {
+					let jsonArray = JSON.stringify(this.state[key].value);
+					formData.append(key, jsonArray);
+				} else formData.append(key, this.state[key].value);
+			}
+			formData.append('examId', examId);
+			formData.append('abcd', this.state.options.value);
+			console.log(typeof this.state.options.value);
+			this.questionService.saveQuestion(formData).then((response) => {
+				console.log(response.data);
+			});
 		}
 	}
 
@@ -98,7 +123,10 @@ class Questions extends React.Component {
 					>
 						Add questions
 					</div>
-					<form onSubmit={this.createQuestion}>
+					<form
+						onSubmit={this.createQuestion}
+						encType='multipart/form-data'
+					>
 						<div className='card-body'>
 							<div className='container'>
 								<div className='form-group'>
@@ -138,12 +166,15 @@ class Questions extends React.Component {
 										<option value='multiple'>Multiple</option>
 									</select>
 								</div>
-								<div class='form-group'>
-									<label for='exampleFormControlFile1'>Image</label>
+								<div className='form-group'>
+									<label>Image</label>
 									<input
 										type='file'
-										class='form-control-file'
-										id='exampleFormControlFile1'
+										onChange={this.handleFileChange}
+										className='form-control-file'
+										id='questionImage'
+										name='questionImage'
+										accept='image/*'
 									/>
 								</div>
 								<div className='form-group'>

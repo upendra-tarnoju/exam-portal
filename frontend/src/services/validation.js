@@ -291,7 +291,6 @@ const createQuestionFields = (temp) => {
 				error = true;
 			}
 		} else if (key === 'options' || key === 'correctAnswer') {
-			console.log(temp[key]);
 			if (temp[key].value.length === 0) {
 				temp[key].error = '* Required';
 			} else {
@@ -309,8 +308,8 @@ const createQuestionFields = (temp) => {
 	}
 	for (let index in keys) {
 		let key = keys[index];
-		if (key !== 'options') {
-			if (temp[key] !== '') {
+		if (key !== 'options' && key !== 'image') {
+			if (temp[key].error !== '') {
 				error = true;
 			}
 		}
