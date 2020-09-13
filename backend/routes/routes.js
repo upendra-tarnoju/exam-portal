@@ -4,8 +4,11 @@ const {
 	adminController,
 	examinerController,
 	examController,
+	questionController,
 } = require('../controllers');
 const passport = require('passport');
+
+const { multerMiddleware } = require('../middleware');
 
 module.exports = () => {
 	const router = express.Router();
@@ -76,6 +79,13 @@ module.exports = () => {
 		'/examiner/exam',
 		passport.authenticate('jwt'),
 		examController.deleteExam
+	);
+
+	router.post(
+		'/examiner/question',
+		passport.authenticate('jwt'),
+		multerMiddleware.upload.single('image'),
+		questionController.addNewQuestion
 	);
 
 	return router;
