@@ -88,5 +88,11 @@ module.exports = () => {
 		questionController.addNewQuestion
 	);
 
+	router.get(
+		'/examiner/question',
+		passport.authenticate('jwt'),
+		questionController.getAllQuestions
+	);
+
 	return router;
 };

@@ -1,4 +1,4 @@
-let { question } = require('../models');
+let { question, exam } = require('../models');
 
 let createQuestionData = (data, image) => {
 	let options = JSON.parse(data.options);
@@ -20,6 +20,14 @@ const questions = {
 	addNewQuestion: async (questionData, image) => {
 		let questionObject = createQuestionData(questionData, image);
 		return question.create(questionObject);
+	},
+
+	getAllQuestions: async (examId) => {
+		let questionData = await question
+			.getSpecificData(examId)
+			.select({ _id: 1, question: 1 });
+		let examData = await exam.getById(examId).select({ examCode: 1 });
+		return { questionData, examData };
 	},
 };
 
