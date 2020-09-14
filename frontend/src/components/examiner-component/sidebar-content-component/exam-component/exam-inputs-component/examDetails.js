@@ -5,7 +5,7 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 
 import * as ActionTypes from '../../../../../action';
 import validate from '../../../../../services/validation';
-import ExaminerService from '../../../../../services/examinerApi';
+import CourseService from '../../../../../services/courseApi';
 
 class ExamDetails extends Component {
 	constructor(props) {
@@ -15,7 +15,7 @@ class ExamDetails extends Component {
 			selected: [],
 		};
 		this.handleSubmit = this.handleSubmit.bind(this);
-		this.examinerService = new ExaminerService();
+		this.courseService = new CourseService();
 	}
 	handleChange = (event) => {
 		let key = event.target.name;
@@ -42,7 +42,7 @@ class ExamDetails extends Component {
 
 	componentDidMount() {
 		let state = {};
-		this.examinerService.viewCourses(state).then((res) => {
+		this.courseService.viewCourses(state).then((res) => {
 			res.data = res.data.map((data) => {
 				return {
 					name: data.name,

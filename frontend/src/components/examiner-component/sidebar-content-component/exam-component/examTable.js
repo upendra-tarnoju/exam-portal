@@ -5,7 +5,7 @@ import { Tooltip, OverlayTrigger, Modal, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import * as ActionTypes from '../../../../action';
-import ExaminerService from '../../../../services/examinerApi';
+import ExamService from '../../../../services/examApi';
 
 class ExamTable extends Component {
 	constructor(props) {
@@ -18,7 +18,7 @@ class ExamTable extends Component {
 		this.ShowDeleteDialog = this.ShowDeleteDialog.bind(this);
 		this.ShowEditDialog = this.ShowEditDialog.bind(this);
 		this.deleteExam = this.deleteExam.bind(this);
-		this.examinerService = new ExaminerService();
+		this.examService = new ExamService();
 	}
 
 	handleDeleteDialog(showDialog, deleteIndex) {
@@ -31,7 +31,7 @@ class ExamTable extends Component {
 
 	deleteExam() {
 		let examId = this.props.examsList[this.state.deleteIndex]._id;
-		this.examinerService.deleteExam(examId).then((response) => {
+		this.examService.deleteExam(examId).then((response) => {
 			let updatedExams = this.props.examsList.filter(
 				(exam) => exam._id !== response.data._id
 			);
@@ -124,7 +124,9 @@ class ExamTable extends Component {
 						placement='bottom'
 						overlay={<Tooltip id='button-tooltip'>Add Questions</Tooltip>}
 					>
-						<i className='fa fa-plus cursor-pointer text-white align-self-center'></i>
+						<Link to={`/examiner/exam/${exam._id}/questions`}>
+							<i className='fa fa-plus cursor-pointer text-white align-self-center'></i>
+						</Link>
 					</OverlayTrigger>
 					<OverlayTrigger
 						placement='bottom'

@@ -3,7 +3,6 @@ const bcrypt = require('bcryptjs');
 const moment = require('moment');
 
 let createExamObject = (data, userId) => {
-	console.log(data);
 	let salt = bcrypt.genSaltSync(10);
 	let hash = bcrypt.hashSync(data.password, salt);
 	let object = {

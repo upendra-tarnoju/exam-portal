@@ -108,6 +108,14 @@ let validateExamPassword = (temp) => {
 	return temp;
 };
 
+let validateQuestions = (temp) => {
+	for (let i = 0; i < temp.length; i++) {
+		let key = Object.keys(temp[i])[0];
+		temp[i][key].error = checkEmptyField(temp[i][key].value);
+	}
+	return temp;
+};
+
 let validateFields = (key, temp) => {
 	switch (key) {
 		case 'subject':
@@ -272,6 +280,43 @@ const courseFields = (temp) => {
 	return { tempState: temp, error: error };
 };
 
+const createQuestionFields = (temp) => {
+	let keys = Object.keys(temp);
+	let error = false;
+	for (let index in keys) {
+		let key = keys[index];
+		if (key === 'question' || key === 'optionsType') {
+			temp[key].error = checkEmptyField(temp[key].value);
+			if (temp[key].error !== '') {
+				error = true;
+			}
+		} else if (key === 'options' || key === 'correctAnswer') {
+			if (temp[key].value.length === 0) {
+				temp[key].error = '* Required';
+			} else {
+				temp[key].error = '';
+				if (key === 'options')
+					temp[key].value = validateQuestions(temp[key].value);
+			}
+		} else if (key === 'correctAnswer') {
+			if (temp[key].value.length === 0) {
+				temp[key].error = '* Required';
+			} else {
+				temp[key].error = '';
+			}
+		}
+	}
+	for (let index in keys) {
+		let key = keys[index];
+		if (key !== 'options' && key !== 'image') {
+			if (temp[key].error !== '') {
+				error = true;
+			}
+		}
+	}
+	return { tempState: temp, error: error };
+};
+
 export default {
 	signUpFields,
 	loginFields,
@@ -279,4 +324,5 @@ export default {
 	examDurationFields,
 	updateExamFields,
 	courseFields,
+	createQuestionFields,
 };

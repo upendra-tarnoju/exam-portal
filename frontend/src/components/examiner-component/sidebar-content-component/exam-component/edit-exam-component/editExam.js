@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from '../exam.module.css';
-import ExaminerService from '../../../../../services/examinerApi';
+import ExamService from '../../../../../services/examApi';
 import moment from 'moment';
 import ExamDetails from './accordion/examDetails';
 import ExamMarks from './accordion/examMarks';
@@ -27,7 +27,7 @@ class EditExam extends React.Component {
 		this.handleExamChange = this.handleExamChange.bind(this);
 		this.handleCollapseChange = this.handleCollapseChange.bind(this);
 		this.updateExamDetails = this.updateExamDetails.bind(this);
-		this.examinerService = new ExaminerService();
+		this.examService = new ExamService();
 		this.handlePasswordChange = this.handlePasswordChange.bind(this);
 	}
 
@@ -66,7 +66,7 @@ class EditExam extends React.Component {
 
 	componentDidMount() {
 		let examId = this.props.match.params.examId;
-		this.examinerService.getParticularExam(examId).then((res) => {
+		this.examService.getParticularExam(examId).then((res) => {
 			let exam = res.data;
 			let examDate = moment(exam.examDate, 'YYYY-MM-DD').format(
 				'YYYY-MM-DD'
@@ -111,7 +111,7 @@ class EditExam extends React.Component {
 		let validationState = validation.updateExamFields(data);
 
 		if (validationState.error === '') {
-			this.examinerService
+			this.examService
 				.updateExam(examId, data)
 				.then((response) => {
 					this.setState({
