@@ -19,6 +19,31 @@ class Questions extends React.Component {
 		this.createQuestion = this.createQuestion.bind(this);
 		this.handleFileChange = this.handleFileChange.bind(this);
 		this.questionService = new QuestionService();
+		this.handleOptionChange = this.handleOptionChange.bind(this);
+	}
+
+	handleOptionChange(event) {
+		let key = event.target.name;
+		let value = event.target.value;
+		let arr = [];
+		let prevOptions = this.state.options.value;
+		let size = parseInt(value, 10);
+		for (let i = 0; i < size; i++) {
+			let innerKey = `option${i + 1}`;
+			if (prevOptions.length !== 0 && i < prevOptions.length) {
+				let existingValue = prevOptions[i][innerKey].value;
+				arr[i] = { [innerKey]: { value: existingValue, error: '' } };
+			} else {
+				arr[i] = { [innerKey]: { value: '', error: '' } };
+			}
+		}
+		value = arr;
+		this.setState((prevState) => ({
+			[key]: {
+				...prevState[key],
+				value: value,
+			},
+		}));
 	}
 
 	handleChange(event) {
@@ -32,13 +57,6 @@ class Questions extends React.Component {
 			totalOptions[optionNo - 1][key].value = value;
 			key = 'options';
 			value = totalOptions;
-		} else if (key === 'options') {
-			let size = parseInt(value, 10);
-			for (let i = 0; i < size; i++) {
-				let innerKey = `option${i + 1}`;
-				arr[i] = { [innerKey]: { value: '', error: '' } };
-			}
-			value = arr;
 		} else if (key === 'single') {
 			arr.push(value);
 			key = 'correctAnswer';
@@ -104,11 +122,7 @@ class Questions extends React.Component {
 				} else formData.append(key, this.state[key].value);
 			}
 			formData.append('examId', examId);
-			formData.append('abcd', this.state.options.value);
-			console.log(typeof this.state.options.value);
-			this.questionService.saveQuestion(formData).then((response) => {
-				console.log(response.data);
-			});
+			this.questionService.saveQuestion(formData).then((response) => {});
 		}
 	}
 
@@ -190,7 +204,7 @@ class Questions extends React.Component {
 										className='form-control'
 										name='options'
 										value={this.state.options.value.length}
-										onChange={this.handleChange}
+										onChange={this.handleOptionChange}
 									>
 										<option value='0'>Select number</option>
 										<option value='1'>1</option>

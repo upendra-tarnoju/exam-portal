@@ -26,9 +26,6 @@ const questions = new Schema({
 		type: Date,
 		default: null,
 	},
-	// totalOptions: {
-	// 	type: Number,
-	// },
 });
 
 module.exports = mongoose.model('questions', questions);
