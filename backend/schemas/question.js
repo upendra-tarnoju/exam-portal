@@ -15,8 +15,14 @@ const questions = new Schema({
 	correctAnswer: {
 		type: String,
 	},
-	options: {
-		type: Array,
+	options: [
+		{
+			name: String,
+			value: String,
+		},
+	],
+	image: {
+		type: String,
 	},
 	createdAt: {
 		type: Date,

@@ -4,11 +4,11 @@ const question = {
 	addNewQuestion: async (req, res) => {
 		let questionData = req.body;
 		let questionImage = req.file;
-		let newQuestion = await questionHandler.addNewQuestion(
-			questionData,
-			questionImage
-		);
-		res.status(200).send(newQuestion);
+		questionHandler
+			.addNewQuestion(questionData, questionImage)
+			.then((response) => {
+				res.status(200).send({ msg: 'Question added successfully' });
+			});
 	},
 };
 
