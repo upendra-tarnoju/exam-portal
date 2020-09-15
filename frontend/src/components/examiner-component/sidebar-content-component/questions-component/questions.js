@@ -7,8 +7,8 @@ import styles from './question.module.css';
 import * as ActionTypes from '../../../../action';
 
 class Questions extends React.Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
 		this.questionService = new QuestionService();
 	}
 
@@ -84,6 +84,7 @@ const mapDispatchToProps = (dispatch) => {
 			});
 		},
 		addQuestion: (question) => {
+			console.log('adding questions');
 			dispatch({
 				type: ActionTypes.ADD_QUESTION,
 				question: question,

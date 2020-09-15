@@ -23,11 +23,9 @@ const examinerReducers = (state = initialState, action) => {
 			examCode: action.examCode,
 		};
 	} else if (action.type === 'add_question') {
-		let questions = state.questions;
-		questions.push(action.question);
 		return {
 			...state,
-			questions,
+			questions: [...state.questions, action.question],
 		};
 	}
 	return state;
