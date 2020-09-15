@@ -8,3 +8,5 @@ export const SET_EXAM_DETAILS_ERRORS = 'set_exam_details_errors';
 export const COLLAPSE_SIDEBAR = 'collapse_sidebar';
 export const CLEAR_EXAM_DETAILS_FIELDS = 'clear_exam_details_fields';
 export const SET_EXAM_LIST = 'set_exam_list';
+export const SET_QUESTIONS = 'set_questions';
+export const ADD_QUESTION = 'add_question';

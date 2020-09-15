@@ -1,8 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import styles from './question.module.css';
 import validateInputs from '../../../../services/validation';
 import QuestionService from '../../../../services/questionApi';
+import * as ActionTypes from '../../../../action';
 
 class AddQuestions extends React.Component {
 	constructor(props) {
@@ -124,6 +126,7 @@ class AddQuestions extends React.Component {
 			}
 			formData.append('examId', examId);
 			this.questionService.saveQuestion(formData).then((response) => {
+				this.props.addQuestion(response.data.newQuestion);
 				this.setState(this.baseState);
 			});
 		}
@@ -311,4 +314,15 @@ class AddQuestions extends React.Component {
 	}
 }
 
-export default AddQuestions;
+const mapDispatchToProps = (dispatch) => {
+	return {
+		addQuestion: (question) => {
+			dispatch({
+				type: ActionTypes.ADD_QUESTION,
+				question: question,
+			});
+		},
+	};
+};
+
+export default connect(null, mapDispatchToProps)(AddQuestions);
