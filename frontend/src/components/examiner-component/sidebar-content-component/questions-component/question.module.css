@@ -1,16 +1,14 @@
-.questionCard {
+.questionCard,
+.examDetailsCard {
 	margin-top: 3rem;
 }
 
-.questionHeader {
+.questionHeader,
+.examDetailHeader {
 	font-family: 'Raleway';
 	font-size: 30px;
 }
 
 .textArea {
 	resize: none;
-}
-
-.w60 {
-	width: 60%;
 }

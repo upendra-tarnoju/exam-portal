@@ -8,7 +8,7 @@ class QuestionService {
 		this.QUESTION_URL = 'api/examiner/question';
 	}
 
-	saveQuestion(formData) {
+	create(formData) {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'post',
@@ -18,6 +18,46 @@ class QuestionService {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,
 			},
+		});
+	}
+
+	getAll(examId) {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'get',
+			url: `${process.env.REACT_APP_BASE_URL}/${this.QUESTION_URL}`,
+			params: {
+				examId: examId,
+			},
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	}
+
+	getParticular(questionId) {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'get',
+			url: `${process.env.REACT_APP_BASE_URL}/${this.QUESTION_URL}/${questionId}`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	}
+
+	update(questionId, questionData) {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'patch',
+			url: `${process.env.REACT_APP_BASE_URL}/${this.QUESTION_URL}/${questionId}`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			data: questionData,
 		});
 	}
 }

@@ -88,5 +88,24 @@ module.exports = () => {
 		questionController.addNewQuestion
 	);
 
+	router.get(
+		'/examiner/question',
+		passport.authenticate('jwt'),
+		questionController.getAllQuestions
+	);
+
+	router.get(
+		'/examiner/question/:questionId',
+		passport.authenticate('jwt'),
+		questionController.getParticularQuestion
+	);
+
+	router.patch(
+		'/examiner/question/:questionId',
+		passport.authenticate('jwt'),
+		multerMiddleware.upload.single('image'),
+		questionController.update
+	);
+
 	return router;
 };

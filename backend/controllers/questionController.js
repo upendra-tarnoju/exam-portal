@@ -4,11 +4,48 @@ const question = {
 	addNewQuestion: async (req, res) => {
 		let questionData = req.body;
 		let questionImage = req.file;
-		let newQuestion = await questionHandler.addNewQuestion(
-			questionData,
-			questionImage
-		);
-		res.status(200).send(newQuestion);
+		questionHandler
+			.addNewQuestion(questionData, questionImage)
+			.then((response) => {
+				let data = {
+					_id: response._id,
+					question: response.question,
+				};
+				res.status(200).send({
+					msg: 'Question added successfully',
+					newQuestion: data,
+				});
+			});
+	},
+
+	getAllQuestions: async (req, res) => {
+		let examId = req.query.examId;
+		questionHandler.getAllQuestions(examId).then((response) => {
+			res.status(200).send(response);
+		});
+	},
+
+	getParticularQuestion: async (req, res) => {
+		let questionId = req.params.questionId;
+		questionHandler
+			.getParticularQuestion(questionId)
+			.then((response) => {
+				res.status(200).send(response);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	},
+
+	update: async (req, res) => {
+		let questionId = req.params.questionId;
+		let questionData = req.body;
+		let questionImage = req.file;
+		questionHandler
+			.update(questionId, questionData, questionImage)
+			.then((data) => {
+				res.status(200).send(data);
+			});
 	},
 };
 
