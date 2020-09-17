@@ -308,7 +308,7 @@ const createQuestionFields = (temp) => {
 	}
 	for (let index in keys) {
 		let key = keys[index];
-		if (key !== 'options' && key !== 'image') {
+		if (key !== 'options' && key !== 'image' && key !== 'editExam') {
 			if (temp[key].error !== '') {
 				error = true;
 			}

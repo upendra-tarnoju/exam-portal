@@ -15,6 +15,7 @@ class AddQuestions extends React.Component {
 			options: { value: [], error: '' },
 			correctAnswer: { show: false, value: [], error: '' },
 			image: { value: '' },
+			editExam: false,
 		};
 		this.baseState = this.state;
 		this.handleChange = this.handleChange.bind(this);
@@ -132,11 +133,51 @@ class AddQuestions extends React.Component {
 		}
 	}
 
+	setValues(questionData) {
+		let correctAnswer = questionData.correctAnswer.split(',');
+
+		let options = questionData.options.map((option) => {
+			return { [option.name]: { value: option.value, error: '' } };
+		});
+
+		this.setState({
+			question: { value: questionData.question, error: '' },
+			optionsType: { value: questionData.optionType, error: '' },
+			options: { value: options, error: '' },
+			correctAnswer: { show: true, value: correctAnswer, error: '' },
+			image: { value: '' },
+		});
+	}
+
+	editExam(pathname) {
+		let editStatus;
+		if (!pathname.endsWith('question')) {
+			editStatus = true;
+			let questionId = pathname.split('/question/')[1];
+			this.questionService
+				.getParticularQuestion(questionId)
+				.then((response) => {
+					this.setValues(response.data);
+				});
+		} else editStatus = false;
+		this.setState({ editExam: editStatus });
+	}
+
+	componentDidMount() {
+		let pathname = this.props.match.url;
+		this.editExam(pathname);
+		this.props.history.listen((location) => {
+			this.editExam(location.pathname);
+		});
+	}
+
 	render() {
 		return (
 			<div className={`card ${styles.questionCard}`}>
-				<div className={`card-header text-center ${styles.questionHeader}`}>
-					Add questions
+				<div
+					className={`card-header text-center ${styles.questionHeader} bg-dark text-white`}
+				>
+					{this.state.editExam ? 'Edit Question' : 'Add Question'}
 				</div>
 				<form onSubmit={this.createQuestion} encType='multipart/form-data'>
 					<div className='card-body'>
@@ -228,7 +269,7 @@ class AddQuestions extends React.Component {
 										<input
 											type='text'
 											name={key}
-											value={option.value}
+											value={option[key].value}
 											onChange={this.handleChange}
 											className='form-control'
 										/>
@@ -251,6 +292,7 @@ class AddQuestions extends React.Component {
 											className='form-control'
 											name='single'
 											onChange={this.handleChange}
+											value={this.state.correctAnswer.value[0]}
 										>
 											<option>Select correct option</option>
 											{this.state.options.value.map(
@@ -284,6 +326,7 @@ class AddQuestions extends React.Component {
 											className='form-control'
 											name='multiple'
 											onChange={this.handleChange}
+											value={this.state.correctAnswer.value}
 										>
 											{this.state.options.value.map(
 												(option, index) => {
@@ -304,7 +347,7 @@ class AddQuestions extends React.Component {
 					<div className='card-footer'>
 						<div className='d-flex justify-content-end'>
 							<button type='submit' className='btn btn-primary'>
-								Create
+								{!this.state.editExam ? 'Create' : 'Update'}
 							</button>
 						</div>
 					</div>

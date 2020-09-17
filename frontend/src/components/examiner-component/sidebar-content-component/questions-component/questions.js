@@ -5,6 +5,7 @@ import QuestionService from '../../../../services/questionApi';
 import AddQuestions from './addQuestions';
 import styles from './question.module.css';
 import * as ActionTypes from '../../../../action';
+import { withRouter } from 'react-router-dom';
 
 class Questions extends React.Component {
 	constructor(props) {
@@ -14,16 +15,28 @@ class Questions extends React.Component {
 
 	componentDidMount() {
 		let examId = this.props.match.params.examId;
+
 		this.questionService.getAllQuestions(examId).then((response) => {
 			let data = response.data;
 			this.props.setQuestions(data.questionData, data.examData.examCode);
 		});
 	}
 
+	editQuestion(questionId) {
+		let examId = this.props.match.params.examId;
+		this.props.history.push({
+			pathname: `/examiner/exam/${examId}/question/${questionId}`,
+		});
+	}
+
 	render() {
 		let questionList = this.props.questions.map((data, index) => {
 			return (
-				<div key={data._id} className='my-2 cursor-pointer'>
+				<div
+					key={data._id}
+					className='my-2 cursor-pointer'
+					onClick={() => this.editQuestion(data._id)}
+				>
 					{index + 1}) {data.question}
 				</div>
 			);
@@ -37,7 +50,7 @@ class Questions extends React.Component {
 					<div className='col-md-5'>
 						<div className={`card ${styles.examDetailsCard}`}>
 							<div
-								className={`card-header ${styles.examDetailHeader} text-center`}
+								className={`card-header ${styles.examDetailHeader} text-center bg-dark text-white`}
 							>
 								Exam details
 							</div>
@@ -84,7 +97,6 @@ const mapDispatchToProps = (dispatch) => {
 			});
 		},
 		addQuestion: (question) => {
-			console.log('adding questions');
 			dispatch({
 				type: ActionTypes.ADD_QUESTION,
 				question: question,
@@ -93,4 +105,6 @@ const mapDispatchToProps = (dispatch) => {
 	};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Questions);
+export default withRouter(
+	connect(mapStateToProps, mapDispatchToProps)(Questions)
+);
