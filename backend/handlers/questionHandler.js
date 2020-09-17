@@ -9,7 +9,7 @@ let createQuestionData = (data, image) => {
 	return {
 		examId: data.examId,
 		question: data.question,
-		optionType: data.optionType,
+		optionType: data.optionsType,
 		options: optionArray,
 		correctAnswer: data.correctAnswer,
 		image: image ? image.filename : null,
@@ -28,6 +28,12 @@ const questions = {
 			.select({ _id: 1, question: 1 });
 		let examData = await exam.getById(examId).select({ examCode: 1 });
 		return { questionData, examData };
+	},
+
+	getParticularQuestion: async (questionId) => {
+		return question
+			.findById(questionId)
+			.select({ modifiedAt: 0, createdAt: 0, __v: 0, _id: 0 });
 	},
 };
 

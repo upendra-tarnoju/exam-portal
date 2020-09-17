@@ -7,7 +7,14 @@ const question = {
 		questionHandler
 			.addNewQuestion(questionData, questionImage)
 			.then((response) => {
-				res.status(200).send({ msg: 'Question added successfully' });
+				let data = {
+					_id: response._id,
+					question: response.question,
+				};
+				res.status(200).send({
+					msg: 'Question added successfully',
+					newQuestion: data,
+				});
 			});
 	},
 
@@ -16,6 +23,18 @@ const question = {
 		questionHandler.getAllQuestions(examId).then((response) => {
 			res.status(200).send(response);
 		});
+	},
+
+	getParticularQuestion: async (req, res) => {
+		let questionId = req.params.questionId;
+		questionHandler
+			.getParticularQuestion(questionId)
+			.then((response) => {
+				res.status(200).send(response);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
 	},
 };
 

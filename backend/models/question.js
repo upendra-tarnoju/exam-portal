@@ -1,6 +1,5 @@
 const { question } = require('../schemas');
 const mongoose = require('mongoose');
-const ObjectId = mongoose.Types.ObjectId;
 
 class Questions {
 	constructor() {
@@ -14,6 +13,10 @@ class Questions {
 
 	getSpecificData(examId) {
 		return this.questionModel.find({ examId: examId });
+	}
+
+	findById(id) {
+		return this.questionModel.findById(id);
 	}
 }
 
