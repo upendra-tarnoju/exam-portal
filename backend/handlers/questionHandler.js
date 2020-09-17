@@ -35,6 +35,13 @@ const questions = {
 			.findById(questionId)
 			.select({ modifiedAt: 0, createdAt: 0, __v: 0, _id: 0 });
 	},
+
+	update: async (questionId, data, image) => {
+		let questionObject = createQuestionData(data, image);
+		return question
+			.update(questionId, questionObject)
+			.select({ examId: 1, question: 1 });
+	},
 };
 
 module.exports = questions;

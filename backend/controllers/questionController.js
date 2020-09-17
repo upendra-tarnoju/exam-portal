@@ -36,6 +36,17 @@ const question = {
 				console.log(error);
 			});
 	},
+
+	update: async (req, res) => {
+		let questionId = req.params.questionId;
+		let questionData = req.body;
+		let questionImage = req.file;
+		questionHandler
+			.update(questionId, questionData, questionImage)
+			.then((data) => {
+				res.status(200).send(data);
+			});
+	},
 };
 
 module.exports = question;

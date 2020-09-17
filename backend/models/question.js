@@ -18,6 +18,10 @@ class Questions {
 	findById(id) {
 		return this.questionModel.findById(id);
 	}
+
+	update(id, data) {
+		return this.questionModel.findByIdAndUpdate(id, data, { new: true });
+	}
 }
 
 module.exports = new Questions();

@@ -100,5 +100,12 @@ module.exports = () => {
 		questionController.getParticularQuestion
 	);
 
+	router.patch(
+		'/examiner/question/:questionId',
+		passport.authenticate('jwt'),
+		multerMiddleware.upload.single('image'),
+		questionController.update
+	);
+
 	return router;
 };

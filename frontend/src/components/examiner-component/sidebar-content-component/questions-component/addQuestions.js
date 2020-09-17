@@ -20,7 +20,7 @@ class AddQuestions extends React.Component {
 		this.baseState = this.state;
 		this.handleChange = this.handleChange.bind(this);
 		this.handleOptionTypeChange = this.handleOptionTypeChange.bind(this);
-		this.createQuestion = this.createQuestion.bind(this);
+		this.submitQuestion = this.submitQuestion.bind(this);
 		this.handleFileChange = this.handleFileChange.bind(this);
 		this.questionService = new QuestionService();
 		this.handleOptionChange = this.handleOptionChange.bind(this);
@@ -111,7 +111,7 @@ class AddQuestions extends React.Component {
 		});
 	}
 
-	createQuestion(event) {
+	submitQuestion(event) {
 		event.preventDefault();
 		let examId = this.props.match.params.examId;
 		let validationState = validateInputs.createQuestionFields(this.state);
@@ -126,10 +126,30 @@ class AddQuestions extends React.Component {
 				} else formData.append(key, this.state[key].value);
 			}
 			formData.append('examId', examId);
-			this.questionService.saveQuestion(formData).then((response) => {
-				this.props.addQuestion(response.data.newQuestion);
-				this.setState(this.baseState);
-			});
+			if (this.state.editExam) {
+				let questionId = this.props.match.params.questionId;
+				this.questionService
+					.update(questionId, formData)
+					.then((response) => {
+						let data = response.data;
+						let questions = this.props.questions.map((element) =>
+							element._id === data._id
+								? Object.assign({}, element, {
+										question: data.question,
+								  })
+								: element
+						);
+						this.props.updateQuestion(questions, this.props.examCode);
+						this.props.history.push(
+							`/examiner/exam/${response.data.examId}/question`
+						);
+					});
+			} else {
+				this.questionService.create(formData).then((response) => {
+					this.props.addQuestion(response.data.newQuestion);
+					this.setState(this.baseState);
+				});
+			}
 		}
 	}
 
@@ -150,17 +170,15 @@ class AddQuestions extends React.Component {
 	}
 
 	editExam(pathname) {
-		let editStatus;
 		if (!pathname.endsWith('question')) {
-			editStatus = true;
 			let questionId = pathname.split('/question/')[1];
-			this.questionService
-				.getParticularQuestion(questionId)
-				.then((response) => {
-					this.setValues(response.data);
-				});
-		} else editStatus = false;
-		this.setState({ editExam: editStatus });
+			this.questionService.getParticular(questionId).then((response) => {
+				this.setValues(response.data);
+				this.setState({ editExam: true });
+			});
+		} else {
+			this.setState(this.baseState);
+		}
 	}
 
 	componentDidMount() {
@@ -179,7 +197,7 @@ class AddQuestions extends React.Component {
 				>
 					{this.state.editExam ? 'Edit Question' : 'Add Question'}
 				</div>
-				<form onSubmit={this.createQuestion} encType='multipart/form-data'>
+				<form onSubmit={this.submitQuestion} encType='multipart/form-data'>
 					<div className='card-body'>
 						<div className='container'>
 							<div className='form-group'>
@@ -357,6 +375,13 @@ class AddQuestions extends React.Component {
 	}
 }
 
+const mapStateToProps = (state) => {
+	return {
+		examCode: state.examinerReducer.examCode,
+		questions: state.examinerReducer.questions,
+	};
+};
+
 const mapDispatchToProps = (dispatch) => {
 	return {
 		addQuestion: (question) => {
@@ -365,7 +390,14 @@ const mapDispatchToProps = (dispatch) => {
 				question: question,
 			});
 		},
+
+		updateQuestion: (questions) => {
+			dispatch({
+				type: ActionTypes.SET_QUESTIONS,
+				questions: questions,
+			});
+		},
 	};
 };
 
-export default connect(null, mapDispatchToProps)(AddQuestions);
+export default connect(mapStateToProps, mapDispatchToProps)(AddQuestions);

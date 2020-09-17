@@ -16,7 +16,7 @@ class Questions extends React.Component {
 	componentDidMount() {
 		let examId = this.props.match.params.examId;
 
-		this.questionService.getAllQuestions(examId).then((response) => {
+		this.questionService.getAll(examId).then((response) => {
 			let data = response.data;
 			this.props.setQuestions(data.questionData, data.examData.examCode);
 		});
@@ -94,12 +94,6 @@ const mapDispatchToProps = (dispatch) => {
 				type: ActionTypes.SET_QUESTIONS,
 				questions: questions,
 				examCode: examCode,
-			});
-		},
-		addQuestion: (question) => {
-			dispatch({
-				type: ActionTypes.ADD_QUESTION,
-				question: question,
 			});
 		},
 	};
