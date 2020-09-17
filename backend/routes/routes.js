@@ -107,5 +107,11 @@ module.exports = () => {
 		questionController.update
 	);
 
+	router.delete(
+		'/examiner/question/:questionId',
+		passport.authenticate('jwt'),
+		questionController.delete
+	);
+
 	return router;
 };

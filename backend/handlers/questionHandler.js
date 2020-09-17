@@ -42,6 +42,10 @@ const questions = {
 			.update(questionId, questionObject)
 			.select({ examId: 1, question: 1 });
 	},
+
+	delete: async (questionId) => {
+		return question.deleteById(questionId);
+	},
 };
 
 module.exports = questions;

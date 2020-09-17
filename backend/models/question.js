@@ -22,6 +22,10 @@ class Questions {
 	update(id, data) {
 		return this.questionModel.findByIdAndUpdate(id, data, { new: true });
 	}
+
+	deleteById(id) {
+		return this.questionModel.findByIdAndDelete(id);
+	}
 }
 
 module.exports = new Questions();

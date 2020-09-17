@@ -60,6 +60,18 @@ class QuestionService {
 			data: questionData,
 		});
 	}
+
+	delete(questionId) {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'delete',
+			url: `${process.env.REACT_APP_BASE_URL}/${this.QUESTION_URL}/${questionId}`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	}
 }
 
 export default QuestionService;
