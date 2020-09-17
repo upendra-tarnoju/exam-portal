@@ -47,6 +47,13 @@ const question = {
 				res.status(200).send(data);
 			});
 	},
+
+	delete: async (req, res) => {
+		let questionId = req.params.questionId;
+		questionHandler.delete(questionId).then((data) => {
+			res.status(200).send(data);
+		});
+	},
 };
 
 module.exports = question;
