@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 
+import * as ActionTypes from '../../action';
 import UserService from '../../services/userApi';
 import LoginForm from '../../forms/loginForm';
 
@@ -21,6 +24,7 @@ class LoginCard extends Component {
 			if (lastLogin == null) {
 				this.props.setExaminerInputWindow(true);
 			} else {
+				console.log('ues');
 				this.props.setExaminerInputWindow(false);
 				this.props.history.push('/examiner');
 			}
@@ -53,4 +57,15 @@ class LoginCard extends Component {
 	}
 }
 
-export default LoginCard;
+const mapDispatchToProps = (dispatch) => {
+	return {
+		setExaminerInputWindow: (status) => {
+			dispatch({
+				type: ActionTypes.SET_EXAMINER_INPUT_WINDOW,
+				status: status,
+			});
+		},
+	};
+};
+
+export default withRouter(connect(null, mapDispatchToProps)(LoginCard));

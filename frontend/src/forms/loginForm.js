@@ -1,10 +1,7 @@
 import React from 'react';
 import { Formik } from 'formik';
 import { Form, Button } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
 
-import * as ActionTypes from '../action';
 import schema from '../schema/loginSchema';
 import UserService from '../services/userApi';
 
@@ -74,15 +71,4 @@ let LoginForm = ({ handleLogin, handleError }) => {
 	);
 };
 
-const mapDispatchToProps = (dispatch) => {
-	return {
-		setExaminerInputWindow: (status) => {
-			dispatch({
-				type: ActionTypes.SET_EXAMINER_INPUT_WINDOW,
-				status: status,
-			});
-		},
-	};
-};
-
-export default withRouter(connect(null, mapDispatchToProps)(LoginForm));
+export default LoginForm;
