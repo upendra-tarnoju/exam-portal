@@ -43,7 +43,6 @@ class Admin extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		panel: state.adminReducer.panel,
 		toggle: state.adminReducer.sidebarToggle,
 	};
 };

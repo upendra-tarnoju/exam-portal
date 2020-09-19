@@ -5,6 +5,7 @@ import Alert from 'react-bootstrap/Alert';
 
 import AdminModal from '../../../modal-component/modal';
 import styles from './viewExaminers.module.css';
+import AdminService from '../../../../services/adminApi';
 
 class ViewExaminers extends Component {
 	constructor(props) {
@@ -20,12 +21,26 @@ class ViewExaminers extends Component {
 			showModal: false,
 			fullName: '',
 			modalData: { id: '', type: '', success: false },
+			examinerCount: { approved: 0, pending: 0, declined: 0 },
 		};
+		this.adminService = new AdminService();
 		this.examinerData = this.examinerData.bind(this);
 		this.paginateExaminers = this.paginateExaminers.bind(this);
 		this.changePageSize = this.changePageSize.bind(this);
 		this.handleModal = this.handleModal.bind(this);
 		this.handleAlert = this.handleAlert.bind(this);
+	}
+
+	componentDidMount() {
+		this.adminService.getAllExaminer().then((res) => {
+			this.setState({
+				examinerCount: {
+					approved: res.data.approved,
+					pending: res.data.pending,
+					declined: res.data.declined,
+				},
+			});
+		});
 	}
 
 	handleModal(status) {
@@ -62,8 +77,8 @@ class ViewExaminers extends Component {
 			})
 			.then((res) => {
 				let maxIndex;
-				if (this.props.examinerCount[type] < this.state.maxSizeIndex) {
-					maxIndex = this.props.examinerCount[type];
+				if (this.state.examinerCount[type] < this.state.maxSizeIndex) {
+					maxIndex = this.state.examinerCount[type];
 				} else maxIndex = this.state.maxSizeIndex;
 				this.setState({
 					tableData: res.data.examiner,
@@ -80,12 +95,12 @@ class ViewExaminers extends Component {
 		if (paginateType === 'inc') pageIndex = pageIndex + 1;
 		else pageIndex = pageIndex - 1;
 		let maxSizeIndex = (pageIndex + 1) * pageSize;
-		if (maxSizeIndex > this.props.examinerCount.pending)
-			maxSizeIndex = this.props.examinerCount.pending;
+		if (maxSizeIndex > this.state.examinerCount.pending)
+			maxSizeIndex = this.state.examinerCount.pending;
 		if (
 			pageIndex >= 0 &&
-			(this.state.maxSizeIndex !== this.props.examinerCount.pending ||
-				maxSizeIndex !== this.props.examinerCount.pending)
+			(this.state.maxSizeIndex !== this.state.examinerCount.pending ||
+				maxSizeIndex !== this.state.examinerCount.pending)
 		) {
 			this.setState(
 				{
@@ -199,7 +214,7 @@ class ViewExaminers extends Component {
 					</select>
 					<span className='align-self-center mr-3'>
 						{this.state.tableIndex + 1}- {this.state.maxSizeIndex} of{' '}
-						{this.props.examinerCount[this.state.accountStatus]}
+						{this.state.examinerCount[this.state.accountStatus]}
 					</span>
 					<i
 						onClick={() => this.paginateExaminers('pending', 'dec')}
@@ -239,7 +254,7 @@ class ViewExaminers extends Component {
 									Total approved
 								</p>
 								<p className={`mb-0 text-white ${styles.textStyle}`}>
-									{this.props.examinerCount.approved}
+									{this.state.examinerCount.approved}
 								</p>
 							</div>
 						</div>
@@ -265,7 +280,7 @@ class ViewExaminers extends Component {
 									Total pending
 								</p>
 								<p className={`mb-0 text-white ${styles.textStyle}`}>
-									{this.props.examinerCount.pending}
+									{this.state.examinerCount.pending}
 								</p>
 							</div>
 						</div>
@@ -291,7 +306,7 @@ class ViewExaminers extends Component {
 									Total declined
 								</p>
 								<p className={`mb-0 text-white ${styles.textStyle}`}>
-									{this.props.examinerCount.declined}
+									{this.state.examinerCount.declined}
 								</p>
 							</div>
 						</div>
@@ -316,9 +331,4 @@ class ViewExaminers extends Component {
 	}
 }
 
-const mapStateToProps = (state) => {
-	return {
-		examinerCount: state.adminReducer.examinerCount,
-	};
-};
-export default connect(mapStateToProps, null)(ViewExaminers);
+export default ViewExaminers;
