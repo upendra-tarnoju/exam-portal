@@ -24,7 +24,6 @@ class LoginCard extends Component {
 			if (lastLogin == null) {
 				this.props.setExaminerInputWindow(true);
 			} else {
-				console.log('ues');
 				this.props.setExaminerInputWindow(false);
 				this.props.history.push('/examiner');
 			}

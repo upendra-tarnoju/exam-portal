@@ -18,7 +18,6 @@ module.exports = (passport) => {
 					lastLogin: 1,
 				})
 				.then((user) => {
-					console.log(user);
 					if (user) {
 						let userStatus = bcryptjs.compareSync(
 							password,

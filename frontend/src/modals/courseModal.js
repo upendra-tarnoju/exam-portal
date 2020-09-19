@@ -30,7 +30,6 @@ class CourseModal extends Component {
 			this.courseService
 				.createCourse(values)
 				.then((res) => {
-					console.log(this.props);
 					this.props.closeModal();
 					this.props.handleAlert(true, res.data.msg);
 					this.props.viewCourses();

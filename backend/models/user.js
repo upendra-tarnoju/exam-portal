@@ -7,7 +7,6 @@ class Users {
 	}
 
 	find = (email) => {
-		console.log(email);
 		return this.userModel.findOne({ email });
 	};
 
