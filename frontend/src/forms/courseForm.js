@@ -1,0 +1,59 @@
+import React from 'react';
+import { Formik } from 'formik';
+import { Form, Button } from 'react-bootstrap';
+
+import schema from '../schema/courseSchema';
+
+let CourseForm = ({ state, modalType, handleSubmit }) => {
+	return (
+		<Formik
+			validationSchema={modalType !== 'search' ? schema : null}
+			onSubmit={(values) => {
+				handleSubmit(values);
+			}}
+			initialValues={state}
+		>
+			{({ values, errors, handleChange, handleBlur, handleSubmit }) => (
+				<Form noValidate onSubmit={handleSubmit}>
+					<Form.Group>
+						<Form.Label>Name</Form.Label>
+						<Form.Control
+							type='text'
+							name='name'
+							placeholder='Course name'
+							value={values.name}
+							onBlur={handleBlur}
+							onChange={handleChange}
+							isInvalid={!!errors.name}
+							required
+						/>
+						<Form.Control.Feedback type='invalid'>
+							{errors.name}
+						</Form.Control.Feedback>
+					</Form.Group>
+					<Form.Group>
+						<Form.Label>Description</Form.Label>
+						<Form.Control
+							type='text'
+							name='description'
+							placeholder='Course description'
+							value={values.description}
+							onBlur={handleBlur}
+							onChange={handleChange}
+							isInvalid={!!errors.description}
+							required
+						/>
+						<Form.Control.Feedback type='invalid'>
+							{errors.description}
+						</Form.Control.Feedback>
+					</Form.Group>
+					<div className='d-flex justify-content-end'>
+						<Button type='submit'>Create</Button>
+					</div>
+				</Form>
+			)}
+		</Formik>
+	);
+};
+
+export default CourseForm;

@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import styles from './courses.module.css';
 import { connect } from 'react-redux';
+import { Table, Alert, Button, Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 import * as ActionTypes from '../../../../action';
-import CourseModal from './courseModal';
-import Alert from 'react-bootstrap/Alert';
+import CourseModal from '../../../../modals/courseModal';
+import styles from './courses.module.css';
 import CourseService from '../../../../services/courseApi';
+import DeleteModal from '../../../../modals/deleteModal';
 
 class Courses extends Component {
 	constructor(props) {
@@ -16,7 +17,6 @@ class Courses extends Component {
 			modalType: '',
 			alert: false,
 			msg: '',
-			courses: [],
 			pageIndex: 0,
 			pageSize: 5,
 			maxSizeIndex: 5,
@@ -25,11 +25,9 @@ class Courses extends Component {
 			name: '',
 			description: '',
 			courseId: '',
+			deleteModal: { show: false, id: '' },
 		};
-		this.changePageSize = this.changePageSize.bind(this);
 		this.courseService = new CourseService();
-		this.handleSearch = this.handleSearch.bind(this);
-		this.clearSearch = this.clearSearch.bind(this);
 	}
 
 	handleCourseModal = (modal, modalType) => {
@@ -55,19 +53,30 @@ class Courses extends Component {
 		});
 	};
 
-	deleteCourse(courseId) {
+	handleDeleteModal = (show, id) => {
+		this.setState({
+			deleteModal: {
+				show,
+				id,
+			},
+		});
+	};
+
+	deleteCourse = () => {
+		let courseId = this.state.deleteModal.id;
 		this.courseService.deleteCourse(courseId).then((response) => {
 			this.viewCourses();
+			this.handleDeleteModal(false, '');
 		});
-	}
+	};
 
-	handleSearch(search) {
+	handleSearch = (search) => {
 		this.setState({
 			search: search,
 		});
-	}
+	};
 
-	clearSearch() {
+	clearSearch = () => {
 		this.setState(
 			{
 				search: false,
@@ -76,9 +85,9 @@ class Courses extends Component {
 			},
 			() => this.viewCourses()
 		);
-	}
+	};
 
-	viewCourses() {
+	viewCourses = () => {
 		this.courseService
 			.viewCourses({
 				pageSize: this.state.pageSize,
@@ -88,25 +97,27 @@ class Courses extends Component {
 				let maxIndex;
 				if (response.data.totalCourses < this.state.maxSizeIndex)
 					maxIndex = response.data.totalCourses;
-				else maxIndex = this.state.maxSizeIndex;
+				else {
+					maxIndex = this.state.maxSizeIndex;
+				}
 				this.props.setCourses(response.data.courses);
 				this.setState({
 					maxSizeIndex: maxIndex,
 					totalCount: response.data.totalCourses,
 				});
 			});
-	}
+	};
 
 	componentDidMount() {
 		this.viewCourses();
 	}
 
-	changePageSize(event) {
+	changePageSize = (event) => {
 		let newPageSize = event.target.value;
 		this.setState({ pageIndex: 0, pageSize: newPageSize }, () => {
 			this.viewCourses();
 		});
-	}
+	};
 
 	paginateCourses(paginateType) {
 		let pageIndex = this.state.pageIndex;
@@ -143,32 +154,26 @@ class Courses extends Component {
 				<td>{data.name}</td>
 				<td>{data.description}</td>
 				<td>
-					<button
-						data-toggle='tooltip'
-						data-placement='top'
-						title='Edit'
-						type='button'
-						className='btn p-0'
-						onClick={() =>
-							this.editCourse(data.name, data.description, data._id)
-						}
+					<OverlayTrigger
+						placement='bottom'
+						overlay={<Tooltip id='button-tooltip'>Edit</Tooltip>}
 					>
 						<i
-							className={
-								'fa fa-pencil-square-o cursor-pointer text-white'
+							className='fa fa-pencil-square-o cursor-pointer text-white mr-2'
+							onClick={() =>
+								this.editCourse(data.name, data.description, data._id)
 							}
 						></i>
-					</button>{' '}
-					<button
-						type='button'
-						data-toggle='tooltip'
-						data-placement='top'
-						title='Delete'
-						className='btn p-0'
-						onClick={() => this.deleteCourse(data._id)}
+					</OverlayTrigger>
+					<OverlayTrigger
+						placement='bottom'
+						overlay={<Tooltip id='button-tooltip'>Delete</Tooltip>}
 					>
-						<i className={'fa fa-trash-o cursor-pointer text-white'}></i>
-					</button>
+						<i
+							className='fa fa-trash-o cursor-pointer text-white'
+							onClick={() => this.handleDeleteModal(true, data._id)}
+						></i>
+					</OverlayTrigger>
 				</td>
 			</tr>
 		));
@@ -176,28 +181,24 @@ class Courses extends Component {
 		return (
 			<div className='container'>
 				<div className='d-flex justify-content-end py-4'>
-					<button
-						type='button'
-						className='btn btn-primary mr-2'
+					<Button
+						variant='primary'
+						className='mr-2'
 						onClick={() => this.handleCourseModal(true, 'create')}
 					>
 						Create
-					</button>
-					<button
-						type='button'
-						className='btn btn-success mr-2'
+					</Button>
+					<Button
+						variant='success'
+						className='mr-2'
 						onClick={() => this.handleCourseModal(true, 'search')}
 					>
 						Search
-					</button>
+					</Button>
 					{this.state.search ? (
-						<button
-							type='button'
-							className='btn btn-danger'
-							onClick={this.clearSearch}
-						>
+						<Button variant='danger' onClick={this.clearSearch}>
 							Clear search
-						</button>
+						</Button>
 					) : null}
 				</div>
 				<Alert
@@ -213,8 +214,8 @@ class Courses extends Component {
 				{this.props.courses.length === 0 ? (
 					<p className='mb-0'>No course existed. Create a new one </p>
 				) : (
-					<div className='table-responsive'>
-						<table className='table table-hover table-dark mb-0'>
+					<div className='px-5'>
+						<Table striped bordered hover variant='dark' className='mb-0'>
 							<thead>
 								<tr>
 									<th scope='col'>S.No</th>
@@ -224,7 +225,7 @@ class Courses extends Component {
 								</tr>
 							</thead>
 							<tbody>{courses}</tbody>
-						</table>
+						</Table>
 						<div className='py-2 px-1 bg-light d-flex justify-content-end'>
 							<span className='align-self-center mr-3'>
 								Item per page
@@ -262,6 +263,13 @@ class Courses extends Component {
 					name={this.state.name}
 					description={this.state.description}
 					courseId={this.state.courseId}
+					viewCourses={this.viewCourses}
+				/>
+				<DeleteModal
+					show={this.state.deleteModal.show}
+					hideModal={this.handleDeleteModal}
+					heading='course'
+					deleteContent={this.deleteCourse}
 				/>
 			</div>
 		);
