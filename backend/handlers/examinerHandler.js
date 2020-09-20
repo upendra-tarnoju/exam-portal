@@ -21,7 +21,7 @@ const examiner = {
 			.findByExaminerId(userId)
 			.skip(pageIndex)
 			.limit(pageSize)
-			.select({ examinerId: 0 });
+			.select({ examinerId: 0, modifiedAt: 0 });
 		return courses;
 	},
 

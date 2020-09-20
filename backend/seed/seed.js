@@ -2,7 +2,7 @@ const faker = require('faker');
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 require('../db').connection;
-const { users } = require('../schemas');
+const { users, course } = require('../schemas');
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
@@ -16,6 +16,23 @@ mongoose.connect(url, (err, conn) => {
 		console.log('Mongoose Connection is Successful');
 	}
 });
+
+async function createCourses() {
+	let totalCourses = 300;
+	let examinerId = '5f3908829b9d72178cf822af';
+	for (let i = 0; i < totalCourses; i++) {
+		let courseName = faker.lorem.word().slice(0, 3).toLocaleUpperCase();
+		let courseDescription = faker.lorem.words(3);
+		let courseObject = new course({
+			name: courseName,
+			description: courseDescription,
+			examinerId: examinerId,
+		});
+		await courseObject.save();
+	}
+	console.log('course created for particular user');
+}
+
 async function createUserData() {
 	//Creating examiner
 	let totalExaminer = 7;
@@ -58,4 +75,6 @@ async function createUserData() {
 	await userObject.save();
 }
 
-createUserData();
+// createUserData();
+
+createCourses();
