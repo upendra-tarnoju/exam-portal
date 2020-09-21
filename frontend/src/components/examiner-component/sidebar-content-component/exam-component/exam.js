@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Table from 'react-bootstrap/Table';
+import Button from '@material-ui/core/Button';
 
 import ExamService from '../../../../services/examApi';
 import ExamDetails from './exam-inputs-component/examDetails';
@@ -13,7 +14,7 @@ class Exam extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			createExam: false,
+			createExam: true,
 			nextInputs: false,
 			inputErrors: {},
 		};
@@ -51,21 +52,23 @@ class Exam extends Component {
 			<div className='p-4'>
 				<div className='d-flex justify-content-end'>
 					{this.state.createExam ? (
-						<button
+						<Button
 							type='button'
-							className='btn btn-danger'
+							variant='contained'
+							color='secondary'
 							onClick={() => this.handleStates('createExam', false)}
 						>
 							Cancel
-						</button>
+						</Button>
 					) : (
-						<button
+						<Button
 							type='submit'
-							className='btn btn-primary'
+							variant='contained'
+							color='primary'
 							onClick={() => this.handleStates('createExam', true)}
 						>
 							Create
-						</button>
+						</Button>
 					)}
 				</div>
 				{this.state.createExam ? (
