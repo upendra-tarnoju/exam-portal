@@ -1,6 +1,7 @@
 import React from 'react';
 import { Formik } from 'formik';
-import { Form, Button } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
+import Button from '@material-ui/core/Button';
 
 import schema from '../schema/loginSchema';
 import UserService from '../services/userApi';
@@ -62,7 +63,9 @@ let LoginForm = ({ handleLogin, handleError }) => {
 							</Form.Control.Feedback>
 						</Form.Group>
 						<div className='d-flex justify-content-end'>
-							<Button type='submit'>Login</Button>
+							<Button variant='contained' color='primary' type='submit'>
+								Login
+							</Button>
 						</div>
 					</div>
 				</Form>

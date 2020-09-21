@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Table, Button, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Table, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import Button from '@material-ui/core/Button';
 import Moment from 'react-moment';
 import Pagination from '@material-ui/lab/Pagination';
 
@@ -14,6 +15,7 @@ class Courses extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			search: false,
 			modal: false,
 			modalType: '',
 			alert: false,
@@ -150,19 +152,25 @@ class Courses extends Component {
 			<div className='container'>
 				<div className='d-flex justify-content-end py-4'>
 					<Button
-						variant='primary'
+						variant='contained'
+						color='primary'
 						className='mr-2'
 						onClick={() => this.handleCourseModal(true, 'create')}
 					>
 						Create
 					</Button>
 					<Button
-						variant='success'
+						variant='contained'
 						className='mr-2'
 						onClick={() => this.handleCourseModal(true, 'search')}
 					>
 						Search
 					</Button>
+					{this.state.search ? (
+						<Button variant='danger' onClick={this.clearSearch}>
+							Clear search
+						</Button>
+					) : null}
 				</div>
 				<div className={`text-center ${styles.heading} mb-2`}>Courses</div>
 				{this.props.courses.length === 0 ? (

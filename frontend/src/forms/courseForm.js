@@ -1,6 +1,7 @@
 import React from 'react';
 import { Formik } from 'formik';
-import { Form, Button } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
+import Button from '@material-ui/core/Button';
 
 import schema from '../schema/courseSchema';
 
@@ -48,7 +49,9 @@ let CourseForm = ({ state, modalType, handleSubmit }) => {
 						</Form.Control.Feedback>
 					</Form.Group>
 					<div className='d-flex justify-content-end'>
-						<Button type='submit'>Create</Button>
+						<Button type='submit' variant='contained' color='primary'>
+							{modalType === 'create' ? 'Create' : 'Update'}
+						</Button>
 					</div>
 				</Form>
 			)}

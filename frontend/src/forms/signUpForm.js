@@ -1,6 +1,7 @@
 import React from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { Formik } from 'formik';
+import Button from '@material-ui/core/Button';
 
 import schema from '../schema/signUpSchema';
 import UserService from '../services/userApi';
@@ -131,7 +132,9 @@ let SignUpForm = ({ showModal }) => {
 						</Form.Control.Feedback>
 					</Form.Group>
 					<div className='d-flex justify-content-end'>
-						<Button type='submit'>Sign Up</Button>
+						<Button type='submit' variant='contained' color='primary'>
+							Sign Up
+						</Button>
 					</div>
 				</Form>
 			)}
