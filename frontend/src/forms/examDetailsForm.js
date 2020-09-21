@@ -20,12 +20,20 @@ let ExamDetailForm = (props) => {
 		<Formik
 			validationSchema={schema}
 			onSubmit={(values) => {
-				values['course'] = props.selected[0].id;
-				this.props.setFieldsValues(values);
+				props.setFieldsValues(values);
+				props.handleInputs('nextInputs', true);
 			}}
 			initialValues={props.fieldDetails}
 		>
-			{({ values, errors, handleChange, handleSubmit }) => (
+			{({
+				values,
+				errors,
+				touched,
+				handleChange,
+				handleSubmit,
+				setFieldValue,
+				setFieldTouched,
+			}) => (
 				<Form noValidate onSubmit={handleSubmit}>
 					<Form.Group>
 						<Form.Label>Subject</Form.Label>
@@ -35,7 +43,7 @@ let ExamDetailForm = (props) => {
 							placeholder='Subject'
 							value={values.subject}
 							onChange={handleChange}
-							isInvalid={!!errors.subject}
+							isInvalid={touched.subject && !!errors.subject}
 							required
 						/>
 						<Form.Control.Feedback type='invalid'>
@@ -49,8 +57,10 @@ let ExamDetailForm = (props) => {
 							filterBy={filterByCallback}
 							defaultSelected={props.selected}
 							onChange={(selected) => {
-								props.handleTypeAHeadChange(selected);
+								setFieldValue('course', selected[0].id);
 							}}
+							onBlur={(event) => setFieldTouched('course', true)}
+							isInvalid={touched.course && !!errors.course}
 							options={props.courses}
 							highlightOnlyResult={true}
 							labelKey='name'
@@ -63,19 +73,21 @@ let ExamDetailForm = (props) => {
 								</div>
 							)}
 						/>
-						<Form.Control.Feedback type='invalid'>
-							{errors.course}
-						</Form.Control.Feedback>
+						{touched.course ? (
+							<div className='d-block invalid-feedback'>
+								{errors.course}
+							</div>
+						) : null}
 					</Form.Group>
 					<Form.Group>
 						<Form.Label>Exam Password</Form.Label>
 						<Form.Control
-							type='text'
+							type='password'
 							name='password'
 							placeholder='Exam password'
 							value={values.password}
 							onChange={handleChange}
-							isInvalid={!!errors.password}
+							isInvalid={touched.password && !!errors.password}
 							required
 						/>
 						<Form.Control.Feedback type='invalid'>
@@ -90,7 +102,7 @@ let ExamDetailForm = (props) => {
 							placeholder='Course name'
 							value={values.examCode}
 							onChange={handleChange}
-							isInvalid={!!errors.examCode}
+							isInvalid={touched.examCode && !!errors.examCode}
 							required
 						/>
 						<Form.Control.Feedback type='invalid'>
@@ -117,11 +129,10 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		setFieldsValues: (key, value) => {
+		setFieldsValues: (values) => {
 			dispatch({
 				type: ActionTypes.SET_EXAM_DETAILS,
-				key: key,
-				value: value,
+				values: values,
 			});
 		},
 	};

@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 
 let schema = Yup.object({
 	subject: Yup.string().required('Subject is required'),
+	course: Yup.string().required('Course name is required'),
 	examCode: Yup.string().required('Exam code is required'),
 	password: Yup.string()
 		.required('Password is required')

@@ -9,10 +9,6 @@ import CourseService from '../../../../../services/courseApi';
 class ExamDetails extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			courseName: '',
-			selected: [],
-		};
 		this.courseService = new CourseService();
 	}
 
@@ -27,23 +23,13 @@ class ExamDetails extends Component {
 				};
 			});
 			this.props.setCourses(res.data);
-			this.setState({ selected: [res.data[0]] });
 		});
 	}
-
-	handleTypeAHeadChange = (selected) => {
-		this.setState({ selected });
-		this.props.setFieldsValues('course', selected[0].id);
-	};
 
 	render() {
 		return (
 			<div className='card-body'>
-				<ExamDetailForm
-					filterByCallback={this.filterByCallback}
-					selected={this.state.selected}
-					handleTypeAHeadChange={this.handleTypeAHeadChange}
-				/>
+				<ExamDetailForm handleInputs={this.props.handleInputs} />
 			</div>
 		);
 	}

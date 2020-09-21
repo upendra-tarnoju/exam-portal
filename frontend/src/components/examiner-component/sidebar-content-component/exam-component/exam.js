@@ -14,22 +14,21 @@ class Exam extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			createExam: true,
+			createExam: false,
 			nextInputs: false,
 			inputErrors: {},
 		};
 		this.examService = new ExamService();
-		this.handleStates = this.handleStates.bind(this);
 	}
 
-	handleStates(key, value) {
+	handleStates = (key, value) => {
 		if (key === 'createExam' && value === false) {
 			this.props.clearExamInputs();
 		}
 		this.setState({
 			[key]: value,
 		});
-	}
+	};
 
 	componentDidMount() {
 		this.examService.getAllExams().then((res) => {
