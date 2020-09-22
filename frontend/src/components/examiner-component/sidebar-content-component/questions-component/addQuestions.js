@@ -18,15 +18,10 @@ class AddQuestions extends React.Component {
 			editExam: false,
 		};
 		this.baseState = this.state;
-		this.handleChange = this.handleChange.bind(this);
-		this.handleOptionTypeChange = this.handleOptionTypeChange.bind(this);
-		this.submitQuestion = this.submitQuestion.bind(this);
-		this.handleFileChange = this.handleFileChange.bind(this);
 		this.questionService = new QuestionService();
-		this.handleOptionChange = this.handleOptionChange.bind(this);
 	}
 
-	handleOptionChange(event) {
+	handleOptionChange = (event) => {
 		let key = event.target.name;
 		let value = event.target.value;
 		let arr = [];
@@ -48,9 +43,9 @@ class AddQuestions extends React.Component {
 				value: value,
 			},
 		}));
-	}
+	};
 
-	handleChange(event) {
+	handleChange = (event) => {
 		let key = event.target.name;
 		let value = event.target.value;
 		let regex = /\d/g;
@@ -81,9 +76,9 @@ class AddQuestions extends React.Component {
 				value: value,
 			},
 		}));
-	}
+	};
 
-	handleOptionTypeChange(event) {
+	handleOptionTypeChange = (event) => {
 		let key = event.target.name;
 		let show = true;
 		let value = event.target.value;
@@ -100,18 +95,18 @@ class AddQuestions extends React.Component {
 				value: value,
 			},
 		}));
-	}
+	};
 
-	handleFileChange(event) {
+	handleFileChange = (event) => {
 		let file = event.target.files[0];
 		this.setState({
 			image: {
 				value: file,
 			},
 		});
-	}
+	};
 
-	submitQuestion(event) {
+	submitQuestion = (event) => {
 		event.preventDefault();
 		let examId = this.props.match.params.examId;
 		let validationState = validateInputs.createQuestionFields(this.state);
@@ -151,7 +146,7 @@ class AddQuestions extends React.Component {
 				});
 			}
 		}
-	}
+	};
 
 	setValues(questionData) {
 		let correctAnswer = questionData.correctAnswer.split(',');

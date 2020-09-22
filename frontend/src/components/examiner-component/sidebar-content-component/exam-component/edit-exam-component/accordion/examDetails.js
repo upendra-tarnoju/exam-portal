@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
-import { Button } from '@material-ui/core';
 
 import styles from '../../exam.module.css';
 

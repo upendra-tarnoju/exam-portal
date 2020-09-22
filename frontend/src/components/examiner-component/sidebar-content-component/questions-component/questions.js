@@ -99,7 +99,7 @@ class Questions extends React.Component {
 			<div className='container'>
 				<div className='row'>
 					<div className='col-md-7'>
-						<AddQuestions {...this.props} />;
+						<AddQuestions {...this.props} />
 					</div>
 					<div className='col-md-5'>
 						<div className={`card ${styles.examDetailsCard}`}>
