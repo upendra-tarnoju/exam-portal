@@ -33,12 +33,14 @@ const ExamMarks = ({
 										{state.totalMarks.prev}
 									</p>
 								</div>
-								<p
-									className='cursor-pointer edit-text align-self-center'
-									onClick={() => handleCollapseChange('totalMarks')}
-								>
-									Edit
-								</p>
+								{state.editExam ? (
+									<p
+										className='cursor-pointer edit-text align-self-center'
+										onClick={() => handleCollapseChange('totalMarks')}
+									>
+										Edit
+									</p>
+								) : null}
 							</div>
 							<Collapse in={state.totalMarks.collapse}>
 								<div className='row'>
@@ -52,7 +54,9 @@ const ExamMarks = ({
 											onChange={handleExamChange}
 										/>
 										{state.totalMarks.msg ? (
-											<span>{state.totalMarks.msg}</span>
+											<span className='d-block invalid-feedback'>
+												{state.totalMarks.msg}
+											</span>
 										) : null}
 									</div>
 									<div className='col-md-2'>
@@ -83,12 +87,16 @@ const ExamMarks = ({
 										{state.passingMarks.prev}
 									</p>
 								</div>
-								<p
-									className='cursor-pointer edit-text align-self-center'
-									onClick={() => handleCollapseChange('passingMarks')}
-								>
-									Edit
-								</p>
+								{state.editExam ? (
+									<p
+										className='cursor-pointer edit-text align-self-center'
+										onClick={() =>
+											handleCollapseChange('passingMarks')
+										}
+									>
+										Edit
+									</p>
+								) : null}
 							</div>
 							<Collapse in={state.passingMarks.collapse}>
 								<div className='row'>
@@ -102,7 +110,9 @@ const ExamMarks = ({
 											onChange={handleExamChange}
 										/>
 										{state.passingMarks.msg ? (
-											<span>{state.passingMarks.msg}</span>
+											<span className='d-block invalid-feedback'>
+												{state.passingMarks.msg}
+											</span>
 										) : null}
 									</div>
 									<div className='col-md-2'>

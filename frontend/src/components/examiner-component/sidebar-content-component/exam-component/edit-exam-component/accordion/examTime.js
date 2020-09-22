@@ -36,12 +36,14 @@ const ExamTime = ({
 										</Moment>
 									</p>
 								</div>
-								<p
-									className='cursor-pointer edit-text align-self-center'
-									onClick={() => handleCollapseChange('examDate')}
-								>
-									Edit
-								</p>
+								{state.editExam ? (
+									<p
+										className='cursor-pointer edit-text align-self-center'
+										onClick={() => handleCollapseChange('examDate')}
+									>
+										Edit
+									</p>
+								) : null}
 							</div>
 							<Collapse in={state.examDate.collapse}>
 								<div className='row'>
@@ -87,12 +89,14 @@ const ExamTime = ({
 										</Moment>
 									</p>
 								</div>
-								<p
-									className='cursor-pointer edit-text align-self-center'
-									onClick={() => handleCollapseChange('startTime')}
-								>
-									Edit
-								</p>
+								{state.editExam ? (
+									<p
+										className='cursor-pointer edit-text align-self-center'
+										onClick={() => handleCollapseChange('startTime')}
+									>
+										Edit
+									</p>
+								) : null}
 							</div>
 							<Collapse in={state.startTime.collapse}>
 								<div className='row'>
@@ -138,12 +142,14 @@ const ExamTime = ({
 										</Moment>
 									</p>
 								</div>
-								<p
-									className='cursor-pointer edit-text align-self-center'
-									onClick={() => handleCollapseChange('endTime')}
-								>
-									Edit
-								</p>
+								{state.editExam ? (
+									<p
+										className='cursor-pointer edit-text align-self-center'
+										onClick={() => handleCollapseChange('endTime')}
+									>
+										Edit
+									</p>
+								) : null}
 							</div>
 							<Collapse in={state.endTime.collapse}>
 								<div className='row'>

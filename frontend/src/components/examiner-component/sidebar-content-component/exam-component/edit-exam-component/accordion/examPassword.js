@@ -28,17 +28,19 @@ const ExamPassword = ({
 								<label className={`mb-0 ${styles.editExamHeading}`}>
 									Password{' '}
 									{state.password.msg ? (
-										<span className='text-danger'>
+										<span className='d-block invalid-feedback'>
 											* {state.password.msg}
 										</span>
 									) : null}
 								</label>
-								<p
-									className='cursor-pointer edit-text'
-									onClick={() => handleCollapseChange('password')}
-								>
-									Edit
-								</p>
+								{state.editExam ? (
+									<p
+										className='cursor-pointer edit-text'
+										onClick={() => handleCollapseChange('password')}
+									>
+										Edit
+									</p>
+								) : null}
 							</div>
 							<Collapse in={state.password.collapse}>
 								<form>
@@ -46,7 +48,7 @@ const ExamPassword = ({
 										<label>
 											Current{' '}
 											{state.current.msg ? (
-												<span className='text-danger'>
+												<span className='d-block invalid-feedback'>
 													{state.current.msg}
 												</span>
 											) : null}
@@ -63,7 +65,7 @@ const ExamPassword = ({
 										<label>
 											New{' '}
 											{state.new.msg ? (
-												<span className='text-danger'>
+												<span className='d-block invalid-feedback'>
 													{state.new.msg}
 												</span>
 											) : null}
@@ -80,7 +82,7 @@ const ExamPassword = ({
 										<label>
 											Re-type new{' '}
 											{state.reTypeNew.msg ? (
-												<span className='text-danger'>
+												<span className='d-block invalid-feedback'>
 													{state.reTypeNew.msg}
 												</span>
 											) : null}

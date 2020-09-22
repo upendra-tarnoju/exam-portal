@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import { Alert, AlertTitle } from '@material-ui/lab';
 
 import styles from '../exam.module.css';
 import ExamService from '../../../../../services/examApi';
@@ -8,6 +9,7 @@ import ExamDetails from './accordion/examDetails';
 import ExamMarks from './accordion/examMarks';
 import ExamTime from './accordion/examTime';
 import ExamPassword from './accordion/examPassword';
+import factories from '../../../../../factories/factories';
 
 class EditExam extends React.Component {
 	constructor(props) {
@@ -24,6 +26,7 @@ class EditExam extends React.Component {
 			current: { value: '', msg: '' },
 			new: { value: '', msg: '' },
 			reTypeNew: { value: '', msg: '' },
+			editExam: false,
 		};
 		this.examService = new ExamService();
 	}
@@ -61,6 +64,16 @@ class EditExam extends React.Component {
 		}));
 	};
 
+	setEditExamStatus(examDate) {
+		let currentDate = new Date();
+		currentDate = factories.formatDate(currentDate);
+		if (examDate >= currentDate) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	componentDidMount() {
 		let examId = this.props.match.params.examId;
 		this.examService.getParticularExam(examId).then((res) => {
@@ -70,6 +83,7 @@ class EditExam extends React.Component {
 			);
 			let startTime = moment(exam.startTime).format('HH:MM');
 			let endTime = moment(exam.endTime).format('HH:MM');
+			let boolStatus = this.setEditExamStatus(examDate);
 			this.setState({
 				examCode: { prev: exam.examCode, new: exam.examCode },
 				subject: { prev: exam.subject, new: exam.subject },
@@ -78,6 +92,7 @@ class EditExam extends React.Component {
 				examDate: { prev: examDate, new: examDate },
 				startTime: { prev: startTime, new: startTime },
 				endTime: { prev: endTime, new: endTime },
+				editExam: boolStatus,
 			});
 		});
 	}
@@ -157,6 +172,15 @@ class EditExam extends React.Component {
 		return (
 			<div className='container w-50 my-5'>
 				<h3 className={`text-center ${styles.heading}`}>Edit exam</h3>
+				{!this.state.editExam ? (
+					<div className='mb-2'>
+						<Alert severity='error' variant='filled'>
+							<AlertTitle>Message</AlertTitle>
+							You cannot edit <strong>expired</strong> exam
+						</Alert>
+					</div>
+				) : null}
+
 				<ExamDetails
 					state={this.state}
 					handleExamChange={this.handleExamChange}

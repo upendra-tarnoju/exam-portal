@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
+import { Button } from '@material-ui/core';
 
 import styles from '../../exam.module.css';
 
@@ -33,12 +34,14 @@ const ExamDetails = ({
 										{state.subject.prev}
 									</p>
 								</div>
-								<p
-									className='cursor-pointer edit-text align-self-center'
-									onClick={() => handleCollapseChange('subject')}
-								>
-									Edit
-								</p>
+								{state.editExam ? (
+									<p
+										className='cursor-pointer edit-text align-self-center'
+										onClick={() => handleCollapseChange('subject')}
+									>
+										Edit
+									</p>
+								) : null}
 							</div>
 							<Collapse in={state.subject.collapse}>
 								<div className='row'>
@@ -51,7 +54,9 @@ const ExamDetails = ({
 											onChange={handleExamChange}
 										/>
 										{state.subject.msg ? (
-											<span>{state.subject.msg}</span>
+											<span className='d-block invalid-feedback'>
+												{state.subject.msg}
+											</span>
 										) : null}
 									</div>
 									<div className='col-md-2'>
@@ -81,12 +86,14 @@ const ExamDetails = ({
 										{state.examCode.prev}
 									</p>
 								</div>
-								<p
-									className='cursor-pointer edit-text align-self-center'
-									onClick={() => handleCollapseChange('examCode')}
-								>
-									Edit
-								</p>
+								{state.editExam ? (
+									<p
+										className='cursor-pointer edit-text align-self-center'
+										onClick={() => handleCollapseChange('examCode')}
+									>
+										Edit
+									</p>
+								) : null}
 							</div>
 							<Collapse in={state.examCode.collapse}>
 								<div className='row'>
@@ -99,7 +106,9 @@ const ExamDetails = ({
 											onChange={handleExamChange}
 										/>
 										{state.examCode.msg ? (
-											<span>{state.examCode.msg}</span>
+											<span className='d-block invalid-feedback'>
+												{state.examCode.msg}
+											</span>
 										) : null}
 									</div>
 									<div className='col-md-2'>

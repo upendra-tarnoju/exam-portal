@@ -1,11 +1,9 @@
-const { data } = require('jquery');
-
-mapSignUpStates = (state) => {
-	for (data in state) {
-		console.log(data);
-	}
+let formatDate = (date) => {
+	let formattedDate = `${date.getFullYear()}-${(
+		'0' +
+		(date.getMonth() + 1)
+	).slice(-2)}-${('0' + date.getDate()).slice(-2)}`;
+	return formattedDate;
 };
 
-module.exports = {
-	mapSignUpStates,
-};
+export default { formatDate };
