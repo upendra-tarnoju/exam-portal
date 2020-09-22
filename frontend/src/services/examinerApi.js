@@ -12,11 +12,7 @@ class ExaminerService {
 		return axios({
 			method: 'patch',
 			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}`,
-			data: {
-				institution: state.collegeName.value,
-				department: state.department.value,
-				designation: state.designation.value,
-			},
+			data: state,
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,

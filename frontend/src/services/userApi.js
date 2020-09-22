@@ -2,13 +2,13 @@ import axios from 'axios';
 import cookie from 'js-cookie';
 
 class UserService {
-	loginExisitingUser = (username, password) => {
+	loginExisitingUser = (data) => {
 		return axios({
 			method: 'post',
 			url: `${process.env.REACT_APP_BASE_URL}/api/login`,
 			data: {
-				username: username,
-				password: password,
+				username: data.email,
+				password: data.password,
 			},
 		});
 	};

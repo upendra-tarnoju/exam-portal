@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { withRouter, Link } from 'react-router-dom';
-import queryString from 'query-string';
 import { connect } from 'react-redux';
 
 import * as actionTypes from '../../../action';
@@ -10,28 +9,22 @@ import UserService from '../../../services/userApi';
 class AdminSidebar extends Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			selectedTab: '',
+		};
 		this.adminService = new AdminService();
 		this.userService = new UserService();
 	}
-	handleAdminQueryParams(params) {
-		if (params.tab === 'examiner') {
-			this.adminService.getAllExaminer().then((res) => {
-				this.props.panelWindow('examiner', 'Manage Examiner');
-				this.props.examinerCount(res.data);
-			});
-		} else if (params.tab === undefined) {
-			this.props.panelWindow('', 'Dashboard');
-		}
-	}
 
 	componentDidMount() {
-		let params = queryString.parse(this.props.location.search);
-		this.handleAdminQueryParams(params);
+		let pathName = this.props.location.pathname.split('/')[2];
+		this.setState({ selectedTab: pathName });
 		this.props.history.listen((location, action) => {
-			let params = queryString.parse(location.search);
-			this.handleAdminQueryParams(params);
+			let pathName = location.pathname.split('/')[2];
+			this.setState({ selectedTab: pathName });
 		});
 	}
+
 	render() {
 		return (
 			<div className='bg-dark' id='sidebar-wrapper'>
@@ -49,15 +42,17 @@ class AdminSidebar extends Component {
 					<Link
 						to='/admin'
 						className={`list-group-item list-group-item-action bg-dark adminIcon ${
-							this.props.panel === '' ? 'text-white' : 'text-white-50'
+							this.state.selectedTab === undefined
+								? 'text-white'
+								: 'text-white-50'
 						}`}
 					>
 						<i className='fa fa-desktop'></i> Dashboard
 					</Link>
 					<Link
-						to='/admin?tab=examiner'
+						to='/admin/examiner'
 						className={`list-group-item list-group-item-action bg-dark ${
-							this.props.panel === 'examiner'
+							this.state.selectedTab === 'examiner'
 								? 'text-white'
 								: 'text-white-50'
 						}`}
@@ -65,9 +60,9 @@ class AdminSidebar extends Component {
 						<i className='fa fa-user-circle'></i> Examiners
 					</Link>
 					<Link
-						to='/admin?tab=exam'
+						to='/admin/exam'
 						className={`list-group-item list-group-item-action bg-dark ${
-							this.props.panel === 'exam'
+							this.state.selectedTab === 'exam'
 								? 'text-white'
 								: 'text-white-50'
 						}`}
@@ -75,9 +70,9 @@ class AdminSidebar extends Component {
 						<i className='fa fa-book'></i> Exam
 					</Link>
 					<Link
-						to='/admin?tab=setting'
+						to='/admin/setting'
 						className={`list-group-item list-group-item-action bg-dark ${
-							this.props.panel === 'settings'
+							this.state.selectedTab === 'settings'
 								? 'text-white'
 								: 'text-white-50'
 						}`}
@@ -101,27 +96,8 @@ class AdminSidebar extends Component {
 	}
 }
 
-const mapStateToProps = (state) => {
-	return {
-		panel: state.adminReducer.panel,
-	};
-};
-
 const mapDispatchToProps = (dispatch) => {
 	return {
-		panelWindow: (source, heading) => {
-			dispatch({
-				type: actionTypes.SET_PANEL_WINDOW,
-				panelValue: source,
-				panelHeading: heading,
-			});
-		},
-		examinerCount: (count) => {
-			dispatch({
-				type: actionTypes.SET_EXAMINER_COUNT,
-				examinerCount: count,
-			});
-		},
 		setAuthenticatedUser: (authenticatedState) => {
 			dispatch({
 				type: actionTypes.SET_AUTHENTICATED_USER,
@@ -130,6 +106,4 @@ const mapDispatchToProps = (dispatch) => {
 		},
 	};
 };
-export default withRouter(
-	connect(mapStateToProps, mapDispatchToProps)(AdminSidebar)
-);
+export default withRouter(connect(null, mapDispatchToProps)(AdminSidebar));

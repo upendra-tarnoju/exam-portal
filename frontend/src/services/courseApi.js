@@ -12,10 +12,7 @@ class CourseService {
 		return axios({
 			method: 'post',
 			url: `${process.env.REACT_APP_BASE_URL}/${this.COURSE_URL}`,
-			data: {
-				name: state.name.value,
-				description: state.description.value,
-			},
+			data: state,
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,
@@ -30,8 +27,8 @@ class CourseService {
 			url: `${process.env.REACT_APP_BASE_URL}/${this.COURSE_URL}`,
 			params: {
 				courseId: id,
-				name: state.name.value,
-				description: state.description.value,
+				name: state.name,
+				description: state.description,
 			},
 			headers: {
 				'Content-Type': 'application/json',

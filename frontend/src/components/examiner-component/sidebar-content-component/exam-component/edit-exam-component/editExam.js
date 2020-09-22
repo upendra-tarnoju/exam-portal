@@ -1,10 +1,11 @@
 import React from 'react';
+import moment from 'moment';
+
 import styles from '../exam.module.css';
 import ExamService from '../../../../../services/examApi';
-import moment from 'moment';
+import validation from '../../../../../services/validation';
 import ExamDetails from './accordion/examDetails';
 import ExamMarks from './accordion/examMarks';
-import validation from '../../../../../services/validation';
 import ExamTime from './accordion/examTime';
 import ExamPassword from './accordion/examPassword';
 
@@ -24,14 +25,10 @@ class EditExam extends React.Component {
 			new: { value: '', msg: '' },
 			reTypeNew: { value: '', msg: '' },
 		};
-		this.handleExamChange = this.handleExamChange.bind(this);
-		this.handleCollapseChange = this.handleCollapseChange.bind(this);
-		this.updateExamDetails = this.updateExamDetails.bind(this);
 		this.examService = new ExamService();
-		this.handlePasswordChange = this.handlePasswordChange.bind(this);
 	}
 
-	handleExamChange(event) {
+	handleExamChange = (event) => {
 		let update = false;
 		let key = event.target.name;
 		let value = event.target.value;
@@ -51,9 +48,9 @@ class EditExam extends React.Component {
 				},
 			}));
 		}
-	}
+	};
 
-	handlePasswordChange(event) {
+	handlePasswordChange = (event) => {
 		let key = event.target.name;
 		let value = event.target.value;
 		this.setState((prevState) => ({
@@ -62,7 +59,7 @@ class EditExam extends React.Component {
 				value: value,
 			},
 		}));
-	}
+	};
 
 	componentDidMount() {
 		let examId = this.props.match.params.examId;
@@ -85,7 +82,7 @@ class EditExam extends React.Component {
 		});
 	}
 
-	handleCollapseChange(key) {
+	handleCollapseChange = (key) => {
 		if (key === 'password') {
 			this.setState((prevState) => ({
 				[key]: {
@@ -103,13 +100,12 @@ class EditExam extends React.Component {
 				},
 			}));
 		}
-	}
+	};
 
-	updateExamDetails(data) {
+	updateExamDetails = (data) => {
 		let key = Object.keys(data)[0];
 		let examId = this.props.match.params.examId;
 		let validationState = validation.updateExamFields(data);
-
 		if (validationState.error === '') {
 			this.examService
 				.updateExam(examId, data)
@@ -155,7 +151,7 @@ class EditExam extends React.Component {
 				}));
 			}
 		}
-	}
+	};
 
 	render() {
 		return (
