@@ -6,4 +6,11 @@ let formatDate = (date) => {
 	return formattedDate;
 };
 
-export default { formatDate };
+let formatTime = (time) => {
+	let formattedTime = `${('0' + time.getHours()).slice(-2)}:${(
+		'0' + time.getMinutes()
+	).slice(-2)}`;
+	return formattedTime;
+};
+
+export default { formatDate, formatTime };

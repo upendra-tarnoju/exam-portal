@@ -1,89 +1,63 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Moment from 'react-moment';
-import { Tooltip, OverlayTrigger, Modal, Button } from 'react-bootstrap';
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import MuiAlert from '@material-ui/lab/Alert';
+import { Snackbar } from '@material-ui/core';
 
 import * as ActionTypes from '../../../../action';
 import ExamService from '../../../../services/examApi';
+import DeleteModal from '../../../../modals/deleteModal';
+import factories from '../../../../factories/factories';
 
 class ExamTable extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			showDialog: false,
-			showEditDialog: false,
-			deleteIndex: '',
+			deleteModal: { show: false, id: '' },
+			snackBar: false,
 		};
-		this.ShowDeleteDialog = this.ShowDeleteDialog.bind(this);
-		this.ShowEditDialog = this.ShowEditDialog.bind(this);
-		this.deleteExam = this.deleteExam.bind(this);
 		this.examService = new ExamService();
 	}
 
-	handleDeleteDialog(showDialog, deleteIndex) {
-		this.setState({ showDialog, deleteIndex });
-	}
+	handleDeleteDialog = (show, id) => {
+		this.setState({
+			deleteModal: {
+				show: show,
+				id: id,
+			},
+		});
+	};
 
-	handleEditDialog(showEditDialog) {
-		this.setState({ showEditDialog });
-	}
-
-	deleteExam() {
-		let examId = this.props.examsList[this.state.deleteIndex]._id;
+	deleteExam = () => {
+		let examId = this.props.examsList[this.state.deleteModal.id]._id;
 		this.examService.deleteExam(examId).then((response) => {
 			let updatedExams = this.props.examsList.filter(
 				(exam) => exam._id !== response.data._id
 			);
 			this.props.setExamList(updatedExams);
 		});
-	}
+	};
 
-	ShowDeleteDialog() {
-		return (
-			<Modal
-				show={this.state.showDialog}
-				onHide={() => this.handleDeleteDialog(false)}
-				aria-labelledby='contained-modal-title-vcenter'
-				centered
-			>
-				<Modal.Header closeButton>Caution</Modal.Header>
-				<Modal.Body>Do you want to delete this exam ?</Modal.Body>
-				<Modal.Footer>
-					<Button
-						variant='secondary'
-						onClick={() => this.handleDeleteDialog(false)}
-					>
-						Close
-					</Button>
-					<Button variant='primary' onClick={this.deleteExam}>
-						Delete
-					</Button>
-				</Modal.Footer>
-			</Modal>
-		);
-	}
+	handleSnackBar = (status) => {
+		this.setState({ snackBar: status });
+	};
 
-	ShowEditDialog() {
-		return (
-			<Modal
-				show={this.state.showEditDialog}
-				onHide={() => this.handleEditDialog(false)}
-				centered
-			>
-				<Modal.Header closeButton>Warning</Modal.Header>
-				<Modal.Body>You cannot edit expired exam.</Modal.Body>
-				<Modal.Footer>
-					<Button
-						variant='primary'
-						onClick={() => this.handleEditDialog(false)}
-					>
-						Close
-					</Button>
-				</Modal.Footer>
-			</Modal>
-		);
-	}
+	redirectToEditExam = (examId, examDate) => {
+		let currentDate = new Date();
+		let boolStatus;
+		currentDate = factories.formatDate(currentDate);
+
+		if (examDate >= currentDate) boolStatus = false;
+		else boolStatus = true;
+
+		this.handleSnackBar(boolStatus);
+
+		if (!boolStatus) {
+			this.props.history.push(`/examiner/exam/${examId}`);
+		}
+	};
 
 	render() {
 		let { exam, index } = this.props;
@@ -124,9 +98,12 @@ class ExamTable extends Component {
 						placement='bottom'
 						overlay={<Tooltip id='button-tooltip'>Add Questions</Tooltip>}
 					>
-						<Link to={`/examiner/exam/${exam._id}/question`}>
-							<i className='fa fa-plus cursor-pointer text-white align-self-center'></i>
-						</Link>
+						<i
+							className='fa fa-plus cursor-pointer text-white align-self-center'
+							onClick={() =>
+								this.redirectToEditExam(exam._id, exam.examDate)
+							}
+						></i>
 					</OverlayTrigger>
 					<OverlayTrigger
 						placement='bottom'
@@ -137,8 +114,26 @@ class ExamTable extends Component {
 						</Link>
 					</OverlayTrigger>
 				</td>
-				<this.ShowDeleteDialog />
-				<this.ShowEditDialog />
+				<DeleteModal
+					show={this.state.deleteModal.show}
+					hideModal={this.handleDeleteDialog}
+					heading='exam'
+					deleteContent={this.deleteExam}
+				/>
+				<Snackbar
+					open={this.state.snackBar}
+					onClose={() => this.handleSnackBar(false)}
+					// key={vertical + horizontal}
+				>
+					<MuiAlert
+						elevation={6}
+						variant='filled'
+						onClose={() => this.handleSnackBar(false)}
+						severity='error'
+					>
+						You cannot update questions in expired exam
+					</MuiAlert>
+				</Snackbar>
 			</tr>
 		);
 	}

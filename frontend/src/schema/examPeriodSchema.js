@@ -1,27 +1,18 @@
 import * as Yup from 'yup';
+import factories from '../factories/factories';
 
 let currentDate = new Date();
-currentDate = `${currentDate.getFullYear()}-${(
-	'0' +
-	(currentDate.getMonth() + 1)
-).slice(-2)}-${('0' + currentDate.getDate()).slice(-2)}`;
+
+currentDate = factories.formatDate(currentDate);
 
 let validateStartTime = (examDate, startTime) => {
 	let currentDate = new Date();
 
-	let currentTime = `${('0' + currentDate.getHours()).slice(-2)}:${(
-		'0' + currentDate.getMinutes()
-	).slice(-2)}`;
+	let currentTime = factories.formatTime(currentDate);
 
-	currentDate = `${currentDate.getFullYear()}-${(
-		'0' +
-		(currentDate.getMonth() + 1)
-	).slice(-2)}-${('0' + currentDate.getDate()).slice(-2)}`;
+	currentDate = factories.formatDate(currentDate);
 
-	examDate = `${examDate.getFullYear()}-${(
-		'0' +
-		(examDate.getMonth() + 1)
-	).slice(-2)}-${('0' + examDate.getDate()).slice(-2)}`;
+	examDate = factories.formatDate(examDate);
 
 	if (currentDate === examDate) {
 		if (currentTime <= startTime) return true;
