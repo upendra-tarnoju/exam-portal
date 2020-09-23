@@ -189,7 +189,7 @@ class Courses extends Component {
 							</thead>
 							<tbody>{courses}</tbody>
 						</Table>
-						<div className='d-flex justify-content-center mt-4'>
+						<div className='d-flex justify-content-center py-2 bg-white'>
 							<Pagination
 								count={this.state.pageCount}
 								variant='outlined'

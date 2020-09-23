@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Moment from 'react-moment';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import MuiAlert from '@material-ui/lab/Alert';
 import { Snackbar } from '@material-ui/core';
 
@@ -44,7 +44,7 @@ class ExamTable extends Component {
 		this.setState({ snackBar: status });
 	};
 
-	redirectToEditExam = (examId, examDate) => {
+	redirectToAddQuestion = (examId, examDate) => {
 		let currentDate = new Date();
 		let boolStatus;
 		currentDate = factories.formatDate(currentDate);
@@ -55,7 +55,7 @@ class ExamTable extends Component {
 		this.handleSnackBar(boolStatus);
 
 		if (!boolStatus) {
-			this.props.history.push(`/examiner/exam/${examId}`);
+			this.props.history.push(`/examiner/exam/${examId}/question`);
 		}
 	};
 
@@ -101,7 +101,7 @@ class ExamTable extends Component {
 						<i
 							className='fa fa-plus cursor-pointer text-white align-self-center'
 							onClick={() =>
-								this.redirectToEditExam(exam._id, exam.examDate)
+								this.redirectToAddQuestion(exam._id, exam.examDate)
 							}
 						></i>
 					</OverlayTrigger>
@@ -130,7 +130,7 @@ class ExamTable extends Component {
 						onClose={() => this.handleSnackBar(false)}
 						severity='error'
 					>
-						You cannot update questions in expired exam
+						You cannot add questions in expired exam
 					</MuiAlert>
 				</Snackbar>
 			</tr>
@@ -156,4 +156,6 @@ const mapDispatchToProps = (dispatch) => {
 	};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ExamTable);
+export default withRouter(
+	connect(mapStateToProps, mapDispatchToProps)(ExamTable)
+);

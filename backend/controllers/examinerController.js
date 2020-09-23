@@ -44,10 +44,14 @@ const examiner = {
 			let totalCourses = await examinerHandler.getCoursesLength(userId);
 			res.status(200).send({ courses, totalCourses });
 		} else if ('search' in req.query) {
+			let pageIndex = 0;
+			let pageSize = 5;
 			let query = JSON.parse(req.query.search);
 			let searchedCourse = await examinerHandler.searchCourse(
 				query.name,
-				query.description
+				query.description,
+				pageIndex,
+				pageSize
 			);
 			res.status(200).send(searchedCourse);
 		} else {

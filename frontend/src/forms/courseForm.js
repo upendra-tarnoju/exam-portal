@@ -50,7 +50,7 @@ let CourseForm = ({ state, modalType, handleSubmit }) => {
 					</Form.Group>
 					<div className='d-flex justify-content-end'>
 						<Button type='submit' variant='contained' color='primary'>
-							{modalType === 'create' ? 'Create' : 'Update'}
+							{modalType}
 						</Button>
 					</div>
 				</Form>

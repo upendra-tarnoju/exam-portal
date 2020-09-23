@@ -49,9 +49,11 @@ const examiner = {
 		return deletedCourse;
 	},
 
-	searchCourse: async (name, description) => {
+	searchCourse: async (name, description, pageIndex, pageSize) => {
 		let searchCourse = await course
 			.search(name, description)
+			.skip(pageIndex)
+			.limit(pageSize)
 			.select({ name: 1, description: 1 });
 		return searchCourse;
 	},
