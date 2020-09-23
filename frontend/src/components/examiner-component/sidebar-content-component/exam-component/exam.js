@@ -18,13 +18,13 @@ class Exam extends Component {
 			createExam: false,
 			nextInputs: false,
 			inputErrors: {},
-			snackBar: false,
+			snackBar: { show: false, msg: '' },
 		};
 		this.examService = new ExamService();
 	}
 
-	handleSnackBar = (status) => {
-		this.setState({ snackBar: status });
+	handleSnackBar = (status, msg) => {
+		this.setState({ snackBar: { show: status, msg: msg } });
 	};
 
 	handleStates = (key, value) => {
@@ -50,6 +50,7 @@ class Exam extends Component {
 					index={index}
 					key={exam._id}
 					errors={this.state.inputErrors}
+					handleSnackBar={this.handleSnackBar}
 				/>
 			);
 		});
@@ -77,7 +78,7 @@ class Exam extends Component {
 					)}
 				</div>
 				<Snackbar
-					open={this.state.snackBar}
+					open={this.state.snackBar.show}
 					autoHideDuration={6000}
 					onClose={() => this.handleSnackBar(false)}
 				>
@@ -87,7 +88,7 @@ class Exam extends Component {
 						onClose={() => this.handleSnackBar(false)}
 						severity='success'
 					>
-						Exam added successfully
+						{this.state.snackBar.msg}
 					</MuiAlert>
 				</Snackbar>
 				{this.state.createExam ? (

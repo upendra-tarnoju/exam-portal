@@ -15,12 +15,13 @@ class ExamPeriod extends Component {
 		this.examService
 			.saveExamDetails(this.props.fieldDetails, values)
 			.then((response) => {
+				let msg = 'Exam added successfully';
 				let exams = this.props.examsList;
 				exams.push(response.data);
 				this.props.setExamList(exams);
 				this.props.handleInputs('nextInputs', false);
 				this.props.handleInputs('createExam', false);
-				this.props.handleSnackBar(true);
+				this.props.handleSnackBar(true, msg);
 			});
 	};
 

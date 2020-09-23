@@ -37,6 +37,8 @@ class ExamTable extends Component {
 				(exam) => exam._id !== response.data._id
 			);
 			this.props.setExamList(updatedExams);
+			let msg = 'Exam deleted successfully';
+			this.props.handleSnackBar(true, msg);
 		});
 	};
 
