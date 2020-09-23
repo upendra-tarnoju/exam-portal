@@ -1,33 +1,25 @@
-import React, { Component } from 'react';
-import axios from 'axios';
-import Alert from 'react-bootstrap/Alert';
+import React from 'react';
+import { Pagination } from '@material-ui/lab';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
-import AdminModal from '../../../modal-component/modal';
-import styles from './viewExaminers.module.css';
 import AdminService from '../../../../services/adminApi';
+import styles from './viewExaminers.module.css';
+import ApproveDeclineModal from '../../../../modals/approveDeclineModal';
 
-class ViewExaminers extends Component {
+class ViewExaminer extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			tableData: [],
-			accountStatus: '',
-			msg: '',
+			examinerCount: { approved: 0, pending: 0, declined: 0 },
 			pageIndex: 0,
 			pageSize: 5,
-			tableIndex: 0,
-			maxSizeIndex: 5,
-			showModal: false,
-			fullName: '',
-			modalData: { id: '', type: '', success: false },
-			examinerCount: { approved: 0, pending: 0, declined: 0 },
+			examinerData: [],
+			accountStatus: '',
+			approveDeclineModal: { show: false, data: '' },
+			snackBar: { show: false, msg: '' },
 		};
 		this.adminService = new AdminService();
-		this.examinerData = this.examinerData.bind(this);
-		this.paginateExaminers = this.paginateExaminers.bind(this);
-		this.changePageSize = this.changePageSize.bind(this);
-		this.handleModal = this.handleModal.bind(this);
-		this.handleAlert = this.handleAlert.bind(this);
 	}
 
 	componentDidMount() {
@@ -42,92 +34,63 @@ class ViewExaminers extends Component {
 		});
 	}
 
-	handleModal(status) {
-		this.setState({ showModal: status });
-	}
-
-	handleAlert(status, msg) {
-		this.setState((prevState) => ({
-			...prevState,
-			msg: msg,
-			modalData: {
-				...prevState.modalData,
-				success: status,
+	handleModal = (status) => {
+		this.setState({
+			approveDeclineModal: {
+				show: status,
+				data: '',
 			},
-		}));
-	}
+		});
+	};
+
+	handleSnackBar = (status, msg) => {
+		this.setState({
+			snackBar: {
+				show: status,
+				msg: msg,
+			},
+		});
+	};
+
+	handleCardClick = (type) => {
+		let { pageIndex, pageSize } = this.state;
+		this.adminService
+			.getExaminersCount(type, pageIndex, pageSize)
+			.then((res) => {
+				this.setState({
+					examinerData: res.data.examiner,
+					accountStatus: type,
+					pageCount: Math.ceil(
+						this.state.examinerCount[type] / this.state.pageSize
+					),
+				});
+			});
+	};
+
+	handlePageChange = (event, value) => {
+		this.setState({ pageIndex: value - 1 }, () =>
+			this.handleCardClick(this.state.accountStatus)
+		);
+	};
 
 	approveOrDeclineExaminers(firstName, lastName, modalType, id) {
 		this.setState({
-			fullName: `${firstName} ${lastName}`,
-			showModal: true,
-			modalData: { id: id, type: modalType, success: false },
+			approveDeclineModal: {
+				show: true,
+				data: {
+					id: id,
+					type: modalType,
+					success: false,
+					fullName: `${firstName} ${lastName}`,
+				},
+			},
 		});
 	}
 
-	handleCardClick(type) {
-		axios
-			.get(`${process.env.REACT_APP_BASE_URL}/api/admin/examiner`, {
-				params: {
-					type: type,
-					pageIndex: this.state.pageIndex,
-					pageSize: this.state.pageSize,
-				},
-			})
-			.then((res) => {
-				let maxIndex;
-				if (this.state.examinerCount[type] < this.state.maxSizeIndex) {
-					maxIndex = this.state.examinerCount[type];
-				} else maxIndex = this.state.maxSizeIndex;
-				this.setState({
-					tableData: res.data.examiner,
-					accountStatus: type,
-					msg: res.data.msg,
-					maxSizeIndex: maxIndex,
-				});
-			});
-	}
-
-	paginateExaminers(examinerType, paginateType) {
-		let pageIndex = this.state.pageIndex;
-		let pageSize = this.state.pageSize;
-		if (paginateType === 'inc') pageIndex = pageIndex + 1;
-		else pageIndex = pageIndex - 1;
-		let maxSizeIndex = (pageIndex + 1) * pageSize;
-		if (maxSizeIndex > this.state.examinerCount.pending)
-			maxSizeIndex = this.state.examinerCount.pending;
-		if (
-			pageIndex >= 0 &&
-			(this.state.maxSizeIndex !== this.state.examinerCount.pending ||
-				maxSizeIndex !== this.state.examinerCount.pending)
-		) {
-			this.setState(
-				{
-					pageIndex: pageIndex,
-					tableIndex: pageIndex * pageSize,
-					maxSizeIndex: maxSizeIndex,
-				},
-				() => {
-					this.handleCardClick(examinerType);
-				}
-			);
-		}
-	}
-
-	changePageSize(event) {
-		let newPageSize = event.target.value;
-		this.setState(
-			{ pageSize: newPageSize, pageIndex: 0, maxSizeIndex: 10 },
-			() => {
-				this.handleCardClick('pending');
-			}
-		);
-	}
-
-	examinerData() {
-		let examiners = this.state.tableData.map((data, index) => (
+	examinerData = () => {
+		let examiners = this.state.examinerData.map((data, index) => (
 			<tr key={data._id}>
-				<th scope='row'>{this.state.tableIndex + index + 1}</th>
+				<th scope='row'>{index + 1}</th>
 				<td>{data.firstName}</td>
 				<td>{data.lastName}</td>
 				<td>{data.email}</td>
@@ -179,15 +142,6 @@ class ViewExaminers extends Component {
 		));
 		return (
 			<div className='mt-4 table-responsive'>
-				<Alert
-					variant='success'
-					show={this.state.modalData.success}
-					onClose={() => this.handleAlert(false, this.state.msg)}
-					dismissible
-					animation='false'
-				>
-					{this.state.msg}
-				</Alert>
 				<table className='table table-hover table-dark mb-0'>
 					<thead>
 						<tr>
@@ -200,37 +154,22 @@ class ViewExaminers extends Component {
 					</thead>
 					<tbody>{examiners}</tbody>
 				</table>
-				<div className='py-2 px-1 bg-light d-flex justify-content-end'>
-					<span className='align-self-center mr-3'>Items per page</span>
-					<select
-						onChange={this.changePageSize}
-						value={this.state.pageSize}
-						className={`form-control form-control-sm ${styles.dropdown} mr-3`}
-					>
-						<option>5</option>
-						<option>10</option>
-						<option>15</option>
-					</select>
-					<span className='align-self-center mr-3'>
-						{this.state.tableIndex + 1}- {this.state.maxSizeIndex} of{' '}
-						{this.state.examinerCount[this.state.accountStatus]}
-					</span>
-					<i
-						onClick={() => this.paginateExaminers('pending', 'dec')}
-						className='fa fa-2x fa-angle-left align-self-center mr-3 cursor-pointer'
-					></i>
-					<i
-						onClick={() => this.paginateExaminers('pending', 'inc')}
-						className='fa fa-2x fa-angle-right align-self-center cursor-pointer'
-					></i>
+				<div className='d-flex justify-content-center bg-white py-2'>
+					<Pagination
+						count={this.state.pageCount}
+						showFirstButton
+						showLastButton
+						onChange={this.handlePageChange}
+						size='large'
+					/>
 				</div>
 			</div>
 		);
-	}
+	};
 
 	render() {
 		return (
-			<div className={`container pt-4`}>
+			<div className='container pt-4'>
 				<div className='row'>
 					<div className='col-md-4'>
 						<div
@@ -311,23 +250,35 @@ class ViewExaminers extends Component {
 						</div>
 					</div>
 				</div>
-				{this.state.tableData.length !== 0 ? (
+				{this.state.examinerData.length !== 0 ? (
 					<this.examinerData />
 				) : (
 					<h3 className='pt-4 font-weight-normal text-center'>
 						{this.state.msg}
 					</h3>
 				)}
-				<AdminModal
-					name={this.state.fullName}
-					show={this.state.showModal}
+				<ApproveDeclineModal
+					show={this.state.approveDeclineModal.show}
 					closeModal={this.handleModal}
-					openAlert={this.handleAlert}
-					modalData={this.state.modalData}
+					modalData={this.state.approveDeclineModal.data}
+					handleSnackBar={this.handleSnackBar}
 				/>
+				<Snackbar
+					open={this.state.snackBar.show}
+					onClose={() => this.handleSnackBar(false, '')}
+				>
+					<MuiAlert
+						elevation={6}
+						variant='filled'
+						onClose={() => this.handleSnackBar(false, '')}
+						severity='error'
+					>
+						{this.state.snackBar.msg}
+					</MuiAlert>
+				</Snackbar>
 			</div>
 		);
 	}
 }
 
-export default ViewExaminers;
+export default ViewExaminer;

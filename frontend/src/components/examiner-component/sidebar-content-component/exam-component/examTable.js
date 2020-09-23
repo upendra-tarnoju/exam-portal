@@ -123,7 +123,6 @@ class ExamTable extends Component {
 				<Snackbar
 					open={this.state.snackBar}
 					onClose={() => this.handleSnackBar(false)}
-					// key={vertical + horizontal}
 				>
 					<MuiAlert
 						elevation={6}

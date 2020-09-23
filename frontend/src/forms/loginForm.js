@@ -27,7 +27,14 @@ let LoginForm = ({ handleLogin, handleError }) => {
 				password: '',
 			}}
 		>
-			{({ values, errors, handleChange, handleBlur, handleSubmit }) => (
+			{({
+				touched,
+				values,
+				errors,
+				handleChange,
+				handleBlur,
+				handleSubmit,
+			}) => (
 				<Form noValidate onSubmit={handleSubmit}>
 					<div className='px-3 pb-4'>
 						<Form.Group>
@@ -39,7 +46,7 @@ let LoginForm = ({ handleLogin, handleError }) => {
 								value={values.email}
 								onBlur={handleBlur}
 								onChange={handleChange}
-								isInvalid={!!errors.email}
+								isInvalid={touched.email && !!errors.email}
 								required
 							/>
 							<Form.Control.Feedback type='invalid'>
@@ -55,7 +62,7 @@ let LoginForm = ({ handleLogin, handleError }) => {
 								value={values.password}
 								onBlur={handleBlur}
 								onChange={handleChange}
-								isInvalid={!!errors.password}
+								isInvalid={touched.password && !!errors.password}
 								required
 							/>
 							<Form.Control.Feedback type='invalid'>

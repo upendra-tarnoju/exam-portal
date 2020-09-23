@@ -26,7 +26,14 @@ let SignUpForm = ({ showModal }) => {
 				accountType: '',
 			}}
 		>
-			{({ values, errors, handleChange, handleBlur, handleSubmit }) => (
+			{({
+				touched,
+				values,
+				errors,
+				handleChange,
+				handleBlur,
+				handleSubmit,
+			}) => (
 				<Form noValidate onSubmit={handleSubmit}>
 					<div className='row'>
 						<div className='col-md-6'>
@@ -39,7 +46,7 @@ let SignUpForm = ({ showModal }) => {
 									value={values.firstName}
 									onBlur={handleBlur}
 									onChange={handleChange}
-									isInvalid={!!errors.firstName}
+									isInvalid={touched.firstName && !!errors.firstName}
 									required
 								/>
 								<Form.Control.Feedback type='invalid'>
@@ -57,7 +64,7 @@ let SignUpForm = ({ showModal }) => {
 									value={values.lastName}
 									onBlur={handleBlur}
 									onChange={handleChange}
-									isInvalid={!!errors.lastName}
+									isInvalid={touched.lastName && !!errors.lastName}
 									required
 								/>
 								<Form.Control.Feedback type='invalid'>
@@ -75,7 +82,7 @@ let SignUpForm = ({ showModal }) => {
 							value={values.mobileNumber}
 							onBlur={handleBlur}
 							onChange={handleChange}
-							isInvalid={!!errors.mobileNumber}
+							isInvalid={touched.mobileNumber && !!errors.mobileNumber}
 							required
 						/>
 						<Form.Control.Feedback type='invalid'>
@@ -91,7 +98,7 @@ let SignUpForm = ({ showModal }) => {
 							value={values.email}
 							onBlur={handleBlur}
 							onChange={handleChange}
-							isInvalid={!!errors.email}
+							isInvalid={touched.email && !!errors.email}
 							required
 						/>
 						<Form.Control.Feedback type='invalid'>
@@ -107,7 +114,7 @@ let SignUpForm = ({ showModal }) => {
 							value={values.password}
 							onBlur={handleBlur}
 							onChange={handleChange}
-							isInvalid={!!errors.password}
+							isInvalid={touched.password && !!errors.password}
 							required
 						/>
 						<Form.Control.Feedback type='invalid'>
@@ -121,7 +128,7 @@ let SignUpForm = ({ showModal }) => {
 							name='accountType'
 							onBlur={handleBlur}
 							onChange={handleChange}
-							isInvalid={!!errors.accountType}
+							isInvalid={touched.accountType && !!errors.accountType}
 						>
 							<option value='none'>Select account type</option>
 							<option value='student'>Student</option>
