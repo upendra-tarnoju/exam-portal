@@ -165,7 +165,7 @@ class AddQuestions extends React.Component {
 	}
 
 	editExam(pathname) {
-		if (!pathname.endsWith('question')) {
+		if (!pathname.endsWith('question') && !pathname.endsWith('exam')) {
 			let questionId = pathname.split('/question/')[1];
 			this.questionService.getParticular(questionId).then((response) => {
 				this.setValues(response.data);

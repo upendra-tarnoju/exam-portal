@@ -20,6 +20,7 @@ class ExamPeriod extends Component {
 				this.props.setExamList(exams);
 				this.props.handleInputs('nextInputs', false);
 				this.props.handleInputs('createExam', false);
+				this.props.handleSnackBar(true);
 			});
 	};
 

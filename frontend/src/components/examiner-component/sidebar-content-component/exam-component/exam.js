@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Table from 'react-bootstrap/Table';
-import Button from '@material-ui/core/Button';
+import { Button, Snackbar } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert';
 
 import ExamService from '../../../../services/examApi';
 import ExamDetails from './exam-inputs-component/examDetails';
@@ -17,9 +18,14 @@ class Exam extends Component {
 			createExam: false,
 			nextInputs: false,
 			inputErrors: {},
+			snackBar: false,
 		};
 		this.examService = new ExamService();
 	}
+
+	handleSnackBar = (status) => {
+		this.setState({ snackBar: status });
+	};
 
 	handleStates = (key, value) => {
 		if (key === 'createExam' && value === false) {
@@ -70,6 +76,20 @@ class Exam extends Component {
 						</Button>
 					)}
 				</div>
+				<Snackbar
+					open={this.state.snackBar}
+					autoHideDuration={6000}
+					onClose={() => this.handleSnackBar(false)}
+				>
+					<MuiAlert
+						elevation={6}
+						variant='filled'
+						onClose={() => this.handleSnackBar(false)}
+						severity='success'
+					>
+						Exam added successfully
+					</MuiAlert>
+				</Snackbar>
 				{this.state.createExam ? (
 					<div className='card mt-4 w-50 mx-auto'>
 						<div className='card-header bg-white text-center'>
@@ -78,7 +98,10 @@ class Exam extends Component {
 						{!this.state.nextInputs ? (
 							<ExamDetails handleInputs={this.handleStates} />
 						) : (
-							<ExamPeriod handleInputs={this.handleStates} />
+							<ExamPeriod
+								handleInputs={this.handleStates}
+								handleSnackBar={this.handleSnackBar}
+							/>
 						)}
 					</div>
 				) : (
