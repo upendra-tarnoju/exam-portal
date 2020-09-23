@@ -22,7 +22,14 @@ let ExaminerInputForm = ({ handleRedirect }) => {
 				collegeName: '',
 			}}
 		>
-			{({ values, errors, handleChange, handleBlur, handleSubmit }) => (
+			{({
+				touched,
+				values,
+				errors,
+				handleChange,
+				handleBlur,
+				handleSubmit,
+			}) => (
 				<Form noValidate onSubmit={handleSubmit}>
 					<div className='px-3 pb-4'>
 						<Form.Group>
@@ -34,7 +41,7 @@ let ExaminerInputForm = ({ handleRedirect }) => {
 								value={values.collegeName}
 								onBlur={handleBlur}
 								onChange={handleChange}
-								isInvalid={!!errors.collegeName}
+								isInvalid={touched.collegeName && !!errors.collegeName}
 								required
 							/>
 							<Form.Control.Feedback type='invalid'>
@@ -50,7 +57,7 @@ let ExaminerInputForm = ({ handleRedirect }) => {
 								value={values.designation}
 								onBlur={handleBlur}
 								onChange={handleChange}
-								isInvalid={!!errors.designation}
+								isInvalid={touched.designation && !!errors.designation}
 								required
 							/>
 							<Form.Control.Feedback type='invalid'>
@@ -62,11 +69,11 @@ let ExaminerInputForm = ({ handleRedirect }) => {
 							<Form.Control
 								type='text'
 								name='department'
-								placeholder='College name'
+								placeholder='Department'
 								value={values.department}
 								onBlur={handleBlur}
 								onChange={handleChange}
-								isInvalid={!!errors.department}
+								isInvalid={touched.department && !!errors.department}
 								required
 							/>
 							<Form.Control.Feedback type='invalid'>

@@ -29,7 +29,7 @@ const user = {
 			let salt = bcrypt.genSaltSync(10);
 			let hash = bcrypt.hashSync(userData.password, salt);
 			userData.password = hash;
-
+			userData = checkAccountStatus(userData);
 			await users
 				.create(userData)
 				.then((user) => {

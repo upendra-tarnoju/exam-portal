@@ -60,7 +60,7 @@ let SignUpForm = ({ showModal }) => {
 								<Form.Control
 									type='text'
 									name='lastName'
-									placeholder='First name'
+									placeholder='Last name'
 									value={values.lastName}
 									onBlur={handleBlur}
 									onChange={handleChange}

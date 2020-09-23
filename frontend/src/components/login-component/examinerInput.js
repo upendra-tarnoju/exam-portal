@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import ExaminerService from '../../services/examinerApi';
 import ExaminerInputForm from '../../forms/examinerInputForm';
+import { withRouter } from 'react-router-dom';
 
 class ExaminerInput extends Component {
 	constructor(props) {
@@ -10,12 +11,11 @@ class ExaminerInput extends Component {
 			error: '',
 		};
 		this.examinerService = new ExaminerService();
-		this.handleRedirect = this.handleRedirect.bind(this);
 	}
 
-	handleRedirect() {
+	handleRedirect = () => {
 		this.props.history.push('/examiner');
-	}
+	};
 
 	render() {
 		return (
@@ -27,4 +27,4 @@ class ExaminerInput extends Component {
 	}
 }
 
-export default ExaminerInput;
+export default withRouter(ExaminerInput);
