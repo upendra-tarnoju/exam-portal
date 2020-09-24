@@ -63,13 +63,19 @@ const examiner = {
 	updateCourse: async (req, res) => {
 		let courseData = req.query;
 		let updatedCourse = await examinerHandler.updateCourse(courseData);
-		res.status(200).send({ course: updatedCourse, msg: 'Updated course' });
+		res.status(200).send({
+			course: updatedCourse,
+			msg: 'Course updated successfully',
+		});
 	},
 
 	deleteCourse: async (req, res) => {
 		let courseId = req.query.courseId;
 		let deletedCourse = await examinerHandler.deleteCourse(courseId);
-		res.status(200).send(deletedCourse);
+		res.status(200).send({
+			courseId: deletedCourse._id,
+			msg: 'Course deleted successfully',
+		});
 	},
 };
 

@@ -19,6 +19,7 @@ const examiner = {
 		pageIndex = pageIndex * pageSize;
 		let courses = await course
 			.findByExaminerId(userId)
+			.sort({ createdAt: -1 })
 			.skip(pageIndex)
 			.limit(pageSize)
 			.select({ examinerId: 0, modifiedAt: 0 });
