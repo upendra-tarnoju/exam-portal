@@ -31,7 +31,7 @@ class CourseModal extends Component {
 				.createCourse(values)
 				.then((res) => {
 					this.props.closeModal();
-					this.props.handleAlert(true, res.data.msg);
+					this.props.handleSnackBar(true, res.data.msg);
 					this.props.viewCourses();
 				})
 				.catch((err) => {
@@ -52,7 +52,7 @@ class CourseModal extends Component {
 					);
 					this.props.setCourses(updatedCourse);
 					this.props.closeModal();
-					this.props.handleAlert(true, res.data.msg);
+					this.props.handleSnackBar(true, res.data.msg);
 				});
 		} else {
 			this.courseService

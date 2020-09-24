@@ -2,6 +2,8 @@ import { Formik } from 'formik';
 import React from 'react';
 import { Form } from 'react-bootstrap';
 import Button from '@material-ui/core/Button';
+import moment from 'moment';
+import factories from '../factories/factories';
 
 import schema from '../schema/examPeriodSchema';
 
@@ -16,16 +18,9 @@ let ExamPeriodForm = (props) => {
 			initialValues={{
 				totalMarks: '',
 				passingMarks: '',
-				examDate: `${curr.getFullYear()}-${(
-					'0' +
-					(curr.getMonth() + 1)
-				).slice(-2)}-${('0' + curr.getDate()).slice(-2)}`,
-				startTime: `${('0' + curr.getHours()).slice(-2)}:${(
-					'0' + curr.getMinutes()
-				).slice(-2)}`,
-				endTime: `${('0' + (curr.getHours() + 3)).slice(-2)}:${(
-					'0' + curr.getMinutes()
-				).slice(-2)}`,
+				examDate: factories.formatDate(curr),
+				startTime: factories.formatTime(curr),
+				endTime: moment(curr).add(3, 'hours').format('HH:mm'),
 				duration: '',
 				hideDuration: false,
 			}}

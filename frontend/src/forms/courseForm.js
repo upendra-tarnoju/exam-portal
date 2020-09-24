@@ -14,7 +14,14 @@ let CourseForm = ({ state, modalType, handleSubmit }) => {
 			}}
 			initialValues={state}
 		>
-			{({ values, errors, handleChange, handleBlur, handleSubmit }) => (
+			{({
+				touched,
+				values,
+				errors,
+				handleChange,
+				handleBlur,
+				handleSubmit,
+			}) => (
 				<Form noValidate onSubmit={handleSubmit}>
 					<Form.Group>
 						<Form.Label>Name</Form.Label>
@@ -25,7 +32,7 @@ let CourseForm = ({ state, modalType, handleSubmit }) => {
 							value={values.name}
 							onBlur={handleBlur}
 							onChange={handleChange}
-							isInvalid={!!errors.name}
+							isInvalid={touched.name && !!errors.name}
 							required
 						/>
 						<Form.Control.Feedback type='invalid'>
@@ -41,7 +48,7 @@ let CourseForm = ({ state, modalType, handleSubmit }) => {
 							value={values.description}
 							onBlur={handleBlur}
 							onChange={handleChange}
-							isInvalid={!!errors.description}
+							isInvalid={touched.description && !!errors.description}
 							required
 						/>
 						<Form.Control.Feedback type='invalid'>

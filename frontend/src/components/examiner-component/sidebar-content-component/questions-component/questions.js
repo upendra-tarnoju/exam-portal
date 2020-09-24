@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Modal, Button } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 
 import QuestionService from '../../../../services/questionApi';
 import AddQuestions from './addQuestions';
 import styles from './question.module.css';
 import * as ActionTypes from '../../../../action';
+import DeleteModal from '../../../../modals/deleteModal';
 
 class Questions extends React.Component {
 	constructor(props) {
@@ -16,7 +16,6 @@ class Questions extends React.Component {
 			deleteIndex: '',
 		};
 		this.questionService = new QuestionService();
-		this.ShowDeleteDialog = this.ShowDeleteDialog.bind(this);
 		this.deleteQuestion = this.deleteQuestion.bind(this);
 	}
 
@@ -40,32 +39,7 @@ class Questions extends React.Component {
 		this.setState({ showDialog: status, deleteIndex: id });
 	}
 
-	ShowDeleteDialog() {
-		return (
-			<Modal
-				show={this.state.showDialog}
-				onHide={() => this.handleDeleteDialog(false, '')}
-				aria-labelledby='contained-modal-title-vcenter'
-				centered
-			>
-				<Modal.Header closeButton>Caution</Modal.Header>
-				<Modal.Body>Do you want to delete this question ?</Modal.Body>
-				<Modal.Footer>
-					<Button
-						variant='secondary'
-						onClick={() => this.handleDeleteDialog(false, '')}
-					>
-						Close
-					</Button>
-					<Button variant='primary' onClick={this.deleteQuestion}>
-						Delete
-					</Button>
-				</Modal.Footer>
-			</Modal>
-		);
-	}
-
-	deleteQuestion() {
+	deleteQuestion = () => {
 		let questionId = this.state.deleteIndex;
 		this.questionService.delete(questionId).then((response) => {
 			let questions = this.props.questions.filter(
@@ -74,14 +48,14 @@ class Questions extends React.Component {
 			this.props.setQuestions(questions, this.props.examCode);
 			this.handleDeleteDialog(false, '');
 		});
-	}
+	};
 
 	render() {
 		let questionList = this.props.questions.map((data, index) => {
 			return (
 				<div key={data._id} className='d-flex justify-content-between'>
 					<div
-						className='my-2 cursor-pointer'
+						className='my-2 cursor-pointer text-truncate'
 						onClick={() => this.editQuestion(data._id)}
 					>
 						{index + 1}) {data.question}
@@ -129,7 +103,12 @@ class Questions extends React.Component {
 						</div>
 					</div>
 				</div>
-				<this.ShowDeleteDialog />
+				<DeleteModal
+					show={this.state.showDialog}
+					heading='question'
+					deleteContent={this.deleteQuestion}
+					hideModal={this.handleDeleteDialog}
+				/>
 			</div>
 		);
 	}

@@ -80,7 +80,13 @@ const createQuestionFields = (temp) => {
 	}
 	for (let index in keys) {
 		let key = keys[index];
-		if (key !== 'options' && key !== 'image' && key !== 'editExam') {
+		if (
+			key !== 'options' &&
+			key !== 'image' &&
+			key !== 'editExam' &&
+			key !== 'snackbar' &&
+			key !== 'deleteModal'
+		) {
 			if (temp[key].error !== '') {
 				error = true;
 			}

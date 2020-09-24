@@ -57,7 +57,9 @@ let ExamDetailForm = (props) => {
 							filterBy={filterByCallback}
 							defaultSelected={props.selected}
 							onChange={(selected) => {
-								setFieldValue('course', selected[0].id);
+								if (selected.length !== 0) {
+									setFieldValue('course', selected[0].id);
+								}
 							}}
 							onBlur={(event) => setFieldTouched('course', true)}
 							isInvalid={touched.course && !!errors.course}

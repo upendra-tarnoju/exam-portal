@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Table, Tooltip, OverlayTrigger } from 'react-bootstrap';
-import Button from '@material-ui/core/Button';
+import { Snackbar, Button } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert';
 import Moment from 'react-moment';
 import Pagination from '@material-ui/lab/Pagination';
 
@@ -18,8 +19,7 @@ class Courses extends Component {
 			search: false,
 			modal: false,
 			modalType: '',
-			alert: false,
-			msg: '',
+			snackbar: { show: false, msg: '' },
 			pageIndex: 0,
 			pageSize: 5,
 			currentPage: 0,
@@ -37,11 +37,16 @@ class Courses extends Component {
 		else this.setState({ modal, modalType });
 	};
 
-	handleAlert = (status, msg) => {
-		this.setState({
-			alert: status,
-			msg: msg,
-		});
+	handleSnackBar = (status, msg) => {
+		this.setState(
+			{
+				snackbar: {
+					show: status,
+					msg: msg,
+				},
+			},
+			() => console.log(this.state.snackbar)
+		);
 	};
 
 	editCourse = (name, description, id) => {
@@ -68,6 +73,7 @@ class Courses extends Component {
 		this.courseService.deleteCourse(courseId).then((response) => {
 			this.viewCourses();
 			this.handleDeleteModal(false, '');
+			this.handleSnackBar(true, response.data.msg);
 		});
 	};
 
@@ -115,14 +121,15 @@ class Courses extends Component {
 	};
 
 	render() {
+		let { pageIndex, pageSize } = this.state;
 		let courses = this.props.courses.map((data, index) => (
 			<tr key={data._id}>
-				<th scope='row'>{index + 1}</th>
+				<th scope='row'>{pageIndex * pageSize + index + 1}</th>
 				<td>{data.name}</td>
 
 				<td>{data.description}</td>
 				<td>
-					<Moment format='MMM Do, YYYY'>{data.createdAt}</Moment>
+					<Moment format='MMM Do, YYYY (hh:mm A)'>{data.createdAt}</Moment>
 				</td>
 				<td>
 					<OverlayTrigger
@@ -205,7 +212,7 @@ class Courses extends Component {
 				<CourseModal
 					show={this.state.modal}
 					closeModal={this.handleCourseModal}
-					handleAlert={this.handleAlert}
+					handleSnackBar={this.handleSnackBar}
 					handleSearch={this.handleSearch}
 					modalType={this.state.modalType}
 					name={this.state.name}
@@ -219,6 +226,20 @@ class Courses extends Component {
 					heading='course'
 					deleteContent={this.deleteCourse}
 				/>
+				<Snackbar
+					open={this.state.snackbar.show}
+					autoHideDuration={6000}
+					onClose={() => this.handleSnackBar(false, '')}
+				>
+					<MuiAlert
+						elevation={6}
+						variant='filled'
+						onClose={() => this.handleSnackBar(false, '')}
+						severity='success'
+					>
+						{this.state.snackbar.msg}
+					</MuiAlert>
+				</Snackbar>
 			</div>
 		);
 	}

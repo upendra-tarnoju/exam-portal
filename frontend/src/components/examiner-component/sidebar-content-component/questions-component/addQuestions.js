@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Button, Snackbar } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert';
 
 import styles from './question.module.css';
 import validateInputs from '../../../../services/validation';
@@ -16,6 +18,8 @@ class AddQuestions extends React.Component {
 			correctAnswer: { show: false, value: [], error: '' },
 			image: { value: '' },
 			editExam: false,
+			snackbar: { show: false, msg: '' },
+			deleteModal: false,
 		};
 		this.baseState = this.state;
 		this.questionService = new QuestionService();
@@ -106,10 +110,20 @@ class AddQuestions extends React.Component {
 		});
 	};
 
+	handleSnackBar(status, msg) {
+		this.setState({
+			snackbar: {
+				show: status,
+				msg: msg,
+			},
+		});
+	}
+
 	submitQuestion = (event) => {
 		event.preventDefault();
 		let examId = this.props.match.params.examId;
 		let validationState = validateInputs.createQuestionFields(this.state);
+		console.log(validationState);
 		if (validationState.error) {
 			this.setState(validationState.tempState);
 		} else {
@@ -143,6 +157,7 @@ class AddQuestions extends React.Component {
 				this.questionService.create(formData).then((response) => {
 					this.props.addQuestion(response.data.newQuestion);
 					this.setState(this.baseState);
+					this.handleSnackBar(true, response.data.msg);
 				});
 			}
 		}
@@ -233,15 +248,25 @@ class AddQuestions extends React.Component {
 								</select>
 							</div>
 							<div className='form-group'>
-								<label>Image</label>
+								<label className='w-100'>Image</label>
 								<input
-									type='file'
+									accept='image/*'
+									className='d-none'
 									onChange={this.handleFileChange}
-									className='form-control-file'
 									id='questionImage'
 									name='questionImage'
-									accept='image/*'
+									type='file'
 								/>
+								<label htmlFor='questionImage'>
+									<Button
+										variant='contained'
+										color='primary'
+										component='span'
+										size='large'
+									>
+										Upload
+									</Button>
+								</label>
 							</div>
 							<div className='form-group'>
 								<label>
@@ -364,6 +389,20 @@ class AddQuestions extends React.Component {
 							</button>
 						</div>
 					</div>
+					<Snackbar
+						open={this.state.snackbar.show}
+						autoHideDuration={6000}
+						onClose={() => this.handleSnackBar(false, '')}
+					>
+						<MuiAlert
+							elevation={6}
+							variant='filled'
+							onClose={() => this.handleSnackBar(false, '')}
+							severity='success'
+						>
+							{this.state.snackbar.msg}
+						</MuiAlert>
+					</Snackbar>
 				</form>
 			</div>
 		);

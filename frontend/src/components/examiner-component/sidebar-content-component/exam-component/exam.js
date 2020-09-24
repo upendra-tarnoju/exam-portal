@@ -110,23 +110,29 @@ class Exam extends Component {
 						<p className={`${style.heading} text-center`}>
 							List of all created Exams
 						</p>
-						<Table striped bordered hover variant='dark'>
-							<thead>
-								<tr>
-									<th>S.No</th>
-									<th>Subject</th>
-									<th>Exam code</th>
-									<th>Exam date</th>
-									<th className='text-right'>Total marks</th>
-									<th className='text-right'>Passing marks</th>
-									<th>Start time</th>
-									<th>End time</th>
-									<th>Created at</th>
-									<th>Action</th>
-								</tr>
-							</thead>
-							<tbody>{allExams}</tbody>
-						</Table>
+						{this.props.examsList.length !== 0 ? (
+							<Table striped bordered hover variant='dark'>
+								<thead>
+									<tr>
+										<th>S.No</th>
+										<th>Subject</th>
+										<th>Exam code</th>
+										<th>Exam date</th>
+										<th className='text-right'>Total marks</th>
+										<th className='text-right'>Passing marks</th>
+										<th>Start time</th>
+										<th>End time</th>
+										<th>Created at</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody>{allExams}</tbody>
+							</Table>
+						) : (
+							<div className={`${style.heading} text-center`}>
+								No exam available. Create new exam
+							</div>
+						)}
 					</div>
 				)}
 			</div>
