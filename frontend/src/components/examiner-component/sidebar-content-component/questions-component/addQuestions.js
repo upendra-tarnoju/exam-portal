@@ -123,7 +123,6 @@ class AddQuestions extends React.Component {
 		event.preventDefault();
 		let examId = this.props.match.params.examId;
 		let validationState = validateInputs.createQuestionFields(this.state);
-		console.log(validationState);
 		if (validationState.error) {
 			this.setState(validationState.tempState);
 		} else {
