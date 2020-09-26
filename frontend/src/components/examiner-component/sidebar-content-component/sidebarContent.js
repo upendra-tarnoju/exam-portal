@@ -7,6 +7,7 @@ import Exam from './exam-component/exam';
 import * as ActionType from '../../../action';
 import EditExam from './exam-component/edit-exam-component/editExam';
 import Questions from './questions-component/questions';
+import ViewQuestions from './questions-component/view-questions-component/viewQuestions';
 
 class SidebarContent extends Component {
 	constructor(props) {
@@ -47,8 +48,12 @@ class SidebarContent extends Component {
 						component={Questions}
 					></Route>
 					<Route
-						path='/examiner/exam/:examId/question'
+						path='/examiner/exam/:examId/question/new'
 						component={Questions}
+					></Route>
+					<Route
+						path='/examiner/exam/:examId/questions'
+						component={ViewQuestions}
 					></Route>
 				</Switch>
 			</div>

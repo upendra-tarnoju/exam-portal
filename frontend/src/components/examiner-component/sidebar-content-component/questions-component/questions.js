@@ -21,8 +21,8 @@ class Questions extends React.Component {
 
 	componentDidMount() {
 		let examId = this.props.match.params.examId;
-
-		this.questionService.getAll(examId).then((response) => {
+		let queryType = 'selective';
+		this.questionService.getAll(examId, queryType).then((response) => {
 			let data = response.data;
 			this.props.setQuestions(data.questionData, data.examData.examCode);
 		});

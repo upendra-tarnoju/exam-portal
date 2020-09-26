@@ -57,7 +57,7 @@ class ExamTable extends Component {
 		this.handleSnackBar(boolStatus);
 
 		if (!boolStatus) {
-			this.props.history.push(`/examiner/exam/${examId}/question`);
+			this.props.history.push(`/examiner/exam/${examId}/question/new`);
 		}
 	};
 
@@ -106,6 +106,16 @@ class ExamTable extends Component {
 								this.redirectToAddQuestion(exam._id, exam.examDate)
 							}
 						></i>
+					</OverlayTrigger>
+					<OverlayTrigger
+						placement='bottom'
+						overlay={
+							<Tooltip id='button-tooltip'>View questions</Tooltip>
+						}
+					>
+						<Link to={`/examiner/exam/${exam._id}/questions`}>
+							<i className='fa fa-question cursor-pointer text-white align-self-center'></i>
+						</Link>
 					</OverlayTrigger>
 					<OverlayTrigger
 						placement='bottom'

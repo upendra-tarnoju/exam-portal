@@ -21,13 +21,14 @@ class QuestionService {
 		});
 	}
 
-	getAll(examId) {
+	getAll(examId, queryType) {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'get',
 			url: `${process.env.REACT_APP_BASE_URL}/${this.QUESTION_URL}`,
 			params: {
 				examId: examId,
+				queryType: queryType,
 			},
 			headers: {
 				'Content-Type': 'application/json',

@@ -123,7 +123,7 @@ class Exam extends Component {
 										<th>Start time</th>
 										<th>End time</th>
 										<th>Created at</th>
-										<th>Action</th>
+										<th>Exam actions</th>
 									</tr>
 								</thead>
 								<tbody>{allExams}</tbody>

@@ -57,16 +57,6 @@ class ExaminerSidebar extends Component {
 					>
 						<i className='fa fa-certificate'></i> Course
 					</Link>
-					<Link
-						to='/examiner/question'
-						className={`list-group-item list-group-item-action bg-dark adminIcon ${
-							this.state.selectedTab === 'question'
-								? 'text-white'
-								: 'text-white-50'
-						}`}
-					>
-						<i className='fa fa-question'></i> Exam questions
-					</Link>
 					<a
 						href='/login'
 						onClick={() => {
