@@ -22,12 +22,19 @@ const questions = {
 		return question.create(questionObject);
 	},
 
-	getAllQuestions: async (examId) => {
+	getSelectiveQuestionData: async (examId) => {
 		let questionData = await question
 			.getSpecificData(examId)
 			.select({ _id: 1, question: 1 });
 		let examData = await exam.getById(examId).select({ examCode: 1 });
 		return { questionData, examData };
+	},
+
+	getAllQuestionData: async (examId) => {
+		let questionData = await question
+			.getSpecificData(examId)
+			.select({ modifiedAt: 0, examId: 0 });
+		return questionData;
 	},
 
 	getParticularQuestion: async (questionId) => {
