@@ -31,7 +31,7 @@ class Questions extends React.Component {
 	editQuestion(questionId) {
 		let examId = this.props.match.params.examId;
 		this.props.history.push({
-			pathname: `/examiner/exam/${examId}/question/${questionId}`,
+			pathname: `/examiner/exam/${examId}/question/${questionId}/new`,
 		});
 	}
 
