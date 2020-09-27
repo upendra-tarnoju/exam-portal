@@ -1,3 +1,6 @@
+const path = require('path');
+const fs = require('fs');
+
 const { questionHandler } = require('../handlers');
 
 const question = {
@@ -59,6 +62,15 @@ const question = {
 		let questionId = req.params.questionId;
 		questionHandler.delete(questionId).then((data) => {
 			res.status(200).send(data);
+		});
+	},
+
+	getQuestionImage: async (req, res) => {
+		let imageId = req.params.imageId;
+		let uploadDirectory = path.join(`uploads/${imageId}`);
+		fs.readFile(uploadDirectory, (err, data) => {
+			res.writeHead(200, { 'Content-Type': 'image/jpg' });
+			res.end(data, 'Base64');
 		});
 	},
 };

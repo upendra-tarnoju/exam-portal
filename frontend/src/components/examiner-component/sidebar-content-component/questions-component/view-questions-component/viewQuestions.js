@@ -84,7 +84,11 @@ class ViewQuestions extends React.Component {
 					<CardActionArea>
 						<CardMedia
 							className={styles.cardImageHeight}
-							image='https://directory.bodc.in/images/parish/parish_details/No_Image_Available.jpg'
+							image={
+								data.image === null
+									? 'https://directory.bodc.in/images/parish/parish_details/No_Image_Available.jpg'
+									: `${process.env.REACT_APP_BASE_URL}/api/image/${data.image}`
+							}
 						/>
 						<CardContent>
 							<Typography

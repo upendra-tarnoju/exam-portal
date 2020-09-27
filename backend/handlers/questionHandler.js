@@ -53,6 +53,8 @@ const questions = {
 	delete: async (questionId) => {
 		return question.deleteById(questionId);
 	},
+
+	getQuestionImage: async (imageId) => {},
 };
 
 module.exports = questions;

@@ -113,5 +113,7 @@ module.exports = () => {
 		questionController.delete
 	);
 
+	router.get('/image/:imageId', questionController.getQuestionImage);
+
 	return router;
 };
