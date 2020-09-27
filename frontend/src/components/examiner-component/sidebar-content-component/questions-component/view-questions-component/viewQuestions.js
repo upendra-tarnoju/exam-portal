@@ -15,6 +15,7 @@ import { Edit, DeleteForever } from '@material-ui/icons';
 
 import QuestionService from '../../../../../services/questionApi';
 import styles from '../question.module.css';
+import DeleteModal from '../../../../../modals/deleteModal';
 
 class ViewQuestions extends React.Component {
 	constructor(props) {
@@ -22,6 +23,7 @@ class ViewQuestions extends React.Component {
 		this.questionService = new QuestionService();
 		this.state = {
 			questionList: [],
+			deleteModal: { show: false, id: '' },
 		};
 	}
 
@@ -29,12 +31,31 @@ class ViewQuestions extends React.Component {
 		let examId = this.props.match.params.examId;
 		let queryType = 'all';
 		this.questionService.getAll(examId, queryType).then((response) => {
-			console.log(response.data[0]);
 			this.setState({
 				questionList: response.data,
 			});
 		});
 	}
+
+	handleDeleteDialog = (show, id) => {
+		this.setState({
+			deleteModal: {
+				show: show,
+				id: id,
+			},
+		});
+	};
+
+	deleteQuestion = () => {
+		let questionId = this.state.deleteModal.id;
+		this.questionService.delete(questionId).then((response) => {
+			let questionList = this.state.questionList.filter(
+				(item) => item._id !== response.data._id
+			);
+			this.setState({ questionList });
+			this.handleDeleteDialog(false, '');
+		});
+	};
 
 	showOptions = (options, correctAnswer, optionType) => {
 		let rows = [...Array(Math.ceil(options.length / 2))];
@@ -80,45 +101,61 @@ class ViewQuestions extends React.Component {
 				data.optionType
 			);
 			return (
-				<Card key={data._id} className='mb-2 w-75 mx-auto'>
-					<CardActionArea>
-						<CardMedia
-							className={styles.cardImageHeight}
-							image={
-								data.image === null
-									? 'https://directory.bodc.in/images/parish/parish_details/No_Image_Available.jpg'
-									: `${process.env.REACT_APP_BASE_URL}/api/image/${data.image}`
-							}
-						/>
-						<CardContent>
-							<Typography
-								gutterBottom
-								variant='h5'
-								component='h2'
-							>{`Question ${index + 1}`}</Typography>
-							<Typography
-								variant='body2'
-								color='textSecondary'
-								component='pre'
-								className={`mb-2 ${styles.questionSize}`}
-							>
-								{data.question}
-							</Typography>
-							{optionContent}
-						</CardContent>
-						<CardActions disableSpacing>
-							<IconButton>
-								<Edit />
-							</IconButton>
-							<IconButton>
-								<DeleteForever />
-							</IconButton>
-						</CardActions>
-					</CardActionArea>
-				</Card>
+				<div>
+					<Card key={data._id} className='mb-2 w-75 mx-auto'>
+						<CardActionArea>
+							<CardMedia
+								className={styles.cardImageHeight}
+								image={
+									data.image === null
+										? 'https://directory.bodc.in/images/parish/parish_details/No_Image_Available.jpg'
+										: `${process.env.REACT_APP_BASE_URL}/api/image/${data.image}`
+								}
+							/>
+							<CardContent>
+								<Typography
+									gutterBottom
+									variant='h5'
+									component='h2'
+								>{`Question ${index + 1}`}</Typography>
+								<Typography
+									variant='body2'
+									color='textSecondary'
+									component='pre'
+									className={`mb-2 ${styles.questionSize}`}
+								>
+									{data.question}
+								</Typography>
+								{optionContent}
+							</CardContent>
+							<CardActions disableSpacing>
+								<IconButton>
+									<Edit />
+								</IconButton>
+								<IconButton
+									onClick={() =>
+										this.handleDeleteDialog(true, data._id)
+									}
+								>
+									<DeleteForever />
+								</IconButton>
+							</CardActions>
+						</CardActionArea>
+					</Card>
+				</div>
 			);
 		});
-		return <div className='container pt-5'>{questions}</div>;
+		return (
+			<div className='container pt-5'>
+				{questions}
+				<DeleteModal
+					show={this.state.deleteModal.show}
+					heading='question'
+					deleteContent={this.deleteQuestion}
+					hideModal={this.handleDeleteDialog}
+				/>
+			</div>
+		);
 	}
 }
 

@@ -35,9 +35,9 @@ class Questions extends React.Component {
 		});
 	}
 
-	handleDeleteDialog(status, id) {
+	handleDeleteDialog = (status, id) => {
 		this.setState({ showDialog: status, deleteIndex: id });
-	}
+	};
 
 	deleteQuestion = () => {
 		let questionId = this.state.deleteIndex;
