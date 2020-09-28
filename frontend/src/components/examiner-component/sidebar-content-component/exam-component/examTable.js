@@ -84,7 +84,7 @@ class ExamTable extends Component {
 					<Moment format='hh:mm A'>{exam.endTime}</Moment>
 				</td>
 				<td>
-					<Moment format='MMM Do, YYYY hh:mm A'>{exam.createdAt}</Moment>
+					<Moment format='MMM Do, YYYY (hh:mm A)'>{exam.createdAt}</Moment>
 				</td>
 				<td className='d-flex justify-content-around'>
 					<OverlayTrigger

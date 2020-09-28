@@ -56,7 +56,7 @@ class Exam extends Component {
 		});
 		return (
 			<div className='p-4'>
-				<div className='d-flex justify-content-end'>
+				<div className='float-right'>
 					{this.state.createExam ? (
 						<Button
 							type='button'
