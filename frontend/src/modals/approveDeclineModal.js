@@ -14,7 +14,7 @@ const ApproveDeclineModal = ({
 		let adminService = new AdminService();
 		adminService.approveOrDeclineExaminer(modalData).then((res) => {
 			closeModal(false);
-			handleSnackBar(true, res.data.msg);
+			handleSnackBar(true, res.data);
 		});
 	};
 	return (

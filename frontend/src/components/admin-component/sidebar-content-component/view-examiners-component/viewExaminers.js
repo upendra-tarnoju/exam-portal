@@ -6,6 +6,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import AdminService from '../../../../services/adminApi';
 import styles from './viewExaminers.module.css';
 import ApproveDeclineModal from '../../../../modals/approveDeclineModal';
+import factories from '../../../../factories/factories';
 
 class ViewExaminer extends React.Component {
 	constructor(props) {
@@ -43,11 +44,25 @@ class ViewExaminer extends React.Component {
 		});
 	};
 
-	handleSnackBar = (status, msg) => {
+	handleSnackBar = (status, data) => {
+		let examinerCount;
+		let updatedExaminerData = this.state.examinerData.filter(
+			(examiner) => examiner._id !== data._id
+		);
+		if (status) {
+			examinerCount = factories.updateExaminerCount(
+				this.state.accountStatus,
+				data.accountStatus,
+				this.state.examinerCount
+			);
+		} else examinerCount = this.state.examinerCount;
+
 		this.setState({
+			examinerCount: examinerCount,
+			examinerData: updatedExaminerData,
 			snackBar: {
 				show: status,
-				msg: msg,
+				msg: data.msg,
 			},
 		});
 	};
@@ -271,7 +286,7 @@ class ViewExaminer extends React.Component {
 						elevation={6}
 						variant='filled'
 						onClose={() => this.handleSnackBar(false, '')}
-						severity='error'
+						severity='success'
 					>
 						{this.state.snackBar.msg}
 					</MuiAlert>

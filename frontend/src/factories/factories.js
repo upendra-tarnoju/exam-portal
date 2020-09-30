@@ -13,4 +13,14 @@ let formatTime = (time) => {
 	return formattedTime;
 };
 
-export default { formatDate, formatTime };
+let updateExaminerCount = (
+	prevAccountStatus,
+	newAccountStatus,
+	examinerCount
+) => {
+	examinerCount[newAccountStatus] = examinerCount[newAccountStatus] + 1;
+	examinerCount[prevAccountStatus] = examinerCount[prevAccountStatus] - 1;
+	return examinerCount;
+};
+
+export default { formatDate, formatTime, updateExaminerCount };

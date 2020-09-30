@@ -12,7 +12,10 @@ class AdminService {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'get',
-			url: `${process.env.REACT_APP_BASE_URL}/api/admin/examiner`,
+			url: `${process.env.REACT_APP_BASE_URL}/${this.adminUrl}`,
+			params: {
+				type: 'examinerCount',
+			},
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,
@@ -24,7 +27,7 @@ class AdminService {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'get',
-			url: `${process.env.REACT_APP_BASE_URL}/api/admin/examiner`,
+			url: `${process.env.REACT_APP_BASE_URL}/${this.adminUrl}`,
 			params: {
 				type: type,
 				pageIndex: pageIndex,
@@ -41,7 +44,7 @@ class AdminService {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'patch',
-			url: `${process.env.REACT_APP_BASE_URL}/api/admin/examiner`,
+			url: `${process.env.REACT_APP_BASE_URL}/${this.adminUrl}`,
 			params: modalData,
 			headers: {
 				'Content-Type': 'application/json',
