@@ -197,6 +197,7 @@ const AddQuestionForm = ({
 						id='uploadExam'
 						name='uploadExam'
 						type='file'
+						onChange={handleFileChange}
 					/>
 					<label htmlFor='uploadExam'>
 						<Button

@@ -31,7 +31,7 @@ const ExamTime = ({
 										Exam date
 									</label>
 									<p className={styles.editExamContent}>
-										<Moment format='MMM Do, YYYY'>
+										<Moment parse='YYYY-MM-DD' format='MMM Do, YYYY'>
 											{state.examDate.prev}
 										</Moment>
 									</p>
