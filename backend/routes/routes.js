@@ -1,8 +1,6 @@
 const express = require('express');
-const { userController, questionController } = require('../controllers');
-const passport = require('passport');
 
-const { multerMiddleware } = require('../middleware');
+const { userController, questionController } = require('../controllers');
 
 module.exports = () => {
 	const router = express.Router();

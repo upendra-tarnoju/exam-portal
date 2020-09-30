@@ -1,7 +1,12 @@
 const express = require('express');
 const passport = require('passport');
 
-const { examinerController, examController } = require('../controllers');
+const {
+	examinerController,
+	examController,
+	questionController,
+} = require('../controllers');
+const { multerMiddleware } = require('../middleware');
 
 module.exports = () => {
 	const router = express.Router();

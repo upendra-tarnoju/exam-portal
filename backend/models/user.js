@@ -24,7 +24,7 @@ class Users {
 	};
 
 	update = (id, toUpdate) => {
-		return this.userModel.findByIdAndUpdate(id, toUpdate);
+		return this.userModel.findByIdAndUpdate(id, toUpdate, { new: true });
 	};
 
 	findById = (id) => {

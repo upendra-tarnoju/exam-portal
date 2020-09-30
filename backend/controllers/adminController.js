@@ -6,7 +6,7 @@ const admin = {
 		let pageIndex = parseInt(req.query.pageIndex);
 		let pageSize = parseInt(req.query.pageSize);
 		let msg = '';
-		if (queryType) {
+		if (queryType !== 'examinerCount') {
 			let examiner = await adminHandler.getExaminerDetails(
 				queryType,
 				pageIndex,
@@ -23,8 +23,11 @@ const admin = {
 	saveExaminerDetails: async (req, res) => {
 		let examinerId = req.query.id;
 		let accountStatus = `${req.query.type}d`;
-		await adminHandler.approveOrDeclineExaminer(examinerId, accountStatus);
-		res.status(200).send({ msg: `Examiner ${accountStatus}` });
+		let data = await adminHandler.approveOrDeclineExaminer(
+			examinerId,
+			accountStatus
+		);
+		res.status(200).send(data);
 	},
 };
 
