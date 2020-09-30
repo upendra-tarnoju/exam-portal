@@ -6,12 +6,9 @@ import AdminSidebar from './admin-sidebar-component/adminSidebar';
 import * as ActionTypes from '../../action';
 import SidebarContent from './sidebar-content-component/sidebarContent';
 
-const Admin = () => {
+const Admin = (props) => {
 	return (
-		<div
-			className={`d-flex ${this.props.toggle ? 'toggled' : ''}`}
-			id='wrapper'
-		>
+		<div className={`d-flex ${props.toggle ? 'toggled' : ''}`} id='wrapper'>
 			<AdminSidebar />
 			<SidebarContent />
 		</div>

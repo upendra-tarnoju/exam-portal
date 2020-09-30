@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import * as ActionTypes from '../action';
 
-export default function (WrappedComponent) {
+export default function (WrappedComponent, accountType) {
 	class ProtectedRoute extends React.Component {
 		checkAuthentication() {
 			let cookieData = cookie.getJSON();
@@ -13,7 +13,7 @@ export default function (WrappedComponent) {
 				let decodedToken = JwtDecode(cookieData.token);
 				if (
 					Date.now() >= decodedToken.exp * 1000 ||
-					decodedToken.type !== 'examiner'
+					decodedToken.type !== accountType
 				) {
 					this.props.history.push('/login');
 					this.props.setAuthenticatedUser(false);

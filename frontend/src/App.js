@@ -16,10 +16,13 @@ function App() {
 				<Route exact path='/' component={Start}></Route>
 				<Route path='/signup' component={SignUp}></Route>
 				<Route path='/login' component={Login}></Route>
-				<Route path='/admin' component={ProtectedRoute(Admin)}></Route>
+				<Route
+					path='/admin'
+					component={ProtectedRoute(Admin, 'admin')}
+				></Route>
 				<Route
 					path='/examiner'
-					component={ProtectedRoute(Examiner)}
+					component={ProtectedRoute(Examiner, 'examiner')}
 				></Route>
 			</Switch>
 		</BrowserRouter>
