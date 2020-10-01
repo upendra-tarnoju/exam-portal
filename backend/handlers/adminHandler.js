@@ -1,5 +1,6 @@
 const { users } = require('../models');
 const { sender, transporter } = require('../config/mail');
+
 const admin = {
 	getExaminerDetails: async (type, pageIndex, pageSize) => {
 		pageIndex = pageIndex * pageSize;
@@ -27,20 +28,23 @@ const admin = {
 	},
 
 	approveOrDeclineExaminer: async (examinerId, accountStatus) => {
-		users
+		let updatedExaminer = await users
 			.update(examinerId, {
 				accountStatus: accountStatus,
 			})
-			.then((user) => {
-				let mailOptions = {
-					to: user.email,
-					from: sender,
-					subject: 'Examiner confirmation mail',
-					text: `Your email id ${user.email} has been successfully registered as examiner`,
-				};
-				transporter.sendMail(mailOptions);
-				return 'Examiner approved';
-			});
+			.select({ email: 1, accountStatus: 1 });
+		let mailOptions = {
+			to: updatedExaminer.email,
+			from: sender,
+			subject: 'Examiner confirmation mail',
+			text: `Your email id ${updatedExaminer.email} has been successfully registered as examiner`,
+		};
+		transporter.sendMail(mailOptions);
+		return {
+			msg: `Examiner ${updatedExaminer.accountStatus}`,
+			accountStatus: updatedExaminer.accountStatus,
+			_id: updatedExaminer._id,
+		};
 	},
 };
 

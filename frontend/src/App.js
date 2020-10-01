@@ -7,6 +7,7 @@ import SignUp from './components/signup-component/signup';
 import Login from './components/login-component/login';
 import Admin from './components/admin-component/admin';
 import Examiner from './components/examiner-component/examiner';
+import ProtectedRoute from './hoc/protectedRoute';
 
 function App() {
 	return (
@@ -15,8 +16,14 @@ function App() {
 				<Route exact path='/' component={Start}></Route>
 				<Route path='/signup' component={SignUp}></Route>
 				<Route path='/login' component={Login}></Route>
-				<Route path='/admin' component={Admin}></Route>
-				<Route path='/examiner' component={Examiner}></Route>
+				<Route
+					path='/admin'
+					component={ProtectedRoute(Admin, 'admin')}
+				></Route>
+				<Route
+					path='/examiner'
+					component={ProtectedRoute(Examiner, 'examiner')}
+				></Route>
 			</Switch>
 		</BrowserRouter>
 	);

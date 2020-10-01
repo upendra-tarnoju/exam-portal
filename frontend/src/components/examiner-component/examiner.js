@@ -1,22 +1,17 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import ExaminerSidebar from './examiner-sidebar-component/examinerSidebar';
 import SidebarContent from './sidebar-content-component/sidebarContent';
 
-class Examiner extends Component {
-	render() {
-		return (
-			<div
-				className={`d-flex ${this.props.toggle ? 'toggled' : ''}`}
-				id='wrapper'
-			>
-				<ExaminerSidebar />
-				<SidebarContent />
-			</div>
-		);
-	}
-}
+const Examiner = (props) => {
+	return (
+		<div className={`d-flex ${props.toggle ? 'toggled' : ''}`} id='wrapper'>
+			<ExaminerSidebar />
+			<SidebarContent />
+		</div>
+	);
+};
 
 const mapStateToProps = (state) => {
 	return {

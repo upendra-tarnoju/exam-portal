@@ -19,15 +19,24 @@ module.exports = (passport) => {
 				})
 				.then((user) => {
 					if (user) {
-						let userStatus = bcryptjs.compareSync(
-							password,
-							user.password
-						);
-						if (userStatus) return done(null, user);
-						else
+						if (
+							user.accountStatus !== 'approved' &&
+							user.accountStatus !== 'created'
+						) {
 							return done(null, false, {
-								message: 'Incorrect credentials',
+								message: 'Your account is not approved',
 							});
+						} else {
+							let userStatus = bcryptjs.compareSync(
+								password,
+								user.password
+							);
+							if (userStatus) return done(null, user);
+							else
+								return done(null, false, {
+									message: 'Incorrect credentials',
+								});
+						}
 					} else {
 						return done(null, false, {
 							message: 'Incorrect credentials',

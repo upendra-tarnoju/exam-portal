@@ -1,4 +1,13 @@
 const { users, course } = require('../models');
+
+let trimObject = (data) => {
+	let keys = Object.keys(data);
+	for (let i = 0; i < keys.length - 1; i++) {
+		data[keys[i]] = data[keys[i]].trim();
+	}
+	return data;
+};
+
 const examiner = {
 	updateExaminerDetails: async (details, userId) => {
 		details['lastLogin'] = Date.now();
@@ -9,6 +18,7 @@ const examiner = {
 		let existingCourse = await course.find(userId, courseDetails.name);
 		if (existingCourse.length === 0) {
 			courseDetails['examinerId'] = userId;
+			courseDetails = trimObject(courseDetails);
 			return course.create(courseDetails);
 		} else {
 			return { status: 400, msg: 'Course name already existed' };
