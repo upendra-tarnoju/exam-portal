@@ -14,6 +14,7 @@ const examiner = {
 				}
 			});
 	},
+
 	createCourse: async (req, res) => {
 		let userId = req.user._id;
 		let courseDetails = req.body;
@@ -25,8 +26,9 @@ const examiner = {
 				} else res.status(200).send({ msg: 'New course created' });
 			})
 			.catch((err) => {
+				let error = Object.values(err.errors)[0].message;
 				res.status(400).send({
-					msg: 'Something wrong happened, Try again',
+					msg: error,
 				});
 			});
 	},

@@ -19,7 +19,10 @@ module.exports = (passport) => {
 				})
 				.then((user) => {
 					if (user) {
-						if (user.accountStatus !== 'approved') {
+						if (
+							user.accountStatus !== 'approved' &&
+							user.accountStatus !== 'created'
+						) {
 							return done(null, false, {
 								message: 'Your account is not approved',
 							});

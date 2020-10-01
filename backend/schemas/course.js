@@ -13,7 +13,7 @@ const course = new Schema({
 	},
 	examinerId: {
 		type: String,
-		required: true,
+		required: [true, 'Something wrong happened. Try again'],
 	},
 	createdAt: {
 		type: Date,
