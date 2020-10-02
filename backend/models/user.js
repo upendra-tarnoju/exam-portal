@@ -1,5 +1,4 @@
 const { users } = require('../schemas');
-const user = require('../handlers/userHandler');
 
 class Users {
 	constructor() {
@@ -15,12 +14,48 @@ class Users {
 		return userData.save();
 	};
 
-	findByAccountStatus = (accountStatus) => {
-		return this.userModel.find({ accountStatus: accountStatus });
+	findByAccountStatus = (accountStatus, accountType) => {
+		return this.userModel.aggregate([
+			{
+				$match: { accountType },
+			},
+			{
+				$lookup: {
+					from: 'examiners',
+					pipeline: [{ $match: { accountStatus } }],
+					as: 'examiner',
+				},
+			},
+			{
+				$project: {
+					firstName: 1,
+					lastName: 1,
+					email: 1,
+				},
+			},
+		]);
 	};
 
 	findByAccountType = (accountType) => {
-		return this.userModel.find({ accountType: accountType });
+		return this.userModel.aggregate([
+			{
+				$match: { accountType: accountType },
+			},
+			{
+				$lookup: {
+					from: 'examiners',
+					localField: 'userDataId',
+					foreignField: '_id',
+					as: 'examiner',
+				},
+			},
+			{
+				$unwind: '$examiner',
+			},
+			{
+				$project: { 'examiner.accountStatus': 1 },
+			},
+		]);
 	};
 
 	update = (id, toUpdate) => {

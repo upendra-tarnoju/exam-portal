@@ -40,7 +40,7 @@ const users = new Schema({
 	institution: {
 		type: String,
 	},
-	userData: {
+	userDataId: {
 		type: Schema.Types.ObjectId,
 	},
 });

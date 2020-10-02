@@ -6,6 +6,15 @@ const bcryptjs = require('bcryptjs');
 const { users, examiner } = require('../models');
 const userSchema = require('../schemas').users;
 
+let comparePassword = (typedPassword, user, done) => {
+	let userStatus = bcryptjs.compareSync(typedPassword, user.password);
+	if (userStatus) return done(null, user);
+	else
+		return done(null, false, {
+			message: 'Incorrect credentials',
+		});
+};
+
 module.exports = (passport) => {
 	passport.use(
 		new LocalStrategy((email, password, done) => {
@@ -29,26 +38,10 @@ module.exports = (passport) => {
 											message: 'Account not approved',
 										});
 									} else {
-										let userStatus = bcryptjs.compareSync(
-											password,
-											user.password
-										);
-										if (userStatus) return done(null, user);
-										else
-											return done(null, false, {
-												message: 'Incorrect credentials',
-											});
+										return comparePassword(password, user, done);
 									}
 								} else if (user.accountType === 'admin') {
-									let userStatus = bcryptjs.compareSync(
-										password,
-										user.password
-									);
-									if (userStatus) return done(null, user);
-									else
-										return done(null, false, {
-											message: 'Incorrect credentials',
-										});
+									return comparePassword(password, user, done);
 								}
 							});
 					} else {

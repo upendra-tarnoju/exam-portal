@@ -25,11 +25,15 @@ const user = {
 				.then((user) => {
 					let data = { userId: user._id, accountStatus: 'pending' };
 					examiner.create(data).then((data) => {
-						res.status(200).send({
-							role: 'examiner',
-							msg:
-								'Your account would be created shortly.You will receive email soon.',
-						});
+						users
+							.update(user._id, { userDataId: data._id })
+							.then((response) => {
+								res.status(200).send({
+									role: 'examiner',
+									msg:
+										'Your account would be created shortly.You will receive email soon.',
+								});
+							});
 					});
 				})
 				.catch((err) => {
