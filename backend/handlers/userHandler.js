@@ -1,7 +1,6 @@
-const { users } = require('../models');
+const { users, examiner } = require('../models');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
-const { userModel } = require('../models/user');
 const { createToken } = require('../auth').token;
 
 mapNewUser = (userData) => {
@@ -12,15 +11,6 @@ mapNewUser = (userData) => {
 	return checkAccountStatus(userData);
 };
 
-checkAccountStatus = (data) => {
-	if (data.accountType == 'examiner') {
-		data.accountStatus = 'pending';
-	} else {
-		data.accountStatus = 'created';
-	}
-	return data;
-};
-
 const user = {
 	saveUserDetails: async (req, res) => {
 		let userData = req.body;
@@ -29,22 +19,18 @@ const user = {
 			let salt = bcrypt.genSaltSync(10);
 			let hash = bcrypt.hashSync(userData.password, salt);
 			userData.password = hash;
-			userData = checkAccountStatus(userData);
-			await users
+			userData.accountType = 'examiner';
+			users
 				.create(userData)
 				.then((user) => {
-					if (user.accountType == 'examiner') {
+					let data = { userId: user._id, accountStatus: 'pending' };
+					examiner.create(data).then((data) => {
 						res.status(200).send({
 							role: 'examiner',
 							msg:
 								'Your account would be created shortly.You will receive email soon.',
 						});
-					} else {
-						res.status(200).send({
-							role: 'student',
-							msg: 'User created successfully',
-						});
-					}
+					});
 				})
 				.catch((err) => {
 					let error = Object.values(err.errors)[0].message;

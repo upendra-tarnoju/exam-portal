@@ -1,9 +1,10 @@
-const { users } = require('../models');
-const userSchema = require('../schemas').users;
 const LocalStrategy = require('passport-local').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const bcryptjs = require('bcryptjs');
+
+const { users, examiner } = require('../models');
+const userSchema = require('../schemas').users;
 
 module.exports = (passport) => {
 	passport.use(
@@ -13,30 +14,43 @@ module.exports = (passport) => {
 				.select({
 					email: 1,
 					accountType: 1,
-					accountStatus: 1,
 					password: 1,
 					lastLogin: 1,
 				})
 				.then((user) => {
 					if (user) {
-						if (
-							user.accountStatus !== 'approved' &&
-							user.accountStatus !== 'created'
-						) {
-							return done(null, false, {
-								message: 'Your account is not approved',
+						examiner
+							.find({ userId: user._id })
+							.select({ accountStatus: 1 })
+							.then((userData) => {
+								if (user.accountType === 'examiner') {
+									if (userData.accountStatus !== 'approved') {
+										return done(null, false, {
+											message: 'Account not approved',
+										});
+									} else {
+										let userStatus = bcryptjs.compareSync(
+											password,
+											user.password
+										);
+										if (userStatus) return done(null, user);
+										else
+											return done(null, false, {
+												message: 'Incorrect credentials',
+											});
+									}
+								} else if (user.accountType === 'admin') {
+									let userStatus = bcryptjs.compareSync(
+										password,
+										user.password
+									);
+									if (userStatus) return done(null, user);
+									else
+										return done(null, false, {
+											message: 'Incorrect credentials',
+										});
+								}
 							});
-						} else {
-							let userStatus = bcryptjs.compareSync(
-								password,
-								user.password
-							);
-							if (userStatus) return done(null, user);
-							else
-								return done(null, false, {
-									message: 'Incorrect credentials',
-								});
-						}
 					} else {
 						return done(null, false, {
 							message: 'Incorrect credentials',
