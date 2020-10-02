@@ -12,9 +12,6 @@ let schema = Yup.object({
 	password: Yup.string()
 		.min(6, 'Minimum password length should be 6')
 		.required('Password is required'),
-	accountType: Yup.string()
-		.required('Account type is required')
-		.oneOf(['student', 'examiner'], 'Invalid account type'),
 });
 
 export default schema;

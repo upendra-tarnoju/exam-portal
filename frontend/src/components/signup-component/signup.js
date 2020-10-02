@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import styles from './signup.module.css';
 import ShowModal from './showModal';
 import Navbar from '../header/navbar';
-import UserService from '../../services/userApi';
 import SignUpForm from '../../forms/signUpForm';
 
 class SignUp extends Component {
@@ -13,9 +12,6 @@ class SignUp extends Component {
 			modal: false,
 			message: '',
 		};
-		this.handleModal = this.handleModal.bind(this);
-		this.hideModal = this.hideModal.bind(this);
-		this.userService = new UserService();
 	}
 
 	showModal = (message) => {
@@ -26,11 +22,11 @@ class SignUp extends Component {
 		this.setState({ modal: false }, () => this.props.history.push('/login'));
 	};
 
-	handleModal(state) {
+	handleModal = (state) => {
 		this.setState({
 			modal: state,
 		});
-	}
+	};
 
 	render() {
 		return (
@@ -39,7 +35,7 @@ class SignUp extends Component {
 				<div className={`card ${styles.width35} mx-auto mt-3`}>
 					<div className='pt-3 pb-2'>
 						<p className={`text-center ${styles.heading}`}>
-							Sign up to continue
+							Sign up as examiner to continue
 						</p>
 						<div className='px-5'>
 							<SignUpForm showModal={this.showModal} />
