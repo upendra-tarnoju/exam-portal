@@ -14,7 +14,7 @@ mapNewUser = (userData) => {
 const user = {
 	saveUserDetails: async (req, res) => {
 		let userData = req.body;
-		let existingUser = await users.find(userData.email);
+		let existingUser = await users.find({ email: userData.email });
 		if (existingUser == null) {
 			let salt = bcrypt.genSaltSync(10);
 			let hash = bcrypt.hashSync(userData.password, salt);

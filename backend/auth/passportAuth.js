@@ -19,7 +19,7 @@ module.exports = (passport) => {
 	passport.use(
 		new LocalStrategy((email, password, done) => {
 			users
-				.find(email)
+				.find({ email: email })
 				.select({
 					email: 1,
 					accountType: 1,

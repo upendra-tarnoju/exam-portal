@@ -5,35 +5,13 @@ class Users {
 		this.userModel = users;
 	}
 
-	find = (email) => {
-		return this.userModel.findOne({ email });
+	find = (data) => {
+		return this.userModel.findOne(data);
 	};
 
 	create = (data) => {
 		const userData = new this.userModel(data);
 		return userData.save();
-	};
-
-	findByAccountStatus = (accountStatus, accountType) => {
-		return this.userModel.aggregate([
-			{
-				$match: { accountType },
-			},
-			{
-				$lookup: {
-					from: 'examiners',
-					pipeline: [{ $match: { accountStatus } }],
-					as: 'examiner',
-				},
-			},
-			{
-				$project: {
-					firstName: 1,
-					lastName: 1,
-					email: 1,
-				},
-			},
-		]);
 	};
 
 	findByAccountType = (accountType) => {

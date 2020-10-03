@@ -8,7 +8,6 @@ const examiner = new Schema({
 	},
 	department: {
 		type: String,
-		default: null,
 	},
 	designation: {
 		type: String,

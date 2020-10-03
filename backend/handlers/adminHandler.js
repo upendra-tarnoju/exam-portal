@@ -1,14 +1,14 @@
-const { users } = require('../models');
+const { users, examiner } = require('../models');
 const { sender, transporter } = require('../config/mail');
 
 const admin = {
 	getExaminerDetails: async (accountStatus, pageIndex, pageSize) => {
 		pageIndex = pageIndex * pageSize;
-		let accountType = 'examiner';
-		let data = await users.findByAccountStatus(accountStatus, accountType);
-		// .skip(pageIndex)
-		// .limit(pageSize)
-		// .select({ firstName: 1, lastName: 1, email: 1, accountStatus: 1 });
+		let data = await examiner.findByAccountStatus(
+			accountStatus,
+			pageIndex,
+			pageSize
+		);
 		return data;
 	},
 
@@ -29,13 +29,17 @@ const admin = {
 	},
 
 	approveOrDeclineExaminer: async (examinerId, accountStatus) => {
-		let updatedExaminer = await users
+		let updatedExaminer = await examiner
 			.update(examinerId, {
 				accountStatus: accountStatus,
 			})
-			.select({ email: 1, accountStatus: 1 });
+			.select({ accountStatus: 1 });
+		let userData = await users
+			.find({ userDataId: updatedExaminer._id })
+			.select({ email: 1 });
+
 		let mailOptions = {
-			to: updatedExaminer.email,
+			to: userData.email,
 			from: sender,
 			subject: 'Examiner confirmation mail',
 			text: `Your email id ${updatedExaminer.email} has been successfully registered as examiner`,

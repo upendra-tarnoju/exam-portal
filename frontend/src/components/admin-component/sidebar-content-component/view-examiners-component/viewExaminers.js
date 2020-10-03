@@ -103,12 +103,12 @@ class ViewExaminer extends React.Component {
 	}
 
 	examinerData = () => {
-		let examiners = this.state.examinerData.map((data, index) => (
-			<tr key={data._id}>
+		let examiners = this.state.examinerData.map((examiner, index) => (
+			<tr key={examiner._id}>
 				<th scope='row'>{index + 1}</th>
-				<td>{data.firstName}</td>
-				<td>{data.lastName}</td>
-				<td>{data.email}</td>
+				<td>{examiner.data.firstName}</td>
+				<td>{examiner.data.lastName}</td>
+				<td>{examiner.data.email}</td>
 				<td>
 					{this.state.accountStatus === 'pending' ||
 					this.state.accountStatus === 'approved' ? (
@@ -120,10 +120,10 @@ class ViewExaminer extends React.Component {
 							title='Decline'
 							onClick={() => {
 								this.approveOrDeclineExaminers(
-									data.firstName,
-									data.lastName,
+									examiner.data.firstName,
+									examiner.data.lastName,
 									'decline',
-									data._id
+									examiner._id
 								);
 							}}
 						>
@@ -140,14 +140,14 @@ class ViewExaminer extends React.Component {
 							data-toggle='tooltip'
 							data-placement='top'
 							title='Approve'
-							onClick={() =>
+							onClick={() => {
 								this.approveOrDeclineExaminers(
-									data.firstName,
-									data.lastName,
+									examiner.data.firstName,
+									examiner.data.lastName,
 									'approve',
-									data._id
-								)
-							}
+									examiner._id
+								);
+							}}
 						>
 							<i className='fa fa-check-square-o cursor-pointer text-white'></i>
 						</button>
@@ -188,7 +188,11 @@ class ViewExaminer extends React.Component {
 				<div className='row'>
 					<div className='col-md-4'>
 						<div
-							onClick={() => this.handleCardClick('approved')}
+							onClick={() => {
+								this.setState({ pageIndex: 0 }, () =>
+									this.handleCardClick('approved')
+								);
+							}}
 							className={`card p-3 ${styles.approvedCard} cursor-pointer ${styles.iconHover}`}
 						>
 							<img
@@ -215,7 +219,11 @@ class ViewExaminer extends React.Component {
 					<div className='col-md-4'>
 						<div
 							className={`card p-3 ${styles.pendingCard} cursor-pointer ${styles.iconHover}`}
-							onClick={() => this.handleCardClick('pending')}
+							onClick={() => {
+								this.setState({ pageIndex: 0 }, () =>
+									this.handleCardClick('pending')
+								);
+							}}
 						>
 							<img
 								alt='pending icon'
@@ -241,7 +249,11 @@ class ViewExaminer extends React.Component {
 					<div className='col-md-4'>
 						<div
 							className={`card p-3 ${styles.declinedCard} cursor-pointer ${styles.iconHover}`}
-							onClick={() => this.handleCardClick('declined')}
+							onClick={() => {
+								this.setState({ pageIndex: 0 }, () =>
+									this.handleCardClick('declined')
+								);
+							}}
 						>
 							<img
 								alt='declined icon'
