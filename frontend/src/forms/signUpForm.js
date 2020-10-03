@@ -23,7 +23,6 @@ let SignUpForm = ({ showModal }) => {
 				mobileNumber: '',
 				email: '',
 				password: '',
-				accountType: '',
 			}}
 		>
 			{({
@@ -121,26 +120,9 @@ let SignUpForm = ({ showModal }) => {
 							{errors.password}
 						</Form.Control.Feedback>
 					</Form.Group>
-					<Form.Group>
-						<Form.Label>Account Type</Form.Label>
-						<Form.Control
-							as='select'
-							name='accountType'
-							onBlur={handleBlur}
-							onChange={handleChange}
-							isInvalid={touched.accountType && !!errors.accountType}
-						>
-							<option value='none'>Select account type</option>
-							<option value='student'>Student</option>
-							<option value='examiner'>Examiner</option>
-						</Form.Control>
-						<Form.Control.Feedback type='invalid'>
-							{errors.accountType}
-						</Form.Control.Feedback>
-					</Form.Group>
 					<div className='d-flex justify-content-end'>
 						<Button type='submit' variant='contained' color='primary'>
-							Sign Up
+							Request for Sign Up
 						</Button>
 					</div>
 				</Form>

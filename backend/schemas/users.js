@@ -26,12 +26,12 @@ const users = new Schema({
 		required: [true, 'Password is required'],
 		minlength: [6, 'Minimum length of password should be 6'],
 	},
+	mobileNumber: {
+		type: String,
+	},
 	accountType: {
 		type: String,
 		required: [true, 'Account type is required'],
-	},
-	accountStatus: {
-		type: String,
 	},
 	lastLogin: {
 		type: Date,
@@ -40,11 +40,8 @@ const users = new Schema({
 	institution: {
 		type: String,
 	},
-	department: {
-		type: String,
-	},
-	designation: {
-		type: String,
+	userDataId: {
+		type: Schema.Types.ObjectId,
 	},
 });
 

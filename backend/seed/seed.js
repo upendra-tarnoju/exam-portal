@@ -2,7 +2,7 @@ const faker = require('faker');
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 require('../db').connection;
-const { users, course } = require('../schemas');
+const { users, course, examiner } = require('../schemas');
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
@@ -35,7 +35,7 @@ async function createCourses() {
 
 async function createUserData() {
 	//Creating examiner
-	let totalExaminer = 7;
+	let totalExaminer = 22;
 	await users.remove();
 
 	for (let i = 0; i < totalExaminer; i++) {
@@ -53,10 +53,17 @@ async function createUserData() {
 			email: email,
 			password: hash,
 			accountType: 'examiner',
-			accountStatus: 'pending',
+			mobileNumber: '1234567890',
 		});
-		await userObject.save();
-		console.log('creating user');
+		let data = await userObject.save();
+		let examinerObject = new examiner({
+			accountStatus: 'pending',
+			userId: data._id,
+		});
+		let examinerData = await examinerObject.save();
+		await users.findByIdAndUpdate(data._id, {
+			$set: { userDataId: examinerData._id },
+		});
 	}
 
 	//Creating admin
@@ -75,6 +82,6 @@ async function createUserData() {
 	await userObject.save();
 }
 
-// createUserData();
+createUserData();
 
-createCourses();
+// createCourses();

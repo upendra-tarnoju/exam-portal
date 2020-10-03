@@ -1,4 +1,4 @@
-const { users, course } = require('../models');
+const { users, course, examiner } = require('../models');
 
 let trimObject = (data) => {
 	let keys = Object.keys(data);
@@ -8,10 +8,15 @@ let trimObject = (data) => {
 	return data;
 };
 
-const examiner = {
+const examiners = {
 	updateExaminerDetails: async (details, userId) => {
-		details['lastLogin'] = Date.now();
-		return users.update(userId, details);
+		let userData = await users
+			.update(userId, {
+				lastLogin: Date.now(),
+				institution: details.collegeName,
+			})
+			.select({ userDataId: 1 });
+		return examiner.update(userData.userDataId, details);
 	},
 
 	createCourse: async (userId, courseDetails) => {
@@ -70,4 +75,4 @@ const examiner = {
 	},
 };
 
-module.exports = examiner;
+module.exports = examiners;

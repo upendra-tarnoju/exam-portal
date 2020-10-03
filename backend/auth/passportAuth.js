@@ -1,42 +1,54 @@
-const { users } = require('../models');
-const userSchema = require('../schemas').users;
 const LocalStrategy = require('passport-local').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const bcryptjs = require('bcryptjs');
 
+const { users, examiner } = require('../models');
+const userSchema = require('../schemas').users;
+
+let comparePassword = (typedPassword, user, done) => {
+	let userStatus = bcryptjs.compareSync(typedPassword, user.password);
+	if (userStatus) return done(null, user);
+	else
+		return done(null, false, {
+			message: 'Incorrect credentials',
+		});
+};
+
 module.exports = (passport) => {
 	passport.use(
 		new LocalStrategy((email, password, done) => {
 			users
-				.find(email)
+				.find({ email: email })
 				.select({
 					email: 1,
 					accountType: 1,
-					accountStatus: 1,
 					password: 1,
 					lastLogin: 1,
 				})
 				.then((user) => {
 					if (user) {
-						if (
-							user.accountStatus !== 'approved' &&
-							user.accountStatus !== 'created'
-						) {
-							return done(null, false, {
-								message: 'Your account is not approved',
+						examiner
+							.find({ userId: user._id })
+							.select({ accountStatus: 1 })
+							.then((userData) => {
+								if (user.accountType === 'examiner') {
+									console.log(userData);
+									if (userData.accountStatus === 'pending') {
+										return done(null, false, {
+											message: 'Account not approved',
+										});
+									} else if (userData.accountStatus === 'declined') {
+										return done(null, false, {
+											message: 'Account has been closed',
+										});
+									} else {
+										return comparePassword(password, user, done);
+									}
+								} else if (user.accountType === 'admin') {
+									return comparePassword(password, user, done);
+								}
 							});
-						} else {
-							let userStatus = bcryptjs.compareSync(
-								password,
-								user.password
-							);
-							if (userStatus) return done(null, user);
-							else
-								return done(null, false, {
-									message: 'Incorrect credentials',
-								});
-						}
 					} else {
 						return done(null, false, {
 							message: 'Incorrect credentials',

@@ -13,7 +13,7 @@ const admin = {
 				pageSize
 			);
 			if (examiner.length === 0) msg = `No ${queryType} examiner found`;
-			res.status(200).send({ examiner: examiner, msg: msg });
+			res.status(200).send({ examiner, msg: msg });
 		} else {
 			let examinerCount = await adminHandler.getExaminerCount();
 			res.status(200).send(examinerCount);
