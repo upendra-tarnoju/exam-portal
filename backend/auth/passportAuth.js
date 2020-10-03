@@ -33,9 +33,14 @@ module.exports = (passport) => {
 							.select({ accountStatus: 1 })
 							.then((userData) => {
 								if (user.accountType === 'examiner') {
-									if (userData.accountStatus !== 'approved') {
+									console.log(userData);
+									if (userData.accountStatus === 'pending') {
 										return done(null, false, {
 											message: 'Account not approved',
+										});
+									} else if (userData.accountStatus === 'declined') {
+										return done(null, false, {
+											message: 'Account has been closed',
 										});
 									} else {
 										return comparePassword(password, user, done);

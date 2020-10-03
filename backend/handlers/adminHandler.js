@@ -42,7 +42,11 @@ const admin = {
 			to: userData.email,
 			from: sender,
 			subject: 'Examiner confirmation mail',
-			text: `Your email id ${updatedExaminer.email} has been successfully registered as examiner`,
+			text: `Your email id ${userData.email} has been ${
+				updatedExaminer.accountStatus === 'approved'
+					? 'successfully registered'
+					: 'declined'
+			}  as examiner`,
 		};
 		transporter.sendMail(mailOptions);
 		return {

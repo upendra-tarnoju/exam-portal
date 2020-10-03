@@ -11,7 +11,7 @@ class Examiner {
 	}
 
 	find(userId) {
-		return this.examinerModel.find(userId);
+		return this.examinerModel.findOne(userId);
 	}
 
 	update = (id, toUpdate) => {

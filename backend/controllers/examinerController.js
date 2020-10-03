@@ -7,6 +7,7 @@ const examiner = {
 		examinerHandler
 			.updateExaminerDetails(examinerDetails, userId)
 			.then((data, err) => {
+				console.log(data);
 				if (err) {
 					res.status(400).send({ msg: 'Unexpected error, Try again' });
 				} else {
