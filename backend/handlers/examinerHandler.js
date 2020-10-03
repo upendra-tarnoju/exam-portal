@@ -17,7 +17,6 @@ const examiners = {
 			})
 			.select({ userDataId: 1 });
 		return examiner.update(userData.userDataId, details);
-		// return users.update(userId, details);
 	},
 
 	createCourse: async (userId, courseDetails) => {
