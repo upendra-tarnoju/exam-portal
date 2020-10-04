@@ -18,6 +18,12 @@ const student = new Schema({
 	address: {
 		type: String,
 	},
+	examinerId: {
+		type: Schema.Types.ObjectId,
+	},
+	examId: {
+		type: Schema.Types.ObjectId,
+	},
 });
 
 module.exports = mongoose.model('student', student);
