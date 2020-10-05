@@ -2,15 +2,24 @@ import React from 'react';
 import { Formik } from 'formik';
 import { Form } from 'react-bootstrap';
 import Button from '@material-ui/core/Button';
+import { Typeahead } from 'react-bootstrap-typeahead';
 
 import schema from '../schema/studentSchema';
+import ExaminerService from '../services/examinerApi';
 
-let AddStudentForm = () => {
+let AddStudentForm = ({ examCode }) => {
+	let filterByCallback = (option, data) => {
+		let text = data.text;
+		return option.examCode.toLowerCase().indexOf(text.toLowerCase()) !== -1;
+	};
 	return (
 		<Formik
 			validationSchema={schema}
 			onSubmit={(values) => {
-				console.log(values);
+				let examinerService = new ExaminerService();
+				examinerService.saveNewStudent(values).then((response) => {
+					console.log(response.data);
+				});
 			}}
 			initialValues={{
 				firstName: '',
@@ -32,6 +41,8 @@ let AddStudentForm = () => {
 				handleChange,
 				handleBlur,
 				handleSubmit,
+				setFieldValue,
+				setFieldTouched,
 			}) => (
 				<Form noValidate onSubmit={handleSubmit}>
 					<div className='row'>
@@ -96,8 +107,8 @@ let AddStudentForm = () => {
 								<Form.Label>Mother name</Form.Label>
 								<Form.Control
 									type='text'
-									name='lastName'
-									placeholder='Father name'
+									name='motherName'
+									placeholder='Mother name'
 									value={values.motherName}
 									onBlur={handleBlur}
 									onChange={handleChange}
@@ -110,6 +121,36 @@ let AddStudentForm = () => {
 							</Form.Group>
 						</div>
 					</div>
+					<Form.Group>
+						<Form.Label>Exam code</Form.Label>
+						<Typeahead
+							id='typeahead'
+							filterBy={filterByCallback}
+							onBlur={(event) => setFieldTouched('examCode', true)}
+							isInvalid={touched.examCode && !!errors.examCode}
+							labelKey='examCode'
+							placeholder='Exam code'
+							options={examCode}
+							highlightOnlyResult={true}
+							onChange={(selected) => {
+								if (selected.length !== 0) {
+									setFieldValue('examCode', selected[0]._id);
+								} else {
+									setFieldValue('examCode', '');
+								}
+							}}
+							renderMenuItemChildren={(option) => (
+								<div>
+									<div id={option._id}>{option.examCode}</div>
+								</div>
+							)}
+						/>
+						{touched.examCode ? (
+							<div className='d-block invalid-feedback'>
+								{errors.examCode}
+							</div>
+						) : null}
+					</Form.Group>
 					<Form.Group>
 						<Form.Label>Address</Form.Label>
 						<Form.Control
