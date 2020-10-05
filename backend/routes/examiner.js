@@ -5,6 +5,7 @@ const {
 	examinerController,
 	examController,
 	questionController,
+	studentController,
 } = require('../controllers');
 const { multerMiddleware } = require('../middleware');
 
@@ -101,6 +102,12 @@ module.exports = () => {
 		'/question/:questionId',
 		passport.authenticate('jwt'),
 		questionController.delete
+	);
+
+	router.post(
+		'/student',
+		passport.authenticate('jwt'),
+		studentController.addNewStudent
 	);
 
 	return router;

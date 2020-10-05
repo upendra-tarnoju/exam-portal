@@ -43,6 +43,10 @@ class Users {
 	findById = (id) => {
 		return this.userModel.findById(id);
 	};
+
+	findByEmailAndMobileNumber(data) {
+		return this.userModel.findOne({ $or: data });
+	}
 }
 
 module.exports = new Users();

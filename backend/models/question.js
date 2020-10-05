@@ -1,5 +1,4 @@
 const { question } = require('../schemas');
-const mongoose = require('mongoose');
 
 class Questions {
 	constructor() {

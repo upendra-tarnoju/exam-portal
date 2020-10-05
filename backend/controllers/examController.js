@@ -12,7 +12,8 @@ const exam = {
 	},
 	getExamDetails: async (req, res) => {
 		let userId = req.user._id;
-		examHandler.getAllExams(userId).then((response) => {
+		let queryType = req.query.type;
+		examHandler.getAllExams(userId, queryType).then((response) => {
 			res.status(200).send(response);
 		});
 	},
