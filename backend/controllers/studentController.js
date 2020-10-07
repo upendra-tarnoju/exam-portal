@@ -15,10 +15,14 @@ const student = {
 
 	getAllStudents: async (req, res) => {
 		let examinerId = req.user._id;
+		let pageQuery = req.query;
+		let studentData = await studentHandler.getAllStudents(
+			examinerId,
+			pageQuery
+		);
+		let totalStudents = await studentHandler.getStudentsLength(examinerId);
 
-		let studentData = await studentHandler.getAllStudents(examinerId);
-		console.log(studentData);
-		res.status(200).send(studentData);
+		res.status(200).send({ studentData, totalStudents });
 	},
 };
 

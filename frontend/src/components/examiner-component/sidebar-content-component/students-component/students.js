@@ -1,5 +1,7 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
+import Moment from 'react-moment';
+import Pagination from '@material-ui/lab/Pagination';
 
 import CreateStudent from './create-student-component/createStudent';
 import styles from './students.module.css';
@@ -12,16 +14,32 @@ class Students extends React.Component {
 		this.state = {
 			createStudent: false,
 			studentList: [],
+			pageSize: 5,
+			pageIndex: 0,
+			totalStudents: 0,
 		};
 		this.examinerService = new ExaminerService();
 	}
 
-	componentDidMount() {
-		this.examinerService.getAllStudents().then((res) => {
+	viewStudents() {
+		let { pageIndex, pageSize } = this.state;
+		this.examinerService.getAllStudents(pageIndex, pageSize).then((res) => {
+			let studentsLength = res.data.totalStudents;
+
 			this.setState({
-				studentList: res.data,
+				studentList: res.data.studentData,
+				totalStudents: studentsLength,
+				pageCount: Math.ceil(studentsLength / this.state.pageSize),
 			});
 		});
+	}
+
+	handlePageChange = (event, value) => {
+		this.setState({ pageIndex: value - 1 }, () => this.viewStudents());
+	};
+
+	componentDidMount() {
+		this.viewStudents();
 	}
 
 	handleStudent = (status) => {
@@ -30,21 +48,26 @@ class Students extends React.Component {
 		});
 	};
 	render() {
+		let { pageIndex, pageSize } = this.state;
 		let allStudents = this.state.studentList.map((student, index) => {
 			return (
 				<tr key={student._id}>
-					<td>{index + 1}</td>
+					<td>{pageIndex * pageSize + index + 1}</td>
 					<td>{`${student.data.firstName} ${student.data.lastName}`}</td>
 					<td>{student.fatherName}</td>
 					<td>{student.motherName}</td>
 					<td>{student.data.email}</td>
 					<td>{student.data.mobileNumber}</td>
-					<td>{student.dob}</td>
+					<td>
+						<Moment parse='YYYY-MM-DD' format='MMM Do, YYYY'>
+							{student.dob}
+						</Moment>
+					</td>
 				</tr>
 			);
 		});
 		return (
-			<div className='container py-4'>
+			<div className='p-4'>
 				<div className='d-flex justify-content-end'>
 					{!this.state.createStudent ? (
 						<Button
@@ -84,6 +107,17 @@ class Students extends React.Component {
 							</thead>
 							<tbody>{allStudents}</tbody>
 						</Table>
+						<div className='d-flex justify-content-center py-2  bg-white'>
+							<Pagination
+								count={this.state.pageCount}
+								variant='outlined'
+								color='secondary'
+								size='large'
+								onChange={this.handlePageChange}
+								showFirstButton
+								showLastButton
+							/>
+						</div>
 					</div>
 				)}
 			</div>

@@ -40,9 +40,20 @@ const students = {
 		}
 	},
 
-	getAllStudents: async (examinerId) => {
-		let studentData = await student.find(examinerId);
+	getAllStudents: async (examinerId, pageQuery) => {
+		let pageIndex = parseInt(pageQuery.pageIndex, 10);
+		let pageSize = parseInt(pageQuery.pageSize, 10);
+		pageIndex = pageIndex * pageSize;
+		let studentData = await student
+			.find(examinerId)
+			.skip(pageIndex)
+			.limit(pageSize);
 		return studentData;
+	},
+
+	getStudentsLength: async (examinerId) => {
+		let studentData = await student.findByExaminerId(examinerId);
+		return studentData.length;
 	},
 };
 

@@ -45,7 +45,7 @@ class ExaminerService {
 		});
 	};
 
-	getAllStudents = () => {
+	getAllStudents = (pageIndex, pageSize) => {
 		let token = this.userService.getToken();
 		return axios({
 			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}/student`,
@@ -53,6 +53,10 @@ class ExaminerService {
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,
+			},
+			params: {
+				pageIndex: pageIndex,
+				pageSize: pageSize,
 			},
 		});
 	};

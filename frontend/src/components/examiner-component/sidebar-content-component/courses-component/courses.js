@@ -38,15 +38,12 @@ class Courses extends Component {
 	};
 
 	handleSnackBar = (status, msg) => {
-		this.setState(
-			{
-				snackbar: {
-					show: status,
-					msg: msg,
-				},
+		this.setState({
+			snackbar: {
+				show: status,
+				msg: msg,
 			},
-			() => console.log(this.state.snackbar)
-		);
+		});
 	};
 
 	editCourse = (name, description, id) => {

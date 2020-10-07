@@ -12,6 +12,10 @@ class Students {
 		return studentData.save();
 	}
 
+	findByExaminerId(examinerId) {
+		return this.studentModel.find({ examinerId: examinerId });
+	}
+
 	find(examinerId) {
 		return this.studentModel.aggregate([
 			{ $match: { examinerId: ObjectId(examinerId) } },

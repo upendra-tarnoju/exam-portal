@@ -13,7 +13,7 @@ const student = new Schema({
 		type: String,
 	},
 	dob: {
-		type: String,
+		type: Date,
 	},
 	address: {
 		type: String,
