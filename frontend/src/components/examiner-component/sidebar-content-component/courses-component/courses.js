@@ -22,7 +22,6 @@ class Courses extends Component {
 			snackbar: { show: false, msg: '' },
 			pageIndex: 0,
 			pageSize: 5,
-			currentPage: 0,
 			name: '',
 			description: '',
 			courseId: '',

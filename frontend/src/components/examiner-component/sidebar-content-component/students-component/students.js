@@ -5,7 +5,7 @@ import Pagination from '@material-ui/lab/Pagination';
 
 import CreateStudent from './create-student-component/createStudent';
 import styles from './students.module.css';
-import { Table } from 'react-bootstrap';
+import { Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import ExaminerService from '../../../../services/examinerApi';
 
 class Students extends React.Component {
@@ -63,6 +63,20 @@ class Students extends React.Component {
 							{student.dob}
 						</Moment>
 					</td>
+					<td className='d-flex justify-content-center'>
+						<OverlayTrigger
+							placement='bottom'
+							overlay={<Tooltip id='button-tooltip'>Edit</Tooltip>}
+						>
+							<i className='fa fa-pencil-square-o cursor-pointer text-white mr-2'></i>
+						</OverlayTrigger>
+						<OverlayTrigger
+							placement='bottom'
+							overlay={<Tooltip id='button-tooltip'>Delete</Tooltip>}
+						>
+							<i className='fa fa-trash-o cursor-pointer text-white'></i>
+						</OverlayTrigger>
+					</td>
 				</tr>
 			);
 		});
@@ -92,7 +106,7 @@ class Students extends React.Component {
 						<p className={`${styles.heading} text-center`}>
 							List of all students
 						</p>
-						<Table striped bordered hover variant='dark'>
+						<Table striped bordered hover variant='dark' className='mb-0'>
 							<thead>
 								<tr>
 									<th>S.No</th>
@@ -102,7 +116,7 @@ class Students extends React.Component {
 									<th>Email</th>
 									<th>Mobile</th>
 									<th>D.O.B</th>
-									<th>Student actions</th>
+									<th>Actions</th>
 								</tr>
 							</thead>
 							<tbody>{allStudents}</tbody>
