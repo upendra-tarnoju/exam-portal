@@ -46,6 +46,7 @@ const students = {
 		pageIndex = pageIndex * pageSize;
 		let studentData = await student
 			.find(examinerId)
+			.sort({ createdAt: 1 })
 			.skip(pageIndex)
 			.limit(pageSize);
 		return studentData;
