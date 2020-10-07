@@ -2,6 +2,7 @@ import React from 'react';
 
 import AddStudentForm from '../../../../../forms/addStudentForm';
 import ExaminerService from '../../../../../services/examApi';
+import styles from '../students.module.css';
 
 class CreateStudent extends React.Component {
 	constructor(props) {
@@ -25,8 +26,12 @@ class CreateStudent extends React.Component {
 		return (
 			<div className='container py-5'>
 				<div className='card w-50 mx-auto'>
+					<div
+						className={`card-header text-center text-white bg-dark ${styles.studentCardHeader}`}
+					>
+						Add student
+					</div>
 					<div className='pt-3 pb-2'>
-						<p className='text-center'>Add student</p>
 						<div className='px-5'>
 							<AddStudentForm examCode={this.state.examCode} />
 						</div>

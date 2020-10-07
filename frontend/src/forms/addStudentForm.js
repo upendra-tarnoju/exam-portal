@@ -83,6 +83,36 @@ let AddStudentForm = ({ examCode }) => {
 							</Form.Group>
 						</div>
 					</div>
+					<Form.Group>
+						<Form.Label>Exam code</Form.Label>
+						<Typeahead
+							id='typeahead'
+							filterBy={filterByCallback}
+							onBlur={(event) => setFieldTouched('examCode', true)}
+							isInvalid={touched.examCode && !!errors.examCode}
+							labelKey='examCode'
+							placeholder='Exam code'
+							options={examCode}
+							highlightOnlyResult={true}
+							onChange={(selected) => {
+								if (selected.length !== 0) {
+									setFieldValue('examCode', selected[0]._id);
+								} else {
+									setFieldValue('examCode', '');
+								}
+							}}
+							renderMenuItemChildren={(option) => (
+								<div>
+									<div id={option._id}>{option.examCode}</div>
+								</div>
+							)}
+						/>
+						{touched.examCode ? (
+							<div className='d-block invalid-feedback'>
+								{errors.examCode}
+							</div>
+						) : null}
+					</Form.Group>
 					<div className='row'>
 						<div className='col-md-6'>
 							<Form.Group>
@@ -122,36 +152,6 @@ let AddStudentForm = ({ examCode }) => {
 						</div>
 					</div>
 					<Form.Group>
-						<Form.Label>Exam code</Form.Label>
-						<Typeahead
-							id='typeahead'
-							filterBy={filterByCallback}
-							onBlur={(event) => setFieldTouched('examCode', true)}
-							isInvalid={touched.examCode && !!errors.examCode}
-							labelKey='examCode'
-							placeholder='Exam code'
-							options={examCode}
-							highlightOnlyResult={true}
-							onChange={(selected) => {
-								if (selected.length !== 0) {
-									setFieldValue('examCode', selected[0]._id);
-								} else {
-									setFieldValue('examCode', '');
-								}
-							}}
-							renderMenuItemChildren={(option) => (
-								<div>
-									<div id={option._id}>{option.examCode}</div>
-								</div>
-							)}
-						/>
-						{touched.examCode ? (
-							<div className='d-block invalid-feedback'>
-								{errors.examCode}
-							</div>
-						) : null}
-					</Form.Group>
-					<Form.Group>
 						<Form.Label>Address</Form.Label>
 						<Form.Control
 							type='text'
@@ -167,7 +167,46 @@ let AddStudentForm = ({ examCode }) => {
 							{errors.address}
 						</Form.Control.Feedback>
 					</Form.Group>
-
+					<div className='row'>
+						<div className='col-md-6'>
+							<Form.Group>
+								<Form.Label>Mobile number</Form.Label>
+								<Form.Control
+									type='text'
+									name='mobileNumber'
+									placeholder='Mobile number'
+									value={values.mobileNumber}
+									onBlur={handleBlur}
+									onChange={handleChange}
+									isInvalid={
+										touched.mobileNumber && !!errors.mobileNumber
+									}
+									required
+								/>
+								<Form.Control.Feedback type='invalid'>
+									{errors.mobileNumber}
+								</Form.Control.Feedback>
+							</Form.Group>
+						</div>
+						<div className='col-md-6'>
+							<Form.Group>
+								<Form.Label>Date of birth</Form.Label>
+								<Form.Control
+									type='date'
+									name='dob'
+									placeholder='Date of birth'
+									value={values.dob}
+									onBlur={handleBlur}
+									onChange={handleChange}
+									isInvalid={touched.dob && !!errors.dob}
+									required
+								/>
+								<Form.Control.Feedback type='invalid'>
+									{errors.dob}
+								</Form.Control.Feedback>
+							</Form.Group>
+						</div>
+					</div>
 					<Form.Group>
 						<Form.Label>Email Address</Form.Label>
 						<Form.Control
@@ -198,22 +237,6 @@ let AddStudentForm = ({ examCode }) => {
 						/>
 						<Form.Control.Feedback type='invalid'>
 							{errors.password}
-						</Form.Control.Feedback>
-					</Form.Group>
-					<Form.Group>
-						<Form.Label>Date of birth</Form.Label>
-						<Form.Control
-							type='date'
-							name='dob'
-							placeholder='Date of birth'
-							value={values.dob}
-							onBlur={handleBlur}
-							onChange={handleChange}
-							isInvalid={touched.dob && !!errors.dob}
-							required
-						/>
-						<Form.Control.Feedback type='invalid'>
-							{errors.dob}
 						</Form.Control.Feedback>
 					</Form.Group>
 
