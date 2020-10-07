@@ -110,5 +110,11 @@ module.exports = () => {
 		studentController.addNewStudent
 	);
 
+	router.get(
+		'/student',
+		passport.authenticate('jwt'),
+		studentController.getAllStudents
+	);
+
 	return router;
 };

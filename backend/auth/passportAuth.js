@@ -33,7 +33,6 @@ module.exports = (passport) => {
 							.select({ accountStatus: 1 })
 							.then((userData) => {
 								if (user.accountType === 'examiner') {
-									console.log(userData);
 									if (userData.accountStatus === 'pending') {
 										return done(null, false, {
 											message: 'Account not approved',

@@ -32,13 +32,17 @@ const students = {
 			studentData.password = hashPassword(studentData.password);
 			let userData = await users.create(studentData);
 			studentData.userId = userData._id;
-
 			let newStudent = await student.create(studentData);
 			await users.update(userData._id, { userDataId: newStudent._id });
 			let msg = 'New student added';
 
 			return msg;
 		}
+	},
+
+	getAllStudents: async (examinerId) => {
+		let studentData = await student.find(examinerId);
+		return studentData;
 	},
 };
 

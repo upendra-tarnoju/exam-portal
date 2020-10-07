@@ -12,6 +12,14 @@ const student = {
 			res.status(200).send(response);
 		});
 	},
+
+	getAllStudents: async (req, res) => {
+		let examinerId = req.user._id;
+
+		let studentData = await studentHandler.getAllStudents(examinerId);
+		console.log(studentData);
+		res.status(200).send(studentData);
+	},
 };
 
 module.exports = student;
