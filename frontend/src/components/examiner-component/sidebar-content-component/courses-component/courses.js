@@ -22,7 +22,6 @@ class Courses extends Component {
 			snackbar: { show: false, msg: '' },
 			pageIndex: 0,
 			pageSize: 5,
-			currentPage: 0,
 			name: '',
 			description: '',
 			courseId: '',
@@ -38,15 +37,12 @@ class Courses extends Component {
 	};
 
 	handleSnackBar = (status, msg) => {
-		this.setState(
-			{
-				snackbar: {
-					show: status,
-					msg: msg,
-				},
+		this.setState({
+			snackbar: {
+				show: status,
+				msg: msg,
 			},
-			() => console.log(this.state.snackbar)
-		);
+		});
 	};
 
 	editCourse = (name, description, id) => {

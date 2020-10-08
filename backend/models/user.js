@@ -43,6 +43,19 @@ class Users {
 	findById = (id) => {
 		return this.userModel.findById(id);
 	};
+
+	findByEmailAndMobileNumber(mobileNumber, email, accountType) {
+		return this.userModel.findOne({
+			$and: [
+				{
+					$or: [{ mobileNumber }, { email }],
+				},
+				{
+					accountType,
+				},
+			],
+		});
+	}
 }
 
 module.exports = new Users();

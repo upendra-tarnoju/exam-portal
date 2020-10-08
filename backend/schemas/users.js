@@ -43,6 +43,10 @@ const users = new Schema({
 	userDataId: {
 		type: Schema.Types.ObjectId,
 	},
+	createdAt: {
+		type: Date,
+		default: Date.now(),
+	},
 });
 
 module.exports = mongoose.model('users', users);

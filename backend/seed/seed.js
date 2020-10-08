@@ -1,8 +1,9 @@
 const faker = require('faker');
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 require('../db').connection;
-const { users, course, examiner } = require('../schemas');
+const { users, course, examiner, student } = require('../schemas');
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
@@ -82,6 +83,45 @@ async function createUserData() {
 	await userObject.save();
 }
 
-createUserData();
+//Creating student for particular examiner
+async function createStudent() {
+	let salt = bcrypt.genSaltSync(10);
+	let hash = bcrypt.hashSync('sample', salt);
+	let examinerId = ObjectId('5f7c76dfc6183219e837f792');
+	let totalStudents = 12;
+	for (let i = 0; i < totalStudents; i++) {
+		let firstName = faker.name.firstName();
+		let lastName = faker.name.lastName();
+		let email = `${firstName.toLocaleLowerCase()}${faker.random
+			.number()
+			.toString()
+			.substr(0, 2)}@${faker.internet.domainWord()}.com`;
+		let userObject = new users({
+			firstName: firstName,
+			lastName: lastName,
+			email: email,
+			mobileNumber: faker.phone.phoneNumber('+91 ####-######'),
+			password: hash,
+			accountType: 'student',
+		});
+		let data = await userObject.save();
+		let studentObject = new student({
+			fatherName: `${faker.name.firstName()} ${lastName}`,
+			motherName: `${faker.name.firstName()} ${lastName}`,
+			dob: '2020-10-13',
+			address: `${faker.address.streetAddress()}, ${faker.address.city()}, ${faker.address.state()}, ${faker.address.country()}`,
+			examinerId: examinerId,
+			userId: data._id,
+		});
+		let studentData = await studentObject.save();
+		await users.findByIdAndUpdate(data._id, {
+			$set: { userDataId: studentData._id },
+		});
+	}
+	console.log('student created');
+}
+
+// createUserData();
+createStudent();
 
 // createCourses();

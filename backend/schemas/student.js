@@ -13,10 +13,16 @@ const student = new Schema({
 		type: String,
 	},
 	dob: {
-		type: String,
+		type: Date,
 	},
 	address: {
 		type: String,
+	},
+	examinerId: {
+		type: Schema.Types.ObjectId,
+	},
+	examId: {
+		type: Schema.Types.ObjectId,
 	},
 });
 

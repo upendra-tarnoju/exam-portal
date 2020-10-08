@@ -39,10 +39,10 @@ const exams = {
 		return exam.create(examObject);
 	},
 
-	getAllExams: async (userId) => {
+	getAllExams: async (userId, queryType) => {
 		let allExams = await exam
 			.get({ examinerId: userId })
-			.select({ password: 0 })
+			.select(queryType === 'examCode' ? { examCode: 1 } : { password: 0 })
 			.sort({ examDate: -1 });
 		return allExams;
 	},

@@ -32,7 +32,7 @@ class ExamService {
 		});
 	};
 
-	getAllExams = () => {
+	getAllExams = (params) => {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'get',
@@ -41,6 +41,7 @@ class ExamService {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,
 			},
+			params: params,
 		});
 	};
 

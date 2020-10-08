@@ -29,6 +29,7 @@
     "react-datetime-picker": "^3.0.2",
     "react-dom": "^16.13.1",
     "react-moment": "^0.9.7",
+    "react-number-format": "^4.4.1",
     "react-paginate": "^6.5.0",
     "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
