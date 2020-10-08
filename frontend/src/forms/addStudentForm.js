@@ -1,13 +1,14 @@
 import React from 'react';
-import { Formik } from 'formik';
+import { Formik, ErrorMessage } from 'formik';
 import { Form } from 'react-bootstrap';
 import Button from '@material-ui/core/Button';
 import { Typeahead } from 'react-bootstrap-typeahead';
+import NumberFormat from 'react-number-format';
 
 import schema from '../schema/studentSchema';
 import ExaminerService from '../services/examinerApi';
 
-let AddStudentForm = ({ examCode }) => {
+let AddStudentForm = ({ examCode, resetViewStudents }) => {
 	let filterByCallback = (option, data) => {
 		let text = data.text;
 		return option.examCode.toLowerCase().indexOf(text.toLowerCase()) !== -1;
@@ -18,7 +19,7 @@ let AddStudentForm = ({ examCode }) => {
 			onSubmit={(values) => {
 				let examinerService = new ExaminerService();
 				examinerService.saveNewStudent(values).then((response) => {
-					console.log(response.data);
+					resetViewStudents();
 				});
 			}}
 			initialValues={{
@@ -171,6 +172,34 @@ let AddStudentForm = ({ examCode }) => {
 						<div className='col-md-6'>
 							<Form.Group>
 								<Form.Label>Mobile number</Form.Label>
+								<NumberFormat
+									className='form-control'
+									name='mobileNumber'
+									format='+91 #####-#####'
+									value={values.mobileNumber}
+									placeholder='+91 99999-99999'
+									onChange={(selected) => {
+										setFieldValue(
+											'mobileNumber',
+											selected.target.value
+										);
+									}}
+									onBlur={(event) =>
+										setFieldTouched('mobileNumber', true)
+									}
+									isAllowed={
+										touched.mobileNumber && !!errors.mobileNumber
+									}
+									required
+								/>
+								<ErrorMessage name='mobileNumber' />
+								{/* <Form.Control.Feedback type='invalid'>
+									{errors.mobileNumber}
+								</Form.Control.Feedback> */}
+							</Form.Group>
+
+							{/* <Form.Group>
+								
 								<Form.Control
 									type='text'
 									name='mobileNumber'
@@ -186,7 +215,7 @@ let AddStudentForm = ({ examCode }) => {
 								<Form.Control.Feedback type='invalid'>
 									{errors.mobileNumber}
 								</Form.Control.Feedback>
-							</Form.Group>
+							</Form.Group> */}
 						</div>
 						<div className='col-md-6'>
 							<Form.Group>

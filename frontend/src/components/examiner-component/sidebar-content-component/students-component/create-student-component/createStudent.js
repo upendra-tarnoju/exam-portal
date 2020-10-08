@@ -33,7 +33,10 @@ class CreateStudent extends React.Component {
 					</div>
 					<div className='pt-3 pb-2'>
 						<div className='px-5'>
-							<AddStudentForm examCode={this.state.examCode} />
+							<AddStudentForm
+								resetViewStudents={this.props.resetViewStudents}
+								examCode={this.state.examCode}
+							/>
 						</div>
 					</div>
 				</div>

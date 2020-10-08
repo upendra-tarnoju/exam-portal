@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
+import { Button } from '@material-ui/core';
 import Moment from 'react-moment';
 import Pagination from '@material-ui/lab/Pagination';
 
@@ -12,7 +12,7 @@ class Students extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			createStudent: false,
+			createStudent: true,
 			studentList: [],
 			pageSize: 5,
 			pageIndex: 0,
@@ -41,6 +41,12 @@ class Students extends React.Component {
 	componentDidMount() {
 		this.viewStudents();
 	}
+
+	resetViewStudents = () => {
+		this.setState({ pageIndex: 0, createStudent: false }, () =>
+			this.viewStudents()
+		);
+	};
 
 	handleStudent = (status) => {
 		this.setState({
@@ -85,14 +91,18 @@ class Students extends React.Component {
 				<div className='d-flex justify-content-end'>
 					{!this.state.createStudent ? (
 						<Button
-							variant='primary'
+							variant='contained'
+							color='primary'
+							size='large'
 							onClick={() => this.handleStudent(true)}
 						>
 							Add
 						</Button>
 					) : (
 						<Button
-							variant='danger'
+							variant='contained'
+							color='secondary'
+							size='large'
 							onClick={() => this.handleStudent(false)}
 						>
 							Cancel
@@ -100,7 +110,7 @@ class Students extends React.Component {
 					)}
 				</div>
 				{this.state.createStudent ? (
-					<CreateStudent />
+					<CreateStudent resetViewStudents={this.resetViewStudents} />
 				) : (
 					<div className='mt-5'>
 						<p className={`${styles.heading} text-center`}>
@@ -121,7 +131,7 @@ class Students extends React.Component {
 							</thead>
 							<tbody>{allStudents}</tbody>
 						</Table>
-						<div className='d-flex justify-content-center py-2  bg-white'>
+						<div className='d-flex justify-content-center py-2 bg-white'>
 							<Pagination
 								count={this.state.pageCount}
 								variant='outlined'
