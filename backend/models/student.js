@@ -36,6 +36,9 @@ class Students {
 			},
 			{ $unwind: '$data' },
 			{
+				$sort: { 'data.createdAt': -1 },
+			},
+			{
 				$project: {
 					fatherName: 1,
 					motherName: 1,

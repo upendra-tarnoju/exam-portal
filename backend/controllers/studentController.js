@@ -9,7 +9,7 @@ const student = {
 		studentData.accountType = 'student';
 
 		studentHandler.addNewStudent(studentData).then((response) => {
-			res.status(200).send(response);
+			res.status(response.status).send({ msg: response.msg });
 		});
 	},
 

@@ -8,13 +8,15 @@ let hashPassword = (password) => {
 	return hash;
 };
 
-let checkExistingStudent = async (mobileNumber, email) => {
-	let studentArray = [{ mobileNumber }, { email }];
-
-	let existingStudent = await users.findByEmailAndMobileNumber(studentArray);
+let checkExistingStudent = async (mobileNumber, email, accountType) => {
+	let existingStudent = await users.findByEmailAndMobileNumber(
+		mobileNumber,
+		email,
+		accountType
+	);
 	if (existingStudent) {
 		if (mobileNumber === existingStudent.mobileNumber)
-			return 'Mobile already existed';
+			return 'Mobile number already existed';
 		else return 'Email ID already existed';
 	} else return '';
 };
@@ -23,11 +25,12 @@ const students = {
 	addNewStudent: async (studentData) => {
 		let msg = await checkExistingStudent(
 			studentData.mobileNumber,
-			studentData.email
+			studentData.email,
+			'student'
 		);
 
 		if (msg) {
-			return msg;
+			return { status: 409, msg: msg };
 		} else {
 			studentData.password = hashPassword(studentData.password);
 			let userData = await users.create(studentData);
@@ -35,8 +38,7 @@ const students = {
 			let newStudent = await student.create(studentData);
 			await users.update(userData._id, { userDataId: newStudent._id });
 			let msg = 'New student added';
-
-			return msg;
+			return { status: 200, msg: msg };
 		}
 	},
 
@@ -46,7 +48,6 @@ const students = {
 		pageIndex = pageIndex * pageSize;
 		let studentData = await student
 			.find(examinerId)
-			.sort({ createdAt: 1 })
 			.skip(pageIndex)
 			.limit(pageSize);
 		return studentData;
