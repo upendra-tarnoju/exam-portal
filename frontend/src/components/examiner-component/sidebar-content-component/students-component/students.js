@@ -1,22 +1,24 @@
 import React from 'react';
-import { Button } from '@material-ui/core';
+import { Button, Snackbar } from '@material-ui/core';
 import Moment from 'react-moment';
 import Pagination from '@material-ui/lab/Pagination';
+import MuiAlert from '@material-ui/lab/Alert';
+import { Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 import CreateStudent from './create-student-component/createStudent';
 import styles from './students.module.css';
-import { Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import ExaminerService from '../../../../services/examinerApi';
 
 class Students extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			createStudent: true,
+			createStudent: false,
 			studentList: [],
 			pageSize: 5,
 			pageIndex: 0,
 			totalStudents: 0,
+			snackBar: { show: false, msg: '' },
 		};
 		this.examinerService = new ExaminerService();
 	}
@@ -33,6 +35,10 @@ class Students extends React.Component {
 			});
 		});
 	}
+
+	handleSnackBar = (show, msg) => {
+		this.setState({ snackBar: { show, msg } });
+	};
 
 	handlePageChange = (event, value) => {
 		this.setState({ pageIndex: value - 1 }, () => this.viewStudents());
@@ -86,6 +92,7 @@ class Students extends React.Component {
 				</tr>
 			);
 		});
+		let { snackBar } = this.state;
 		return (
 			<div className='p-4'>
 				<div className='d-flex justify-content-end'>
@@ -110,7 +117,10 @@ class Students extends React.Component {
 					)}
 				</div>
 				{this.state.createStudent ? (
-					<CreateStudent resetViewStudents={this.resetViewStudents} />
+					<CreateStudent
+						resetViewStudents={this.resetViewStudents}
+						handleSuccessSnackBar={this.handleSnackBar}
+					/>
 				) : (
 					<div className='mt-5'>
 						<p className={`${styles.heading} text-center`}>
@@ -142,6 +152,20 @@ class Students extends React.Component {
 								showLastButton
 							/>
 						</div>
+						<Snackbar
+							open={snackBar.show}
+							autoHideDuration={6000}
+							onClose={() => this.handleSnackBar(false)}
+						>
+							<MuiAlert
+								elevation={6}
+								variant='filled'
+								severity='success'
+								onClose={() => this.handleSnackBar(false)}
+							>
+								{snackBar.msg}
+							</MuiAlert>
+						</Snackbar>
 					</div>
 				)}
 			</div>

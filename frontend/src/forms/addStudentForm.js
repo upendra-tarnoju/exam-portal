@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, ErrorMessage } from 'formik';
+import { Formik } from 'formik';
 import { Form } from 'react-bootstrap';
 import Button from '@material-ui/core/Button';
 import { Typeahead } from 'react-bootstrap-typeahead';
@@ -7,7 +7,12 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import schema from '../schema/studentSchema';
 import ExaminerService from '../services/examinerApi';
 
-let AddStudentForm = ({ examCode, resetViewStudents }) => {
+let AddStudentForm = ({
+	examCode,
+	resetViewStudents,
+	handleSuccessSnackBar,
+	handleErrorSnackBar,
+}) => {
 	let filterByCallback = (option, data) => {
 		let text = data.text;
 		return option.examCode.toLowerCase().indexOf(text.toLowerCase()) !== -1;
@@ -17,9 +22,17 @@ let AddStudentForm = ({ examCode, resetViewStudents }) => {
 			validationSchema={schema}
 			onSubmit={(values) => {
 				let examinerService = new ExaminerService();
-				examinerService.saveNewStudent(values).then((response) => {
-					resetViewStudents();
-				});
+				examinerService
+					.saveNewStudent(values)
+					.then((response) => {
+						let msg = response.data.msg;
+						resetViewStudents();
+						handleSuccessSnackBar(true, msg);
+					})
+					.catch((err) => {
+						let msg = err.response.data.msg;
+						handleErrorSnackBar(true, msg);
+					});
 			}}
 			initialValues={{
 				firstName: '',
@@ -170,7 +183,7 @@ let AddStudentForm = ({ examCode, resetViewStudents }) => {
 					<div className='row'>
 						<div className='col-md-6'>
 							<Form.Group>
-								<Form.Label>Mobile number</Form.Label>
+								<Form.Label>Mobile numbermm</Form.Label>
 								<Form.Control
 									type='text'
 									name='mobileNumber'

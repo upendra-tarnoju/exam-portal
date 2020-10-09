@@ -1,3 +1,5 @@
+import { Snackbar } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert';
 import React from 'react';
 
 import AddStudentForm from '../../../../../forms/addStudentForm';
@@ -9,6 +11,7 @@ class CreateStudent extends React.Component {
 		super(props);
 		this.state = {
 			examCode: [],
+			snackBar: { show: false, msg: '' },
 		};
 		this.examinerService = new ExaminerService();
 	}
@@ -22,7 +25,12 @@ class CreateStudent extends React.Component {
 		});
 	}
 
+	handleSnackBar = (show, msg) => {
+		this.setState({ snackBar: { show, msg } });
+	};
+
 	render() {
+		let { snackBar } = this.state;
 		return (
 			<div className='container py-5'>
 				<div className='card w-50 mx-auto'>
@@ -36,10 +44,26 @@ class CreateStudent extends React.Component {
 							<AddStudentForm
 								resetViewStudents={this.props.resetViewStudents}
 								examCode={this.state.examCode}
+								handleErrorSnackBar={this.handleSnackBar}
+								handleSuccessSnackBar={this.props.handleSuccessSnackBar}
 							/>
 						</div>
 					</div>
 				</div>
+				<Snackbar
+					open={snackBar.show}
+					autoHideDuration={6000}
+					onClose={() => this.handleSnackBar(false)}
+				>
+					<MuiAlert
+						elevation={6}
+						variant='filled'
+						severity='error'
+						onClose={() => this.handleSnackBar(false)}
+					>
+						{snackBar.msg}
+					</MuiAlert>
+				</Snackbar>
 			</div>
 		);
 	}
