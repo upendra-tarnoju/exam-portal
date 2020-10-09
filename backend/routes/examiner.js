@@ -116,5 +116,11 @@ module.exports = () => {
 		studentController.getAllStudents
 	);
 
+	router.delete(
+		'/student/:studentId',
+		passport.authenticate('jwt'),
+		studentController.deleteStudent
+	);
+
 	return router;
 };

@@ -8,16 +8,24 @@ let hashPassword = (password) => {
 	return hash;
 };
 
-let checkExistingStudent = async (mobileNumber, email, accountType) => {
-	let existingStudent = await users.findByEmailAndMobileNumber(
+let checkExistingStudent = async (
+	mobileNumber,
+	email,
+	studentId,
+	accountType
+) => {
+	let existingUser = await users.findByEmailAndMobileNumber(
 		mobileNumber,
 		email,
 		accountType
 	);
-	if (existingStudent) {
-		if (mobileNumber === existingStudent.mobileNumber)
+	let existingStudent = await student.findByStudentId(studentId);
+	if (existingUser) {
+		if (mobileNumber === existingUser.mobileNumber)
 			return 'Mobile number already existed';
 		else return 'Email ID already existed';
+	} else if (existingStudent) {
+		return 'Student Id already existed';
 	} else return '';
 };
 
@@ -26,6 +34,7 @@ const students = {
 		let msg = await checkExistingStudent(
 			studentData.mobileNumber,
 			studentData.email,
+			studentData.studentId,
 			'student'
 		);
 
@@ -56,6 +65,12 @@ const students = {
 	getStudentsLength: async (examinerId) => {
 		let studentData = await student.findByExaminerId(examinerId);
 		return studentData.length;
+	},
+
+	delete: async (studentId) => {
+		let data = await student.delete(studentId);
+		await users.deleteByUserDataId(data.userId);
+		return { status: 200, msg: 'Student deleted successfully' };
 	},
 };
 

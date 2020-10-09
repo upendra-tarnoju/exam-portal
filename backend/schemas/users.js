@@ -6,10 +6,12 @@ const users = new Schema({
 	firstName: {
 		type: String,
 		required: [true, 'First name is required'],
+		lowercase: true,
 	},
 	lastName: {
 		type: String,
 		required: [true, 'Last name is required'],
+		lowercase: true,
 	},
 	email: {
 		type: String,

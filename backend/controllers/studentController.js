@@ -24,6 +24,12 @@ const student = {
 
 		res.status(200).send({ studentData, totalStudents });
 	},
+
+	deleteStudent: async (req, res) => {
+		let studentId = req.params.studentId;
+		let response = await studentHandler.delete(studentId);
+		res.status(response.status).send({ msg: response.msg });
+	},
 };
 
 module.exports = student;

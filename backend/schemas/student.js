@@ -8,9 +8,11 @@ const student = new Schema({
 	},
 	fatherName: {
 		type: String,
+		lowercase: true,
 	},
 	motherName: {
 		type: String,
+		lowercase: true,
 	},
 	dob: {
 		type: Date,
@@ -23,6 +25,10 @@ const student = new Schema({
 	},
 	examId: {
 		type: Schema.Types.ObjectId,
+	},
+	studentId: {
+		type: String,
+		uppercase: true,
 	},
 });
 

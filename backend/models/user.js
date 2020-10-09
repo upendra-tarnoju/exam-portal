@@ -56,6 +56,10 @@ class Users {
 			],
 		});
 	}
+
+	deleteByUserDataId = (id) => {
+		return this.userModel.findOneAndRemove({ userDataId: id });
+	};
 }
 
 module.exports = new Users();
