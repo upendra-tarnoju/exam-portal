@@ -17,6 +17,7 @@ let schema = Yup.object({
 	dob: Yup.string().required('Date of birth is required'),
 	address: Yup.string().required('Address is required'),
 	examCode: Yup.string().required('Exam code is required'),
+	studentId: Yup.string().required('Student ID is required'),
 });
 
 export default schema;

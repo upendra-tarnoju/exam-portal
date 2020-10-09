@@ -45,6 +45,7 @@ let AddStudentForm = ({
 				dob: '',
 				address: '',
 				examCode: '',
+				studentId: '',
 			}}
 		>
 			{({
@@ -183,7 +184,7 @@ let AddStudentForm = ({
 					<div className='row'>
 						<div className='col-md-6'>
 							<Form.Group>
-								<Form.Label>Mobile numbermm</Form.Label>
+								<Form.Label>Mobile number</Form.Label>
 								<Form.Control
 									type='text'
 									name='mobileNumber'
@@ -220,6 +221,22 @@ let AddStudentForm = ({
 							</Form.Group>
 						</div>
 					</div>
+					<Form.Group>
+						<Form.Label>Student ID</Form.Label>
+						<Form.Control
+							type='text'
+							name='studentId'
+							placeholder='Student Roll no'
+							value={values.studentId}
+							onBlur={handleBlur}
+							onChange={handleChange}
+							isInvalid={touched.studentId && !!errors.studentId}
+							required
+						/>
+						<Form.Control.Feedback type='invalid'>
+							{errors.studentId}
+						</Form.Control.Feedback>
+					</Form.Group>
 					<Form.Group>
 						<Form.Label>Email Address</Form.Label>
 						<Form.Control

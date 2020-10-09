@@ -8,6 +8,7 @@ import { Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import CreateStudent from './create-student-component/createStudent';
 import styles from './students.module.css';
 import ExaminerService from '../../../../services/examinerApi';
+import DeleteModal from '../../../../modals/deleteModal';
 
 class Students extends React.Component {
 	constructor(props) {
@@ -19,6 +20,7 @@ class Students extends React.Component {
 			pageIndex: 0,
 			totalStudents: 0,
 			snackBar: { show: false, msg: '' },
+			deleteModal: { show: false, heading: '', id: '' },
 		};
 		this.examinerService = new ExaminerService();
 	}
@@ -59,12 +61,33 @@ class Students extends React.Component {
 			createStudent: status,
 		});
 	};
+
+	deleteStudent = () => {
+		let studentId = this.state.deleteModal.id;
+		this.examinerService.deleteStudent(studentId).then((response) => {
+			let updatedStudentList = this.state.studentList.filter(
+				(data) => data.studentId !== studentId
+			);
+			this.setState((prevState) => ({
+				...prevState,
+				studentList: updatedStudentList,
+				snackBar: { show: true, msg: response.data.msg },
+				deleteModal: { show: false, heading: '' },
+			}));
+		});
+	};
+
+	handleDeleteModal = (show, heading, id) => {
+		this.setState({ deleteModal: { show, heading, id } });
+	};
+
 	render() {
 		let { pageIndex, pageSize } = this.state;
 		let allStudents = this.state.studentList.map((student, index) => {
 			return (
 				<tr key={student._id}>
 					<td>{pageIndex * pageSize + index + 1}</td>
+					<td>{student.studentId}</td>
 					<td>{`${student.data.firstName} ${student.data.lastName}`}</td>
 					<td>{student.fatherName}</td>
 					<td>{student.motherName}</td>
@@ -86,13 +109,22 @@ class Students extends React.Component {
 							placement='bottom'
 							overlay={<Tooltip id='button-tooltip'>Delete</Tooltip>}
 						>
-							<i className='fa fa-trash-o cursor-pointer text-white'></i>
+							<i
+								className='fa fa-trash-o cursor-pointer text-white'
+								onClick={() =>
+									this.handleDeleteModal(
+										true,
+										'student',
+										student.studentId
+									)
+								}
+							></i>
 						</OverlayTrigger>
 					</td>
 				</tr>
 			);
 		});
-		let { snackBar } = this.state;
+		let { snackBar, deleteModal } = this.state;
 		return (
 			<div className='p-4'>
 				<div className='d-flex justify-content-end'>
@@ -105,21 +137,14 @@ class Students extends React.Component {
 						>
 							Add
 						</Button>
-					) : (
-						<Button
-							variant='contained'
-							color='secondary'
-							size='large'
-							onClick={() => this.handleStudent(false)}
-						>
-							Cancel
-						</Button>
-					)}
+					) : null}
 				</div>
 				{this.state.createStudent ? (
 					<CreateStudent
 						resetViewStudents={this.resetViewStudents}
 						handleSuccessSnackBar={this.handleSnackBar}
+						createStudent={this.state.createStudent}
+						handleStudent={this.handleStudent}
 					/>
 				) : (
 					<div className='mt-5'>
@@ -130,6 +155,7 @@ class Students extends React.Component {
 							<thead>
 								<tr>
 									<th>S.No</th>
+									<th>Student ID</th>
 									<th>Name</th>
 									<th>Father name</th>
 									<th>Mother name</th>
@@ -166,6 +192,12 @@ class Students extends React.Component {
 								{snackBar.msg}
 							</MuiAlert>
 						</Snackbar>
+						<DeleteModal
+							show={deleteModal.show}
+							heading={deleteModal.heading}
+							hideModal={this.handleDeleteModal}
+							deleteContent={this.deleteStudent}
+						/>
 					</div>
 				)}
 			</div>

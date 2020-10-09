@@ -1,6 +1,7 @@
 import { Snackbar } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 import React from 'react';
+import { Button } from '@material-ui/core';
 
 import AddStudentForm from '../../../../../forms/addStudentForm';
 import ExaminerService from '../../../../../services/examApi';
@@ -32,12 +33,21 @@ class CreateStudent extends React.Component {
 	render() {
 		let { snackBar } = this.state;
 		return (
-			<div className='container py-5'>
+			<div className='container'>
 				<div className='card w-50 mx-auto'>
 					<div
-						className={`card-header text-center text-white bg-dark ${styles.studentCardHeader}`}
+						className={`card-header text-white bg-dark d-flex justify-content-between ${styles.studentCardHeader}`}
 					>
-						Add student
+						Add Student
+						{this.props.createStudent ? (
+							<Button
+								variant='contained'
+								color='secondary'
+								onClick={() => this.props.handleStudent(false)}
+							>
+								Cancel
+							</Button>
+						) : null}
 					</div>
 					<div className='pt-3 pb-2'>
 						<div className='px-5'>
