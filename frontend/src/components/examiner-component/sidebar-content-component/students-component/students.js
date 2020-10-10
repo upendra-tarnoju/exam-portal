@@ -81,6 +81,13 @@ class Students extends React.Component {
 		this.setState({ deleteModal: { show, heading, id } });
 	};
 
+	capitalizeString(string) {
+		return string
+			.split(' ')
+			.map((char) => char.charAt(0).toUpperCase() + char.slice(1))
+			.join(' ');
+	}
+
 	render() {
 		let { pageIndex, pageSize } = this.state;
 		let allStudents = this.state.studentList.map((student, index) => {
@@ -89,8 +96,8 @@ class Students extends React.Component {
 					<td>{pageIndex * pageSize + index + 1}</td>
 					<td>{student.studentId}</td>
 					<td>{`${student.data.firstName} ${student.data.lastName}`}</td>
-					<td>{student.fatherName}</td>
-					<td>{student.motherName}</td>
+					<td>{this.capitalizeString(student.fatherName)}</td>
+					<td>{this.capitalizeString(student.motherName)}</td>
 					<td>{student.data.email}</td>
 					<td>{student.data.mobileNumber}</td>
 					<td>
