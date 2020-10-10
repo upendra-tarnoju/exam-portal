@@ -1,9 +1,16 @@
 import { Snackbar } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 import React from 'react';
-import { Button } from '@material-ui/core';
+import {
+	Button,
+	Stepper,
+	Step,
+	StepLabel,
+	Typography,
+} from '@material-ui/core';
 
-import AddStudentForm from '../../../../../forms/addStudentForm';
+import PersonalDetailsForm from '../../../../../forms/student-form/personalDetailForm';
+import StudentExamDetailForm from '../../../../../forms/student-form/studentExamDetailForm';
 import ExaminerService from '../../../../../services/examApi';
 import styles from '../students.module.css';
 
@@ -13,6 +20,7 @@ class CreateStudent extends React.Component {
 		this.state = {
 			examCode: [],
 			snackBar: { show: false, msg: '' },
+			activeStep: 0,
 		};
 		this.examinerService = new ExaminerService();
 	}
@@ -28,6 +36,38 @@ class CreateStudent extends React.Component {
 
 	handleSnackBar = (show, msg) => {
 		this.setState({ snackBar: { show, msg } });
+	};
+
+	getStepperContent = (stepIndex) => {
+		switch (stepIndex) {
+			case 0:
+				return (
+					<PersonalDetailsForm
+						activeStep={this.state.activeStep}
+						scrollStepper={this.scrollStepper}
+					/>
+				);
+			case 1:
+				return (
+					<StudentExamDetailForm
+						activeStep={this.state.activeStep}
+						scrollStepper={this.scrollStepper}
+						examCode={this.state.examCode}
+						resetViewStudents={this.resetViewStudents}
+					/>
+				);
+			default:
+				return (
+					<PersonalDetailsForm
+						activeStep={this.state.activeStep}
+						scrollStepper={this.scrollStepper}
+					/>
+				);
+		}
+	};
+
+	scrollStepper = (step) => {
+		this.setState({ activeStep: step });
 	};
 
 	render() {
@@ -49,16 +89,19 @@ class CreateStudent extends React.Component {
 							</Button>
 						) : null}
 					</div>
-					<div className='pt-3 pb-2'>
-						<div className='px-5'>
-							<AddStudentForm
-								resetViewStudents={this.props.resetViewStudents}
-								examCode={this.state.examCode}
-								handleErrorSnackBar={this.handleSnackBar}
-								handleSuccessSnackBar={this.props.handleSuccessSnackBar}
-							/>
+					<Stepper activeStep={this.state.activeStep} alternativeLabel>
+						<Step key='personalDetails'>
+							<StepLabel>Personal details</StepLabel>
+						</Step>
+						<Step key='examDetails'>
+							<StepLabel>Exam details</StepLabel>
+						</Step>
+					</Stepper>
+					<Typography component={'span'} variant={'body2'}>
+						<div className='container p-0'>
+							{this.getStepperContent(this.state.activeStep)}
 						</div>
-					</div>
+					</Typography>
 				</div>
 				<Snackbar
 					open={snackBar.show}
