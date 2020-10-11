@@ -1,16 +1,15 @@
 const { studentHandler } = require('../handlers');
 
 const student = {
-	addNewStudent: (req, res) => {
+	addNewStudent: async (req, res) => {
 		let studentData = req.body;
 		let examinerId = req.user._id;
 
 		studentData.examinerId = examinerId;
 		studentData.accountType = 'student';
 
-		studentHandler.addNewStudent(studentData).then((response) => {
-			res.status(response.status).send({ msg: response.msg });
-		});
+		let response = await studentHandler.addNewStudent(studentData);
+		res.status(response.status).send({ msg: response.msg });
 	},
 
 	getAllStudents: async (req, res) => {

@@ -152,7 +152,7 @@ let PersonalDetailsForm = (props) => {
 						<div className='d-flex justify-content-end'>
 							<Button
 								variant='contained'
-								disabled={props.activeStep === 0}
+								color='secondary'
 								onClick={handleBack}
 								className='mr-2'
 							>

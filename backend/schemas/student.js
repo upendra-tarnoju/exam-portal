@@ -30,6 +30,10 @@ const student = new Schema({
 		type: String,
 		uppercase: true,
 	},
+	gender: {
+		type: String,
+	},
+	exam: [{ examId: Schema.Types.ObjectId }],
 });
 
 module.exports = mongoose.model('student', student);

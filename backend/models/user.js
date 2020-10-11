@@ -44,14 +44,17 @@ class Users {
 		return this.userModel.findById(id);
 	};
 
-	findByEmailAndMobileNumber(mobileNumber, email, accountType) {
+	findByEmailAndMobileNumber(data) {
 		return this.userModel.findOne({
 			$and: [
 				{
-					$or: [{ mobileNumber }, { email }],
+					$or: [
+						{ mobileNumber: data.mobileNumber },
+						{ email: data.email },
+					],
 				},
 				{
-					accountType,
+					accountType: data.accountType,
 				},
 			],
 		});

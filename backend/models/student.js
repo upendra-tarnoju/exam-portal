@@ -16,12 +16,24 @@ class Students {
 		return this.studentModel.find({ examinerId: examinerId });
 	}
 
-	findByStudentId(studentId) {
-		return this.studentModel.findOne({ studentId });
+	findByStudentId(existingUserId, studentData) {
+		return this.studentModel.findOne({
+			$and: [
+				{ studentId: studentData.studentId },
+				{ exam: { $elemMatch: { examId: studentData.examCode._id } } },
+				{ _id: existingUserId },
+			],
+		});
 	}
 
 	delete(studentId) {
 		return this.studentModel.findOneAndRemove({ studentId });
+	}
+
+	updateExam(studentId, data) {
+		return this.studentModel.findByIdAndUpdate(studentId, {
+			$push: { exam: data },
+		});
 	}
 
 	find(examinerId) {

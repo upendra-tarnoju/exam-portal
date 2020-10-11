@@ -8,44 +8,34 @@ let hashPassword = (password) => {
 	return hash;
 };
 
-let checkExistingStudent = async (
-	mobileNumber,
-	email,
-	studentId,
-	accountType
-) => {
-	let existingUser = await users.findByEmailAndMobileNumber(
-		mobileNumber,
-		email,
-		accountType
-	);
-	let existingStudent = await student.findByStudentId(studentId);
-	if (existingUser) {
-		if (mobileNumber === existingUser.mobileNumber)
-			return 'Mobile number already existed';
-		else return 'Email ID already existed';
-	} else if (existingStudent) {
-		return 'Student Id already existed';
-	} else return '';
-};
-
 const students = {
 	addNewStudent: async (studentData) => {
-		let msg = await checkExistingStudent(
-			studentData.mobileNumber,
-			studentData.email,
-			studentData.studentId,
-			'student'
-		);
-
-		if (msg) {
-			return { status: 409, msg: msg };
+		let existingStudent;
+		let existingUser = await users.findByEmailAndMobileNumber(studentData);
+		studentData.password = hashPassword(studentData.password);
+		if (existingUser) {
+			existingStudent = await student.findByStudentId(
+				existingUser.userDataId,
+				studentData
+			);
+			if (existingStudent) {
+				let msg = 'Student is already added in this exam';
+				return { status: 400, msg: msg };
+			} else {
+				await student.updateExam(existingUser.userDataId, {
+					examId: studentData.examCode._id,
+				});
+				let msg = 'New student added';
+				return { status: 200, msg: msg };
+			}
 		} else {
-			studentData.password = hashPassword(studentData.password);
 			let userData = await users.create(studentData);
 			studentData.userId = userData._id;
 			let newStudent = await student.create(studentData);
 			await users.update(userData._id, { userDataId: newStudent._id });
+			await student.updateExam(newStudent._id, {
+				examId: studentData.examCode._id,
+			});
 			let msg = 'New student added';
 			return { status: 200, msg: msg };
 		}

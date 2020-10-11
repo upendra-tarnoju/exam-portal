@@ -32,11 +32,13 @@ let StudentExamDetailForm = (props) => {
 				examinerService
 					.saveNewStudent(studentValues)
 					.then((response) => {
+						console.log('success');
 						let msg = response.data.msg;
 						props.resetViewStudents();
 						props.handleSuccessSnackBar(true, msg);
 					})
 					.catch((err) => {
+						console.log('error');
 						let msg = err.response.data.msg;
 						props.handleErrorSnackBar(true, msg);
 					});
@@ -47,7 +49,6 @@ let StudentExamDetailForm = (props) => {
 				touched,
 				values,
 				errors,
-				handleChange,
 				handleBlur,
 				handleSubmit,
 				setFieldValue,

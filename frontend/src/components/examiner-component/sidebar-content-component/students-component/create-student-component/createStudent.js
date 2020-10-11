@@ -53,7 +53,9 @@ class CreateStudent extends React.Component {
 						activeStep={this.state.activeStep}
 						scrollStepper={this.scrollStepper}
 						examCode={this.state.examCode}
-						resetViewStudents={this.resetViewStudents}
+						resetViewStudents={this.props.resetViewStudents}
+						handleErrorSnackBar={this.handleSnackBar}
+						handleSuccessSnackBar={this.props.handleSuccessSnackBar}
 					/>
 				);
 			default:
