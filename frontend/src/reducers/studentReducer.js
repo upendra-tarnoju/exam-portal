@@ -1,19 +1,19 @@
 const initialState = {
 	personalDetails: {
-		firstName: 'abcd',
-		lastName: 'abcd',
-		fatherName: 'abcd',
-		motherName: 'abcd',
-		address: 'abcd',
-		gender: 'male',
+		firstName: '',
+		lastName: '',
+		fatherName: '',
+		motherName: '',
+		address: '',
+		gender: '',
 	},
 	examDetails: {
 		examCode: [],
-		mobileNumber: '9876325410',
-		dob: '2020-10-10',
-		studentId: 'abcd101',
-		email: 'abcd@gmail.com',
-		password: 'himanshu',
+		mobileNumber: '',
+		dob: '',
+		studentId: '',
+		email: '',
+		password: '',
 	},
 };
 
