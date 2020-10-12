@@ -2,8 +2,8 @@ import React from 'react';
 import { Formik } from 'formik';
 import { Form } from 'react-bootstrap';
 import Button from '@material-ui/core/Button';
-import { Typeahead } from 'react-bootstrap-typeahead';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 import schema from '../../schema/studentExamDetailsSchema';
 import ExaminerService from '../../services/examinerApi';
@@ -14,11 +14,6 @@ let StudentExamDetailForm = (props) => {
 		props.scrollStepper(props.activeStep - 1);
 	};
 
-	let filterByCallback = (option, data) => {
-		let text = data.text;
-		return option.examCode.toLowerCase().indexOf(text.toLowerCase()) !== -1;
-	};
-
 	return (
 		<Formik
 			validationSchema={schema}
@@ -27,18 +22,14 @@ let StudentExamDetailForm = (props) => {
 					...props.personalDetails,
 					...props.examDetails,
 				};
-				studentValues.examCode = studentValues.examCode[0];
+				studentValues.examCode = props.examCode;
 				let examinerService = new ExaminerService();
 				examinerService
 					.saveNewStudent(studentValues)
 					.then((response) => {
-						console.log('success');
-						let msg = response.data.msg;
-						props.resetViewStudents();
-						props.handleSuccessSnackBar(true, msg);
+						props.history.goBack();
 					})
 					.catch((err) => {
-						console.log('error');
 						let msg = err.response.data.msg;
 						props.handleErrorSnackBar(true, msg);
 					});
@@ -52,46 +43,9 @@ let StudentExamDetailForm = (props) => {
 				handleBlur,
 				handleSubmit,
 				setFieldValue,
-				setFieldTouched,
 			}) => (
 				<Form noValidate onSubmit={handleSubmit}>
 					<div className='card-body'>
-						<Form.Group>
-							<Form.Label>Exam code</Form.Label>
-							<Typeahead
-								id='typeahead'
-								selected={
-									props.examDetails.length === 0
-										? []
-										: props.examDetails.examCode
-								}
-								filterBy={filterByCallback}
-								onBlur={(event) => setFieldTouched('examCode', true)}
-								isInvalid={touched.examCode && !!errors.examCode}
-								labelKey='examCode'
-								placeholder='Exam code'
-								options={props.examCode}
-								highlightOnlyResult={true}
-								onChange={(selected) => {
-									if (selected.length !== 0) {
-										setFieldValue('examCode', selected[0]._id);
-										props.setStudentFields('examCode', selected);
-									} else {
-										setFieldValue('examCode', '');
-										props.setStudentFields('examCode', '');
-									}
-								}}
-								renderMenuItemChildren={(option) => (
-									<div id={option._id}>{option.examCode}</div>
-								)}
-							/>
-							{touched.examCode ? (
-								<div className='d-block invalid-feedback'>
-									{errors.examCode}
-								</div>
-							) : null}
-						</Form.Group>
-
 						<div className='row'>
 							<div className='col-md-6'>
 								<Form.Group>
@@ -242,7 +196,6 @@ const mapDispatchToProps = (dispatch) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(StudentExamDetailForm);
+export default withRouter(
+	connect(mapStateToProps, mapDispatchToProps)(StudentExamDetailForm)
+);

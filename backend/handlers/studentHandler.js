@@ -23,7 +23,7 @@ const students = {
 				return { status: 400, msg: msg };
 			} else {
 				await student.updateExam(existingUser.userDataId, {
-					examId: studentData.examCode._id,
+					examId: studentData.examCode,
 				});
 				let msg = 'New student added';
 				return { status: 200, msg: msg };
@@ -34,7 +34,7 @@ const students = {
 			let newStudent = await student.create(studentData);
 			await users.update(userData._id, { userDataId: newStudent._id });
 			await student.updateExam(newStudent._id, {
-				examId: studentData.examCode._id,
+				examId: studentData.examCode,
 			});
 			let msg = 'New student added';
 			return { status: 200, msg: msg };

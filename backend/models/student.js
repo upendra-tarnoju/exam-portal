@@ -20,7 +20,7 @@ class Students {
 		return this.studentModel.findOne({
 			$and: [
 				{ studentId: studentData.studentId },
-				{ exam: { $elemMatch: { examId: studentData.examCode._id } } },
+				{ exam: { $elemMatch: { examId: studentData.examCode } } },
 				{ _id: existingUserId },
 			],
 		});

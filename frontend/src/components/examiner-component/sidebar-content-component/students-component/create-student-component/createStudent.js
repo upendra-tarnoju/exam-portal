@@ -11,7 +11,6 @@ import {
 
 import PersonalDetailsForm from '../../../../../forms/student-form/personalDetailForm';
 import StudentExamDetailForm from '../../../../../forms/student-form/studentExamDetailForm';
-import ExaminerService from '../../../../../services/examApi';
 import styles from '../students.module.css';
 
 class CreateStudent extends React.Component {
@@ -22,16 +21,6 @@ class CreateStudent extends React.Component {
 			snackBar: { show: false, msg: '' },
 			activeStep: 0,
 		};
-		this.examinerService = new ExaminerService();
-	}
-
-	componentDidMount() {
-		let params = { type: 'examCode' };
-		this.examinerService.getAllExams(params).then((response) => {
-			this.setState({
-				examCode: response.data,
-			});
-		});
 	}
 
 	handleSnackBar = (show, msg) => {
@@ -50,12 +39,10 @@ class CreateStudent extends React.Component {
 			case 1:
 				return (
 					<StudentExamDetailForm
+						examCode={this.props.match.params.examId}
 						activeStep={this.state.activeStep}
 						scrollStepper={this.scrollStepper}
-						examCode={this.state.examCode}
-						resetViewStudents={this.props.resetViewStudents}
 						handleErrorSnackBar={this.handleSnackBar}
-						handleSuccessSnackBar={this.props.handleSuccessSnackBar}
 					/>
 				);
 			default:

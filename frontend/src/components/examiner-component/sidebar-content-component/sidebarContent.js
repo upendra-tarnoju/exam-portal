@@ -10,6 +10,7 @@ import Questions from './questions-component/questions';
 import ViewQuestions from './questions-component/view-questions-component/viewQuestions';
 import Students from './students-component/students';
 import ViewStudent from './students-component/view-student-component/viewStudent';
+import CreateStudent from './students-component/create-student-component/createStudent';
 
 class SidebarContent extends Component {
 	constructor(props) {
@@ -58,10 +59,14 @@ class SidebarContent extends Component {
 						component={ViewQuestions}
 					></Route>
 					<Route
+						path='/examiner/exam/:examId/students/new'
+						component={CreateStudent}
+					/>
+					<Route
 						path='/examiner/students/:studentId'
 						component={ViewStudent}
 					/>
-					<Route path='/examiner/students' component={Students}></Route>
+					<Route path='/examiner/students' component={Students} />
 				</Switch>
 			</div>
 		);
