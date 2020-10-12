@@ -89,7 +89,7 @@ class Students extends React.Component {
 					<td>{pageIndex * pageSize + index + 1}</td>
 					<td>{student.subject}</td>
 					<td>{student.examCode}</td>
-					<td className='text-right'>{student.students}</td>
+					<td className='text-right'>{student.totalStudents}</td>
 					<td className='d-flex justify-content-center'>
 						<OverlayTrigger
 							placement='bottom'

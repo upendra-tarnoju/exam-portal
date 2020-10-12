@@ -46,16 +46,10 @@ const students = {
 		let pageSize = parseInt(pageQuery.pageSize, 10);
 		pageIndex = pageIndex * pageSize;
 		let examData = await exam
-			.get({ examinerId })
+			.findExamStudents(examinerId)
 			.skip(pageIndex)
-			.limit(pageSize)
-			.select({ _id: 1, subject: 1, examCode: 1 });
+			.limit(pageSize);
 
-		for (let i = 0; i < examData.length; i++) {
-			let data = await student.findByExamId(examData[i]._id);
-			examData[i] = JSON.parse(JSON.stringify(examData[i]));
-			examData[i]['students'] = data.length;
-		}
 		return examData;
 	},
 
