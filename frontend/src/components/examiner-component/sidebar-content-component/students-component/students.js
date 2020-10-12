@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, Snackbar } from '@material-ui/core';
-import Moment from 'react-moment';
 import Pagination from '@material-ui/lab/Pagination';
 import MuiAlert from '@material-ui/lab/Alert';
 import { Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
@@ -8,7 +7,6 @@ import { Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import CreateStudent from './create-student-component/createStudent';
 import styles from './students.module.css';
 import ExaminerService from '../../../../services/examinerApi';
-import DeleteModal from '../../../../modals/deleteModal';
 
 class Students extends React.Component {
 	constructor(props) {
@@ -20,7 +18,6 @@ class Students extends React.Component {
 			pageIndex: 0,
 			totalStudents: 0,
 			snackBar: { show: false, msg: '' },
-			deleteModal: { show: false, heading: '', id: '' },
 		};
 		this.examinerService = new ExaminerService();
 	}
@@ -29,7 +26,7 @@ class Students extends React.Component {
 		let { pageIndex, pageSize } = this.state;
 		this.examinerService.getAllStudents(pageIndex, pageSize).then((res) => {
 			let studentsLength = res.data.totalStudents;
-
+			console.log(studentsLength);
 			this.setState({
 				studentList: res.data.studentData,
 				totalStudents: studentsLength,
@@ -77,10 +74,6 @@ class Students extends React.Component {
 		});
 	};
 
-	handleDeleteModal = (show, heading, id) => {
-		this.setState({ deleteModal: { show, heading, id } });
-	};
-
 	capitalizeString(string) {
 		return string
 			.split(' ')
@@ -94,17 +87,9 @@ class Students extends React.Component {
 			return (
 				<tr key={student._id}>
 					<td>{pageIndex * pageSize + index + 1}</td>
-					<td>{student.studentId}</td>
-					<td>{`${student.data.firstName} ${student.data.lastName}`}</td>
-					<td>{this.capitalizeString(student.fatherName)}</td>
-					<td>{this.capitalizeString(student.motherName)}</td>
-					<td>{student.data.email}</td>
-					<td>{student.data.mobileNumber}</td>
-					<td>
-						<Moment parse='YYYY-MM-DD' format='MMM Do, YYYY'>
-							{student.dob}
-						</Moment>
-					</td>
+					<td>{student.subject}</td>
+					<td>{student.examCode}</td>
+					<td className='text-right'>{student.students}</td>
 					<td className='d-flex justify-content-center'>
 						<OverlayTrigger
 							placement='bottom'
@@ -112,26 +97,11 @@ class Students extends React.Component {
 						>
 							<i className='fa fa-pencil-square-o cursor-pointer text-white mr-2'></i>
 						</OverlayTrigger>
-						<OverlayTrigger
-							placement='bottom'
-							overlay={<Tooltip id='button-tooltip'>Delete</Tooltip>}
-						>
-							<i
-								className='fa fa-trash-o cursor-pointer text-white'
-								onClick={() =>
-									this.handleDeleteModal(
-										true,
-										'student',
-										student.studentId
-									)
-								}
-							></i>
-						</OverlayTrigger>
 					</td>
 				</tr>
 			);
 		});
-		let { snackBar, deleteModal } = this.state;
+		let { snackBar } = this.state;
 		return (
 			<div className='p-4'>
 				<div className='d-flex justify-content-end'>
@@ -154,7 +124,7 @@ class Students extends React.Component {
 						handleStudent={this.handleStudent}
 					/>
 				) : (
-					<div className='mt-5'>
+					<div className='mt-5 w-75 mx-auto'>
 						<p className={`${styles.heading} text-center`}>
 							List of all students
 						</p>
@@ -162,14 +132,10 @@ class Students extends React.Component {
 							<thead>
 								<tr>
 									<th>S.No</th>
-									<th>Student ID</th>
-									<th>Name</th>
-									<th>Father name</th>
-									<th>Mother name</th>
-									<th>Email</th>
-									<th>Mobile</th>
-									<th>D.O.B</th>
-									<th>Actions</th>
+									<th>Subject</th>
+									<th>Exam code</th>
+									<th className='text-right'>Total Students</th>
+									<th className='text-center'>Actions</th>
 								</tr>
 							</thead>
 							<tbody>{allStudents}</tbody>
@@ -199,12 +165,6 @@ class Students extends React.Component {
 								{snackBar.msg}
 							</MuiAlert>
 						</Snackbar>
-						<DeleteModal
-							show={deleteModal.show}
-							heading={deleteModal.heading}
-							hideModal={this.handleDeleteModal}
-							deleteContent={this.deleteStudent}
-						/>
 					</div>
 				)}
 			</div>

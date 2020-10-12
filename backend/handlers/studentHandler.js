@@ -1,6 +1,6 @@
 let bcrypt = require('bcryptjs');
 
-let { student, users } = require('../models');
+let { student, users, exam } = require('../models');
 
 let hashPassword = (password) => {
 	let salt = bcrypt.genSaltSync(10);
@@ -45,11 +45,18 @@ const students = {
 		let pageIndex = parseInt(pageQuery.pageIndex, 10);
 		let pageSize = parseInt(pageQuery.pageSize, 10);
 		pageIndex = pageIndex * pageSize;
-		let studentData = await student
-			.find(examinerId)
+		let examData = await exam
+			.get({ examinerId })
 			.skip(pageIndex)
-			.limit(pageSize);
-		return studentData;
+			.limit(pageSize)
+			.select({ _id: 1, subject: 1, examCode: 1 });
+
+		for (let i = 0; i < examData.length; i++) {
+			let data = await student.findByExamId(examData[i]._id);
+			examData[i] = JSON.parse(JSON.stringify(examData[i]));
+			examData[i]['students'] = data.length;
+		}
+		return examData;
 	},
 
 	getStudentsLength: async (examinerId) => {
