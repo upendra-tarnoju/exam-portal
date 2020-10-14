@@ -60,13 +60,6 @@ class Students extends React.Component {
 		});
 	};
 
-	capitalizeString(string) {
-		return string
-			.split(' ')
-			.map((char) => char.charAt(0).toUpperCase() + char.slice(1))
-			.join(' ');
-	}
-
 	render() {
 		let { pageIndex, pageSize } = this.state;
 		let allStudents = this.state.studentList.map((student, index) => {
@@ -79,18 +72,22 @@ class Students extends React.Component {
 					<td className='d-flex justify-content-center'>
 						<OverlayTrigger
 							placement='bottom'
-							overlay={<Tooltip id='button-tooltip'>Edit</Tooltip>}
-						>
-							<i className='fa fa-pencil-square-o cursor-pointer text-white mt-1 mr-2'></i>
-						</OverlayTrigger>
-						<OverlayTrigger
-							placement='bottom'
 							overlay={
 								<Tooltip id='button-tooltip'>Add student</Tooltip>
 							}
 						>
 							<Link to={`/examiner/exam/${student._id}/students/new`}>
 								<i className='fa fa-plus cursor-pointer text-white mr-2'></i>
+							</Link>
+						</OverlayTrigger>
+						<OverlayTrigger
+							placement='bottom'
+							overlay={
+								<Tooltip id='button-tooltip'>View students</Tooltip>
+							}
+						>
+							<Link to={`/examiner/exam/${student._id}/students`}>
+								<i className='fa fa-eye cursor-pointer text-white mt-1 mr-2'></i>
 							</Link>
 						</OverlayTrigger>
 					</td>

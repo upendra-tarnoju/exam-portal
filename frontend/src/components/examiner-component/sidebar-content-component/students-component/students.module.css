@@ -3,3 +3,8 @@
 	font-family: 'Raleway';
 	font-size: 30px;
 }
+
+.accordionView {
+	flex-basis: 33.33%;
+	flex-shrink: 0;
+}

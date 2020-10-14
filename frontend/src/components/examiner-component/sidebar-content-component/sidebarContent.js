@@ -9,7 +9,7 @@ import EditExam from './exam-component/edit-exam-component/editExam';
 import Questions from './questions-component/questions';
 import ViewQuestions from './questions-component/view-questions-component/viewQuestions';
 import Students from './students-component/students';
-import ViewStudent from './students-component/view-student-component/viewStudent';
+import ViewStudents from './students-component/view-student-component/viewStudents';
 import CreateStudent from './students-component/create-student-component/createStudent';
 
 class SidebarContent extends Component {
@@ -63,8 +63,8 @@ class SidebarContent extends Component {
 						component={CreateStudent}
 					/>
 					<Route
-						path='/examiner/students/:studentId'
-						component={ViewStudent}
+						path='/examiner/exam/:examId/students'
+						component={ViewStudents}
 					/>
 					<Route path='/examiner/students' component={Students} />
 				</Switch>
