@@ -63,6 +63,11 @@ const students = {
 		await users.deleteByUserDataId(data.userId);
 		return { status: 200, msg: 'Student deleted successfully' };
 	},
+
+	getParticularExamStudents: async (examId) => {
+		let studentDetails = await student.findStudentsByExamId(examId);
+		return studentDetails;
+	},
 };
 
 module.exports = students;

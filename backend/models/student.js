@@ -41,6 +41,66 @@ class Students {
 			exam: { $elemMatch: { examId } },
 		});
 	}
+	findStudentsByExamId(examId) {
+		return this.studentModel.aggregate([
+			{ $match: { exam: { $elemMatch: { examId: ObjectId(examId) } } } },
+			{
+				$lookup: {
+					from: 'users',
+					localField: '_id',
+					foreignField: 'userDataId',
+					as: 'userData',
+				},
+			},
+			{ $unwind: '$userData' },
+			{
+				$project: {
+					studentId: 1,
+					fatherName: 1,
+					motherName: 1,
+					address: 1,
+					gender: 1,
+					dob: 1,
+					'userData.mobileNumber': 1,
+					'userData.email': 1,
+					'userData.firstName': {
+						$concat: [
+							{ $toUpper: { $substrCP: ['$userData.firstName', 0, 1] } },
+							{
+								$substrCP: [
+									'$userData.firstName',
+									1,
+									{
+										$subtract: [
+											{ $strLenCP: '$userData.firstName' },
+											1,
+										],
+									},
+								],
+							},
+						],
+					},
+					'userData.lastName': {
+						$concat: [
+							{ $toUpper: { $substrCP: ['$userData.lastName', 0, 1] } },
+							{
+								$substrCP: [
+									'$userData.lastName',
+									1,
+									{
+										$subtract: [
+											{ $strLenCP: '$userData.lastName' },
+											1,
+										],
+									},
+								],
+							},
+						],
+					},
+				},
+			},
+		]);
+	}
 }
 
 module.exports = new Students();
