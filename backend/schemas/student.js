@@ -33,7 +33,12 @@ const student = new Schema({
 	gender: {
 		type: String,
 	},
-	exam: [{ examId: Schema.Types.ObjectId }],
+	exam: [
+		{
+			examId: { type: Schema.Types.ObjectId },
+			accountStatus: { type: String, default: 'enabled' },
+		},
+	],
 });
 
 module.exports = mongoose.model('student', student);

@@ -41,6 +41,17 @@ class Students {
 			exam: { $elemMatch: { examId } },
 		});
 	}
+
+	updateStudentAccountStatus(studentId, data) {
+		return this.studentModel.findOneAndUpdate(
+			{
+				_id: studentId,
+				'exam.examId': data.examId,
+			},
+			{ $set: { 'exam.$.accountStatus': data.accountStatus } }
+		);
+	}
+
 	findStudentsByExamId(examId) {
 		return this.studentModel.aggregate([
 			{ $match: { exam: { $elemMatch: { examId: ObjectId(examId) } } } },
@@ -61,6 +72,7 @@ class Students {
 					address: 1,
 					gender: 1,
 					dob: 1,
+					exam: 1,
 					'userData.mobileNumber': 1,
 					'userData.email': 1,
 					'userData.firstName': {

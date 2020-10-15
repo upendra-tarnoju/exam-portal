@@ -64,6 +64,16 @@ const students = {
 		return { status: 200, msg: 'Student deleted successfully' };
 	},
 
+	updateStudentAccountStatus: async (studentId, data) => {
+		let updatedData = await student.updateStudentAccountStatus(
+			studentId,
+			data
+		);
+		if (updatedData) {
+			return { status: 200, msg: 'Student account status updated' };
+		}
+	},
+
 	getParticularExamStudents: async (examId) => {
 		let studentDetails = await student.findStudentsByExamId(examId);
 		return studentDetails;

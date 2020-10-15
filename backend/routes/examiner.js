@@ -122,6 +122,12 @@ module.exports = () => {
 		studentController.deleteStudent
 	);
 
+	router.patch(
+		'/student/:studentId',
+		passport.authenticate('jwt'),
+		studentController.updateStudent
+	);
+
 	router.get(
 		'/exam/:examId/student',
 		passport.authenticate('jwt'),

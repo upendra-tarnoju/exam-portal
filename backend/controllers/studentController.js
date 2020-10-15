@@ -30,6 +30,18 @@ const student = {
 		res.status(response.status).send({ msg: response.msg });
 	},
 
+	updateStudent: async (req, res) => {
+		let studentId = req.params.studentId;
+		let data = req.body;
+		if ('accountStatus' in data) {
+			let response = await studentHandler.updateStudentAccountStatus(
+				studentId,
+				data
+			);
+			res.status(response.status).send({ msg: response.msg });
+		}
+	},
+
 	getParticularExamStudents: async (req, res) => {
 		let examId = req.params.examId;
 		let studentData = await studentHandler.getParticularExamStudents(examId);
