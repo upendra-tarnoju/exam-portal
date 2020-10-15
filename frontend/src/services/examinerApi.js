@@ -57,6 +57,19 @@ class ExaminerService {
 		});
 	};
 
+	updateStudent = (studentId, data) => {
+		let token = this.userService.getToken();
+		return axios({
+			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}/student/${studentId}`,
+			method: 'patch',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			data: data,
+		});
+	};
+
 	getAllStudents = (pageIndex, pageSize) => {
 		let token = this.userService.getToken();
 		return axios({
