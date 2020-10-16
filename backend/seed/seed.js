@@ -202,7 +202,7 @@ async function createExam() {
 				examCode: `${subjects[number].name.slice(
 					0,
 					2
-				)} ${faker.random.number({
+				)}${faker.random.number({
 					min: 101,
 					max: 999,
 				})}`,
@@ -216,44 +216,35 @@ async function createExam() {
 			});
 		}
 	}
-	console.log('exam created');
+	console.log('Created exams');
 }
 
 async function createQuestions() {
-	let approvedExaminers = await examinerSchema.find({
-		accountStatus: 'approved',
-	});
-
-	for (let i = 0; i < approvedExaminers.length; i++) {
-		let exams = await examSchema.find({
-			examinerId: approvedExaminers[i].userId,
-		});
-		console.log(exams[i].userId);
-
-		for (let j = 0; j < exams.length; j++) {
-			let totalQuestions = faker.random.number(5, 20);
-			for (let k = 0; k < totalQuestions; k++) {
-				let totalOptions = getRandomInt(2, 6);
-				if (totalOptions <= 1) {
-					totalOptions = totalOptions + 2;
-				}
-				let options = [];
-				for (let l = 0; l < totalOptions; l++) {
-					let opt = {};
-					opt.name = `option${l + 1}`;
-					opt.value = faker.random.words(3);
-					options.push(opt);
-				}
-				await question.create({
-					examId: exams[i]._id,
-					question: faker.random.words(10),
-					optionType: 'single',
-					options: options,
-					correctAnswer: `option${getRandomInt(1, totalOptions)}`,
-				});
+	let exams = await examSchema.find();
+	for (let j = 0; j < exams.length; j++) {
+		let totalQuestions = faker.random.number(5, 20);
+		for (let k = 0; k < totalQuestions; k++) {
+			let totalOptions = getRandomInt(2, 6);
+			if (totalOptions <= 1) {
+				totalOptions = totalOptions + 2;
 			}
+			let options = [];
+			for (let l = 0; l < totalOptions; l++) {
+				let opt = {};
+				opt.name = `option${l + 1}`;
+				opt.value = faker.random.words(3);
+				options.push(opt);
+			}
+			await question.create({
+				examId: exams[j]._id,
+				question: faker.random.words(10),
+				optionType: 'single',
+				options: options,
+				correctAnswer: `option${getRandomInt(1, totalOptions)}`,
+			});
 		}
 	}
+
 	console.log('Created questions');
 }
 
@@ -263,7 +254,6 @@ async function createSampleData() {
 	await createCourses();
 	await createExam();
 	await createQuestions();
-	// console.log(data);
 	mongoose.connection.close();
 }
 
