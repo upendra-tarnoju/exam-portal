@@ -3,11 +3,17 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 require('../db').connection;
-const { users, examiner, course, exam, question } = require('../models');
+const {
+	users,
+	examiner,
+	course,
+	exam,
+	question,
+	student,
+} = require('../models');
 const examinerSchema = require('../schemas/examiner');
 const courseSchema = require('../schemas/course');
 const examSchema = require('../schemas/exam');
-const questionSchema = require('../schemas/question');
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
@@ -79,7 +85,7 @@ async function createAdmin() {
 	console.log('Created Admin');
 }
 
-function createUserFakeData(examinerPassword, accountType) {
+function createUserFakeData(password, accountType) {
 	let data = {};
 	data.firstName = faker.name.firstName();
 	data.lastName = faker.name.lastName();
@@ -88,7 +94,7 @@ function createUserFakeData(examinerPassword, accountType) {
 		.toString()
 		.substr(0, 2)}@${faker.internet.domainWord()}.com`;
 	data.mobileNumber = faker.phone.phoneNumber('#####-#####');
-	data.password = examinerPassword;
+	data.password = password;
 	data.accountType = accountType;
 	return data;
 }
@@ -108,6 +114,34 @@ function createExaminerFakeData(id, accountStatus) {
 	return data;
 }
 
+function createRandomDate() {
+	function randomValueBetween(min, max) {
+		return Math.random() * (max - min) + min;
+	}
+	let date1 = '01-01-1997';
+	let date2 = '01-01-1999';
+	date1 = new Date(date1).getTime();
+	date2 = new Date(date2).getTime();
+	if (date1 > date2) {
+		return new Date(randomValueBetween(date2, date1));
+	} else {
+		return new Date(randomValueBetween(date1, date2));
+	}
+}
+
+function createStudentFakeData(id, lastName, examinerId, examList) {
+	let data = {};
+	data.userId = id;
+	data.fatherName = `${faker.name.firstName()} ${lastName}`;
+	data.motherName = `${faker.name.firstName()} ${lastName}`;
+	data.dob = createRandomDate();
+	data.address = `${faker.address.streetAddress},${faker.address.city},${faker.address.state},${faker.address.country}`;
+	data.examinerId = examinerId;
+	data.gender = 'male';
+	data.exam = examList;
+	return data;
+}
+
 async function createExaminers() {
 	let examinerPassword = hashPassword('examiner');
 	for (let i = 0; i < 15; i++) {
@@ -121,7 +155,7 @@ async function createExaminers() {
 		);
 		let createdExaminer = await examiner.create(fakeExaminerData);
 
-		let updatedUser = await users.update(createdUser._id, {
+		await users.update(createdUser._id, {
 			userDataId: createdExaminer._id,
 			institution: faker.random.words(3),
 			lastLogin: Date.now(),
@@ -248,57 +282,46 @@ async function createQuestions() {
 	console.log('Created questions');
 }
 
+async function createStudent() {
+	let exams = await examSchema.find();
+	let studentPassword = hashPassword('student');
+	for (let i = 0; i < 500; i++) {
+		let fakeUserData = createUserFakeData(studentPassword, 'student');
+		let newUser = await users.create(fakeUserData);
+
+		let totalExams = getRandomInt(1, 4);
+		let examList = [];
+		for (j = 0; j < totalExams; j++) {
+			let exam = {};
+			let randomNumber = getRandomInt(0, exams.length - 1);
+			exam.examId = exams[randomNumber]._id;
+			examList.push(exam);
+		}
+		let fakeStudentData = createStudentFakeData(
+			newUser._id,
+			fakeUserData.lastName,
+			exams[j].examinerId,
+			examList
+		);
+
+		let newStudent = await student.create(fakeStudentData);
+		await users.update(newUser._id, {
+			userDataId: newStudent._id,
+			institution: faker.random.words(3),
+			lastLogin: Date.now(),
+		});
+	}
+	console.log('Created student');
+}
+
 async function createSampleData() {
 	await createAdmin();
 	await createExaminers();
 	await createCourses();
 	await createExam();
 	await createQuestions();
+	await createStudent();
 	mongoose.connection.close();
 }
 
 createSampleData();
-
-// //Creating student for particular examiner
-// async function createStudent() {
-// 	let salt = bcrypt.genSaltSync(10);
-// 	let hash = bcrypt.hashSync('sample', salt);
-// 	let examinerId = ObjectId('5f7c76dfc6183219e837f792');
-// 	let totalStudents = 12;
-// 	for (let i = 0; i < totalStudents; i++) {
-// 		let firstName = faker.name.firstName();
-// 		let lastName = faker.name.lastName();
-// 		let email = `${firstName.toLocaleLowerCase()}${faker.random
-// 			.number()
-// 			.toString()
-// 			.substr(0, 2)}@${faker.internet.domainWord()}.com`;
-// 		let userObject = new users({
-// 			firstName: firstName,
-// 			lastName: lastName,
-// 			email: email,
-// 			mobileNumber: faker.phone.phoneNumber('+91 ####-######'),
-// 			password: hash,
-// 			accountType: 'student',
-// 		});
-// 		let data = await userObject.save();
-// 		let studentObject = new student({
-// 			fatherName: `${faker.name.firstName()} ${lastName}`,
-// 			motherName: `${faker.name.firstName()} ${lastName}`,
-// 			dob: '2020-10-13',
-// 			address: `${faker.address.streetAddress()}, ${faker.address.city()}, ${faker.address.state()}, ${faker.address.country()}`,
-// 			examinerId: examinerId,
-// 			userId: data._id,
-// 		});
-// 		let studentData = await studentObject.save();
-// 		await users.findByIdAndUpdate(data._id, {
-// 			$set: { userDataId: studentData._id },
-// 		});
-// 	}
-
-// 	console.log('student created');
-// }
-
-// // createUserData();
-// createStudent();
-
-// // createCourses();
