@@ -23,9 +23,6 @@ const student = new Schema({
 	examinerId: {
 		type: Schema.Types.ObjectId,
 	},
-	examId: {
-		type: Schema.Types.ObjectId,
-	},
 	studentId: {
 		type: String,
 		uppercase: true,
