@@ -1,7 +1,6 @@
 const faker = require('faker');
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
-const ObjectId = mongoose.Types.ObjectId;
 require('../db').connection;
 const {
 	users,
@@ -286,7 +285,7 @@ async function createQuestions() {
 async function createStudent() {
 	let exams = await examSchema.find();
 	let studentPassword = hashPassword('student');
-	for (let i = 0; i < 500; i++) {
+	for (let i = 0; i < exams.length; i++) {
 		let fakeUserData = createUserFakeData(studentPassword, 'student');
 		let newUser = await users.create(fakeUserData);
 
@@ -302,7 +301,7 @@ async function createStudent() {
 		let fakeStudentData = createStudentFakeData(
 			newUser._id,
 			fakeUserData.lastName,
-			exams[j].examinerId,
+			exams[i].examinerId,
 			examList,
 			studentId
 		);
@@ -318,11 +317,11 @@ async function createStudent() {
 }
 
 async function createSampleData() {
-	// await createAdmin();
-	// await createExaminers();
-	// await createCourses();
-	// await createExam();
-	// await createQuestions();
+	await createAdmin();
+	await createExaminers();
+	await createCourses();
+	await createExam();
+	await createQuestions();
 	await createStudent();
 	mongoose.connection.close();
 }
