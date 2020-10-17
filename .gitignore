@@ -3,3 +3,4 @@ backend/node_modules/
 backend/config/credentials.js
 frontend/.vscode/
 backend/.vscode/
+frontend/debug.log
