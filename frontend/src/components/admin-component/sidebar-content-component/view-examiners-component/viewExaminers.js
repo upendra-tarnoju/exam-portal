@@ -19,6 +19,8 @@ class ViewExaminer extends React.Component {
 			accountStatus: '',
 			approveDeclineModal: { show: false, data: '' },
 			snackBar: { show: false, msg: '' },
+			page: 1,
+			selectedCard: '',
 		};
 		this.adminService = new AdminService();
 	}
@@ -46,9 +48,6 @@ class ViewExaminer extends React.Component {
 
 	handleSnackBar = (status, data) => {
 		let examinerCount;
-		let updatedExaminerData = this.state.examinerData.filter(
-			(examiner) => examiner._id !== data._id
-		);
 		if (status) {
 			examinerCount = factories.updateExaminerCount(
 				this.state.accountStatus,
@@ -57,17 +56,19 @@ class ViewExaminer extends React.Component {
 			);
 		} else examinerCount = this.state.examinerCount;
 
-		this.setState({
-			examinerCount: examinerCount,
-			examinerData: updatedExaminerData,
-			snackBar: {
-				show: status,
-				msg: data.msg,
+		this.setState(
+			{
+				examinerCount: examinerCount,
+				snackBar: {
+					show: status,
+					msg: data.msg,
+				},
 			},
-		});
+			() => this.handleCardClick(this.state.selectedCard, 1)
+		);
 	};
 
-	handleCardClick = (type) => {
+	handleCardClick = (type, pageNo) => {
 		let { pageIndex, pageSize } = this.state;
 		this.adminService
 			.getExaminersCount(type, pageIndex, pageSize)
@@ -78,13 +79,15 @@ class ViewExaminer extends React.Component {
 					pageCount: Math.ceil(
 						this.state.examinerCount[type] / this.state.pageSize
 					),
+					page: pageNo,
+					selectedCard: type,
 				});
 			});
 	};
 
 	handlePageChange = (event, value) => {
 		this.setState({ pageIndex: value - 1 }, () =>
-			this.handleCardClick(this.state.accountStatus)
+			this.handleCardClick(this.state.accountStatus, value)
 		);
 	};
 
@@ -103,9 +106,10 @@ class ViewExaminer extends React.Component {
 	}
 
 	examinerData = () => {
+		let { pageIndex, pageSize } = this.state;
 		let examiners = this.state.examinerData.map((examiner, index) => (
 			<tr key={examiner._id}>
-				<th scope='row'>{index + 1}</th>
+				<th scope='row'>{pageIndex * pageSize + index + 1}</th>
 				<td>{examiner.data.firstName}</td>
 				<td>{examiner.data.lastName}</td>
 				<td>{examiner.data.email}</td>
@@ -176,6 +180,7 @@ class ViewExaminer extends React.Component {
 						showLastButton
 						onChange={this.handlePageChange}
 						size='large'
+						page={this.state.page}
 					/>
 				</div>
 			</div>
@@ -190,10 +195,16 @@ class ViewExaminer extends React.Component {
 						<div
 							onClick={() => {
 								this.setState({ pageIndex: 0 }, () =>
-									this.handleCardClick('approved')
+									this.handleCardClick('approved', 1)
 								);
 							}}
-							className={`card p-3 ${styles.approvedCard} cursor-pointer ${styles.iconHover}`}
+							className={`card p-3 ${
+								styles.approvedCard
+							} cursor-pointer ${styles.iconHover} ${
+								this.state.selectedCard === 'approved'
+									? styles.cardBorder
+									: null
+							}`}
 						>
 							<img
 								alt='approved icon'
@@ -218,10 +229,16 @@ class ViewExaminer extends React.Component {
 					</div>
 					<div className='col-md-4'>
 						<div
-							className={`card p-3 ${styles.pendingCard} cursor-pointer ${styles.iconHover}`}
+							className={`card p-3 ${
+								styles.pendingCard
+							} cursor-pointer ${styles.iconHover} ${
+								this.state.selectedCard === 'pending'
+									? styles.cardBorder
+									: null
+							}`}
 							onClick={() => {
 								this.setState({ pageIndex: 0 }, () =>
-									this.handleCardClick('pending')
+									this.handleCardClick('pending', 1)
 								);
 							}}
 						>
@@ -248,10 +265,16 @@ class ViewExaminer extends React.Component {
 					</div>
 					<div className='col-md-4'>
 						<div
-							className={`card p-3 ${styles.declinedCard} cursor-pointer ${styles.iconHover}`}
+							className={`card p-3 ${
+								styles.declinedCard
+							} cursor-pointer ${styles.iconHover} ${
+								this.state.selectedCard === 'declined'
+									? styles.cardBorder
+									: null
+							}`}
 							onClick={() => {
 								this.setState({ pageIndex: 0 }, () =>
-									this.handleCardClick('declined')
+									this.handleCardClick('declined', 1)
 								);
 							}}
 						>

@@ -29,3 +29,7 @@
 .dropdown {
 	width: 3rem !important;
 }
+
+.cardBorder {
+	border: 2px solid black;
+}
