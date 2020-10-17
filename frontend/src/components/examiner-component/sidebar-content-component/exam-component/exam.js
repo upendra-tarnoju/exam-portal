@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Table from 'react-bootstrap/Table';
 import { Button, Snackbar } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
+import Pagination from '@material-ui/lab/Pagination';
 
 import ExamService from '../../../../services/examApi';
 import ExamDetails from './exam-inputs-component/examDetails';
@@ -18,6 +19,8 @@ class Exam extends Component {
 			createExam: false,
 			nextInputs: false,
 			inputErrors: {},
+			pageIndex: 0,
+			pageSize: 5,
 			snackBar: { show: false, msg: '' },
 		};
 		this.examService = new ExamService();
@@ -36,13 +39,29 @@ class Exam extends Component {
 		});
 	};
 
-	componentDidMount() {
-		this.examService.getAllExams().then((res) => {
-			this.props.setExamList(res.data);
-		});
+	viewExams() {
+		this.examService
+			.getAllExams({
+				pageIndex: this.state.pageIndex,
+				pageSize: this.state.pageSize,
+			})
+			.then((res) => {
+				this.setState({ pageCount: res.data.pageCount }, () =>
+					this.props.setExamList(res.data.exams)
+				);
+			});
 	}
 
+	componentDidMount() {
+		this.viewExams();
+	}
+
+	handlePageChange = (event, value) => {
+		this.setState({ pageIndex: value - 1 }, () => this.viewExams());
+	};
+
 	render() {
+		let { pageIndex, pageSize } = this.state;
 		const allExams = this.props.examsList.map((exam, index) => {
 			return (
 				<ExamTable
@@ -51,6 +70,8 @@ class Exam extends Component {
 					key={exam._id}
 					errors={this.state.inputErrors}
 					handleSnackBar={this.handleSnackBar}
+					pageIndex={pageIndex}
+					pageSize={pageSize}
 				/>
 			);
 		});
@@ -111,23 +132,42 @@ class Exam extends Component {
 							List of all created Exams
 						</p>
 						{this.props.examsList.length !== 0 ? (
-							<Table striped bordered hover variant='dark'>
-								<thead>
-									<tr>
-										<th>S.No</th>
-										<th>Subject</th>
-										<th>Exam code</th>
-										<th>Exam date</th>
-										<th className='text-right'>Total marks</th>
-										<th className='text-right'>Passing marks</th>
-										<th>Start time</th>
-										<th>End time</th>
-										<th>Created at</th>
-										<th>Exam actions</th>
-									</tr>
-								</thead>
-								<tbody>{allExams}</tbody>
-							</Table>
+							<div>
+								<Table
+									striped
+									bordered
+									hover
+									variant='dark'
+									className='mb-0'
+								>
+									<thead>
+										<tr>
+											<th>S.No</th>
+											<th>Subject</th>
+											<th>Exam code</th>
+											<th>Exam date</th>
+											<th className='text-right'>Total marks</th>
+											<th className='text-right'>Passing marks</th>
+											<th>Start time</th>
+											<th>End time</th>
+											<th>Created at</th>
+											<th>Exam actions</th>
+										</tr>
+									</thead>
+									<tbody>{allExams}</tbody>
+								</Table>
+								<div className='bg-white py-3 d-flex justify-content-center'>
+									<Pagination
+										count={this.state.pageCount}
+										variant='outlined'
+										color='secondary'
+										size='large'
+										onChange={this.handlePageChange}
+										showFirstButton
+										showLastButton
+									/>
+								</div>
+							</div>
 						) : (
 							<div className={`${style.heading} text-center`}>
 								No exam available. Create new exam

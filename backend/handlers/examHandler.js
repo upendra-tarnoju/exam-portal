@@ -39,12 +39,21 @@ const exams = {
 		return exam.create(examObject);
 	},
 
-	getAllExams: async (userId, queryType) => {
+	getAllExams: async (userId, pageIndex) => {
+		let pageSize = 5;
+		pageIndex = pageIndex * pageSize;
 		let allExams = await exam
 			.get({ examinerId: userId })
-			.select(queryType === 'examCode' ? { examCode: 1 } : { password: 0 })
-			.sort({ examDate: -1 });
+			.select({ password: 0 })
+			.sort({ examDate: -1 })
+			.skip(pageIndex)
+			.limit(pageSize);
 		return allExams;
+	},
+
+	getExamsLength: async (userId) => {
+		let totalExams = await exam.get({ examinerId: userId });
+		return totalExams.length;
 	},
 
 	getParticularExam: async (examId) => {

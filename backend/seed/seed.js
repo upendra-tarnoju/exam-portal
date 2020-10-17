@@ -129,16 +129,17 @@ function createRandomDate() {
 	}
 }
 
-function createStudentFakeData(id, lastName, examinerId, examList) {
+function createStudentFakeData(id, lastName, examinerId, examList, studentId) {
 	let data = {};
 	data.userId = id;
 	data.fatherName = `${faker.name.firstName()} ${lastName}`;
 	data.motherName = `${faker.name.firstName()} ${lastName}`;
 	data.dob = createRandomDate();
-	data.address = `${faker.address.streetAddress},${faker.address.city},${faker.address.state},${faker.address.country}`;
+	data.address = `${faker.address.streetAddress()},${faker.address.city()},${faker.address.state()},${faker.address.country()}`;
 	data.examinerId = examinerId;
 	data.gender = 'male';
 	data.exam = examList;
+	data.studentId = studentId;
 	return data;
 }
 
@@ -297,11 +298,13 @@ async function createStudent() {
 			exam.examId = exams[randomNumber]._id;
 			examList.push(exam);
 		}
+		let studentId = `UID${i}`;
 		let fakeStudentData = createStudentFakeData(
 			newUser._id,
 			fakeUserData.lastName,
 			exams[j].examinerId,
-			examList
+			examList,
+			studentId
 		);
 
 		let newStudent = await student.create(fakeStudentData);
@@ -315,11 +318,11 @@ async function createStudent() {
 }
 
 async function createSampleData() {
-	await createAdmin();
-	await createExaminers();
-	await createCourses();
-	await createExam();
-	await createQuestions();
+	// await createAdmin();
+	// await createExaminers();
+	// await createCourses();
+	// await createExam();
+	// await createQuestions();
 	await createStudent();
 	mongoose.connection.close();
 }

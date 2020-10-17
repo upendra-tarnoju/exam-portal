@@ -12,9 +12,11 @@ const exam = {
 	},
 	getExamDetails: async (req, res) => {
 		let userId = req.user._id;
-		let queryType = req.query.type;
-		examHandler.getAllExams(userId, queryType).then((response) => {
-			res.status(200).send(response);
+		let pageIndex = req.query.pageIndex;
+		let totalExams = await examHandler.getExamsLength(userId);
+		let pageCount = Math.ceil(totalExams / 5);
+		examHandler.getAllExams(userId, pageIndex).then((response) => {
+			res.status(200).send({ exams: response, pageCount: pageCount });
 		});
 	},
 	updateExamDetails: async (req, res) => {

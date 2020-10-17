@@ -62,10 +62,10 @@ class ExamTable extends Component {
 	};
 
 	render() {
-		let { exam, index } = this.props;
+		let { exam, index, pageIndex, pageSize } = this.props;
 		return (
 			<tr key={exam._id}>
-				<td>{index + 1}</td>
+				<td>{pageIndex * pageSize + index + 1}</td>
 				<td>{exam.subject}</td>
 				<td>{exam.examCode}</td>
 				<td>
