@@ -164,13 +164,17 @@ class Courses extends Component {
 					</Button>
 					<Button
 						variant='contained'
-						className='mr-2'
+						className='mr-2 bg-success'
 						onClick={() => this.handleCourseModal(true, 'search')}
 					>
 						Search
 					</Button>
 					{this.state.search ? (
-						<Button variant='danger' onClick={this.clearSearch}>
+						<Button
+							variant='contained'
+							className='bg-danger'
+							onClick={this.clearSearch}
+						>
 							Clear search
 						</Button>
 					) : null}

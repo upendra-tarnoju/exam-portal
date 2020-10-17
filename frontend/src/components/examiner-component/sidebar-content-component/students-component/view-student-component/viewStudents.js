@@ -55,6 +55,16 @@ class ViewStudents extends React.Component {
 		this.viewStudents();
 	}
 
+	capitalizeName(name) {
+		return name
+			.split(' ')
+			.map(
+				(value) =>
+					value.slice(0, 1).toUpperCase() + value.slice(1, value.length)
+			)
+			.join(' ');
+	}
+
 	handleSwitchChange = (event, studentId) => {
 		let checked = event.target.checked;
 		let examId = this.props.match.params.examId;
@@ -130,7 +140,9 @@ class ViewStudents extends React.Component {
 											</ListItemAvatar>
 											<ListItemText
 												primary='Father name'
-												secondary={value.fatherName}
+												secondary={this.capitalizeName(
+													value.fatherName
+												)}
 											/>
 										</ListItem>
 										<Divider variant='inset' component='li' />
@@ -142,7 +154,9 @@ class ViewStudents extends React.Component {
 											</ListItemAvatar>
 											<ListItemText
 												primary='Mother name'
-												secondary={value.motherName}
+												secondary={this.capitalizeName(
+													value.motherName
+												)}
 											/>
 										</ListItem>
 										<Divider variant='inset' component='li' />
