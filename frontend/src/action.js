@@ -9,3 +9,4 @@ export const SET_QUESTIONS = 'set_questions';
 export const ADD_QUESTION = 'add_question';
 export const CHANGE_STUDENT_FIELDS = 'change_student_fields';
 export const EXAM_DETAIL_FIELDS = 'exam_detail_fields';
+export const CLEAR_STUDENT_FIELDS = 'clear_student_fields';

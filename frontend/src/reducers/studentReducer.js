@@ -30,6 +30,25 @@ const studentReducer = (state = initialState, action) => {
 				[action.key]: action.value,
 			},
 		};
+	} else if (action.type === 'clear_student_fields') {
+		return {
+			...state,
+			personalDetails: {
+				firstName: '',
+				lastName: '',
+				fatherName: '',
+				motherName: '',
+				address: '',
+				gender: '',
+			},
+			examDetails: {
+				mobileNumber: '',
+				dob: '',
+				studentId: '',
+				email: '',
+				password: '',
+			},
+		};
 	}
 	return state;
 };

@@ -9,7 +9,7 @@ import * as ActionTypes from '../../action';
 
 let PersonalDetailsForm = (props) => {
 	let handleBack = () => {
-		props.scrollStepper(props.activeStep - 1);
+		props.history.goBack();
 	};
 	return (
 		<Formik

@@ -3,6 +3,7 @@ import { Snackbar } from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
 import MuiAlert from '@material-ui/lab/Alert';
 import { Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import Moment from 'react-moment';
 
 import styles from './students.module.css';
 import ExaminerService from '../../../../services/examinerApi';
@@ -68,6 +69,11 @@ class Students extends React.Component {
 					<td>{pageIndex * pageSize + index + 1}</td>
 					<td>{student.subject}</td>
 					<td>{student.examCode}</td>
+					<td>
+						<Moment format='MMM Do, YYYY (hh:mm A)'>
+							{student.examDate}
+						</Moment>
+					</td>
 					<td className='text-right'>{student.totalStudents}</td>
 					<td className='d-flex justify-content-center'>
 						<OverlayTrigger
@@ -107,6 +113,7 @@ class Students extends React.Component {
 								<th>S.No</th>
 								<th>Subject</th>
 								<th>Exam code</th>
+								<th>Exam date</th>
 								<th className='text-right'>Total Students</th>
 								<th className='text-center'>Actions</th>
 							</tr>

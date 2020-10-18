@@ -28,7 +28,7 @@ let CourseForm = ({ state, modalType, handleSubmit }) => {
 						<Form.Control
 							type='text'
 							name='name'
-							placeholder='Course name'
+							placeholder='E.g. B.Tech, MBA'
 							value={values.name}
 							onBlur={handleBlur}
 							onChange={handleChange}
@@ -44,7 +44,7 @@ let CourseForm = ({ state, modalType, handleSubmit }) => {
 						<Form.Control
 							type='text'
 							name='description'
-							placeholder='Course description'
+							placeholder='E.g. Bachelor of Technology'
 							value={values.description}
 							onBlur={handleBlur}
 							onChange={handleChange}

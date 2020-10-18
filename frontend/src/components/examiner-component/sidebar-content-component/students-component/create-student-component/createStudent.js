@@ -8,10 +8,12 @@ import {
 	StepLabel,
 	Typography,
 } from '@material-ui/core';
+import { connect } from 'react-redux';
 
 import PersonalDetailsForm from '../../../../../forms/student-form/personalDetailForm';
 import StudentExamDetailForm from '../../../../../forms/student-form/studentExamDetailForm';
 import styles from '../students.module.css';
+import * as ActionTypes from '../../../../../action';
 
 class CreateStudent extends React.Component {
 	constructor(props) {
@@ -23,6 +25,10 @@ class CreateStudent extends React.Component {
 		};
 	}
 
+	componentDidMount() {
+		this.props.clearStudentFields();
+	}
+
 	handleSnackBar = (show, msg) => {
 		this.setState({ snackBar: { show, msg } });
 	};
@@ -32,6 +38,7 @@ class CreateStudent extends React.Component {
 			case 0:
 				return (
 					<PersonalDetailsForm
+						history={this.props.history}
 						activeStep={this.state.activeStep}
 						scrollStepper={this.scrollStepper}
 					/>
@@ -86,7 +93,7 @@ class CreateStudent extends React.Component {
 							<StepLabel>Exam details</StepLabel>
 						</Step>
 					</Stepper>
-					<Typography component={'span'} variant={'body2'}>
+					<Typography ponent={'span'} variant={'body2'}>
 						<div className='container p-0'>
 							{this.getStepperContent(this.state.activeStep)}
 						</div>
@@ -111,4 +118,12 @@ class CreateStudent extends React.Component {
 	}
 }
 
-export default CreateStudent;
+const mapDispatchToProps = (dispatch) => {
+	return {
+		clearStudentFields: () => {
+			dispatch({ type: ActionTypes.CLEAR_STUDENT_FIELDS });
+		},
+	};
+};
+
+export default connect(null, mapDispatchToProps)(CreateStudent);

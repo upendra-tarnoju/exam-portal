@@ -43,6 +43,7 @@ class Exams {
 				$project: {
 					subject: 1,
 					examCode: 1,
+					examDate: 1,
 					totalStudents: { $size: '$student.exam' },
 				},
 			},
