@@ -24,5 +24,11 @@ module.exports = () => {
 		adminController.getDashboardCardDetails
 	);
 
+	router.get(
+		'/dashboard/exam',
+		passport.authenticate('jwt'),
+		adminController.getUnexpiredExamDetails
+	);
+
 	return router;
 };

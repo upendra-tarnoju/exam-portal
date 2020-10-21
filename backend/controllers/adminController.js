@@ -34,6 +34,13 @@ const admin = {
 		let data = await adminHandler.getDashboardCardDetails();
 		res.status(200).send(data);
 	},
+
+	getUnexpiredExamDetails: async (req, res) => {
+		let minDate = req.query.minDate;
+		let maxDate = req.query.maxDate;
+		let data = await adminHandler.getUnexpiredExamDetails(minDate, maxDate);
+		res.status(200).send(data);
+	},
 };
 
 module.exports = admin;

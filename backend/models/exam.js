@@ -53,6 +53,26 @@ class Exams {
 	findAll = () => {
 		return this.examModel.find();
 	};
+
+	findByExamMonth = (minDate, maxDate) => {
+		return this.examModel.aggregate([
+			{
+				$match: {
+					examDate: { $gte: new Date(minDate), $lt: new Date(maxDate) },
+				},
+			},
+			{
+				$group: {
+					_id: {
+						$dateToString: { format: '%d', date: '$examDate' },
+					},
+					count: { $sum: 1 },
+				},
+			},
+			{ $project: { _id: 0, examDate: '$_id', count: 1 } },
+			{ $sort: { examDate: 1 } },
+		]);
+	};
 }
 
 module.exports = new Exams();

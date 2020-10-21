@@ -66,6 +66,11 @@ const admin = {
 			totalStudents: allStudents.length,
 		};
 	},
+
+	getUnexpiredExamDetails: async (minDate, maxDate) => {
+		let data = await exam.findByExamMonth(minDate, maxDate);
+		return data;
+	},
 };
 
 module.exports = admin;
