@@ -107,6 +107,7 @@ module.exports = () => {
 	router.post(
 		'/student',
 		passport.authenticate('jwt'),
+		multerMiddleware.upload.single('file'),
 		studentController.addNewStudent
 	);
 

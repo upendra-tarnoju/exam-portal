@@ -1,4 +1,6 @@
 let bcrypt = require('bcryptjs');
+let csv = require('csvtojson');
+let fs = require('fs');
 
 let { student, users, exam } = require('../models');
 
@@ -6,6 +8,28 @@ let hashPassword = (password) => {
 	let salt = bcrypt.genSaltSync(10);
 	let hash = bcrypt.hashSync(password, salt);
 	return hash;
+};
+
+let checkRequiredFileFields = (fields) => {
+	let requiredFields = [
+		'studentId',
+		'firstName',
+		'lastName',
+		'fatherName',
+		'motherName',
+		'gender',
+		'address',
+		'mobileNumber',
+		'dob',
+		'emailAddress',
+		'password',
+	];
+	for (field in requiredFields) {
+		if (!fields.include(field)) {
+			return { allFound: false, field: field };
+		}
+	}
+	return { allFound: true, field: '' };
 };
 
 const students = {
@@ -77,6 +101,16 @@ const students = {
 	getParticularExamStudents: async (examId) => {
 		let studentDetails = await student.findStudentsByExamId(examId);
 		return studentDetails;
+	},
+
+	uploadStudentFile: async (filePath) => {
+		let csvData = await csv().fromFile(filePath);
+		let keys = Object.keys(csvData[0]);
+		let validatedField = checkRequiredFileFields(keys);
+		if (validatedField.allFound) {
+		} else {
+			return { msg: `${validatedField.field} not found in file` };
+		}
 	},
 };
 

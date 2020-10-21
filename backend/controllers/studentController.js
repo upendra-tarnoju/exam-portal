@@ -4,12 +4,17 @@ const student = {
 	addNewStudent: async (req, res) => {
 		let studentData = req.body;
 		let examinerId = req.user._id;
+		if (req.file.originalname.includes('.csv')) {
+			let filePath = req.file.path;
+			let msg = await studentHandler.uploadStudentFile(filePath);
+			res.status(200).send({ msg });
+		} else {
+			studentData.examinerId = examinerId;
+			studentData.accountType = 'student';
 
-		studentData.examinerId = examinerId;
-		studentData.accountType = 'student';
-
-		let response = await studentHandler.addNewStudent(studentData);
-		res.status(response.status).send({ msg: response.msg });
+			let response = await studentHandler.addNewStudent(studentData);
+			res.status(response.status).send({ msg: response.msg });
+		}
 	},
 
 	getAllStudents: async (req, res) => {
