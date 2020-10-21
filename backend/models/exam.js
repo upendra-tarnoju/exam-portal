@@ -49,6 +49,10 @@ class Exams {
 			},
 		]);
 	}
+
+	findAll = () => {
+		return this.examModel.find();
+	};
 }
 
 module.exports = new Exams();

@@ -29,6 +29,11 @@ const admin = {
 		);
 		res.status(200).send(data);
 	},
+
+	getDashboardCardDetails: async (req, res) => {
+		let data = await adminHandler.getDashboardCardDetails();
+		res.status(200).send(data);
+	},
 };
 
 module.exports = admin;

@@ -18,5 +18,11 @@ module.exports = () => {
 		adminController.saveExaminerDetails
 	);
 
+	router.get(
+		'/dashboard',
+		passport.authenticate('jwt'),
+		adminController.getDashboardCardDetails
+	);
+
 	return router;
 };

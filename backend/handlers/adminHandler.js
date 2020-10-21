@@ -1,4 +1,4 @@
-const { users, examiner } = require('../models');
+const { users, examiner, student, exam } = require('../models');
 const { sender, transporter } = require('../config/mail');
 
 const admin = {
@@ -53,6 +53,17 @@ const admin = {
 			msg: `Examiner ${updatedExaminer.accountStatus}`,
 			accountStatus: updatedExaminer.accountStatus,
 			_id: updatedExaminer._id,
+		};
+	},
+
+	getDashboardCardDetails: async () => {
+		let allExaminers = await examiner.findAll();
+		let allExams = await exam.findAll();
+		let allStudents = await student.findAll();
+		return {
+			totalExaminers: allExaminers.length,
+			totalExams: allExams.length,
+			totalStudents: allStudents.length,
 		};
 	},
 };

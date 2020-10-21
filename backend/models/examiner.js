@@ -74,6 +74,10 @@ class Examiner {
 			.skip(pageIndex)
 			.limit(pageSize);
 	};
+
+	findAll = () => {
+		return this.examinerModel.find();
+	};
 }
 
 module.exports = new Examiner();

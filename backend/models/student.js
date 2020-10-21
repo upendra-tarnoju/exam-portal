@@ -113,6 +113,10 @@ class Students {
 			},
 		]);
 	}
+
+	findAll = () => {
+		return this.studentModel.find();
+	};
 }
 
 module.exports = new Students();
