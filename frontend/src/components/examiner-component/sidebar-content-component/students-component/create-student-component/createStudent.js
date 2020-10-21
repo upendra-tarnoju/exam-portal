@@ -1,4 +1,3 @@
-import { Snackbar } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 import React from 'react';
 import {
@@ -7,13 +6,17 @@ import {
 	Step,
 	StepLabel,
 	Typography,
+	Snackbar,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
+import { CloudUpload } from '@material-ui/icons';
 
 import PersonalDetailsForm from '../../../../../forms/student-form/personalDetailForm';
 import StudentExamDetailForm from '../../../../../forms/student-form/studentExamDetailForm';
 import styles from '../students.module.css';
 import * as ActionTypes from '../../../../../action';
+import FileModal from '../../../../../modals/fileModal';
+import ExaminerService from '../../../../../services/examinerApi';
 
 class CreateStudent extends React.Component {
 	constructor(props) {
@@ -22,7 +25,10 @@ class CreateStudent extends React.Component {
 			examCode: [],
 			snackBar: { show: false, msg: '' },
 			activeStep: 0,
+			file: '',
+			fileModal: { show: false },
 		};
+		this.examinerService = new ExaminerService();
 	}
 
 	componentDidMount() {
@@ -31,6 +37,22 @@ class CreateStudent extends React.Component {
 
 	handleSnackBar = (show, msg) => {
 		this.setState({ snackBar: { show, msg } });
+	};
+
+	handleFileChange = (event) => {
+		let file = event.target.files[0];
+		this.setState({ file }, () => this.handleFileModal(true));
+	};
+
+	handleFileModal = (show) => {
+		this.setState({ fileModal: { show } });
+	};
+
+	uploadStudentFile = () => {
+		let formData = new FormData();
+		formData.append('file', this.state.file);
+		this.examinerService.saveNewStudent(formData).then((response) => {});
+		this.handleFileModal(false);
 	};
 
 	getStepperContent = (stepIndex) => {
@@ -75,15 +97,24 @@ class CreateStudent extends React.Component {
 						className={`card-header text-white bg-dark d-flex justify-content-between ${styles.studentCardHeader}`}
 					>
 						Add Student
-						{this.props.createStudent ? (
+						<input
+							accept='.xlsx, .xls, .csv'
+							className='d-none'
+							id='upload-students'
+							multiple
+							onChange={this.handleFileChange}
+							type='file'
+						/>
+						<label htmlFor='upload-students'>
 							<Button
 								variant='contained'
-								color='secondary'
-								onClick={() => this.props.handleStudent(false)}
+								color='primary'
+								startIcon={<CloudUpload />}
+								component='span'
 							>
-								Cancel
+								Upload
 							</Button>
-						) : null}
+						</label>
 					</div>
 					<Stepper activeStep={this.state.activeStep} alternativeLabel>
 						<Step key='personalDetails'>
@@ -93,7 +124,7 @@ class CreateStudent extends React.Component {
 							<StepLabel>Exam details</StepLabel>
 						</Step>
 					</Stepper>
-					<Typography ponent={'span'} variant={'body2'}>
+					<Typography component={'span'} variant={'body2'}>
 						<div className='container p-0'>
 							{this.getStepperContent(this.state.activeStep)}
 						</div>
@@ -113,6 +144,11 @@ class CreateStudent extends React.Component {
 						{snackBar.msg}
 					</MuiAlert>
 				</Snackbar>
+				<FileModal
+					show={this.state.fileModal.show}
+					hideModal={this.handleFileModal}
+					uploadFile={this.uploadStudentFile}
+				/>
 			</div>
 		);
 	}
