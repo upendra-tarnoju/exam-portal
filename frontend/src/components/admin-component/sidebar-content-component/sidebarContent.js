@@ -4,6 +4,7 @@ import { Route, Switch } from 'react-router-dom';
 
 import ViewExaminers from './view-examiners-component/viewExaminers';
 import * as ActionType from '../../../action';
+import AdminDashboard from './admin-dashboard-component/adminDashboard';
 
 const SidebarContent = (props) => {
 	let handleSidebar = () => {
@@ -32,11 +33,8 @@ const SidebarContent = (props) => {
 				</div>
 			</nav>
 			<Switch>
-				<Route
-					exact
-					path='/admin/examiner'
-					component={ViewExaminers}
-				></Route>
+				<Route exact path='/admin' component={AdminDashboard} />
+				<Route path='/admin/examiner' component={ViewExaminers}></Route>
 			</Switch>
 		</div>
 	);
