@@ -1,7 +1,9 @@
 import React from 'react';
-import { ButtonBase, Grid, Paper } from '@material-ui/core';
-import AdminService from '../../../../services/adminApi';
+import { ButtonBase, Divider, Grid, Paper } from '@material-ui/core';
+import Chart from 'react-apexcharts';
+import moment from 'moment';
 
+import AdminService from '../../../../services/adminApi';
 import styles from './adminDashboard.module.css';
 
 class AdminDashboard extends React.Component {
@@ -12,6 +14,12 @@ class AdminDashboard extends React.Component {
 			totalExams: 0,
 			totalStudents: 0,
 			totalEarning: 0,
+			examChart: {
+				options: {
+					xaxis: { categories: [] },
+				},
+				series: [{ data: [] }],
+			},
 		};
 		this.adminService = new AdminService();
 	}
@@ -26,6 +34,38 @@ class AdminDashboard extends React.Component {
 				totalEarning: data.totalExaminers * 15,
 			});
 		});
+
+		let minDate = new Date();
+		minDate.setDate(1);
+		let maxDate = new Date(minDate.getFullYear(), minDate.getMonth() + 1, 0);
+		this.adminService
+			.getExamChartDetails(minDate, maxDate)
+			.then((response) => {
+				let examData = response.data;
+				this.setState((prevState) => ({
+					...prevState,
+					examChart: {
+						options: {
+							chart: { id: 'basic-bar', toolbar: { show: false } },
+							xaxis: {
+								categories: examData.map(
+									(data) =>
+										`${data.examDate}-${moment(
+											minDate.getMonth(),
+											'M'
+										).format('MMM')}`
+								),
+							},
+						},
+						series: [
+							{
+								name: 'Total exams',
+								data: examData.map((data) => data.count),
+							},
+						],
+					},
+				}));
+			});
 	}
 	render() {
 		let {
@@ -128,6 +168,27 @@ class AdminDashboard extends React.Component {
 								</div>
 							</div>
 						</Paper>
+					</Grid>
+				</Grid>
+
+				<Grid container spacing={3} className='px-5'>
+					<Grid item xs={7}>
+						<Paper>
+							<div className='px-3 py-2'>
+								<span className={styles.examinerChartHeading}>
+									Exams
+								</span>
+							</div>
+							<Divider />
+							<Chart
+								options={this.state.examChart.options}
+								series={this.state.examChart.series}
+								type='bar'
+							/>
+						</Paper>
+					</Grid>
+					<Grid item xs={5}>
+						<Paper>hello</Paper>
 					</Grid>
 				</Grid>
 			</div>
