@@ -50,7 +50,7 @@ const user = {
 			if (err) return next(err);
 			if (!user) return res.status(401).json({ msg: info.message });
 			req.logIn(user, async (err) => {
-				let token = createToken(user._id, user.accountType);
+				let token = createToken(user);
 				return res.status(200).send({
 					token: token,
 					accountType: user.accountType,

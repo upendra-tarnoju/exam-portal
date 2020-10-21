@@ -10,9 +10,10 @@ const SidebarContent = (props) => {
 		let toggle = props.toggle;
 		props.setSidebar(!toggle);
 	};
+
 	return (
 		<div id='page-content-wrapper'>
-			<nav className='navbar navbar-expand-lg navbar-light bg-dark border-bottom justify-content-start'>
+			<nav className='navbar navbar-expand-lg navbar-light bg-dark border-bottom justify-content-between align-items-center'>
 				<button
 					type='button'
 					className='btn btn-primary'
@@ -20,6 +21,15 @@ const SidebarContent = (props) => {
 				>
 					<i className='fa fa-bars'></i>
 				</button>
+				<div>
+					<img
+						src='https://i.pinimg.com/originals/7c/c7/a6/7cc7a630624d20f7797cb4c8e93c09c1.png'
+						height='45px'
+						alt='pic'
+						className='mr-2'
+					/>
+					<span className='text-white'>Hie, {props.name}</span>
+				</div>
 			</nav>
 			<Switch>
 				<Route
@@ -35,6 +45,7 @@ const SidebarContent = (props) => {
 const mapStateToProps = (state) => {
 	return {
 		toggle: state.adminReducer.sidebarToggle,
+		name: state.adminReducer.name,
 	};
 };
 

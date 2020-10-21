@@ -1,10 +1,13 @@
 const jwt = require('jsonwebtoken');
 
-const createToken = (id, accountType) => {
+const createToken = (userData) => {
+	console.log(userData);
 	let privateKey = 'gRG9lIiwiaWF0IjoxNTE2MjM5';
 	let object = {
-		userId: id,
-		type: accountType,
+		userId: userData._id,
+		type: userData.accountType,
+		firstName: userData.firstName,
+		lastName: userData.lastName,
 	};
 	var token = jwt.sign(object, privateKey, { expiresIn: '10h' });
 	return token;

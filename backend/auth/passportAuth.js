@@ -25,6 +25,8 @@ module.exports = (passport) => {
 					accountType: 1,
 					password: 1,
 					lastLogin: 1,
+					firstName: 1,
+					lastName: 1,
 				})
 				.then((user) => {
 					if (user) {

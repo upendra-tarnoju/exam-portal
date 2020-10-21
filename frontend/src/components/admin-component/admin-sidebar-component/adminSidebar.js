@@ -88,7 +88,7 @@ class AdminSidebar extends Component {
 						}}
 						className='list-group-item cursor-pointer list-group-item-action bg-dark text-white-50'
 					>
-						<i className='fa fa-sign-out'></i> Sign Out
+						<i className='fa fa-sign-out'></i> Log out
 					</a>
 				</div>
 			</div>

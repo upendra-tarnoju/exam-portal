@@ -18,7 +18,7 @@ export default function (WrappedComponent, accountType) {
 					this.props.history.push('/login');
 					this.props.setAuthenticatedUser(false);
 				} else {
-					this.props.setAuthenticatedUser(true);
+					this.props.setAuthenticatedUser(true, decodedToken);
 				}
 			} else {
 				this.props.history.replace('/login');
@@ -41,10 +41,12 @@ export default function (WrappedComponent, accountType) {
 
 	const mapDispatchToProps = (dispatch) => {
 		return {
-			setAuthenticatedUser: (authenticatedState) => {
+			setAuthenticatedUser: (authenticatedState, data) => {
 				dispatch({
 					type: ActionTypes.SET_AUTHENTICATED_USER,
 					authenticated: authenticatedState,
+					firstName: data.firstName,
+					lastName: data.lastName,
 				});
 			},
 		};
