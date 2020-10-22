@@ -30,6 +30,7 @@ class AdminDashboard extends React.Component {
 				series: [{ data: [] }],
 			},
 			monthMenu: { anchorEl: null, setAnchorEl: null },
+			examinerPieChart: { series: [], options: { labels: [] } },
 		};
 		this.adminService = new AdminService();
 	}
@@ -96,6 +97,21 @@ class AdminDashboard extends React.Component {
 		minDate.setDate(1);
 		let maxDate = new Date(minDate.getFullYear(), minDate.getMonth() + 1, 0);
 		this.viewExamMonthData(minDate, maxDate);
+
+		this.adminService.getAllExaminer().then((res) => {
+			this.setState({
+				examinerPieChart: {
+					series: Object.values(res.data),
+					options: {
+						labels: Object.keys(res.data).map(
+							(data) =>
+								data.slice(0, 1).toUpperCase() +
+								data.slice(1, data.length)
+						),
+					},
+				},
+			});
+		});
 	}
 
 	render() {
@@ -299,7 +315,20 @@ class AdminDashboard extends React.Component {
 						</Paper>
 					</Grid>
 					<Grid item xs={5}>
-						<Paper>hello</Paper>
+						<Paper>
+							<div className='px-3 py-2'>
+								<span className={styles.examinerChartHeading}>
+									Examiner
+								</span>
+							</div>
+							<Divider />
+							<Chart
+								options={this.state.examinerPieChart.options}
+								series={this.state.examinerPieChart.series}
+								type='pie'
+								height={280}
+							/>
+						</Paper>
 					</Grid>
 				</Grid>
 			</div>
