@@ -1,5 +1,14 @@
 import React from 'react';
-import { ButtonBase, Divider, Grid, Paper } from '@material-ui/core';
+import {
+	Button,
+	ButtonBase,
+	Divider,
+	Grid,
+	Paper,
+	Menu,
+	MenuItem,
+	Fade,
+} from '@material-ui/core';
 import Chart from 'react-apexcharts';
 import moment from 'moment';
 
@@ -20,24 +29,20 @@ class AdminDashboard extends React.Component {
 				},
 				series: [{ data: [] }],
 			},
+			monthMenu: { anchorEl: null, setAnchorEl: null },
 		};
 		this.adminService = new AdminService();
 	}
 
-	componentDidMount() {
-		this.adminService.getDashboardCardDetails().then((response) => {
-			let data = response.data;
-			this.setState({
-				totalExaminers: data.totalExaminers,
-				totalExams: data.totalExams,
-				totalStudents: data.totalStudents,
-				totalEarning: data.totalExaminers * 15,
-			});
+	handleExamMonthChange = (value) => {
+		this.setState({
+			monthMenu: {
+				anchorEl: value,
+			},
 		});
+	};
 
-		let minDate = new Date();
-		minDate.setDate(1);
-		let maxDate = new Date(minDate.getFullYear(), minDate.getMonth() + 1, 0);
+	viewExamMonthData = (minDate, maxDate) => {
 		this.adminService
 			.getExamChartDetails(minDate, maxDate)
 			.then((response) => {
@@ -66,7 +71,33 @@ class AdminDashboard extends React.Component {
 					},
 				}));
 			});
+	};
+
+	changeExamMonthData = (month) => {
+		let minDate = new Date();
+		minDate.setDate(1);
+		minDate.setMonth(month);
+		let maxDate = new Date(minDate.getFullYear(), minDate.getMonth() + 1, 0);
+		this.viewExamMonthData(minDate, maxDate);
+	};
+
+	componentDidMount() {
+		this.adminService.getDashboardCardDetails().then((response) => {
+			let data = response.data;
+			this.setState({
+				totalExaminers: data.totalExaminers,
+				totalExams: data.totalExams,
+				totalStudents: data.totalStudents,
+				totalEarning: data.totalExaminers * 15,
+			});
+		});
+
+		let minDate = new Date();
+		minDate.setDate(1);
+		let maxDate = new Date(minDate.getFullYear(), minDate.getMonth() + 1, 0);
+		this.viewExamMonthData(minDate, maxDate);
 	}
+
 	render() {
 		let {
 			totalExaminers,
@@ -174,10 +205,90 @@ class AdminDashboard extends React.Component {
 				<Grid container spacing={3} className='px-5'>
 					<Grid item xs={7}>
 						<Paper>
-							<div className='px-3 py-2'>
-								<span className={styles.examinerChartHeading}>
+							<div className='d-flex justify-content-between px-3 py-2'>
+								<span
+									className={`${styles.examinerChartHeading} align-self-center`}
+								>
 									Exams
 								</span>
+								<Button
+									aria-controls='change-month-menu'
+									aria-haspopup='true'
+									onClick={(event) =>
+										this.handleExamMonthChange(event.currentTarget)
+									}
+								>
+									Change
+								</Button>
+								<Menu
+									id='change-month-menu'
+									anchorEl={this.state.monthMenu.anchorEl}
+									keepMounted
+									open={Boolean(this.state.monthMenu.anchorEl)}
+									onClose={() => this.handleExamMonthChange(null)}
+									TransitionComponent={Fade}
+								>
+									<MenuItem
+										onClick={() => this.changeExamMonthData(1)}
+									>
+										January
+									</MenuItem>
+									<MenuItem
+										onClick={() => this.changeExamMonthData(2)}
+									>
+										Feburary
+									</MenuItem>
+									<MenuItem
+										onClick={() => this.changeExamMonthData(3)}
+									>
+										March
+									</MenuItem>
+									<MenuItem
+										onClick={() => this.changeExamMonthData(4)}
+									>
+										April
+									</MenuItem>
+									<MenuItem
+										onClick={() => this.changeExamMonthData(5)}
+									>
+										May
+									</MenuItem>
+									<MenuItem
+										onClick={() => this.changeExamMonthData(6)}
+									>
+										June
+									</MenuItem>
+									<MenuItem
+										onClick={() => this.changeExamMonthData(7)}
+									>
+										July
+									</MenuItem>
+									<MenuItem
+										onClick={() => this.changeExamMonthData(8)}
+									>
+										Auguest
+									</MenuItem>
+									<MenuItem
+										onClick={() => this.changeExamMonthData(9)}
+									>
+										September
+									</MenuItem>
+									<MenuItem
+										onClick={() => this.changeExamMonthData(10)}
+									>
+										October
+									</MenuItem>
+									<MenuItem
+										onClick={() => this.changeExamMonthData(11)}
+									>
+										November
+									</MenuItem>
+									<MenuItem
+										onClick={() => this.changeExamMonthData(12)}
+									>
+										December
+									</MenuItem>
+								</Menu>
 							</div>
 							<Divider />
 							<Chart
