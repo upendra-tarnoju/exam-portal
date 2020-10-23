@@ -21,6 +21,7 @@ import { AddCircleOutlineOutlined, DeleteOutline } from '@material-ui/icons';
 import AdminService from '../../../../services/adminApi';
 import styles from './adminDashboard.module.css';
 import { Pagination } from '@material-ui/lab';
+import factories from '../../../../factories/factories';
 
 class AdminDashboard extends React.Component {
 	constructor() {
@@ -36,7 +37,7 @@ class AdminDashboard extends React.Component {
 				},
 				series: [{ data: [] }],
 			},
-			monthMenu: { anchorEl: null, setAnchorEl: null },
+			monthMenu: null,
 			examinerPieChart: { series: [], options: { labels: [] } },
 			latestExaminers: [],
 			latestExaminersPage: { pageIndex: 0, pageSize: 2, pageCount: 0 },
@@ -46,9 +47,7 @@ class AdminDashboard extends React.Component {
 
 	handleExamMonthChange = (value) => {
 		this.setState({
-			monthMenu: {
-				anchorEl: value,
-			},
+			monthMenu: value,
 		});
 	};
 
@@ -82,10 +81,6 @@ class AdminDashboard extends React.Component {
 				}));
 			});
 	};
-
-	capitalizeName(name) {
-		return name.slice(0, 1).toUpperCase() + name.slice(1, name.length);
-	}
 
 	viewLatestExaminer(pageIndex, pageSize) {
 		this.adminService
@@ -179,6 +174,14 @@ class AdminDashboard extends React.Component {
 			totalStudents,
 			totalEarning,
 		} = this.state;
+
+		let monthExamMenu = factories.monthMenu.map((month, index) => {
+			return (
+				<MenuItem onClick={() => this.changeExamMonthData(index + 1)}>
+					{month}
+				</MenuItem>
+			);
+		});
 		return (
 			<div className='container'>
 				<div className='row pt-5 pb-3'>
@@ -295,72 +298,13 @@ class AdminDashboard extends React.Component {
 								</Button>
 								<Menu
 									id='change-month-menu'
-									anchorEl={this.state.monthMenu.anchorEl}
+									anchorEl={this.state.monthMenu}
 									keepMounted
-									open={Boolean(this.state.monthMenu.anchorEl)}
+									open={Boolean(this.state.monthMenu)}
 									onClose={() => this.handleExamMonthChange(null)}
 									TransitionComponent={Fade}
 								>
-									<MenuItem
-										onClick={() => this.changeExamMonthData(1)}
-									>
-										January
-									</MenuItem>
-									<MenuItem
-										onClick={() => this.changeExamMonthData(2)}
-									>
-										Feburary
-									</MenuItem>
-									<MenuItem
-										onClick={() => this.changeExamMonthData(3)}
-									>
-										March
-									</MenuItem>
-									<MenuItem
-										onClick={() => this.changeExamMonthData(4)}
-									>
-										April
-									</MenuItem>
-									<MenuItem
-										onClick={() => this.changeExamMonthData(5)}
-									>
-										May
-									</MenuItem>
-									<MenuItem
-										onClick={() => this.changeExamMonthData(6)}
-									>
-										June
-									</MenuItem>
-									<MenuItem
-										onClick={() => this.changeExamMonthData(7)}
-									>
-										July
-									</MenuItem>
-									<MenuItem
-										onClick={() => this.changeExamMonthData(8)}
-									>
-										Auguest
-									</MenuItem>
-									<MenuItem
-										onClick={() => this.changeExamMonthData(9)}
-									>
-										September
-									</MenuItem>
-									<MenuItem
-										onClick={() => this.changeExamMonthData(10)}
-									>
-										October
-									</MenuItem>
-									<MenuItem
-										onClick={() => this.changeExamMonthData(11)}
-									>
-										November
-									</MenuItem>
-									<MenuItem
-										onClick={() => this.changeExamMonthData(12)}
-									>
-										December
-									</MenuItem>
+									{monthExamMenu}
 								</Menu>
 							</div>
 							<Divider />
@@ -400,8 +344,10 @@ class AdminDashboard extends React.Component {
 										{this.state.latestExaminers.map((data) => (
 											<TableRow key={data._id}>
 												<TableCell component='th' scope='row'>
-													{this.capitalizeName(data.firstName)}{' '}
-													{this.capitalizeName(data.lastName)}
+													{factories.capitalizeName(
+														data.firstName
+													)}{' '}
+													{factories.capitalizeName(data.lastName)}
 												</TableCell>
 												<TableCell align='right'>
 													<AddCircleOutlineOutlined />
@@ -411,7 +357,7 @@ class AdminDashboard extends React.Component {
 										))}
 									</TableBody>
 								</Table>
-								<div className='py-1'>
+								<div className='py-1 d-flex justify-content-center'>
 									<Pagination
 										count={this.state.latestExaminersPage.pageCount}
 										showFirstButton

@@ -23,4 +23,34 @@ let updateExaminerCount = (
 	return examinerCount;
 };
 
-export default { formatDate, formatTime, updateExaminerCount };
+let monthMenu = [
+	'January',
+	'Feburary',
+	'March',
+	'April',
+	'May',
+	'June',
+	'July',
+	'August',
+	'September',
+	'October',
+	'November',
+	'December',
+];
+
+let capitalizeName = (name) => {
+	return name
+		.split(' ')
+		.map(
+			(data) => data.slice(0, 1).toUpperCase() + data.slice(1, data.length)
+		)
+		.join(' ');
+};
+
+export default {
+	formatDate,
+	formatTime,
+	updateExaminerCount,
+	monthMenu,
+	capitalizeName,
+};
