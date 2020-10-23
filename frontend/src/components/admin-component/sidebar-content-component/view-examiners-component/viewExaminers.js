@@ -26,15 +26,17 @@ class ViewExaminer extends React.Component {
 	}
 
 	componentDidMount() {
-		this.adminService.getAllExaminer().then((res) => {
-			this.setState({
-				examinerCount: {
-					approved: res.data.approved,
-					pending: res.data.pending,
-					declined: res.data.declined,
-				},
+		this.adminService
+			.getAllExaminer({ type: 'examinerCount' })
+			.then((res) => {
+				this.setState({
+					examinerCount: {
+						approved: res.data.approved,
+						pending: res.data.pending,
+						declined: res.data.declined,
+					},
+				});
 			});
-		});
 	}
 
 	handleModal = (status) => {

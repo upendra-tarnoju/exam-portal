@@ -3,17 +3,24 @@ import {
 	Button,
 	ButtonBase,
 	Divider,
-	Grid,
 	Paper,
 	Menu,
 	MenuItem,
 	Fade,
+	Table,
+	TableContainer,
+	TableCell,
+	TableHead,
+	TableRow,
+	TableBody,
 } from '@material-ui/core';
 import Chart from 'react-apexcharts';
 import moment from 'moment';
+import { AddCircleOutlineOutlined, DeleteOutline } from '@material-ui/icons';
 
 import AdminService from '../../../../services/adminApi';
 import styles from './adminDashboard.module.css';
+import { Pagination } from '@material-ui/lab';
 
 class AdminDashboard extends React.Component {
 	constructor() {
@@ -31,6 +38,8 @@ class AdminDashboard extends React.Component {
 			},
 			monthMenu: { anchorEl: null, setAnchorEl: null },
 			examinerPieChart: { series: [], options: { labels: [] } },
+			latestExaminers: [],
+			latestExaminersPage: { pageIndex: 0, pageSize: 2, pageCount: 0 },
 		};
 		this.adminService = new AdminService();
 	}
@@ -74,6 +83,47 @@ class AdminDashboard extends React.Component {
 			});
 	};
 
+	capitalizeName(name) {
+		return name.slice(0, 1).toUpperCase() + name.slice(1, name.length);
+	}
+
+	viewLatestExaminer(pageIndex, pageSize) {
+		this.adminService
+			.getAllExaminer({
+				type: 'latestExaminer',
+				pageIndex: pageIndex,
+				pageSize: pageSize,
+			})
+			.then((response) => {
+				this.setState((prevState) => ({
+					latestExaminers: response.data.examiners,
+					latestExaminersPage: {
+						...prevState.latestExaminersPage,
+						pageCount: Math.ceil(
+							response.data.count /
+								this.state.latestExaminersPage.pageSize
+						),
+					},
+				}));
+			});
+	}
+
+	handlePageChange = (event, value) => {
+		this.setState(
+			{
+				latestExaminersPage: {
+					pageIndex: value - 1,
+					pageSize: this.state.latestExaminersPage.pageSize,
+				},
+			},
+			() =>
+				this.viewLatestExaminer(
+					this.state.latestExaminersPage.pageIndex,
+					this.state.latestExaminersPage.pageSize
+				)
+		);
+	};
+
 	changeExamMonthData = (month) => {
 		let minDate = new Date();
 		minDate.setDate(1);
@@ -83,6 +133,7 @@ class AdminDashboard extends React.Component {
 	};
 
 	componentDidMount() {
+		let { latestExaminersPage } = this.state;
 		this.adminService.getDashboardCardDetails().then((response) => {
 			let data = response.data;
 			this.setState({
@@ -98,20 +149,27 @@ class AdminDashboard extends React.Component {
 		let maxDate = new Date(minDate.getFullYear(), minDate.getMonth() + 1, 0);
 		this.viewExamMonthData(minDate, maxDate);
 
-		this.adminService.getAllExaminer().then((res) => {
-			this.setState({
-				examinerPieChart: {
-					series: Object.values(res.data),
-					options: {
-						labels: Object.keys(res.data).map(
-							(data) =>
-								data.slice(0, 1).toUpperCase() +
-								data.slice(1, data.length)
-						),
+		this.adminService
+			.getAllExaminer({ type: 'examinerCount' })
+			.then((res) => {
+				this.setState({
+					examinerPieChart: {
+						series: Object.values(res.data),
+						options: {
+							labels: Object.keys(res.data).map(
+								(data) =>
+									data.slice(0, 1).toUpperCase() +
+									data.slice(1, data.length)
+							),
+						},
 					},
-				},
+				});
 			});
-		});
+
+		this.viewLatestExaminer(
+			latestExaminersPage.pageIndex,
+			latestExaminersPage.pageSize
+		);
 	}
 
 	render() {
@@ -122,10 +180,10 @@ class AdminDashboard extends React.Component {
 			totalEarning,
 		} = this.state;
 		return (
-			<div style={{ flexGrow: 1 }}>
-				<Grid container spacing={3} className='px-5 py-4'>
-					<Grid item xs={3}>
-						<Paper className='py-3 px-5'>
+			<div className='container'>
+				<div className='row pt-5 pb-3'>
+					<div className='col-md-3'>
+						<Paper className='p-3'>
 							<div className='d-flex justify-content-between'>
 								<div className='text-center align-self-center'>
 									<p
@@ -146,9 +204,9 @@ class AdminDashboard extends React.Component {
 								</ButtonBase>
 							</div>
 						</Paper>
-					</Grid>
-					<Grid item xs>
-						<Paper className='py-3 px-5'>
+					</div>
+					<div className='col-md-3'>
+						<Paper className='p-3'>
 							<div className='d-flex justify-content-between'>
 								<ButtonBase>
 									<i
@@ -169,9 +227,9 @@ class AdminDashboard extends React.Component {
 								</div>
 							</div>
 						</Paper>
-					</Grid>
-					<Grid item xs>
-						<Paper className='py-3 px-5'>
+					</div>
+					<div className='col-md-3'>
+						<Paper className='p-3'>
 							<div className='d-flex justify-content-between'>
 								<div className='text-center align-self-center'>
 									<p
@@ -192,9 +250,9 @@ class AdminDashboard extends React.Component {
 								</ButtonBase>
 							</div>
 						</Paper>
-					</Grid>
-					<Grid item xs>
-						<Paper className='py-3 px-5'>
+					</div>
+					<div className='col-md-3'>
+						<Paper className='p-3'>
 							<div className='d-flex justify-content-between'>
 								<ButtonBase>
 									<i
@@ -215,11 +273,10 @@ class AdminDashboard extends React.Component {
 								</div>
 							</div>
 						</Paper>
-					</Grid>
-				</Grid>
-
-				<Grid container spacing={3} className='px-5'>
-					<Grid item xs={7}>
+					</div>
+				</div>
+				<div className='row'>
+					<div className='col-md-7'>
 						<Paper>
 							<div className='d-flex justify-content-between px-3 py-2'>
 								<span
@@ -313,9 +370,9 @@ class AdminDashboard extends React.Component {
 								type='bar'
 							/>
 						</Paper>
-					</Grid>
-					<Grid item xs={5}>
-						<Paper>
+					</div>
+					<div className='col-md-5'>
+						<Paper className='mb-3'>
 							<div className='px-3 py-2'>
 								<span className={styles.examinerChartHeading}>
 									Examiner
@@ -326,11 +383,47 @@ class AdminDashboard extends React.Component {
 								options={this.state.examinerPieChart.options}
 								series={this.state.examinerPieChart.series}
 								type='pie'
-								height={280}
+								height={220}
 							/>
 						</Paper>
-					</Grid>
-				</Grid>
+						<Paper>
+							<div className='px-3 py-1'>Latest pending examiner</div>
+							<TableContainer component={Paper}>
+								<Table aria-label='simple-table' size='small'>
+									<TableHead>
+										<TableRow>
+											<TableCell>Name</TableCell>
+											<TableCell align='right'>Actions</TableCell>
+										</TableRow>
+									</TableHead>
+									<TableBody>
+										{this.state.latestExaminers.map((data) => (
+											<TableRow key={data._id}>
+												<TableCell component='th' scope='row'>
+													{this.capitalizeName(data.firstName)}{' '}
+													{this.capitalizeName(data.lastName)}
+												</TableCell>
+												<TableCell align='right'>
+													<AddCircleOutlineOutlined />
+													<DeleteOutline />
+												</TableCell>
+											</TableRow>
+										))}
+									</TableBody>
+								</Table>
+								<div className='py-1'>
+									<Pagination
+										count={this.state.latestExaminersPage.pageCount}
+										showFirstButton
+										showLastButton
+										onChange={this.handlePageChange}
+									/>
+								</div>
+							</TableContainer>
+						</Paper>
+						<Divider />
+					</div>
+				</div>
 			</div>
 		);
 	}

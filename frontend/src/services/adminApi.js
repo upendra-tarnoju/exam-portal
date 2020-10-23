@@ -9,14 +9,12 @@ class AdminService {
 		this.userService = new UserService();
 	}
 
-	getAllExaminer = () => {
+	getAllExaminer = (params) => {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'get',
 			url: `${process.env.REACT_APP_BASE_URL}/${this.adminUrl}`,
-			params: {
-				type: 'examinerCount',
-			},
+			params: params,
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,
