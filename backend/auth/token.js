@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 
 const createToken = (userData) => {
-	console.log(userData);
 	let privateKey = 'gRG9lIiwiaWF0IjoxNTE2MjM5';
 	let object = {
 		userId: userData._id,
