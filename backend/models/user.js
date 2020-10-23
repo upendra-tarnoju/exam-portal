@@ -63,6 +63,21 @@ class Users {
 	deleteByUserDataId = (id) => {
 		return this.userModel.findOneAndRemove({ userDataId: id });
 	};
+
+	findLatest24HoursExaminers() {
+		return this.userModel
+			.find({
+				$and: [
+					{ accountType: 'examiner' },
+					{
+						createdAt: {
+							$gt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+						},
+					},
+				],
+			})
+			.select({ firstName: 1, lastName: 1 });
+	}
 }
 
 module.exports = new Users();

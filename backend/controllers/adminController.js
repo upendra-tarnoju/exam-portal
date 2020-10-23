@@ -6,7 +6,16 @@ const admin = {
 		let pageIndex = parseInt(req.query.pageIndex);
 		let pageSize = parseInt(req.query.pageSize);
 		let msg = '';
-		if (queryType !== 'examinerCount') {
+		if (queryType === 'examinerCount') {
+			let examinerCount = await adminHandler.getExaminerCount();
+			res.status(200).send(examinerCount);
+		} else if (queryType === 'latestExaminer') {
+			let latestPendingExaminers = await adminHandler.getLatestPendingExaminers(
+				pageIndex,
+				pageSize
+			);
+			res.status(200).send(latestPendingExaminers);
+		} else {
 			let examiner = await adminHandler.getExaminerDetails(
 				queryType,
 				pageIndex,
@@ -14,9 +23,6 @@ const admin = {
 			);
 			if (examiner.length === 0) msg = `No ${queryType} examiner found`;
 			res.status(200).send({ examiner, msg: msg });
-		} else {
-			let examinerCount = await adminHandler.getExaminerCount();
-			res.status(200).send(examinerCount);
 		}
 	},
 
