@@ -27,8 +27,8 @@ const admin = {
 	},
 
 	saveExaminerDetails: async (req, res) => {
-		let examinerId = req.query.id;
-		let accountStatus = `${req.query.type}d`;
+		let examinerId = req.body.id;
+		let accountStatus = `${req.body.type}d`;
 		let data = await adminHandler.approveOrDeclineExaminer(
 			examinerId,
 			accountStatus

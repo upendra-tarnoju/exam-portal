@@ -76,7 +76,7 @@ class Users {
 					},
 				],
 			})
-			.select({ firstName: 1, lastName: 1 });
+			.select({ firstName: 1, lastName: 1, userDataId: 1 });
 	}
 }
 
