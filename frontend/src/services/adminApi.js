@@ -44,7 +44,7 @@ class AdminService {
 		return axios({
 			method: 'patch',
 			url: `${process.env.REACT_APP_BASE_URL}/${this.adminUrl}`,
-			params: modalData,
+			data: modalData,
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,

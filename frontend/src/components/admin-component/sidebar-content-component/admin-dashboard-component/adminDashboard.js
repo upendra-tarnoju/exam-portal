@@ -13,7 +13,9 @@ import {
 	TableHead,
 	TableRow,
 	TableBody,
+	Snackbar,
 } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert';
 import Chart from 'react-apexcharts';
 import moment from 'moment';
 import { AddCircleOutlineOutlined, DeleteOutline } from '@material-ui/icons';
@@ -22,6 +24,7 @@ import AdminService from '../../../../services/adminApi';
 import styles from './adminDashboard.module.css';
 import { Pagination } from '@material-ui/lab';
 import factories from '../../../../factories/factories';
+import ApproveDeclineModal from '../../../../modals/approveDeclineModal';
 
 class AdminDashboard extends React.Component {
 	constructor() {
@@ -41,6 +44,8 @@ class AdminDashboard extends React.Component {
 			examinerPieChart: { series: [], options: { labels: [] } },
 			latestExaminers: [],
 			latestExaminersPage: { pageIndex: 0, pageSize: 2, pageCount: 0 },
+			approveDeclineModal: { show: false, data: '' },
+			snackBar: { show: false, msg: '' },
 		};
 		this.adminService = new AdminService();
 	}
@@ -119,6 +124,15 @@ class AdminDashboard extends React.Component {
 		);
 	};
 
+	handleModal = (status) => {
+		this.setState({
+			approveDeclineModal: {
+				show: status,
+				data: '',
+			},
+		});
+	};
+
 	changeExamMonthData = (month) => {
 		let minDate = new Date();
 		minDate.setDate(1);
@@ -166,6 +180,29 @@ class AdminDashboard extends React.Component {
 			latestExaminersPage.pageSize
 		);
 	}
+
+	approveOrDeclineExaminers = (firstName, lastName, modalType, id) => {
+		this.setState({
+			approveDeclineModal: {
+				show: true,
+				data: {
+					id: id,
+					type: modalType,
+					success: false,
+					fullName: `${firstName} ${lastName}`,
+				},
+			},
+		});
+	};
+
+	handleSnackBar = (status, data) => {
+		this.setState({
+			latestExaminers: this.state.latestExaminers.filter(
+				(data) => data._id !== data._id
+			),
+			snackBar: { show: status, msg: data.msg },
+		});
+	};
 
 	render() {
 		let {
@@ -350,8 +387,32 @@ class AdminDashboard extends React.Component {
 													{factories.capitalizeName(data.lastName)}
 												</TableCell>
 												<TableCell align='right'>
-													<AddCircleOutlineOutlined />
-													<DeleteOutline />
+													<span
+														className='cursor-pointer'
+														onClick={() => {
+															this.approveOrDeclineExaminers(
+																data.firstName,
+																data.lastName,
+																'approve',
+																data.userDataId
+															);
+														}}
+													>
+														<AddCircleOutlineOutlined />
+													</span>
+													<span
+														className='cursor-pointer'
+														onClick={() => {
+															this.approveOrDeclineExaminers(
+																data.firstName,
+																data.lastName,
+																'decline',
+																data.userDataId
+															);
+														}}
+													>
+														<DeleteOutline />
+													</span>
 												</TableCell>
 											</TableRow>
 										))}
@@ -368,6 +429,25 @@ class AdminDashboard extends React.Component {
 							</TableContainer>
 						</Paper>
 						<Divider />
+						<ApproveDeclineModal
+							show={this.state.approveDeclineModal.show}
+							closeModal={this.handleModal}
+							modalData={this.state.approveDeclineModal.data}
+							handleSnackBar={this.handleSnackBar}
+						/>
+						<Snackbar
+							open={this.state.snackBar.show}
+							onClose={() => this.handleSnackBar(false, '')}
+						>
+							<MuiAlert
+								elevation={6}
+								variant='filled'
+								onClose={() => this.handleSnackBar(false, '')}
+								severity='success'
+							>
+								{this.state.snackBar.msg}
+							</MuiAlert>
+						</Snackbar>
 					</div>
 				</div>
 			</div>
