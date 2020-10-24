@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import ExamService from '../../../../../services/examApi';
-import * as ActionTypes from '../../../../../action';
 import ExamPeriodForm from '../../../../../forms/examPeriodForm';
 
 class ExamPeriod extends Component {
@@ -16,11 +15,6 @@ class ExamPeriod extends Component {
 			.saveExamDetails(this.props.fieldDetails, values)
 			.then((response) => {
 				let msg = 'Exam added successfully';
-				let exams = this.props.examsList;
-				exams.push(response.data);
-				this.props.setExamList(exams);
-				this.props.handleInputs('nextInputs', false);
-				this.props.handleInputs('createExam', false);
 				this.props.handleSnackBar(true, msg);
 			});
 	};
@@ -42,15 +36,4 @@ const mapStateToProps = (state) => {
 	};
 };
 
-const mapDispatchToProps = (dispatch) => {
-	return {
-		setExamList: (examList) => {
-			dispatch({
-				type: ActionTypes.SET_EXAM_LIST,
-				examList: examList,
-			});
-		},
-	};
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ExamPeriod);
+export default connect(mapStateToProps)(ExamPeriod);

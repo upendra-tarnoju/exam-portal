@@ -18,7 +18,6 @@ class Exam extends Component {
 		this.state = {
 			createExam: false,
 			nextInputs: false,
-			inputErrors: {},
 			pageIndex: 0,
 			pageSize: 5,
 			snackBar: { show: false, msg: '' },
@@ -27,7 +26,14 @@ class Exam extends Component {
 	}
 
 	handleSnackBar = (status, msg) => {
-		this.setState({ snackBar: { show: status, msg: msg } });
+		this.setState(
+			{
+				createExam: false,
+				nextInputs: false,
+				snackBar: { show: status, msg: msg },
+			},
+			() => this.viewExams()
+		);
 	};
 
 	handleStates = (key, value) => {
@@ -68,7 +74,6 @@ class Exam extends Component {
 					exam={exam}
 					index={index}
 					key={exam._id}
-					errors={this.state.inputErrors}
 					handleSnackBar={this.handleSnackBar}
 					pageIndex={pageIndex}
 					pageSize={pageSize}
@@ -184,7 +189,6 @@ const mapStateToProps = (state) => {
 	return {
 		selectedExamIndex: state.examReducer.selectedExamIndex,
 		examsList: state.examReducer.examsList,
-		inputs: state.examReducer.editExamInputs,
 	};
 };
 

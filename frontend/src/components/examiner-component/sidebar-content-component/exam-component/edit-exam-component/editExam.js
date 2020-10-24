@@ -26,7 +26,7 @@ class EditExam extends React.Component {
 			current: { value: '', msg: '' },
 			new: { value: '', msg: '' },
 			reTypeNew: { value: '', msg: '' },
-			editExam: false,
+			editExam: true,
 		};
 		this.examService = new ExamService();
 	}

@@ -6,7 +6,6 @@ import { Link, withRouter } from 'react-router-dom';
 import MuiAlert from '@material-ui/lab/Alert';
 import { Snackbar } from '@material-ui/core';
 
-import * as ActionTypes from '../../../../action';
 import ExamService from '../../../../services/examApi';
 import DeleteModal from '../../../../modals/deleteModal';
 import factories from '../../../../factories/factories';
@@ -33,10 +32,6 @@ class ExamTable extends Component {
 	deleteExam = () => {
 		let examId = this.props.examsList[this.state.deleteModal.id]._id;
 		this.examService.deleteExam(examId).then((response) => {
-			let updatedExams = this.props.examsList.filter(
-				(exam) => exam._id !== response.data._id
-			);
-			this.props.setExamList(updatedExams);
 			let msg = 'Exam deleted successfully';
 			this.props.handleSnackBar(true, msg);
 		});
@@ -157,17 +152,4 @@ const mapStateToProps = (state) => {
 	};
 };
 
-const mapDispatchToProps = (dispatch) => {
-	return {
-		setExamList: (examsList) => {
-			dispatch({
-				type: ActionTypes.SET_EXAM_LIST,
-				examList: examsList,
-			});
-		},
-	};
-};
-
-export default withRouter(
-	connect(mapStateToProps, mapDispatchToProps)(ExamTable)
-);
+export default withRouter(connect(mapStateToProps)(ExamTable));
