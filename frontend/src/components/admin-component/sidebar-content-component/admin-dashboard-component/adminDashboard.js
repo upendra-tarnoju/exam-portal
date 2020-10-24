@@ -198,7 +198,7 @@ class AdminDashboard extends React.Component {
 	handleSnackBar = (status, data) => {
 		this.setState({
 			latestExaminers: this.state.latestExaminers.filter(
-				(data) => data._id !== data._id
+				(examiner) => examiner.examinerData._id !== data._id
 			),
 			snackBar: { show: status, msg: data.msg },
 		});
@@ -394,7 +394,7 @@ class AdminDashboard extends React.Component {
 																data.firstName,
 																data.lastName,
 																'approve',
-																data.userDataId
+																data.examinerData._id
 															);
 														}}
 													>

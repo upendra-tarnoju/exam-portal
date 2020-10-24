@@ -65,18 +65,40 @@ class Users {
 	};
 
 	findLatest24HoursExaminers() {
-		return this.userModel
-			.find({
-				$and: [
-					{ accountType: 'examiner' },
-					{
-						createdAt: {
-							$gt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+		return this.userModel.aggregate([
+			{
+				$match: {
+					$and: [
+						{ accountType: 'examiner' },
+						{
+							createdAt: {
+								$gt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+							},
 						},
-					},
-				],
-			})
-			.select({ firstName: 1, lastName: 1, userDataId: 1 });
+					],
+				},
+			},
+			{
+				$lookup: {
+					from: 'examiners',
+					let: { studentId: '$userDataId' },
+					pipeline: [
+						{
+							$match: {
+								$expr: {
+									$eq: ['$_id', '$$studentId'],
+								},
+								accountStatus: 'pending',
+							},
+						},
+						{ $project: { _id: 1 } },
+					],
+					as: 'examinerData',
+				},
+			},
+			{ $unwind: '$examinerData' },
+			{ $project: { firstName: 1, lastName: 1, 'examinerData._id': 1 } },
+		]);
 	}
 }
 
