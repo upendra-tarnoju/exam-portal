@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
+import { Button } from '@material-ui/core';
 
 import styles from '../../exam.module.css';
 
@@ -96,9 +97,12 @@ const ExamPassword = ({
 										/>
 									</div>
 									<div className='d-flex justify-content-end'>
-										<button
+										<Button
 											type='button'
-											className='btn btn-primary'
+											size='small'
+											variant='contained'
+											color='primary'
+											className='align-self-center'
 											onClick={() =>
 												updateExamDetails({
 													password: {
@@ -110,7 +114,7 @@ const ExamPassword = ({
 											}
 										>
 											Update
-										</button>
+										</Button>
 									</div>
 								</form>
 							</Collapse>

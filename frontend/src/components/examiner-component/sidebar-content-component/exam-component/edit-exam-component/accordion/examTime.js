@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
+import { Button } from '@material-ui/core';
 import Moment from 'react-moment';
 
 import styles from '../../exam.module.css';
@@ -60,10 +61,13 @@ const ExamTime = ({
 											<span>{state.examDate.msg}</span>
 										) : null}
 									</div>
-									<div className='col-md-2'>
-										<button
+									<div className='col-md-2 d-flex'>
+										<Button
 											type='button'
-											className='btn btn-primary'
+											size='small'
+											variant='contained'
+											color='primary'
+											className='align-self-center'
 											onClick={
 												state.totalMarks.new != null
 													? () =>
@@ -74,7 +78,7 @@ const ExamTime = ({
 											}
 										>
 											Update
-										</button>
+										</Button>
 									</div>
 								</div>
 							</Collapse>
@@ -113,10 +117,13 @@ const ExamTime = ({
 											<span>{state.startTime.msg}</span>
 										) : null}
 									</div>
-									<div className='col-md-2'>
-										<button
+									<div className='col-md-2 d-flex'>
+										<Button
 											type='button'
-											className='btn btn-primary'
+											size='small'
+											variant='contained'
+											color='primary'
+											className='align-self-center'
 											onClick={
 												state.passingMarks.new != null
 													? () =>
@@ -127,7 +134,7 @@ const ExamTime = ({
 											}
 										>
 											Update
-										</button>
+										</Button>
 									</div>
 								</div>
 							</Collapse>
@@ -166,10 +173,13 @@ const ExamTime = ({
 											<span>{state.endTime.msg}</span>
 										) : null}
 									</div>
-									<div className='col-md-2'>
-										<button
+									<div className='col-md-2 d-flex'>
+										<Button
 											type='button'
-											className='btn btn-primary'
+											size='small'
+											variant='contained'
+											color='primary'
+											className='align-self-center'
 											onClick={
 												state.endTime.new != null
 													? () =>
@@ -180,7 +190,7 @@ const ExamTime = ({
 											}
 										>
 											Update
-										</button>
+										</Button>
 									</div>
 								</div>
 							</Collapse>

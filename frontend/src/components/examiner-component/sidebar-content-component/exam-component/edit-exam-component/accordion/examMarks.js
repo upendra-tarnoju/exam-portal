@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
+import { Button } from '@material-ui/core';
 
 import styles from '../../exam.module.css';
 
@@ -59,10 +60,13 @@ const ExamMarks = ({
 											</span>
 										) : null}
 									</div>
-									<div className='col-md-2'>
-										<button
+									<div className='col-md-2 d-flex'>
+										<Button
 											type='button'
-											className='btn btn-primary'
+											size='small'
+											variant='contained'
+											color='primary'
+											className='align-self-center'
 											onClick={
 												state.totalMarks.new != null
 													? () =>
@@ -74,7 +78,7 @@ const ExamMarks = ({
 											}
 										>
 											Update
-										</button>
+										</Button>
 									</div>
 								</div>
 							</Collapse>
@@ -115,10 +119,13 @@ const ExamMarks = ({
 											</span>
 										) : null}
 									</div>
-									<div className='col-md-2'>
-										<button
+									<div className='col-md-2 d-flex'>
+										<Button
 											type='button'
-											className='btn btn-primary'
+											size='small'
+											variant='contained'
+											color='primary'
+											className='align-self-center'
 											onClick={
 												state.passingMarks.new != null
 													? () =>
@@ -130,7 +137,7 @@ const ExamMarks = ({
 											}
 										>
 											Update
-										</button>
+										</Button>
 									</div>
 								</div>
 							</Collapse>
