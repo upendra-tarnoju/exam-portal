@@ -230,24 +230,26 @@ async function createExam() {
 				})
 				.skip(number)
 				.limit(1);
-			await exam.create({
-				subject: subjects[number].name,
-				course: course._id,
-				examCode: `${subjects[number].name.slice(
-					0,
-					2
-				)}${faker.random.number({
-					min: 101,
-					max: 999,
-				})}`,
-				password: examPassword,
-				totalMarks: 100,
-				passingMarks: 40,
-				examinerId: approvedExaminers[i].userId,
-				examDate: examDate,
-				startTime: startTime,
-				endTime: endTime,
-			});
+			if (course.length !== 0) {
+				await exam.create({
+					subject: subjects[number].name,
+					course: course[0]._id,
+					examCode: `${subjects[number].name.slice(
+						0,
+						2
+					)}${faker.random.number({
+						min: 101,
+						max: 999,
+					})}`,
+					password: examPassword,
+					totalMarks: 100,
+					passingMarks: 40,
+					examinerId: approvedExaminers[i].userId,
+					examDate: examDate,
+					startTime: startTime,
+					endTime: endTime,
+				});
+			}
 		}
 	}
 	console.log('Created exams');
@@ -317,12 +319,12 @@ async function createStudent() {
 }
 
 async function createSampleData() {
-	await createAdmin();
-	await createExaminers();
-	await createCourses();
+	// await createAdmin();
+	// await createExaminers();
+	// await createCourses();
 	await createExam();
-	await createQuestions();
-	await createStudent();
+	// await createQuestions();
+	// await createStudent();
 	mongoose.connection.close();
 }
 
