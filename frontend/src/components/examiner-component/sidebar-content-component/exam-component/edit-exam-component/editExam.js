@@ -22,6 +22,7 @@ class EditExam extends React.Component {
 			examDate: { prev: '', new: '', collapse: false, msg: '' },
 			startTime: { prev: '', new: '', collapse: false, msg: '' },
 			endTime: { prev: '', new: '', collapse: false, msg: '' },
+			courses: { prev: '', new: '', collapse: false, msg: '' },
 			password: { collapse: false, msg: '' },
 			current: { value: '', msg: '' },
 			new: { value: '', msg: '' },
@@ -84,16 +85,32 @@ class EditExam extends React.Component {
 			let startTime = moment(exam.startTime).format('HH:MM');
 			let endTime = moment(exam.endTime).format('HH:MM');
 			let boolStatus = this.setEditExamStatus(examDate);
-			this.setState({
-				examCode: { prev: exam.examCode, new: exam.examCode },
-				subject: { prev: exam.subject, new: exam.subject },
+			this.setState((prevState) => ({
+				courses: {
+					...prevState.courses,
+					prev: exam.courses,
+					new: exam.courses,
+				},
+				examCode: {
+					...prevState.examCode,
+					prev: exam.examCode,
+					new: exam.examCode,
+				},
+				subject: {
+					...prevState.subject,
+					prev: exam.subject,
+					new: exam.subject,
+				},
 				totalMarks: { prev: exam.totalMarks, new: exam.totalMarks },
-				passingMarks: { prev: exam.passingMarks, new: exam.passingMarks },
+				passingMarks: {
+					prev: exam.passingMarks,
+					new: exam.passingMarks,
+				},
 				examDate: { prev: examDate, new: examDate },
 				startTime: { prev: startTime, new: startTime },
 				endTime: { prev: endTime, new: endTime },
 				editExam: boolStatus,
-			});
+			}));
 		});
 	}
 
@@ -182,7 +199,7 @@ class EditExam extends React.Component {
 				) : null}
 
 				<ExamDetails
-					state={this.state}
+					fields={this.state}
 					handleExamChange={this.handleExamChange}
 					handleCollapseChange={this.handleCollapseChange}
 					updateExamDetails={this.updateExamDetails}
