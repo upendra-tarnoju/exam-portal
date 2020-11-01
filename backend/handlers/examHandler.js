@@ -57,10 +57,8 @@ const exams = {
 	},
 
 	getParticularExam: async (examId) => {
-		let examDetails = await exam
-			.getById(examId)
-			.select({ password: 0, createdAt: 0 });
-		return examDetails;
+		let examDetails = await exam.getById(examId);	
+		return examDetails[0];
 	},
 
 	updateExam: async (userId, examId, examDetails) => {
