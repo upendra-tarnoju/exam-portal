@@ -13,9 +13,10 @@ const exam = {
 	getExamDetails: async (req, res) => {
 		let userId = req.user._id;
 		let pageIndex = req.query.pageIndex;
+		let sortedBy = req.query.sort;
 		let totalExams = await examHandler.getExamsLength(userId);
 		let pageCount = Math.ceil(totalExams / 5);
-		examHandler.getAllExams(userId, pageIndex).then((response) => {
+		examHandler.getAllExams(userId, pageIndex, sortedBy).then((response) => {
 			res.status(200).send({ exams: response, pageCount: pageCount });
 		});
 	},

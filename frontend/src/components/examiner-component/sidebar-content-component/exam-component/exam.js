@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Table from 'react-bootstrap/Table';
-import { Button, Snackbar } from '@material-ui/core';
+import { Button, Menu, MenuItem, Snackbar } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 import Pagination from '@material-ui/lab/Pagination';
 
@@ -11,6 +11,7 @@ import ExamPeriod from './exam-inputs-component/examPeriod';
 import style from './exam.module.css';
 import ExamTable from './examTable';
 import * as ActionTypes from '../../../../action';
+import SortExamMenu from './menuItems';
 
 class Exam extends Component {
 	constructor(props) {
@@ -21,6 +22,7 @@ class Exam extends Component {
 			pageIndex: 0,
 			pageSize: 5,
 			snackBar: { show: false, msg: '' },
+			sortedBy: 'createdAt',
 		};
 		this.examService = new ExamService();
 	}
@@ -45,11 +47,17 @@ class Exam extends Component {
 		});
 	};
 
+	handleSortOptions = (option) => {
+		console.log(option);
+		this.setState({ sortedBy: option }, () => this.viewExams());
+	};
+
 	viewExams() {
 		this.examService
 			.getAllExams({
 				pageIndex: this.state.pageIndex,
 				pageSize: this.state.pageSize,
+				sort: this.state.sortedBy,
 			})
 			.then((res) => {
 				this.setState({ pageCount: res.data.pageCount }, () =>
@@ -82,7 +90,7 @@ class Exam extends Component {
 		});
 		return (
 			<div className='p-4'>
-				<div className='float-right'>
+				<div className='d-flex justify-content-end'>
 					{this.state.createExam ? (
 						<Button
 							type='button'
@@ -93,15 +101,18 @@ class Exam extends Component {
 							Cancel
 						</Button>
 					) : (
-						<Button
-							type='submit'
-							variant='contained'
-							color='primary'
-							onClick={() => this.handleStates('createExam', true)}
-						>
-							Create
-						</Button>
+						<div>
+							<Button
+								type='submit'
+								variant='contained'
+								color='primary'
+								onClick={() => this.handleStates('createExam', true)}
+							>
+								Create
+							</Button>
+						</div>
 					)}
+					<SortExamMenu sortExams={this.handleSortOptions} />
 				</div>
 				<Snackbar
 					open={this.state.snackBar.show}

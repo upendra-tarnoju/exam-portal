@@ -39,13 +39,13 @@ const exams = {
 		return exam.create(examObject);
 	},
 
-	getAllExams: async (userId, pageIndex) => {
+	getAllExams: async (userId, pageIndex, sortedBy) => {
 		let pageSize = 5;
 		pageIndex = pageIndex * pageSize;
 		let allExams = await exam
 			.get({ examinerId: userId })
 			.select({ password: 0 })
-			.sort({ examDate: -1 })
+			.sort({ [sortedBy]: -1 })
 			.skip(pageIndex)
 			.limit(pageSize);
 		return allExams;
