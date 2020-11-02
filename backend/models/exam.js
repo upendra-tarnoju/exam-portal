@@ -1,4 +1,5 @@
 const { exam } = require('../schemas');
+const mongoose = require('mongoose');
 
 class Exams {
 	constructor() {
@@ -25,7 +26,31 @@ class Exams {
 	};
 
 	getById = (id) => {
-		return this.examModel.findById(id);
+		return this.examModel.aggregate([
+			{ $match: { _id: new mongoose.Types.ObjectId(id) } },
+			{
+				$lookup: {
+					from: 'courses',
+					let: { courseId: { $toObjectId: '$course' } },
+					pipeline: [
+						{ $match: { $expr: { $eq: ['$$courseId', '$_id'] } } },
+					],
+					as: 'courses',
+				},
+			},
+			{ $unwind: '$courses' },
+			{
+				$project: {
+					password: 0,
+					createdAt: 0,
+					course: 0,
+					'courses.modifiedAt': 0,
+					'courses.createdAt': 0,
+					'courses.__v': 0,
+					'courses.examinerId': 0,
+				},
+			},
+		]);
 	};
 
 	findExamStudents(examinerId) {
