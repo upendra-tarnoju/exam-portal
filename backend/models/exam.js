@@ -46,6 +46,8 @@ class Exams {
 					course: 0,
 					'courses.modifiedAt': 0,
 					'courses.createdAt': 0,
+					'courses.__v': 0,
+					'courses.examinerId': 0,
 				},
 			},
 		]);

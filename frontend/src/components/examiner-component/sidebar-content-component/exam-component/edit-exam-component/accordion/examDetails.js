@@ -1,11 +1,11 @@
 import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
-import { Button } from '@material-ui/core';
-import { Typeahead } from 'react-bootstrap-typeahead';
+import { Button, TextField } from '@material-ui/core';
 
 import styles from '../../exam.module.css';
 import CourseService from '../../../../../../services/courseApi';
+import { Autocomplete } from '@material-ui/lab';
 
 class ExamDetails extends React.Component {
 	constructor() {
@@ -35,6 +35,17 @@ class ExamDetails extends React.Component {
 			option.description.toLowerCase().indexOf(text.toLowerCase()) !== -1 ||
 			option.name.toLowerCase().indexOf(text.toLowerCase()) !== -1
 		);
+	};
+
+	getSelectedItem = () => {
+		let selectedCourse = this.props.fields.courses.prev;
+
+		const item = this.state.courseList.find((opt) => {
+			if (opt.id === selectedCourse.id) {
+				return opt;
+			}
+		});
+		return item || {};
 	};
 
 	render() {
@@ -78,38 +89,28 @@ class ExamDetails extends React.Component {
 								<Collapse in={fields.courses.collapse}>
 									<div className='row'>
 										<div className='col-md-10'>
-											<Typeahead
-												id='typeahead'
-												filterBy={this.filterByCallback}
-												defaultSelected={[fields.courses.prev]}
-												selected={[fields.courses.prev]}
-												onChange={(selected) => {
-													if (selected.length !== 0) {
-														console.log(selected);
-														setFieldValue(
-															'course',
-															selected[0].id
-														);
+											{this.state.courseList.length !== 0 ? (
+												<Autocomplete
+													id='course-combo-box'
+													options={this.state.courseList}
+													getOptionLabel={(option) => option.name}
+													value={this.getSelectedItem()}
+													size='small'
+													renderInput={(params) => (
+														<TextField
+															{...params}
+															label='Course'
+															variant='outlined'
+														/>
+													)}
+													onChange={(event, newCourse) =>
+														this.props.handleCourseChange(
+															newCourse
+														)
 													}
-												}}
-												onBlur={(event) =>
-													setFieldTouched('course', true)
-												}
-												isInvalid={
-													touched.course && !!errors.course
-												}
-												options={this.state.courseList}
-												labelKey='name'
-												placeholder='Course name'
-												renderMenuItemChildren={(option) => (
-													<div>
-														<div id={option.id}>
-															{option.name} ({' '}
-															{option.description} )
-														</div>
-													</div>
-												)}
-											/>
+												/>
+											) : null}
+
 											{fields.courses.msg ? (
 												<span className='d-block invalid-feedback'>
 													{fields.courses.msg}
@@ -124,10 +125,10 @@ class ExamDetails extends React.Component {
 												color='primary'
 												className='align-self-center'
 												onClick={
-													fields.subject.new != null
+													fields.courses.new !== null
 														? () =>
 																this.props.updateExamDetails({
-																	subject: fields.subject.new,
+																	courses: fields.courses.new,
 																})
 														: null
 												}

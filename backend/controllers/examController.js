@@ -40,6 +40,8 @@ const exam = {
 	getParticularExam: async (req, res) => {
 		let examId = req.params.examId;
 		let exam = await examHandler.getParticularExam(examId);
+		exam.courses.id = exam.courses._id;
+		delete exam.courses._id;
 		res.status(200).send(exam);
 	},
 };

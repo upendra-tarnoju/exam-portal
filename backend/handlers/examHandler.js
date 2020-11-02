@@ -57,7 +57,7 @@ const exams = {
 	},
 
 	getParticularExam: async (examId) => {
-		let examDetails = await exam.getById(examId);	
+		let examDetails = await exam.getById(examId);
 		return examDetails[0];
 	},
 
@@ -119,7 +119,13 @@ const exams = {
 				};
 			} else
 				return { status: 400, data: { msg: 'Incorrect current password' } };
-		} else {
+		} else if (key === 'courses') {
+			updatedExam = await exam.update(examId, {
+				course: examDetails.courses.id,
+			});
+			return { status: 200, data: updatedExam };
+		}
+		{
 			updatedExam = await exam
 				.update(examId, examDetails)
 				.select({ [key]: 1 });

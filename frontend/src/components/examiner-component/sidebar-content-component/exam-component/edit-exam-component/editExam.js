@@ -54,6 +54,15 @@ class EditExam extends React.Component {
 		}
 	};
 
+	changeCourse = (newCourse) => {
+		this.setState((prevState) => ({
+			courses: {
+				...prevState.courses,
+				new: newCourse,
+			},
+		}));
+	};
+
 	handlePasswordChange = (event) => {
 		let key = event.target.name;
 		let value = event.target.value;
@@ -142,13 +151,23 @@ class EditExam extends React.Component {
 			this.examService
 				.updateExam(examId, data)
 				.then((response) => {
-					this.setState({
-						[key]: {
-							prev: response.data[key],
-							new: response.data[key],
-							collapse: false,
-						},
-					});
+					if (key === 'courses') {
+						this.setState((prevState) => ({
+							courses: {
+								...prevState.courses,
+								prev: prevState.courses.new,
+								collapse: false,
+							},
+						}));
+					} else {
+						this.setState({
+							[key]: {
+								prev: response.data[key],
+								new: response.data[key],
+								collapse: false,
+							},
+						});
+					}
 				})
 				.catch((error) => {
 					this.setState((prevState) => ({
@@ -197,13 +216,16 @@ class EditExam extends React.Component {
 						</Alert>
 					</div>
 				) : null}
+				{this.state.courses.prev !== '' ? (
+					<ExamDetails
+						fields={this.state}
+						handleExamChange={this.handleExamChange}
+						handleCollapseChange={this.handleCollapseChange}
+						updateExamDetails={this.updateExamDetails}
+						handleCourseChange={this.changeCourse}
+					/>
+				) : null}
 
-				<ExamDetails
-					fields={this.state}
-					handleExamChange={this.handleExamChange}
-					handleCollapseChange={this.handleCollapseChange}
-					updateExamDetails={this.updateExamDetails}
-				/>
 				<ExamMarks
 					state={this.state}
 					handleExamChange={this.handleExamChange}
