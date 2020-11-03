@@ -1,7 +1,8 @@
 import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
-import { Button, TextField } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
+import { Edit, Close, Update } from '@material-ui/icons';
 
 import styles from '../../exam.module.css';
 import CourseService from '../../../../../../services/courseApi';
@@ -38,14 +39,18 @@ class ExamDetails extends React.Component {
 	};
 
 	getSelectedItem = () => {
-		let selectedCourse = this.props.fields.courses.prev;
-
-		const item = this.state.courseList.find((opt) => {
+		let selectedCourse = this.props.fields.courses.new;
+		let item;
+		item = this.state.courseList.find((opt) => {
 			if (opt.id === selectedCourse.id) {
 				return opt;
 			}
 		});
-		return item || {};
+		return item || { name: '' };
+	};
+
+	handleSubmit = (field) => {
+		this.props.updateExamDetails({ [field]: this.props.fields[field].new });
 	};
 
 	render() {
@@ -76,66 +81,74 @@ class ExamDetails extends React.Component {
 										</p>
 									</div>
 									{fields.editExam ? (
-										<p
-											className='cursor-pointer edit-text align-self-center'
-											onClick={() =>
-												this.props.handleCollapseChange('courses')
-											}
-										>
-											Edit
-										</p>
-									) : null}
-								</div>
-								<Collapse in={fields.courses.collapse}>
-									<div className='row'>
-										<div className='col-md-10'>
-											{this.state.courseList.length !== 0 ? (
-												<Autocomplete
-													id='course-combo-box'
-													options={this.state.courseList}
-													getOptionLabel={(option) => option.name}
-													value={this.getSelectedItem()}
-													size='small'
-													renderInput={(params) => (
-														<TextField
-															{...params}
-															label='Course'
-															variant='outlined'
-														/>
-													)}
-													onChange={(event, newCourse) =>
-														this.props.handleCourseChange(
-															newCourse
+										fields.courses.collapse ? (
+											<div className='align-self-center'>
+												<Update
+													className='cursor-pointer edit-text align-self-center'
+													onClick={
+														fields.courses.new !== null
+															? () =>
+																	this.props.updateExamDetails(
+																		{
+																			courses:
+																				fields.courses.new,
+																		}
+																	)
+															: null
+													}
+												/>
+												<Close
+													fontSize='small'
+													className='cursor-pointer edit-text align-self-center'
+													onClick={() =>
+														this.props.handleCollapseChange(
+															'courses'
 														)
 													}
 												/>
-											) : null}
-
-											{fields.courses.msg ? (
-												<span className='d-block invalid-feedback'>
-													{fields.courses.msg}
-												</span>
-											) : null}
-										</div>
-										<div className='col-md-2 d-flex'>
-											<Button
-												type='button'
-												size='small'
-												variant='contained'
-												color='primary'
-												className='align-self-center'
-												onClick={
-													fields.courses.new !== null
-														? () =>
-																this.props.updateExamDetails({
-																	courses: fields.courses.new,
-																})
-														: null
+											</div>
+										) : (
+											<Edit
+												fontSize='small'
+												className='cursor-pointer edit-text align-self-center'
+												onClick={() =>
+													this.props.handleCollapseChange(
+														'courses'
+													)
 												}
-											>
-												Update
-											</Button>
-										</div>
+											/>
+										)
+									) : null}
+								</div>
+								<Collapse in={fields.courses.collapse}>
+									<div>
+										{this.state.courseList.length !== 0 ? (
+											<Autocomplete
+												id='course-combo-box'
+												options={this.state.courseList}
+												getOptionLabel={(option) => option.name}
+												value={this.getSelectedItem()}
+												size='small'
+												fullWidth
+												className='mb-2'
+												renderInput={(params) => (
+													<TextField
+														{...params}
+														label='Course'
+														variant='outlined'
+													/>
+												)}
+												onChange={(event, newCourse) =>
+													this.props.handleCourseChange(newCourse)
+												}
+											/>
+										) : null}
+
+										{fields.courses.msg ? (
+											<span className='d-block invalid-feedback'>
+												{fields.courses.msg}
+											</span>
+										) : null}
 									</div>
 								</Collapse>
 								<div className='d-flex justify-content-between flex-row'>
@@ -150,52 +163,64 @@ class ExamDetails extends React.Component {
 										</p>
 									</div>
 									{fields.editExam ? (
-										<p
-											className='cursor-pointer edit-text align-self-center'
-											onClick={() =>
-												this.props.handleCollapseChange('subject')
-											}
-										>
-											Edit
-										</p>
+										fields.subject.collapse ? (
+											<div className='align-self-center'>
+												<Update
+													className='cursor-pointer edit-text align-self-center'
+													onClick={
+														fields.subject.new != null
+															? () =>
+																	this.props.updateExamDetails(
+																		{
+																			subject:
+																				fields.subject.new,
+																		}
+																	)
+															: null
+													}
+												/>
+												<Close
+													fontSize='small'
+													className='cursor-pointer edit-text align-self-center'
+													onClick={() =>
+														this.props.handleCollapseChange(
+															'subject'
+														)
+													}
+												/>
+											</div>
+										) : (
+											<Edit
+												fontSize='small'
+												className='cursor-pointer edit-text align-self-center'
+												onClick={() =>
+													this.props.handleCollapseChange(
+														'subject'
+													)
+												}
+											/>
+										)
 									) : null}
 								</div>
 								<Collapse in={fields.subject.collapse}>
-									<div className='row'>
-										<div className='col-md-10'>
-											<input
-												type='text'
-												name='subject'
-												className='w-100 form-control mr-2'
-												defaultValue={fields.subject.prev}
-												onChange={this.props.handleExamChange}
-											/>
-											{fields.subject.msg ? (
-												<span className='d-block invalid-feedback'>
-													{fields.subject.msg}
-												</span>
-											) : null}
-										</div>
-										<div className='col-md-2 d-flex'>
-											<Button
-												type='button'
-												size='small'
-												variant='contained'
-												color='primary'
-												className='align-self-center'
-												onClick={
-													fields.subject.new != null
-														? () =>
-																this.props.updateExamDetails({
-																	subject: fields.subject.new,
-																})
-														: null
-												}
-											>
-												Update
-											</Button>
-										</div>
-									</div>
+									<TextField
+										name='subject'
+										label='Subject'
+										className='w-100'
+										variant='outlined'
+										size='small'
+										defaultValue={fields.subject.prev}
+										onChange={this.props.handleExamChange}
+										error={fields.subject.msg !== ''}
+										helperText={fields.subject.msg}
+										onKeyDown={(event) => {
+											if (
+												event.keyCode === 13 &&
+												fields.subject.new != null
+											)
+												this.handleSubmit('subject');
+										}}
+									/>
 								</Collapse>
 								<div className='d-flex justify-content-between flex-row mt-2'>
 									<div className='flex-column'>
@@ -209,53 +234,64 @@ class ExamDetails extends React.Component {
 										</p>
 									</div>
 									{fields.editExam ? (
-										<p
-											className='cursor-pointer edit-text align-self-center'
-											onClick={() =>
-												this.props.handleCollapseChange('examCode')
-											}
-										>
-											Edit
-										</p>
+										fields.examCode.collapse ? (
+											<div className='align-self-center'>
+												<Update
+													className='cursor-pointer edit-text align-self-center'
+													onClick={
+														fields.examCode.new != null
+															? () =>
+																	this.props.updateExamDetails(
+																		{
+																			examCode:
+																				fields.examCode.new,
+																		}
+																	)
+															: null
+													}
+												/>
+												<Close
+													fontSize='small'
+													className='cursor-pointer edit-text align-self-center'
+													onClick={() =>
+														this.props.handleCollapseChange(
+															'examCode'
+														)
+													}
+												/>
+											</div>
+										) : (
+											<Edit
+												fontSize='small'
+												className='cursor-pointer edit-text align-self-center'
+												onClick={() =>
+													this.props.handleCollapseChange(
+														'examCode'
+													)
+												}
+											/>
+										)
 									) : null}
 								</div>
 								<Collapse in={fields.examCode.collapse}>
-									<div className='row'>
-										<div className='col-md-10'>
-											<input
-												type='text'
-												name='examCode'
-												className='w-100 form-control mr-2'
-												defaultValue={fields.examCode.prev}
-												onChange={this.props.handleExamChange}
-											/>
-											{fields.examCode.msg ? (
-												<span className='d-block invalid-feedback'>
-													{fields.examCode.msg}
-												</span>
-											) : null}
-										</div>
-										<div className='col-md-2 d-flex'>
-											<Button
-												type='button'
-												size='small'
-												variant='contained'
-												color='primary'
-												className='align-self-center'
-												onClick={
-													fields.examCode.new != null
-														? () =>
-																this.props.updateExamDetails({
-																	examCode:
-																		fields.examCode.new,
-																})
-														: null
-												}
-											>
-												Update
-											</Button>
-										</div>
-									</div>
+									<TextField
+										name='examCode'
+										label='Exam code'
+										className='w-100'
+										variant='outlined'
+										size='small'
+										defaultValue={fields.examCode.prev}
+										onChange={this.props.handleExamChange}
+										error={fields.examCode.msg !== ''}
+										helperText={fields.examCode.msg}
+										onKeyDown={(event) => {
+											if (
+												event.keyCode === 13 &&
+												fields.examCode.new != null
+											)
+												this.handleSubmit('examCode');
+										}}
+									/>
 								</Collapse>
 							</div>
 						</Card.Body>

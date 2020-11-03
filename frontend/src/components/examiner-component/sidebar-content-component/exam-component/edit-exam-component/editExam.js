@@ -54,11 +54,21 @@ class EditExam extends React.Component {
 		}
 	};
 
+	handleExamTimeChange = (field) => {
+		let key = Object.keys(field)[0];
+		this.setState((prevState) => ({
+			[key]: {
+				...prevState[key],
+				new: field[key],
+			},
+		}));
+	};
+
 	changeCourse = (newCourse) => {
 		this.setState((prevState) => ({
 			courses: {
 				...prevState.courses,
-				new: newCourse,
+				new: newCourse !== null ? newCourse : {},
 			},
 		}));
 	};
@@ -91,8 +101,6 @@ class EditExam extends React.Component {
 			let examDate = moment(exam.examDate, 'YYYY-MM-DD').format(
 				'YYYY-MM-DD'
 			);
-			let startTime = moment(exam.startTime).format('HH:MM');
-			let endTime = moment(exam.endTime).format('HH:MM');
 			let boolStatus = this.setEditExamStatus(examDate);
 			this.setState((prevState) => ({
 				courses: {
@@ -110,14 +118,31 @@ class EditExam extends React.Component {
 					prev: exam.subject,
 					new: exam.subject,
 				},
-				totalMarks: { prev: exam.totalMarks, new: exam.totalMarks },
+				totalMarks: {
+					...prevState.totalMarks,
+					prev: exam.totalMarks,
+					new: exam.totalMarks,
+				},
 				passingMarks: {
+					...prevState.passingMarks,
 					prev: exam.passingMarks,
 					new: exam.passingMarks,
 				},
-				examDate: { prev: examDate, new: examDate },
-				startTime: { prev: startTime, new: startTime },
-				endTime: { prev: endTime, new: endTime },
+				examDate: {
+					...prevState.examDate,
+					prev: exam.examDate,
+					new: exam.examDate,
+				},
+				startTime: {
+					...prevState.startTime,
+					prev: exam.startTime,
+					new: exam.startTime,
+				},
+				endTime: {
+					...prevState.endTime,
+					prev: exam.endTime,
+					new: exam.endTime,
+				},
 				editExam: boolStatus,
 			}));
 		});
@@ -135,8 +160,6 @@ class EditExam extends React.Component {
 				[key]: {
 					...prevState[key],
 					collapse: !prevState[key].collapse,
-					new:
-						prevState[key].collapse === true ? prevState[key].prev : null,
 					msg: '',
 				},
 			}));
@@ -146,7 +169,7 @@ class EditExam extends React.Component {
 	updateExamDetails = (data) => {
 		let key = Object.keys(data)[0];
 		let examId = this.props.match.params.examId;
-		let validationState = validation.updateExamFields(data);
+		let validationState = validation.updateExamFields(data, this.state);
 		if (validationState.error === '') {
 			this.examService
 				.updateExam(examId, data)
@@ -216,7 +239,7 @@ class EditExam extends React.Component {
 						</Alert>
 					</div>
 				) : null}
-				{this.state.courses.prev !== '' ? (
+				{this.state.courses.new !== '' ? (
 					<ExamDetails
 						fields={this.state}
 						handleExamChange={this.handleExamChange}
@@ -226,20 +249,23 @@ class EditExam extends React.Component {
 					/>
 				) : null}
 
-				<ExamMarks
-					state={this.state}
-					handleExamChange={this.handleExamChange}
-					handleCollapseChange={this.handleCollapseChange}
-					updateExamDetails={this.updateExamDetails}
-				/>
+				{this.state.examDate.prev !== '' ? (
+					<ExamMarks
+						fields={this.state}
+						handleExamChange={this.handleExamChange}
+						handleCollapseChange={this.handleCollapseChange}
+						updateExamDetails={this.updateExamDetails}
+					/>
+				) : null}
+
 				<ExamTime
-					state={this.state}
-					handleExamChange={this.handleExamChange}
+					fields={this.state}
+					handleExamChange={this.handleExamTimeChange}
 					handleCollapseChange={this.handleCollapseChange}
 					updateExamDetails={this.updateExamDetails}
 				/>
 				<ExamPassword
-					state={this.state}
+					fields={this.state}
 					handlePasswordChange={this.handlePasswordChange}
 					handleCollapseChange={this.handleCollapseChange}
 					updateExamDetails={this.updateExamDetails}

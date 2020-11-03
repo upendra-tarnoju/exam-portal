@@ -33,17 +33,34 @@ let validateQuestions = (temp) => {
 	return temp;
 };
 
-const updateExamFields = (temp) => {
+const updateExamFields = (temp, fields) => {
 	let key = Object.keys(temp)[0];
 	switch (key) {
 		case 'subject':
 		case 'examCode':
-		case 'totalMarks':
 			temp.error = checkEmptyField(temp[key]);
 			return temp;
 
 		case 'password':
 			temp = validateExamPassword(temp.password);
+			return temp;
+
+		case 'totalMarks':
+			temp.error = checkEmptyField(temp[key]);
+			if (temp.error === '') {
+				if (temp[key] < fields.passingMarks.new) {
+					temp.error = 'Total marks can not be less than passing marks';
+				} else temp.error = '';
+			}
+			return temp;
+
+		case 'passingMarks':
+			temp.error = checkEmptyField(temp[key]);
+			if (temp.error === '') {
+				if (temp[key] > fields.totalMarks.prev) {
+					temp.error = 'Passing marks cannot be greater than total marks';
+				} else temp.error = '';
+			}
 			return temp;
 
 		default:
