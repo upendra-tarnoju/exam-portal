@@ -1,17 +1,26 @@
 import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
-import { Button } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import Moment from 'react-moment';
+import { Edit, Close, Update } from '@material-ui/icons';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+	MuiPickersUtilsProvider,
+	KeyboardTimePicker,
+	KeyboardDatePicker,
+} from '@material-ui/pickers';
+import moment from 'moment';
 
 import styles from '../../exam.module.css';
 
-const ExamTime = ({
-	state,
-	handleExamChange,
-	handleCollapseChange,
-	updateExamDetails,
-}) => {
+const ExamTime = (props) => {
+	let {
+		fields,
+		handleExamChange,
+		handleCollapseChange,
+		updateExamDetails,
+	} = props;
 	return (
 		<Accordion defaultActiveKey='0'>
 			<Card className='mb-2'>
@@ -33,54 +42,67 @@ const ExamTime = ({
 									</label>
 									<p className={styles.editExamContent}>
 										<Moment parse='YYYY-MM-DD' format='MMM Do, YYYY'>
-											{state.examDate.prev}
+											{fields.examDate.prev}
 										</Moment>
 									</p>
 								</div>
-								{state.editExam ? (
-									<p
-										className='cursor-pointer edit-text align-self-center'
-										onClick={() => handleCollapseChange('examDate')}
-									>
-										Edit
-									</p>
+								{fields.editExam ? (
+									fields.examDate.collapse ? (
+										<div className='align-self-center'>
+											<Update
+												className='cursor-pointer edit-text align-self-center'
+												onClick={
+													fields.examDate.new != null
+														? () =>
+																updateExamDetails({
+																	examDate:
+																		fields.examDate.new,
+																})
+														: null
+												}
+											/>
+											<Close
+												fontSize='small'
+												className='cursor-pointer edit-text align-self-center'
+												onClick={() =>
+													handleCollapseChange('examDate')
+												}
+											/>
+										</div>
+									) : (
+										<Edit
+											fontSize='small'
+											className='cursor-pointer edit-text align-self-center'
+											onClick={() =>
+												handleCollapseChange('examDate')
+											}
+										/>
+									)
 								) : null}
 							</div>
-							<Collapse in={state.examDate.collapse}>
-								<div className='row'>
-									<div className='col-md-10'>
-										<input
-											type='date'
-											name='examDate'
-											maxLength={4}
-											className='w-100 form-control mr-2'
-											value={state.examDate.new}
-											onChange={handleExamChange}
-										/>
-										{state.totalMarks.msg ? (
-											<span>{state.examDate.msg}</span>
-										) : null}
-									</div>
-									<div className='col-md-2 d-flex'>
-										<Button
-											type='button'
-											size='small'
-											variant='contained'
-											color='primary'
-											className='align-self-center'
-											onClick={
-												state.totalMarks.new != null
-													? () =>
-															updateExamDetails({
-																examDate: state.examDate.new,
-															})
-													: null
+							<Collapse in={fields.examDate.collapse}>
+								<Grid container>
+									<MuiPickersUtilsProvider utils={DateFnsUtils}>
+										<KeyboardDatePicker
+											margin='normal'
+											id='exam-date-picker'
+											label='Exam date'
+											format='MM/dd/yyyy'
+											value={fields.examDate.new}
+											className='w-100 mt-0'
+											variant='dialog'
+											onChange={(date) =>
+												handleExamChange({ examDate: date })
 											}
-										>
-											Update
-										</Button>
-									</div>
-								</div>
+											KeyboardButtonProps={{
+												'aria-label': 'change date',
+											}}
+											error={fields.examDate.msg !== ''}
+											helperText={fields.examDate.msg}
+											name='examDate'
+										/>
+									</MuiPickersUtilsProvider>
+								</Grid>
 							</Collapse>
 							<div className='d-flex justify-content-between flex-row mt-2'>
 								<div className='flex-column'>
@@ -88,55 +110,64 @@ const ExamTime = ({
 										Start time
 									</label>
 									<p className={styles.editExamContent}>
-										<Moment parse='HH:mm' format='hh:mm A'>
-											{state.startTime.prev}
-										</Moment>
+										{moment(fields.startTime.prev).format('HH:mm A')}
 									</p>
 								</div>
-								{state.editExam ? (
-									<p
-										className='cursor-pointer edit-text align-self-center'
-										onClick={() => handleCollapseChange('startTime')}
-									>
-										Edit
-									</p>
+								{fields.editExam ? (
+									fields.startTime.collapse ? (
+										<div className='align-self-center'>
+											<Update
+												className='cursor-pointer edit-text align-self-center'
+												onClick={
+													fields.startTime.new != null
+														? () =>
+																updateExamDetails({
+																	startTime:
+																		fields.startTime.new,
+																})
+														: null
+												}
+											/>
+											<Close
+												fontSize='small'
+												className='cursor-pointer edit-text align-self-center'
+												onClick={() =>
+													handleCollapseChange('startTime')
+												}
+											/>
+										</div>
+									) : (
+										<Edit
+											fontSize='small'
+											className='cursor-pointer edit-text align-self-center'
+											onClick={() =>
+												handleCollapseChange('startTime')
+											}
+										/>
+									)
 								) : null}
 							</div>
-							<Collapse in={state.startTime.collapse}>
-								<div className='row'>
-									<div className='col-md-10'>
-										<input
-											type='time'
-											name='startTime'
-											maxLength={4}
-											className='w-100 form-control mr-2'
-											value={state.startTime.new}
-											onChange={handleExamChange}
-										/>
-										{state.startTime.msg ? (
-											<span>{state.startTime.msg}</span>
-										) : null}
-									</div>
-									<div className='col-md-2 d-flex'>
-										<Button
-											type='button'
-											size='small'
-											variant='contained'
-											color='primary'
-											className='align-self-center'
-											onClick={
-												state.passingMarks.new != null
-													? () =>
-															updateExamDetails({
-																startTime: state.startTime.new,
-															})
-													: null
+							<Collapse in={fields.startTime.collapse}>
+								<Grid container>
+									<MuiPickersUtilsProvider utils={DateFnsUtils}>
+										<KeyboardTimePicker
+											margin='normal'
+											id='end-time-picker'
+											label='Start time'
+											fullWidth
+											className='mt-0'
+											value={fields.startTime.new}
+											onChange={(time) =>
+												handleExamChange({ startTime: time })
 											}
-										>
-											Update
-										</Button>
-									</div>
-								</div>
+											KeyboardButtonProps={{
+												'aria-label': 'change time',
+											}}
+											error={fields.startTime.msg !== ''}
+											helperText={fields.startTime.msg}
+										/>
+									</MuiPickersUtilsProvider>
+								</Grid>
 							</Collapse>
 							<div className='d-flex justify-content-between flex-row mt-2'>
 								<div className='flex-column'>
@@ -144,55 +175,61 @@ const ExamTime = ({
 										End time
 									</label>
 									<p className={styles.editExamContent}>
-										<Moment parse='HH:mm' format='hh:mm A'>
-											{state.endTime.prev}
-										</Moment>
+										{moment(fields.endTime.prev).format('HH:mm A')}
 									</p>
 								</div>
-								{state.editExam ? (
-									<p
-										className='cursor-pointer edit-text align-self-center'
-										onClick={() => handleCollapseChange('endTime')}
-									>
-										Edit
-									</p>
+								{fields.editExam ? (
+									fields.endTime.collapse ? (
+										<div className='align-self-center'>
+											<Update
+												className='cursor-pointer edit-text align-self-center'
+												onClick={
+													fields.endTime.new != null
+														? () =>
+																updateExamDetails({
+																	endTime: fields.endTime.new,
+																})
+														: null
+												}
+											/>
+											<Close
+												fontSize='small'
+												className='cursor-pointer edit-text align-self-center'
+												onClick={() =>
+													handleCollapseChange('endTime')
+												}
+											/>
+										</div>
+									) : (
+										<Edit
+											fontSize='small'
+											className='cursor-pointer edit-text align-self-center'
+											onClick={() => handleCollapseChange('endTime')}
+										/>
+									)
 								) : null}
 							</div>
-							<Collapse in={state.endTime.collapse}>
-								<div className='row'>
-									<div className='col-md-10'>
-										<input
-											type='time'
-											name='endTime'
-											maxLength={4}
-											className='w-100 form-control mr-2'
-											value={state.endTime.new}
-											onChange={handleExamChange}
-										/>
-										{state.endTime.msg ? (
-											<span>{state.endTime.msg}</span>
-										) : null}
-									</div>
-									<div className='col-md-2 d-flex'>
-										<Button
-											type='button'
-											size='small'
-											variant='contained'
-											color='primary'
-											className='align-self-center'
-											onClick={
-												state.endTime.new != null
-													? () =>
-															updateExamDetails({
-																endTime: state.endTime.new,
-															})
-													: null
+							<Collapse in={fields.endTime.collapse}>
+								<Grid container>
+									<MuiPickersUtilsProvider utils={DateFnsUtils}>
+										<KeyboardTimePicker
+											margin='normal'
+											id='end-time-picker'
+											label='End time'
+											fullWidth
+											className='mt-0'
+											value={fields.endTime.new}
+											onChange={(time) =>
+												handleExamChange({ endTime: time })
 											}
-										>
-											Update
-										</Button>
-									</div>
-								</div>
+											KeyboardButtonProps={{
+												'aria-label': 'change time',
+											}}
+											error={fields.endTime.msg !== ''}
+											helperText={fields.endTime.msg}
+										/>
+									</MuiPickersUtilsProvider>
+								</Grid>
 							</Collapse>
 						</div>
 					</Card.Body>

@@ -1,16 +1,18 @@
 import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
-import { Button } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
+import { Edit, Close, Update } from '@material-ui/icons';
 
 import styles from '../../exam.module.css';
 
-const ExamPassword = ({
-	state,
-	handlePasswordChange,
-	handleCollapseChange,
-	updateExamDetails,
-}) => {
+const ExamPassword = (props) => {
+	let {
+		fields,
+		updateExamDetails,
+		handleCollapseChange,
+		handlePasswordChange,
+	} = props;
 	return (
 		<Accordion defaultActiveKey='0'>
 			<Card className='mb-2'>
@@ -26,96 +28,90 @@ const ExamPassword = ({
 					<Card.Body>
 						<div className='container'>
 							<div className='d-flex justify-content-between flex-row'>
-								<label className={`mb-0 ${styles.editExamHeading}`}>
+								<label className={`${styles.editExamHeading}`}>
 									Password{' '}
-									{state.password.msg ? (
+									{fields.password.msg ? (
 										<span className='d-block invalid-feedback'>
-											* {state.password.msg}
+											* {fields.password.msg}
 										</span>
 									) : null}
 								</label>
-								{state.editExam ? (
-									<p
-										className='cursor-pointer edit-text'
-										onClick={() => handleCollapseChange('password')}
-									>
-										Edit
-									</p>
+								{fields.editExam ? (
+									fields.password.collapse ? (
+										<div className='align-self-center'>
+											<Update
+												className='cursor-pointer edit-text align-self-center'
+												onClick={() =>
+													updateExamDetails({
+														password: {
+															current: fields.current,
+															new: fields.new,
+															reTypeNew: fields.reTypeNew,
+														},
+													})
+												}
+											/>
+											<Close
+												fontSize='small'
+												className='cursor-pointer edit-text align-self-center'
+												onClick={() =>
+													handleCollapseChange('password')
+												}
+											/>
+										</div>
+									) : (
+										<Edit
+											fontSize='small'
+											className='cursor-pointer edit-text align-self-center'
+											onClick={() =>
+												handleCollapseChange('password')
+											}
+										/>
+									)
 								) : null}
 							</div>
-							<Collapse in={state.password.collapse}>
+							<Collapse in={fields.password.collapse}>
 								<form>
-									<div className='form-group'>
-										<label>
-											Current{' '}
-											{state.current.msg ? (
-												<span className='d-block invalid-feedback'>
-													{state.current.msg}
-												</span>
-											) : null}
-										</label>
-										<input
+									<div className='mt-2 mb-4'>
+										<TextField
 											type='password'
-											name='current'
-											className='w-100 form-control mr-2'
-											value={state.current.value}
+											variant='outlined'
+											label='Current password'
+											value={fields.current.value}
 											onChange={handlePasswordChange}
+											size='small'
+											error={fields.current.msg !== ''}
+											helperText={fields.current.msg}
+											fullWidth
 										/>
 									</div>
-									<div className='form-group'>
-										<label>
-											New{' '}
-											{state.new.msg ? (
-												<span className='d-block invalid-feedback'>
-													{state.new.msg}
-												</span>
-											) : null}
-										</label>
-										<input
+									<div className='mb-4'>
+										<TextField
 											type='password'
 											name='new'
-											className='w-100 form-control mr-2'
-											value={state.new.value}
+											variant='outlined'
+											label='New password'
+											value={fields.new.value}
 											onChange={handlePasswordChange}
-										/>
-									</div>
-									<div className='form-group'>
-										<label>
-											Re-type new{' '}
-											{state.reTypeNew.msg ? (
-												<span className='d-block invalid-feedback'>
-													{state.reTypeNew.msg}
-												</span>
-											) : null}
-										</label>
-										<input
-											type='password'
-											name='reTypeNew'
-											className='w-100 form-control mr-2'
-											value={state.reTypeNew.value}
-											onChange={handlePasswordChange}
-										/>
-									</div>
-									<div className='d-flex justify-content-end'>
-										<Button
-											type='button'
 											size='small'
-											variant='contained'
-											color='primary'
-											className='align-self-center'
-											onClick={() =>
-												updateExamDetails({
-													password: {
-														current: state.current,
-														new: state.new,
-														reTypeNew: state.reTypeNew,
-													},
-												})
-											}
-										>
-											Update
-										</Button>
+											error={fields.new.msg !== ''}
+											helperText={fields.new.msg}
+											fullWidth
+										/>
 									</div>
+									<TextField
+										type='password'
+										name='reTypeNew'
+										variant='outlined'
+										label='Re-type password'
+										className='w-100 form-control mr-2'
+										value={fields.reTypeNew.value}
+										onChange={handlePasswordChange}
+										size='small'
+										error={fields.reTypeNew.msg !== ''}
+										helperText={fields.reTypeNew.msg}
+										fullWidth
+									/>
 								</form>
 							</Collapse>
 						</div>

@@ -1,16 +1,23 @@
 import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
-import { Button } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
+import { Edit, Close, Update } from '@material-ui/icons';
 
 import styles from '../../exam.module.css';
 
-const ExamMarks = ({
-	state,
-	handleExamChange,
-	handleCollapseChange,
-	updateExamDetails,
-}) => {
+const ExamMarks = (props) => {
+	let {
+		fields,
+		updateExamDetails,
+		handleCollapseChange,
+		handleExamChange,
+	} = props;
+
+	let handleSubmit = (field) => {
+		updateExamDetails({ [field]: fields[field].new });
+	};
+
 	return (
 		<Accordion defaultActiveKey='0'>
 			<Card className='mb-2'>
@@ -31,56 +38,63 @@ const ExamMarks = ({
 										Total marks
 									</label>
 									<p className={styles.editExamContent}>
-										{state.totalMarks.prev}
+										{fields.totalMarks.prev}
 									</p>
 								</div>
-								{state.editExam ? (
-									<p
-										className='cursor-pointer edit-text align-self-center'
-										onClick={() => handleCollapseChange('totalMarks')}
-									>
-										Edit
-									</p>
+								{fields.editExam ? (
+									fields.totalMarks.collapse ? (
+										<div className='align-self-center'>
+											<Update
+												className='cursor-pointer edit-text align-self-center'
+												onClick={
+													fields.totalMarks.new != null
+														? () =>
+																updateExamDetails({
+																	totalMarks:
+																		fields.totalMarks.new,
+																})
+														: null
+												}
+											/>
+											<Close
+												fontSize='small'
+												className='cursor-pointer edit-text align-self-center'
+												onClick={() =>
+													handleCollapseChange('totalMarks')
+												}
+											/>
+										</div>
+									) : (
+										<Edit
+											fontSize='small'
+											className='cursor-pointer edit-text align-self-center'
+											onClick={() =>
+												handleCollapseChange('totalMarks')
+											}
+										/>
+									)
 								) : null}
 							</div>
-							<Collapse in={state.totalMarks.collapse}>
-								<div className='row'>
-									<div className='col-md-10'>
-										<input
-											type='text'
-											name='totalMarks'
-											maxLength={4}
-											className='w-100 form-control mr-2'
-											value={state.totalMarks.new}
-											onChange={handleExamChange}
-										/>
-										{state.totalMarks.msg ? (
-											<span className='d-block invalid-feedback'>
-												{state.totalMarks.msg}
-											</span>
-										) : null}
-									</div>
-									<div className='col-md-2 d-flex'>
-										<Button
-											type='button'
-											size='small'
-											variant='contained'
-											color='primary'
-											className='align-self-center'
-											onClick={
-												state.totalMarks.new != null
-													? () =>
-															updateExamDetails({
-																totalMarks:
-																	state.totalMarks.new,
-															})
-													: null
-											}
-										>
-											Update
-										</Button>
-									</div>
-								</div>
+							<Collapse in={fields.totalMarks.collapse}>
+								<TextField
+									name='totalMarks'
+									label='Total marks'
+									inputProps={{ maxLength: 4 }}
+									className='w-100'
+									variant='outlined'
+									size='small'
+									value={fields.totalMarks.new}
+									onChange={handleExamChange}
+									error={fields.totalMarks.msg !== ''}
+									helperText={fields.totalMarks.msg}
+									onKeyDown={(event) => {
+										if (
+											event.keyCode === 13 &&
+											fields.totalMarks.new != null
+										)
+											handleSubmit('totalMarks');
+									}}
+								/>
 							</Collapse>
 							<div className='d-flex justify-content-between flex-row mt-2'>
 								<div className='flex-column'>
@@ -88,58 +102,63 @@ const ExamMarks = ({
 										Passing marks
 									</label>
 									<p className={styles.editExamContent}>
-										{state.passingMarks.prev}
+										{fields.passingMarks.prev}
 									</p>
 								</div>
-								{state.editExam ? (
-									<p
-										className='cursor-pointer edit-text align-self-center'
-										onClick={() =>
-											handleCollapseChange('passingMarks')
-										}
-									>
-										Edit
-									</p>
+								{fields.editExam ? (
+									fields.passingMarks.collapse ? (
+										<div className='align-self-center'>
+											<Update
+												className='cursor-pointer edit-text align-self-center'
+												onClick={
+													fields.passingMarks.new != null
+														? () =>
+																updateExamDetails({
+																	passingMarks:
+																		fields.passingMarks.new,
+																})
+														: null
+												}
+											/>
+											<Close
+												fontSize='small'
+												className='cursor-pointer edit-text align-self-center'
+												onClick={() =>
+													handleCollapseChange('passingMarks')
+												}
+											/>
+										</div>
+									) : (
+										<Edit
+											fontSize='small'
+											className='cursor-pointer edit-text align-self-center'
+											onClick={() =>
+												handleCollapseChange('passingMarks')
+											}
+										/>
+									)
 								) : null}
 							</div>
-							<Collapse in={state.passingMarks.collapse}>
-								<div className='row'>
-									<div className='col-md-10'>
-										<input
-											type='text'
-											name='passingMarks'
-											maxLength={4}
-											className='w-100 form-control mr-2'
-											value={state.passingMarks.new}
-											onChange={handleExamChange}
-										/>
-										{state.passingMarks.msg ? (
-											<span className='d-block invalid-feedback'>
-												{state.passingMarks.msg}
-											</span>
-										) : null}
-									</div>
-									<div className='col-md-2 d-flex'>
-										<Button
-											type='button'
-											size='small'
-											variant='contained'
-											color='primary'
-											className='align-self-center'
-											onClick={
-												state.passingMarks.new != null
-													? () =>
-															updateExamDetails({
-																passingMarks:
-																	state.passingMarks.new,
-															})
-													: null
-											}
-										>
-											Update
-										</Button>
-									</div>
-								</div>
+							<Collapse in={fields.passingMarks.collapse}>
+								<TextField
+									name='passingMarks'
+									label='Passing marks'
+									inputProps={{ maxLength: 4 }}
+									className='w-100'
+									variant='outlined'
+									size='small'
+									value={fields.passingMarks.new}
+									onChange={handleExamChange}
+									error={fields.passingMarks.msg !== ''}
+									helperText={fields.passingMarks.msg}
+									onKeyDown={(event) => {
+										if (
+											event.keyCode === 13 &&
+											fields.passingMarks.new != null
+										)
+											handleSubmit('passingMarks');
+									}}
+								/>
 							</Collapse>
 						</div>
 					</Card.Body>
