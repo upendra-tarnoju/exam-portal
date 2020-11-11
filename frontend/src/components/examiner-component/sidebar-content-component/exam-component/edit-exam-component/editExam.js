@@ -23,6 +23,7 @@ class EditExam extends React.Component {
 			startTime: { prev: '', new: '', collapse: false, msg: '' },
 			endTime: { prev: '', new: '', collapse: false, msg: '' },
 			courses: { prev: '', new: '', collapse: false, msg: '' },
+			duration: { prev: '', new: '', collapse: false, msg: '' },
 			password: { collapse: false, msg: '' },
 			current: { value: '', msg: '' },
 			new: { value: '', msg: '' },
@@ -36,7 +37,11 @@ class EditExam extends React.Component {
 		let update = false;
 		let key = event.target.name;
 		let value = event.target.value;
-		if (key === 'totalMarks' || key === 'passingMarks') {
+		if (
+			key === 'totalMarks' ||
+			key === 'passingMarks' ||
+			key === 'duration'
+		) {
 			let letters = /^[0-9\b]+$/;
 			if (letters.test(value) || value === '') {
 				update = true;
@@ -143,6 +148,11 @@ class EditExam extends React.Component {
 					prev: exam.endTime,
 					new: exam.endTime,
 				},
+				duration: {
+					...prevState.duration,
+					prev: exam.duration,
+					new: exam.duration,
+				},
 				editExam: boolStatus,
 			}));
 		});
@@ -227,6 +237,13 @@ class EditExam extends React.Component {
 		}
 	};
 
+	deleteDuration = () => {
+		let examId = this.props.match.params.examId;
+		this.examService.updateExam(examId, { duration: '' }).then((response) => {
+			console.log(response.data);
+		});
+	};
+
 	render() {
 		return (
 			<div className='container w-50 my-5'>
@@ -260,8 +277,10 @@ class EditExam extends React.Component {
 
 				<ExamTime
 					fields={this.state}
-					handleExamChange={this.handleExamTimeChange}
+					handleExamTimeChange={this.handleExamTimeChange}
+					handleDurationChange={this.handleExamChange}
 					handleCollapseChange={this.handleCollapseChange}
+					deleteDuration={this.deleteDuration}
 					updateExamDetails={this.updateExamDetails}
 				/>
 				<ExamPassword

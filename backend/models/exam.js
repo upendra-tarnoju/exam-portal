@@ -25,6 +25,13 @@ class Exams {
 		return this.examModel.findByIdAndDelete(id);
 	};
 
+	deleteDurationById = (examId) => {
+		console.log(examId);
+		return this.examModel.findByIdAndUpdate(examId, {
+			$unset: { duration: 1 },
+		});
+	};
+
 	getById = (id) => {
 		return this.examModel.aggregate([
 			{ $match: { _id: new mongoose.Types.ObjectId(id) } },

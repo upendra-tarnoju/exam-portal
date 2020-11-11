@@ -1,6 +1,5 @@
 let { exam } = require('../models');
 const bcrypt = require('bcryptjs');
-const moment = require('moment');
 
 let createExamObject = (data, userId) => {
 	let salt = bcrypt.genSaltSync(10);
@@ -76,9 +75,7 @@ const exams = {
 				return { status: 409, data: { msg: setErrorMessages(key) } };
 			}
 		} else if (key === 'passingMarks') {
-			let existingExam = await exam
-				.getById(examId)
-				.select({ totalMarks: 1 });
+			let existingExam = await exam.getById(examId);
 			if (existingExam.totalMarks < examDetails.passingMarks) {
 				return { status: 400, data: { msg: setErrorMessages(key) } };
 			} else {
@@ -88,12 +85,6 @@ const exams = {
 				return { status: 200, data: updatedExam };
 			}
 		} else if (key === 'startTime' || key === 'endTime') {
-			let existingExam = await exam.getById(examId).select({ examDate: 1 });
-			examDetails[key] = new Date(
-				`${moment(existingExam.examDate).format('YYYY-MM-DD')} ${
-					examDetails[key]
-				}`
-			);
 			updatedExam = await exam
 				.update(examId, examDetails)
 				.select({ [key]: 1 });
@@ -124,8 +115,10 @@ const exams = {
 				course: examDetails.courses.id,
 			});
 			return { status: 200, data: updatedExam };
-		}
-		{
+		} else if (key === 'duration' && examDetails.duration === '') {
+			await exam.deleteDurationById(examId);
+			return { status: 200, data: { msg: 'Deleted duration' } };
+		} else {
 			updatedExam = await exam
 				.update(examId, examDetails)
 				.select({ [key]: 1 });

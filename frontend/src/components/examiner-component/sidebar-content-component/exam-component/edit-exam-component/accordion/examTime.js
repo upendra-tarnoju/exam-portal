@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
-import { Grid } from '@material-ui/core';
+import { Grid, TextField } from '@material-ui/core';
 import Moment from 'react-moment';
 import { Edit, Close, Update, DeleteForever } from '@material-ui/icons';
 import DateFnsUtils from '@date-io/date-fns';
@@ -13,14 +13,20 @@ import {
 import moment from 'moment';
 
 import styles from '../../exam.module.css';
+import DeleteModal from '../../../../../../modals/deleteModal';
 
 const ExamTime = (props) => {
+	let [deleteModal, setModal] = React.useState(false);
 	let {
 		fields,
-		handleExamChange,
+		handleExamTimeChange,
+		handleDurationChange,
 		handleCollapseChange,
+		deleteDuration,
 		updateExamDetails,
 	} = props;
+
+	let hideModal = () => setModal(false);
 
 	let getIcons = (key) => {
 		if (fields.editExam) {
@@ -38,8 +44,11 @@ const ExamTime = (props) => {
 									: null
 							}
 						/>
-						{key === 'duration' ? (
-							<DeleteForever className='cursor-pointer edit-text align-self-center' />
+						{key === 'duration' && fields[key].prev !== undefined ? (
+							<DeleteForever
+								className='cursor-pointer edit-text align-self-center'
+								onClick={() => setModal(true)}
+							/>
 						) : null}
 
 						<Close
@@ -99,7 +108,7 @@ const ExamTime = (props) => {
 											className='w-100 mt-0'
 											variant='dialog'
 											onChange={(date) =>
-												handleExamChange({ examDate: date })
+												handleExamTimeChange({ examDate: date })
 											}
 											KeyboardButtonProps={{
 												'aria-label': 'change date',
@@ -133,7 +142,7 @@ const ExamTime = (props) => {
 											className='mt-0'
 											value={fields.startTime.new || Date.now()}
 											onChange={(time) =>
-												handleExamChange({ startTime: time })
+												handleExamTimeChange({ startTime: time })
 											}
 											KeyboardButtonProps={{
 												'aria-label': 'change time',
@@ -166,7 +175,7 @@ const ExamTime = (props) => {
 											className='mt-0'
 											value={fields.endTime.new || Date.now()}
 											onChange={(time) =>
-												handleExamChange({ endTime: time })
+												handleExamTimeChange({ endTime: time })
 											}
 											KeyboardButtonProps={{
 												'aria-label': 'change time',
@@ -177,6 +186,45 @@ const ExamTime = (props) => {
 									</MuiPickersUtilsProvider>
 								</Grid>
 							</Collapse>
+							<div className='d-flex justify-content-between flex-row mt-2'>
+								<div className='flex-column'>
+									<label className={`mb-0 ${styles.editExamHeading}`}>
+										Duration
+									</label>
+									<p className={styles.editExamContent}>
+										{fields.duration.prev !== undefined
+											? `${fields.duration.prev} minutues`
+											: 'NA'}
+									</p>
+								</div>
+								{getIcons('duration')}
+							</div>
+							<Collapse in={fields.duration.collapse}>
+								<TextField
+									name='duration'
+									label='duration'
+									className='w-100'
+									variant='outlined'
+									size='small'
+									value={fields.duration.new}
+									onChange={handleDurationChange}
+									error={fields.duration.msg !== ''}
+									helperText={fields.duration.msg}
+									onKeyDown={(event) => {
+										if (
+											event.keyCode === 13 &&
+											fields.duration.new != null
+										)
+											this.handleSubmit('duration');
+									}}
+								/>
+							</Collapse>
+							<DeleteModal
+								show={deleteModal}
+								hideModal={hideModal}
+								heading='duration'
+								deleteContent={deleteDuration}
+							/>
 						</div>
 					</Card.Body>
 				</Accordion.Collapse>
