@@ -3,7 +3,7 @@ import { Card, Collapse } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
 import { Grid } from '@material-ui/core';
 import Moment from 'react-moment';
-import { Edit, Close, Update } from '@material-ui/icons';
+import { Edit, Close, Update, DeleteForever } from '@material-ui/icons';
 import DateFnsUtils from '@date-io/date-fns';
 import {
 	MuiPickersUtilsProvider,
@@ -21,6 +21,45 @@ const ExamTime = (props) => {
 		handleCollapseChange,
 		updateExamDetails,
 	} = props;
+
+	let getIcons = (key) => {
+		if (fields.editExam) {
+			if (fields[key].collapse) {
+				return (
+					<div className='align-self-center'>
+						<Update
+							className='cursor-pointer edit-text align-self-center'
+							onClick={
+								fields[key].new !== null
+									? () =>
+											updateExamDetails({
+												[key]: fields[key].new,
+											})
+									: null
+							}
+						/>
+						{key === 'duration' ? (
+							<DeleteForever className='cursor-pointer edit-text align-self-center' />
+						) : null}
+
+						<Close
+							fontSize='small'
+							className='cursor-pointer edit-text align-self-center'
+							onClick={() => handleCollapseChange(key)}
+						/>
+					</div>
+				);
+			} else
+				return (
+					<Edit
+						fontSize='small'
+						className='cursor-pointer edit-text align-self-center'
+						onClick={() => handleCollapseChange(key)}
+					/>
+				);
+		} else return null;
+	};
+
 	return (
 		<Accordion defaultActiveKey='0'>
 			<Card className='mb-2'>
@@ -46,39 +85,7 @@ const ExamTime = (props) => {
 										</Moment>
 									</p>
 								</div>
-								{fields.editExam ? (
-									fields.examDate.collapse ? (
-										<div className='align-self-center'>
-											<Update
-												className='cursor-pointer edit-text align-self-center'
-												onClick={
-													fields.examDate.new != null
-														? () =>
-																updateExamDetails({
-																	examDate:
-																		fields.examDate.new,
-																})
-														: null
-												}
-											/>
-											<Close
-												fontSize='small'
-												className='cursor-pointer edit-text align-self-center'
-												onClick={() =>
-													handleCollapseChange('examDate')
-												}
-											/>
-										</div>
-									) : (
-										<Edit
-											fontSize='small'
-											className='cursor-pointer edit-text align-self-center'
-											onClick={() =>
-												handleCollapseChange('examDate')
-											}
-										/>
-									)
-								) : null}
+								{getIcons('examDate')}
 							</div>
 							<Collapse in={fields.examDate.collapse}>
 								<Grid container>
@@ -113,39 +120,7 @@ const ExamTime = (props) => {
 										{moment(fields.startTime.prev).format('HH:mm A')}
 									</p>
 								</div>
-								{fields.editExam ? (
-									fields.startTime.collapse ? (
-										<div className='align-self-center'>
-											<Update
-												className='cursor-pointer edit-text align-self-center'
-												onClick={
-													fields.startTime.new != null
-														? () =>
-																updateExamDetails({
-																	startTime:
-																		fields.startTime.new,
-																})
-														: null
-												}
-											/>
-											<Close
-												fontSize='small'
-												className='cursor-pointer edit-text align-self-center'
-												onClick={() =>
-													handleCollapseChange('startTime')
-												}
-											/>
-										</div>
-									) : (
-										<Edit
-											fontSize='small'
-											className='cursor-pointer edit-text align-self-center'
-											onClick={() =>
-												handleCollapseChange('startTime')
-											}
-										/>
-									)
-								) : null}
+								{getIcons('startTime')}
 							</div>
 							<Collapse in={fields.startTime.collapse}>
 								<Grid container>
@@ -178,36 +153,7 @@ const ExamTime = (props) => {
 										{moment(fields.endTime.prev).format('HH:mm A')}
 									</p>
 								</div>
-								{fields.editExam ? (
-									fields.endTime.collapse ? (
-										<div className='align-self-center'>
-											<Update
-												className='cursor-pointer edit-text align-self-center'
-												onClick={
-													fields.endTime.new != null
-														? () =>
-																updateExamDetails({
-																	endTime: fields.endTime.new,
-																})
-														: null
-												}
-											/>
-											<Close
-												fontSize='small'
-												className='cursor-pointer edit-text align-self-center'
-												onClick={() =>
-													handleCollapseChange('endTime')
-												}
-											/>
-										</div>
-									) : (
-										<Edit
-											fontSize='small'
-											className='cursor-pointer edit-text align-self-center'
-											onClick={() => handleCollapseChange('endTime')}
-										/>
-									)
-								) : null}
+								{getIcons('endTime')}
 							</div>
 							<Collapse in={fields.endTime.collapse}>
 								<Grid container>

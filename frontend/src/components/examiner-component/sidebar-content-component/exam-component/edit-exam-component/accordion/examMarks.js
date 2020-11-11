@@ -18,6 +18,40 @@ const ExamMarks = (props) => {
 		updateExamDetails({ [field]: fields[field].new });
 	};
 
+	let getIcons = (key) => {
+		if (fields.editExam) {
+			if (fields[key].collapse) {
+				return (
+					<div className='align-self-center'>
+						<Update
+							className='cursor-pointer edit-text align-self-center'
+							onClick={
+								fields[key].new !== null
+									? () =>
+											updateExamDetails({
+												[key]: fields[key].new,
+											})
+									: null
+							}
+						/>
+						<Close
+							fontSize='small'
+							className='cursor-pointer edit-text align-self-center'
+							onClick={() => handleCollapseChange(key)}
+						/>
+					</div>
+				);
+			} else
+				return (
+					<Edit
+						fontSize='small'
+						className='cursor-pointer edit-text align-self-center'
+						onClick={() => handleCollapseChange(key)}
+					/>
+				);
+		} else return null;
+	};
+
 	return (
 		<Accordion defaultActiveKey='0'>
 			<Card className='mb-2'>
@@ -41,39 +75,7 @@ const ExamMarks = (props) => {
 										{fields.totalMarks.prev}
 									</p>
 								</div>
-								{fields.editExam ? (
-									fields.totalMarks.collapse ? (
-										<div className='align-self-center'>
-											<Update
-												className='cursor-pointer edit-text align-self-center'
-												onClick={
-													fields.totalMarks.new != null
-														? () =>
-																updateExamDetails({
-																	totalMarks:
-																		fields.totalMarks.new,
-																})
-														: null
-												}
-											/>
-											<Close
-												fontSize='small'
-												className='cursor-pointer edit-text align-self-center'
-												onClick={() =>
-													handleCollapseChange('totalMarks')
-												}
-											/>
-										</div>
-									) : (
-										<Edit
-											fontSize='small'
-											className='cursor-pointer edit-text align-self-center'
-											onClick={() =>
-												handleCollapseChange('totalMarks')
-											}
-										/>
-									)
-								) : null}
+								{getIcons('totalMarks')}
 							</div>
 							<Collapse in={fields.totalMarks.collapse}>
 								<TextField
@@ -105,39 +107,7 @@ const ExamMarks = (props) => {
 										{fields.passingMarks.prev}
 									</p>
 								</div>
-								{fields.editExam ? (
-									fields.passingMarks.collapse ? (
-										<div className='align-self-center'>
-											<Update
-												className='cursor-pointer edit-text align-self-center'
-												onClick={
-													fields.passingMarks.new != null
-														? () =>
-																updateExamDetails({
-																	passingMarks:
-																		fields.passingMarks.new,
-																})
-														: null
-												}
-											/>
-											<Close
-												fontSize='small'
-												className='cursor-pointer edit-text align-self-center'
-												onClick={() =>
-													handleCollapseChange('passingMarks')
-												}
-											/>
-										</div>
-									) : (
-										<Edit
-											fontSize='small'
-											className='cursor-pointer edit-text align-self-center'
-											onClick={() =>
-												handleCollapseChange('passingMarks')
-											}
-										/>
-									)
-								) : null}
+								{getIcons('passingMarks')}
 							</div>
 							<Collapse in={fields.passingMarks.collapse}>
 								<TextField

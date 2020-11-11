@@ -53,6 +53,41 @@ class ExamDetails extends React.Component {
 		this.props.updateExamDetails({ [field]: this.props.fields[field].new });
 	};
 
+	getIcons = (key) => {
+		let fields = this.props.fields;
+		if (fields.editExam) {
+			if (fields[key].collapse) {
+				return (
+					<div className='align-self-center'>
+						<Update
+							className='cursor-pointer edit-text align-self-center'
+							onClick={
+								fields[key].new !== null
+									? () =>
+											this.props.updateExamDetails({
+												[key]: fields[key].new,
+											})
+									: null
+							}
+						/>
+						<Close
+							fontSize='small'
+							className='cursor-pointer edit-text align-self-center'
+							onClick={() => this.props.handleCollapseChange(key)}
+						/>
+					</div>
+				);
+			} else
+				return (
+					<Edit
+						fontSize='small'
+						className='cursor-pointer edit-text align-self-center'
+						onClick={() => this.props.handleCollapseChange(key)}
+					/>
+				);
+		} else return null;
+	};
+
 	render() {
 		let { fields } = this.props;
 		return (
@@ -80,45 +115,7 @@ class ExamDetails extends React.Component {
 											{fields.courses.prev.name}
 										</p>
 									</div>
-									{fields.editExam ? (
-										fields.courses.collapse ? (
-											<div className='align-self-center'>
-												<Update
-													className='cursor-pointer edit-text align-self-center'
-													onClick={
-														fields.courses.new !== null
-															? () =>
-																	this.props.updateExamDetails(
-																		{
-																			courses:
-																				fields.courses.new,
-																		}
-																	)
-															: null
-													}
-												/>
-												<Close
-													fontSize='small'
-													className='cursor-pointer edit-text align-self-center'
-													onClick={() =>
-														this.props.handleCollapseChange(
-															'courses'
-														)
-													}
-												/>
-											</div>
-										) : (
-											<Edit
-												fontSize='small'
-												className='cursor-pointer edit-text align-self-center'
-												onClick={() =>
-													this.props.handleCollapseChange(
-														'courses'
-													)
-												}
-											/>
-										)
-									) : null}
+									{this.getIcons('courses')}
 								</div>
 								<Collapse in={fields.courses.collapse}>
 									<div>
@@ -162,45 +159,7 @@ class ExamDetails extends React.Component {
 											{fields.subject.prev}
 										</p>
 									</div>
-									{fields.editExam ? (
-										fields.subject.collapse ? (
-											<div className='align-self-center'>
-												<Update
-													className='cursor-pointer edit-text align-self-center'
-													onClick={
-														fields.subject.new != null
-															? () =>
-																	this.props.updateExamDetails(
-																		{
-																			subject:
-																				fields.subject.new,
-																		}
-																	)
-															: null
-													}
-												/>
-												<Close
-													fontSize='small'
-													className='cursor-pointer edit-text align-self-center'
-													onClick={() =>
-														this.props.handleCollapseChange(
-															'subject'
-														)
-													}
-												/>
-											</div>
-										) : (
-											<Edit
-												fontSize='small'
-												className='cursor-pointer edit-text align-self-center'
-												onClick={() =>
-													this.props.handleCollapseChange(
-														'subject'
-													)
-												}
-											/>
-										)
-									) : null}
+									{this.getIcons('subject')}
 								</div>
 								<Collapse in={fields.subject.collapse}>
 									<TextField
@@ -233,45 +192,7 @@ class ExamDetails extends React.Component {
 											{fields.examCode.prev}
 										</p>
 									</div>
-									{fields.editExam ? (
-										fields.examCode.collapse ? (
-											<div className='align-self-center'>
-												<Update
-													className='cursor-pointer edit-text align-self-center'
-													onClick={
-														fields.examCode.new != null
-															? () =>
-																	this.props.updateExamDetails(
-																		{
-																			examCode:
-																				fields.examCode.new,
-																		}
-																	)
-															: null
-													}
-												/>
-												<Close
-													fontSize='small'
-													className='cursor-pointer edit-text align-self-center'
-													onClick={() =>
-														this.props.handleCollapseChange(
-															'examCode'
-														)
-													}
-												/>
-											</div>
-										) : (
-											<Edit
-												fontSize='small'
-												className='cursor-pointer edit-text align-self-center'
-												onClick={() =>
-													this.props.handleCollapseChange(
-														'examCode'
-													)
-												}
-											/>
-										)
-									) : null}
+									{this.getIcons('examCode')}
 								</div>
 								<Collapse in={fields.examCode.collapse}>
 									<TextField
