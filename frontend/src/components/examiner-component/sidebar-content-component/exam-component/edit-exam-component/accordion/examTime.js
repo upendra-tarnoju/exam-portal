@@ -88,7 +88,7 @@ const ExamTime = (props) => {
 											id='exam-date-picker'
 											label='Exam date'
 											format='MM/dd/yyyy'
-											value={fields.examDate.new}
+											value={fields.examDate.new || Date.now()}
 											className='w-100 mt-0'
 											variant='dialog'
 											onChange={(date) =>
@@ -152,11 +152,11 @@ const ExamTime = (props) => {
 									<MuiPickersUtilsProvider utils={DateFnsUtils}>
 										<KeyboardTimePicker
 											margin='normal'
-											id='end-time-picker'
+											id='start-time-picker'
 											label='Start time'
 											fullWidth
 											className='mt-0'
-											value={fields.startTime.new}
+											value={fields.startTime.new || Date.now()}
 											onChange={(time) =>
 												handleExamChange({ startTime: time })
 											}
@@ -218,7 +218,7 @@ const ExamTime = (props) => {
 											label='End time'
 											fullWidth
 											className='mt-0'
-											value={fields.endTime.new}
+											value={fields.endTime.new || Date.now()}
 											onChange={(time) =>
 												handleExamChange({ endTime: time })
 											}
