@@ -16,13 +16,13 @@ export default function (WrappedComponent, accountType) {
 					decodedToken.type !== accountType
 				) {
 					this.props.history.push('/login');
-					this.props.setAuthenticatedUser(false);
+					this.props.setAuthenticatedUser(false, '', '');
 				} else {
 					this.props.setAuthenticatedUser(true, decodedToken);
 				}
 			} else {
 				this.props.history.replace('/login');
-				this.props.setAuthenticatedUser(false);
+				this.props.setAuthenticatedUser(false, '', '');
 			}
 		}
 

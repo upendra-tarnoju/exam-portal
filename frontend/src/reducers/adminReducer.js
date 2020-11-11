@@ -15,12 +15,16 @@ const capitalizeName = (name) => {
 
 const adminReducers = (state = initialState, action) => {
 	if (action.type === 'set_authenticated_user') {
+		let name = '';
+		if (action.firstName !== undefined) {
+			name = `${capitalizeName(action.firstName)} ${capitalizeName(
+				action.lastName
+			)}`;
+		}
 		return {
 			...state,
 			authenticated: action.authenticated,
-			name: `${capitalizeName(action.firstName)} ${capitalizeName(
-				action.lastName
-			)}`,
+			name: name,
 		};
 	} else if (action.type === 'collapse_sidebar') {
 		return {
