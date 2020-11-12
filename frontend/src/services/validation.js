@@ -38,6 +38,7 @@ const updateExamFields = (temp, fields) => {
 	switch (key) {
 		case 'subject':
 		case 'examCode':
+		case 'duration':
 			temp.error = checkEmptyField(temp[key]);
 			return temp;
 
@@ -61,6 +62,13 @@ const updateExamFields = (temp, fields) => {
 					temp.error = 'Passing marks cannot be greater than total marks';
 				} else temp.error = '';
 			}
+			return temp;
+
+		case 'courses':
+			let length = Object.keys(temp[key]).length;
+			if (length === 0) {
+				temp.error = 'Select any one course';
+			} else temp.error = '';
 			return temp;
 
 		default:

@@ -133,6 +133,7 @@ class ExamDetails extends React.Component {
 														{...params}
 														label='Course'
 														variant='outlined'
+														error={fields.courses.msg !== ''}
 													/>
 												)}
 												onChange={(event, newCourse) =>
