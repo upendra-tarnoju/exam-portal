@@ -1,3 +1,5 @@
+import factories from '../factories/factories';
+
 let checkEmptyField = (value) => {
 	if (value === '') return '* Required';
 	else return '';
@@ -120,7 +122,43 @@ const createQuestionFields = (temp) => {
 	return { tempState: temp, error: error };
 };
 
+let validateStartTime = (examDate, startTime) => {
+	let currentDate = new Date();
+
+	let currentTime = factories.formatTime(currentDate);
+
+	currentDate = factories.formatDate(currentDate);
+
+	examDate = factories.formatDate(examDate);
+
+	if (currentDate === examDate) {
+		if (currentTime <= startTime) return true;
+		else return false;
+	} else if (currentDate < examDate) return true;
+	else return false;
+};
+
+let validateExamDuration = (duration, startTime, endTime) => {
+	duration = parseInt(duration, 10);
+
+	let startHour = new Date();
+	startHour.setTime(Date.parse(startTime));
+
+	startHour = startHour.getUTCHours();
+
+	let endHour = new Date();
+	endHour.setTime(Date.parse(endTime));
+
+	endHour = endHour.getUTCHours();
+	let diffHour = (endHour - startHour) * 60;
+
+	if (duration <= diffHour) return true;
+	else return false;
+};
+
 export default {
 	updateExamFields,
 	createQuestionFields,
+	validateStartTime,
+	validateExamDuration,
 };

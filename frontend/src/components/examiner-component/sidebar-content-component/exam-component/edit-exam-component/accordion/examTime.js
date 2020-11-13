@@ -1,26 +1,24 @@
 import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import Accordion from 'react-bootstrap/Accordion';
-import { Grid, TextField } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import Moment from 'react-moment';
 import { Edit, Close, Update, DeleteForever } from '@material-ui/icons';
-import DateFnsUtils from '@date-io/date-fns';
-import {
-	MuiPickersUtilsProvider,
-	KeyboardTimePicker,
-	KeyboardDatePicker,
-} from '@material-ui/pickers';
 import moment from 'moment';
 
 import styles from '../../exam.module.css';
 import DeleteModal from '../../../../../../modals/deleteModal';
+import {
+	ExamDateForm,
+	ExamStartTimeForm,
+	ExamEndTimeForm,
+	ExamDurationForm,
+} from '../../../../../../forms/editExamForm';
 
 const ExamTime = (props) => {
 	let [deleteModal, setModal] = React.useState(false);
 	let {
 		fields,
-		handleExamTimeChange,
-		handleDurationChange,
 		handleCollapseChange,
 		deleteDuration,
 		updateExamDetails,
@@ -28,21 +26,14 @@ const ExamTime = (props) => {
 
 	let hideModal = () => setModal(false);
 
-	let getIcons = (key) => {
+	let getIcons = (key, ref) => {
 		if (fields.editExam) {
 			if (fields[key].collapse) {
 				return (
 					<div className='align-self-center'>
 						<Update
 							className='cursor-pointer edit-text align-self-center'
-							onClick={
-								fields[key].new !== null
-									? () =>
-											updateExamDetails({
-												[key]: fields[key].new,
-											})
-									: null
-							}
+							onClick={() => ref.current.handleSubmit()}
 						/>
 						{key === 'duration' && fields[key].prev !== undefined ? (
 							<DeleteForever
@@ -69,6 +60,126 @@ const ExamTime = (props) => {
 		} else return null;
 	};
 
+	let ExamDateField = () => {
+		let examDateRef = React.useRef();
+		return (
+			<div>
+				<div className='d-flex justify-content-between flex-row'>
+					<div className='flex-column'>
+						<label className={`mb-0 ${styles.editExamHeading}`}>
+							Exam date
+						</label>
+						<p className={styles.editExamContent}>
+							<Moment parse='YYYY-MM-DD' format='MMM Do, YYYY'>
+								{fields.examDate.prev}
+							</Moment>
+						</p>
+					</div>
+					{getIcons('examDate', examDateRef)}
+				</div>
+				<Collapse in={fields.examDate.collapse}>
+					<Grid container>
+						<ExamDateForm
+							value={fields.examDate.new}
+							examDateRef={examDateRef}
+							handleSubmit={updateExamDetails}
+						/>
+					</Grid>
+				</Collapse>
+			</div>
+		);
+	};
+
+	let ExamStartTimeField = () => {
+		let startTimeRef = React.useRef();
+		return (
+			<div>
+				<div className='d-flex justify-content-between flex-row mt-2'>
+					<div className='flex-column'>
+						<label className={`mb-0 ${styles.editExamHeading}`}>
+							Start time
+						</label>
+						<p className={styles.editExamContent}>
+							{moment(fields.startTime.prev).format('HH:mm A')}
+						</p>
+					</div>
+					{getIcons('startTime', startTimeRef)}
+				</div>
+				<Collapse in={fields.startTime.collapse}>
+					<Grid container>
+						<ExamStartTimeForm
+							value={fields.startTime.new}
+							startTimeRef={startTimeRef}
+							handleSubmit={updateExamDetails}
+							examDate={fields.examDate.new}
+						/>
+					</Grid>
+				</Collapse>
+			</div>
+		);
+	};
+
+	let ExamEndTimeField = () => {
+		let endTimeRef = React.useRef();
+		return (
+			<div>
+				<div className='d-flex justify-content-between flex-row mt-2'>
+					<div className='flex-column'>
+						<label className={`mb-0 ${styles.editExamHeading}`}>
+							End time
+						</label>
+						<p className={styles.editExamContent}>
+							{moment(fields.endTime.prev).format('HH:mm A')}
+						</p>
+					</div>
+					{getIcons('endTime', endTimeRef)}
+				</div>
+				<Collapse in={fields.endTime.collapse}>
+					<Grid container>
+						<ExamEndTimeForm
+							value={fields.endTime.new}
+							endTimeRef={endTimeRef}
+							handleSubmit={updateExamDetails}
+							startTime={fields.startTime.new}
+						/>
+					</Grid>
+				</Collapse>
+			</div>
+		);
+	};
+
+	let ExamDurationField = () => {
+		let durationRef = React.useRef();
+		return (
+			<div>
+				<div className='d-flex justify-content-between flex-row mt-2'>
+					<div className='flex-column'>
+						<label className={`mb-0 ${styles.editExamHeading}`}>
+							Duration
+						</label>
+						<p className={styles.editExamContent}>
+							{fields.duration.prev !== undefined
+								? `${fields.duration.prev} minutues`
+								: 'NA'}
+						</p>
+					</div>
+					{getIcons('duration', durationRef)}
+				</div>
+				<Collapse in={fields.duration.collapse}>
+					<div>
+						<ExamDurationForm
+							value={fields.duration.new}
+							durationRef={durationRef}
+							handleSubmit={updateExamDetails}
+							startTime={fields.startTime.new}
+							endTime={fields.endTime.new}
+						/>
+					</div>
+				</Collapse>
+			</div>
+		);
+	};
+
 	return (
 		<Accordion defaultActiveKey='0'>
 			<Card className='mb-2'>
@@ -83,142 +194,10 @@ const ExamTime = (props) => {
 				<Accordion.Collapse eventKey='0'>
 					<Card.Body>
 						<div className='container'>
-							<div className='d-flex justify-content-between flex-row'>
-								<div className='flex-column'>
-									<label className={`mb-0 ${styles.editExamHeading}`}>
-										Exam date
-									</label>
-									<p className={styles.editExamContent}>
-										<Moment parse='YYYY-MM-DD' format='MMM Do, YYYY'>
-											{fields.examDate.prev}
-										</Moment>
-									</p>
-								</div>
-								{getIcons('examDate')}
-							</div>
-							<Collapse in={fields.examDate.collapse}>
-								<Grid container>
-									<MuiPickersUtilsProvider utils={DateFnsUtils}>
-										<KeyboardDatePicker
-											margin='normal'
-											id='exam-date-picker'
-											label='Exam date'
-											format='MM/dd/yyyy'
-											value={fields.examDate.new || Date.now()}
-											className='w-100 mt-0'
-											variant='dialog'
-											onChange={(date) =>
-												handleExamTimeChange({ examDate: date })
-											}
-											KeyboardButtonProps={{
-												'aria-label': 'change date',
-											}}
-											error={fields.examDate.msg !== ''}
-											helperText={fields.examDate.msg}
-											name='examDate'
-										/>
-									</MuiPickersUtilsProvider>
-								</Grid>
-							</Collapse>
-							<div className='d-flex justify-content-between flex-row mt-2'>
-								<div className='flex-column'>
-									<label className={`mb-0 ${styles.editExamHeading}`}>
-										Start time
-									</label>
-									<p className={styles.editExamContent}>
-										{moment(fields.startTime.prev).format('HH:mm A')}
-									</p>
-								</div>
-								{getIcons('startTime')}
-							</div>
-							<Collapse in={fields.startTime.collapse}>
-								<Grid container>
-									<MuiPickersUtilsProvider utils={DateFnsUtils}>
-										<KeyboardTimePicker
-											margin='normal'
-											id='start-time-picker'
-											label='Start time'
-											fullWidth
-											className='mt-0'
-											value={fields.startTime.new || Date.now()}
-											onChange={(time) =>
-												handleExamTimeChange({ startTime: time })
-											}
-											KeyboardButtonProps={{
-												'aria-label': 'change time',
-											}}
-											error={fields.startTime.msg !== ''}
-											helperText={fields.startTime.msg}
-										/>
-									</MuiPickersUtilsProvider>
-								</Grid>
-							</Collapse>
-							<div className='d-flex justify-content-between flex-row mt-2'>
-								<div className='flex-column'>
-									<label className={`mb-0 ${styles.editExamHeading}`}>
-										End time
-									</label>
-									<p className={styles.editExamContent}>
-										{moment(fields.endTime.prev).format('HH:mm A')}
-									</p>
-								</div>
-								{getIcons('endTime')}
-							</div>
-							<Collapse in={fields.endTime.collapse}>
-								<Grid container>
-									<MuiPickersUtilsProvider utils={DateFnsUtils}>
-										<KeyboardTimePicker
-											margin='normal'
-											id='end-time-picker'
-											label='End time'
-											fullWidth
-											className='mt-0'
-											value={fields.endTime.new || Date.now()}
-											onChange={(time) =>
-												handleExamTimeChange({ endTime: time })
-											}
-											KeyboardButtonProps={{
-												'aria-label': 'change time',
-											}}
-											error={fields.endTime.msg !== ''}
-											helperText={fields.endTime.msg}
-										/>
-									</MuiPickersUtilsProvider>
-								</Grid>
-							</Collapse>
-							<div className='d-flex justify-content-between flex-row mt-2'>
-								<div className='flex-column'>
-									<label className={`mb-0 ${styles.editExamHeading}`}>
-										Duration
-									</label>
-									<p className={styles.editExamContent}>
-										{fields.duration.prev !== undefined
-											? `${fields.duration.prev} minutues`
-											: 'NA'}
-									</p>
-								</div>
-								{getIcons('duration')}
-							</div>
-							<Collapse in={fields.duration.collapse}>
-								<TextField
-									name='duration'
-									label='duration'
-									className='w-100'
-									variant='outlined'
-									size='small'
-									value={fields.duration.new}
-									onChange={handleDurationChange}
-									error={fields.duration.msg !== ''}
-									helperText={fields.duration.msg}
-									onKeyDown={(event) => {
-										if (
-											event.keyCode === 13 &&
-											fields.duration.new != null
-										)
-											this.handleSubmit('duration');
-									}}
-								/>
-							</Collapse>
+							<ExamDateField />
+							<ExamStartTimeField />
+							<ExamEndTimeField />
+							<ExamDurationField />
 							<DeleteModal
 								show={deleteModal}
 								hideModal={hideModal}
@@ -234,3 +213,4 @@ const ExamTime = (props) => {
 };
 
 export default ExamTime;
+//236

@@ -59,16 +59,6 @@ class EditExam extends React.Component {
 		}
 	};
 
-	handleExamTimeChange = (field) => {
-		let key = Object.keys(field)[0];
-		this.setState((prevState) => ({
-			[key]: {
-				...prevState[key],
-				new: field[key],
-			},
-		}));
-	};
-
 	changeCourse = (newCourse) => {
 		this.setState((prevState) => ({
 			courses: {
@@ -259,7 +249,6 @@ class EditExam extends React.Component {
 				{this.state.courses.new !== '' ? (
 					<ExamDetails
 						fields={this.state}
-						handleExamChange={this.handleExamChange}
 						handleCollapseChange={this.handleCollapseChange}
 						updateExamDetails={this.updateExamDetails}
 						handleCourseChange={this.changeCourse}
@@ -269,7 +258,6 @@ class EditExam extends React.Component {
 				{this.state.examDate.prev !== '' ? (
 					<ExamMarks
 						fields={this.state}
-						handleExamChange={this.handleExamChange}
 						handleCollapseChange={this.handleCollapseChange}
 						updateExamDetails={this.updateExamDetails}
 					/>
@@ -277,8 +265,6 @@ class EditExam extends React.Component {
 
 				<ExamTime
 					fields={this.state}
-					handleExamTimeChange={this.handleExamTimeChange}
-					handleDurationChange={this.handleExamChange}
 					handleCollapseChange={this.handleCollapseChange}
 					deleteDuration={this.deleteDuration}
 					updateExamDetails={this.updateExamDetails}
