@@ -44,6 +44,10 @@ class CreateStudent extends React.Component {
 		let fileType = file.name.split('.')[1];
 		if (fileType === 'xlsx' || fileType === 'xls' || fileType === 'csv') {
 			this.setState({ file }, () => this.handleFileModal(true));
+		} else {
+			this.setState({
+				snackBar: { show: true, msg: 'File type is not supported' },
+			});
 		}
 	};
 
@@ -54,7 +58,13 @@ class CreateStudent extends React.Component {
 	uploadStudentFile = () => {
 		let formData = new FormData();
 		formData.append('file', this.state.file);
-		this.examinerService.saveNewStudent(formData).then((response) => {});
+		this.examinerService
+			.saveNewStudent(formData)
+			.then((response) => {})
+			.catch((err) => {
+				let msg = err.response.data.msg;
+				this.setState({ snackBar: { show: true, msg: msg } });
+			});
 		this.handleFileModal(false);
 	};
 
