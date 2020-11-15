@@ -60,6 +60,10 @@ class Exams {
 		]);
 	};
 
+	getByExamId = (examId) => {
+		return this.examModel.findById(examId);
+	};
+
 	findExamStudents(examinerId) {
 		return this.examModel.aggregate([
 			{ $match: { examinerId: `${examinerId}` } },

@@ -90,18 +90,20 @@ const exams = {
 				.select({ [key]: 1 });
 			return { status: 200, data: updatedExam };
 		} else if (key === 'password') {
-			let existingExam = await exam.getById(examId).select({ password: 1 });
+			let existingExam = await exam
+				.getByExamId(examId)
+				.select({ password: 1 });
 			let passwordStatus = bcrypt.compareSync(
-				examDetails.password.current.value,
+				examDetails.password.current,
 				existingExam.password
 			);
 			if (passwordStatus) {
 				let salt = bcrypt.genSaltSync(10);
 				let hashedPassword = bcrypt.hashSync(
-					examDetails.password.new.value,
+					examDetails.password.new,
 					salt
 				);
-				let updatedExam = await exam
+				await exam
 					.update(examId, { password: hashedPassword })
 					.select({ _id: 1 });
 				return {

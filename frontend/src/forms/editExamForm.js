@@ -305,3 +305,93 @@ export const ExamDurationForm = (props) => (
 		)}
 	</Formik>
 );
+
+export const ExamPasswordForm = (props) => (
+	<Formik
+		innerRef={props.passwordRef}
+		initialValues={{
+			current: '',
+			new: '',
+			reTypeNew: '',
+		}}
+		validationSchema={Yup.object({
+			current: Yup.string().required('Required field'),
+			new: Yup.string()
+				.required('Required field')
+				.min(6, 'Minimum password length should be 6'),
+			reTypeNew: Yup.string()
+				.oneOf([Yup.ref('new'), null], 'Password must match')
+				.required('Required field'),
+		})}
+		onSubmit={(values) => props.handleSubmit({ password: values })}
+	>
+		{(formikProps) => (
+			<div>
+				<div className='mt-2 mb-4'>
+					<TextField
+						type='password'
+						variant='outlined'
+						label='Current password'
+						value={formikProps.values.current}
+						onChange={formikProps.handleChange}
+						size='small'
+						error={
+							formikProps.touched.current &&
+							Boolean(formikProps.errors.current)
+						}
+						helperText={
+							formikProps.touched.current
+								? formikProps.errors.current
+								: ''
+						}
+						onBlur={formikProps.handleBlur}
+						fullWidth
+						name='current'
+					/>
+				</div>
+				<div className='mb-4'>
+					<TextField
+						type='password'
+						name='new'
+						variant='outlined'
+						label='New password'
+						value={formikProps.values.new}
+						onChange={formikProps.handleChange}
+						size='small'
+						error={
+							formikProps.touched.new && Boolean(formikProps.errors.new)
+						}
+						helperText={
+							formikProps.touched.new ? formikProps.errors.new : ''
+						}
+						onBlur={formikProps.handleBlur}
+						fullWidth
+					/>
+				</div>
+				<div className='mb-4'>
+					<TextField
+						type='password'
+						name='reTypeNew'
+						variant='outlined'
+						label='Re-type password'
+						className='w-100 form-control mr-2'
+						value={formikProps.values.reTypeNew}
+						onChange={formikProps.handleChange}
+						onBlur={formikProps.handleBlur}
+						size='small'
+						error={
+							formikProps.touched.reTypeNew &&
+							Boolean(formikProps.errors.reTypeNew)
+						}
+						helperText={
+							formikProps.touched.reTypeNew
+								? formikProps.errors.reTypeNew
+								: ''
+						}
+						fullWidth
+					/>
+				</div>
+			</div>
+		)}
+	</Formik>
+);

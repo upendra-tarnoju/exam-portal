@@ -4,7 +4,6 @@ import { Alert, AlertTitle } from '@material-ui/lab';
 
 import styles from '../exam.module.css';
 import ExamService from '../../../../../services/examApi';
-import validation from '../../../../../services/validation';
 import ExamDetails from './accordion/examDetails';
 import ExamMarks from './accordion/examMarks';
 import ExamTime from './accordion/examTime';
@@ -25,9 +24,6 @@ class EditExam extends React.Component {
 			courses: { prev: '', new: '', collapse: false, msg: '' },
 			duration: { prev: '', new: '', collapse: false, msg: '' },
 			password: { collapse: false, msg: '' },
-			current: { value: '', msg: '' },
-			new: { value: '', msg: '' },
-			reTypeNew: { value: '', msg: '' },
 			editExam: true,
 		};
 		this.examService = new ExamService();
@@ -64,17 +60,6 @@ class EditExam extends React.Component {
 			courses: {
 				...prevState.courses,
 				new: newCourse !== null ? newCourse : {},
-			},
-		}));
-	};
-
-	handlePasswordChange = (event) => {
-		let key = event.target.name;
-		let value = event.target.value;
-		this.setState((prevState) => ({
-			[key]: {
-				...prevState[key],
-				value: value,
 			},
 		}));
 	};
@@ -169,62 +154,35 @@ class EditExam extends React.Component {
 	updateExamDetails = (data) => {
 		let key = Object.keys(data)[0];
 		let examId = this.props.match.params.examId;
-		let validationState = validation.updateExamFields(data, this.state);
-		if (validationState.error === '') {
-			this.examService
-				.updateExam(examId, data)
-				.then((response) => {
-					if (key === 'courses') {
-						this.setState((prevState) => ({
-							courses: {
-								...prevState.courses,
-								prev: prevState.courses.new,
-								collapse: false,
-							},
-						}));
-					} else {
-						this.setState({
-							[key]: {
-								prev: response.data[key],
-								new: response.data[key],
-								collapse: false,
-							},
-						});
-					}
-				})
-				.catch((error) => {
+		this.examService
+			.updateExam(examId, data)
+			.then((response) => {
+				if (key === 'courses') {
 					this.setState((prevState) => ({
-						[key]: {
-							...prevState[key],
-							msg: error.response.data.msg,
+						courses: {
+							...prevState.courses,
+							prev: prevState.courses.new,
+							collapse: false,
 						},
 					}));
-				});
-		} else {
-			if (key !== 'password') {
+				} else {
+					this.setState({
+						[key]: {
+							prev: response.data[key],
+							new: response.data[key],
+							collapse: false,
+						},
+					});
+				}
+			})
+			.catch((error) => {
 				this.setState((prevState) => ({
 					[key]: {
 						...prevState[key],
-						msg: validationState.error,
+						msg: error.response.data.msg,
 					},
 				}));
-			} else {
-				this.setState((prevState) => ({
-					current: {
-						...prevState.current,
-						msg: validationState.current.msg,
-					},
-					new: {
-						...prevState.new,
-						msg: validationState.new.msg,
-					},
-					reTypeNew: {
-						...prevState.reTypeNew,
-						msg: validationState.reTypeNew.msg,
-					},
-				}));
-			}
-		}
+			});
 	};
 
 	deleteDuration = () => {
@@ -271,7 +229,6 @@ class EditExam extends React.Component {
 				/>
 				<ExamPassword
 					fields={this.state}
-					handlePasswordChange={this.handlePasswordChange}
 					handleCollapseChange={this.handleCollapseChange}
 					updateExamDetails={this.updateExamDetails}
 				/>
