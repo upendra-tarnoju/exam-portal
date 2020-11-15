@@ -41,7 +41,10 @@ class CreateStudent extends React.Component {
 
 	handleFileChange = (event) => {
 		let file = event.target.files[0];
-		this.setState({ file }, () => this.handleFileModal(true));
+		let fileType = file.name.split('.')[1];
+		if (fileType === 'xlsx' || fileType === 'xls' || fileType === 'csv') {
+			this.setState({ file }, () => this.handleFileModal(true));
+		}
 	};
 
 	handleFileModal = (show) => {

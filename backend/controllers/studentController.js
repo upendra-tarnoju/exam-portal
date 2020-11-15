@@ -4,10 +4,14 @@ const student = {
 	addNewStudent: async (req, res) => {
 		let studentData = req.body;
 		let examinerId = req.user._id;
-		if (req.file.originalname.includes('.csv')) {
-			let filePath = req.file.path;
-			let msg = await studentHandler.uploadStudentFile(filePath);
-			res.status(200).send({ msg });
+		if (req.file !== undefined) {
+			if (req.file.originalname.includes('.csv')) {
+				let filePath = req.file.path;
+				let msg = await studentHandler.uploadStudentFile(filePath);
+				res.status(200).send({ msg });
+			} else {
+				res.status(400).send({ msg: 'File type is not supported' });
+			}
 		} else {
 			studentData.examinerId = examinerId;
 			studentData.accountType = 'student';
