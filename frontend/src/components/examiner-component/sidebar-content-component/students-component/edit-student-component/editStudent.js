@@ -9,7 +9,6 @@ let gender = [
 ];
 
 const EditStudent = (props) => {
-	console.log(props.student);
 	return (
 		<Modal
 			size='lg'

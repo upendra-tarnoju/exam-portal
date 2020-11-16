@@ -31,6 +31,7 @@ import styles from '../students.module.css';
 import ExaminerService from '../../../../../services/examinerApi';
 import DeleteModal from '../../../../../modals/deleteModal';
 import EditStudentModal from '../edit-student-component/editStudent';
+import EditPasswordModal from '../edit-student-component/editPassword';
 
 class ViewStudents extends React.Component {
 	constructor(props) {
@@ -40,6 +41,7 @@ class ViewStudents extends React.Component {
 			deleteModal: { show: false, id: '' },
 			snackBar: { show: false, msg: '' },
 			editModal: { show: false, data: {} },
+			passwordModal: { show: true },
 		};
 		this.examinerService = new ExaminerService();
 	}
@@ -89,6 +91,10 @@ class ViewStudents extends React.Component {
 
 	handleEditModal = (show, data) => {
 		this.setState({ editModal: { show: show, data: data } });
+	};
+
+	handlePasswordModal = (show) => {
+		this.setState({ passwordModal: { show: show } });
 	};
 
 	deleteExam = () => {
@@ -245,7 +251,15 @@ class ViewStudents extends React.Component {
 							color='primary'
 							onClick={() => this.handleEditModal(true, value)}
 						>
-							Edit
+							Edit Details
+						</Button>
+						<Button
+							size='small'
+							variant='contained'
+							className='bg-success text-white'
+							onClick={() => this.handlePasswordModal(true)}
+						>
+							Change password
 						</Button>
 						<Button
 							size='small'
@@ -290,6 +304,10 @@ class ViewStudents extends React.Component {
 						student={this.state.editModal.data}
 					/>
 				) : null}
+				<EditPasswordModal
+					show={this.state.passwordModal.show}
+					hideModal={this.handlePasswordModal}
+				/>
 			</div>
 		);
 	}
