@@ -1,4 +1,4 @@
-const { studentHandler } = require('../handlers');
+const { studentHandler, examHandler } = require('../handlers');
 
 const student = {
 	addNewStudent: async (req, res) => {
@@ -28,9 +28,10 @@ const student = {
 			examinerId,
 			pageQuery
 		);
-		let totalStudents = await studentHandler.getStudentsLength(examinerId);
+		let totalExams = await examHandler.getExamsLength(examinerId);
+		// let totalStudents = await studentHandler.getStudentsLength(examinerId);
 
-		res.status(200).send({ studentData, totalStudents });
+		res.status(200).send({ studentData, totalExams });
 	},
 
 	deleteStudent: async (req, res) => {

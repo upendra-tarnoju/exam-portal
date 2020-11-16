@@ -16,7 +16,7 @@ class Students extends React.Component {
 			studentList: [],
 			pageSize: 5,
 			pageIndex: 0,
-			totalStudents: 0,
+			totalExams: 0,
 			snackBar: { show: false, msg: '' },
 		};
 		this.examinerService = new ExaminerService();
@@ -25,11 +25,11 @@ class Students extends React.Component {
 	viewStudents() {
 		let { pageIndex, pageSize } = this.state;
 		this.examinerService.getAllStudents(pageIndex, pageSize).then((res) => {
-			let studentsLength = res.data.totalStudents;
+			let examsLength = res.data.totalExams;
 			this.setState({
 				studentList: res.data.studentData,
-				totalStudents: studentsLength,
-				pageCount: Math.ceil(studentsLength / this.state.pageSize),
+				totalExams: examsLength,
+				pageCount: Math.ceil(examsLength / this.state.pageSize),
 			});
 		});
 	}
