@@ -30,6 +30,7 @@ import moment from 'moment';
 import styles from '../students.module.css';
 import ExaminerService from '../../../../../services/examinerApi';
 import DeleteModal from '../../../../../modals/deleteModal';
+import EditStudentModal from '../edit-student-component/editStudent';
 
 class ViewStudents extends React.Component {
 	constructor(props) {
@@ -38,6 +39,7 @@ class ViewStudents extends React.Component {
 			studentData: [],
 			deleteModal: { show: false, id: '' },
 			snackBar: { show: false, msg: '' },
+			editModal: { show: false, data: {} },
 		};
 		this.examinerService = new ExaminerService();
 	}
@@ -83,6 +85,10 @@ class ViewStudents extends React.Component {
 
 	hideDeleteModal = (show, id) => {
 		this.setState({ deleteModal: { show: show, id: id } });
+	};
+
+	handleEditModal = (show, data) => {
+		this.setState({ editModal: { show: show, data: data } });
 	};
 
 	deleteExam = () => {
@@ -233,7 +239,12 @@ class ViewStudents extends React.Component {
 					</AccordionDetails>
 					<Divider />
 					<AccordionActions className='bg-dark'>
-						<Button size='small' variant='contained' color='primary'>
+						<Button
+							size='small'
+							variant='contained'
+							color='primary'
+							onClick={() => this.handleEditModal(true, value)}
+						>
 							Edit
 						</Button>
 						<Button
@@ -272,6 +283,13 @@ class ViewStudents extends React.Component {
 						{this.state.snackBar.msg}
 					</MuiAlert>
 				</Snackbar>
+				{this.state.editModal.data !== '' ? (
+					<EditStudentModal
+						show={this.state.editModal.show}
+						hideModal={this.handleEditModal}
+						student={this.state.editModal.data}
+					/>
+				) : null}
 			</div>
 		);
 	}
