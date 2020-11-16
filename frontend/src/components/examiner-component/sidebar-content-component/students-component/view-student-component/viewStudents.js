@@ -41,7 +41,7 @@ class ViewStudents extends React.Component {
 			deleteModal: { show: false, id: '' },
 			snackBar: { show: false, msg: '' },
 			editModal: { show: false, data: {} },
-			passwordModal: { show: true },
+			passwordModal: { show: false },
 		};
 		this.examinerService = new ExaminerService();
 	}
