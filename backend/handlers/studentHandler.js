@@ -2,7 +2,8 @@ let bcrypt = require('bcryptjs');
 let csv = require('csvtojson');
 let fs = require('fs');
 
-let { student, users, exam } = require('../models');
+let { student, users, exam, examiner } = require('../models');
+const user = require('../models/user');
 
 let hashPassword = (password) => {
 	let salt = bcrypt.genSaltSync(10);
@@ -96,6 +97,28 @@ const students = {
 		if (updatedData) {
 			return { status: 200, msg: 'Student account status updated' };
 		}
+	},
+
+	updateStudentDetails: async (studentId, data) => {
+		let updatedPersonalDetails = await user
+			.updateByUserDataId(
+				{
+					userDataId: studentId,
+				},
+				data
+			)
+			.select({ firstName: 1, lastName: 1, email: 1, mobileNumber: 1 });
+		let updatedOtherDetails = await student
+			.updateStudentDetails(studentId, data)
+			.select({ userId: 0, examinerId: 0, __v: 0 });
+		return {
+			status: 200,
+			data: {
+				personalDetails: updatedPersonalDetails,
+				otherDetails: updatedOtherDetails,
+				msg: 'Student is updated successfully',
+			},
+		};
 	},
 
 	getParticularExamStudents: async (examId) => {

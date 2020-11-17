@@ -52,6 +52,10 @@ class Students {
 		);
 	}
 
+	updateStudentDetails(studentId, data) {
+		return this.studentModel.findOneAndUpdate(studentId, data, { new: true });
+	}
+
 	findStudentsByExamId(examId) {
 		return this.studentModel.aggregate([
 			{ $match: { exam: { $elemMatch: { examId: ObjectId(examId) } } } },

@@ -1,10 +1,11 @@
-import { Button, MenuItem, TextField } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import React from 'react';
 import { Modal } from 'react-bootstrap';
 
 import EditStudentForm from '../../../../../forms/student-form/editStudentForm';
 
 const EditStudent = (props) => {
+	let studentRef = React.useRef();
 	return (
 		<Modal
 			size='lg'
@@ -16,7 +17,7 @@ const EditStudent = (props) => {
 				<h4>Delmor Callacher</h4>
 			</Modal.Header>
 			<Modal.Body>
-				<EditStudentForm {...props} />
+				<EditStudentForm {...props} studentRef={studentRef} />
 			</Modal.Body>
 			<Modal.Footer>
 				<Button
@@ -24,6 +25,9 @@ const EditStudent = (props) => {
 					color='primary'
 					size='small'
 					className='mr-2'
+					onClick={() => {
+						studentRef.current.handleSubmit();
+					}}
 				>
 					Edit
 				</Button>

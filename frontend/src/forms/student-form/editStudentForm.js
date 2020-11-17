@@ -4,6 +4,7 @@ import moment from 'moment';
 import { MenuItem, TextField } from '@material-ui/core';
 
 import schema from '../../schema/editStudentSchema';
+import ExaminerService from '../../services/examinerApi';
 
 let gender = [
 	{ value: 'male', label: 'Male' },
@@ -13,6 +14,7 @@ let gender = [
 const EditStudentForm = (props) => {
 	return (
 		<Formik
+			innerRef={props.studentRef}
 			validationSchema={schema}
 			initialValues={{
 				firstName: props.student.userData.firstName,
@@ -25,6 +27,15 @@ const EditStudentForm = (props) => {
 				motherName: props.student.motherName,
 				dob: props.student.dob,
 				address: props.student.address,
+			}}
+			onSubmit={(values) => {
+				let examinerService = new ExaminerService();
+				examinerService
+					.updateStudent(props.student._id, values)
+					.then((res) => {
+						let data = res.data;
+						props.updateStudent(data.personalDetails, data.otherDetails);
+					});
 			}}
 		>
 			{(formikProps) => (

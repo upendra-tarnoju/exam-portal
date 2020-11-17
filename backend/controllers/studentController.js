@@ -29,7 +29,6 @@ const student = {
 			pageQuery
 		);
 		let totalExams = await examHandler.getExamsLength(examinerId);
-		// let totalStudents = await studentHandler.getStudentsLength(examinerId);
 
 		res.status(200).send({ studentData, totalExams });
 	},
@@ -49,6 +48,12 @@ const student = {
 				data
 			);
 			res.status(response.status).send({ msg: response.msg });
+		} else {
+			let response = await studentHandler.updateStudentDetails(
+				studentId,
+				data
+			);
+			res.status(response.status).send(response.data);
 		}
 	},
 

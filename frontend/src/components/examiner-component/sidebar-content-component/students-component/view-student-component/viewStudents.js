@@ -106,6 +106,29 @@ class ViewStudents extends React.Component {
 		});
 	};
 
+	updateStudent = (personalData, otherData) => {
+		let studentData = this.state.studentData.map((student) => {
+			var tempStudent = Object.assign({}, student);
+			if (student._id === otherData._id) {
+				tempStudent.address = otherData.address;
+				tempStudent.dob = otherData.dob;
+				tempStudent.fatherName = otherData.fatherName;
+				tempStudent.motherName = otherData.motherName;
+				tempStudent.gender = otherData.gender;
+				tempStudent.studentId = otherData.studentId;
+				tempStudent.userData.mobileNumber = personalData.mobileNumber;
+				tempStudent.userData.email = personalData.email;
+				tempStudent.userData.firstName = personalData.firstName;
+				tempStudent.userData.lastName = personalData.lastName;
+				return tempStudent;
+			} else return student;
+		});
+		this.setState({
+			studentData: studentData,
+			editModal: { show: false, data: '' },
+		});
+	};
+
 	render() {
 		let studentsData = this.state.studentData.map((value) => {
 			let examId = this.props.match.params.examId;
@@ -121,7 +144,11 @@ class ViewStudents extends React.Component {
 						<Typography
 							className={`${styles.accordionView} text-white`}
 						>{`${value.studentId}`}</Typography>
-						<Typography className='text-white'>{`${value.userData.firstName} ${value.userData.lastName}`}</Typography>
+						<Typography className='text-white'>
+							{this.capitalizeName(
+								`${value.userData.firstName} ${value.userData.lastName}`
+							)}
+						</Typography>
 					</AccordionSummary>
 					<AccordionDetails>
 						<div className='container'>
@@ -222,7 +249,9 @@ class ViewStudents extends React.Component {
 											</ListItemAvatar>
 											<ListItemText
 												primary='Gender'
-												secondary={value.gender}
+												secondary={this.capitalizeName(
+													value.gender
+												)}
 											/>
 										</ListItem>
 										<Divider variant='inset' component='li' />
@@ -302,6 +331,7 @@ class ViewStudents extends React.Component {
 						show={this.state.editModal.show}
 						hideModal={this.handleEditModal}
 						student={this.state.editModal.data}
+						updateStudent={this.updateStudent}
 					/>
 				) : null}
 				<EditPasswordModal

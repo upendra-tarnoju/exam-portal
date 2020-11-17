@@ -64,6 +64,10 @@ class Users {
 		return this.userModel.findOneAndRemove({ userDataId: id });
 	};
 
+	updateByUserDataId = (id, data) => {
+		return this.userModel.findOneAndUpdate(id, data, { new: true });
+	};
+
 	findLatest24HoursExaminers() {
 		return this.userModel.aggregate([
 			{
