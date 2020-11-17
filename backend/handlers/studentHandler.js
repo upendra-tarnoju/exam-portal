@@ -121,6 +121,13 @@ const students = {
 		};
 	},
 
+	updateStudentPassword: async (studentId, password) => {
+		let updatedData = await users.updateByUserDataId(studentId, { password });
+		if (updatedData) {
+			return { status: 200, msg: 'Password updated successsfully' };
+		}
+	},
+
 	getParticularExamStudents: async (examId) => {
 		let studentDetails = await student.findStudentsByExamId(examId);
 		return studentDetails;

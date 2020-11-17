@@ -41,7 +41,7 @@ class ViewStudents extends React.Component {
 			deleteModal: { show: false, id: '' },
 			snackBar: { show: false, msg: '' },
 			editModal: { show: false, data: {} },
-			passwordModal: { show: false },
+			passwordModal: { show: false, studentId: '' },
 		};
 		this.examinerService = new ExaminerService();
 	}
@@ -93,8 +93,8 @@ class ViewStudents extends React.Component {
 		this.setState({ editModal: { show: show, data: data } });
 	};
 
-	handlePasswordModal = (show) => {
-		this.setState({ passwordModal: { show: show } });
+	handlePasswordModal = (show, studentId) => {
+		this.setState({ passwordModal: { show: show, studentId: studentId } });
 	};
 
 	deleteExam = () => {
@@ -286,7 +286,7 @@ class ViewStudents extends React.Component {
 							size='small'
 							variant='contained'
 							className='bg-success text-white'
-							onClick={() => this.handlePasswordModal(true)}
+							onClick={() => this.handlePasswordModal(true, value._id)}
 						>
 							Change password
 						</Button>
@@ -337,6 +337,7 @@ class ViewStudents extends React.Component {
 				<EditPasswordModal
 					show={this.state.passwordModal.show}
 					hideModal={this.handlePasswordModal}
+					studentId={this.state.passwordModal.studentId}
 				/>
 			</div>
 		);

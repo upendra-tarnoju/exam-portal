@@ -48,6 +48,12 @@ const student = {
 				data
 			);
 			res.status(response.status).send({ msg: response.msg });
+		} else if ('new' in data) {
+			let response = await studentHandler.updateStudentPassword(
+				studentId,
+				data.new
+			);
+			res.status(response.status).send(response.msg);
 		} else {
 			let response = await studentHandler.updateStudentDetails(
 				studentId,
