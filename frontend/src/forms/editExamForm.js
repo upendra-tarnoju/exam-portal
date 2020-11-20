@@ -195,14 +195,16 @@ export const ExamStartTimeForm = (props) => (
 				.required('Required Start time')
 				.test('', 'Invalid start time', function (startTime) {
 					let examDate = new Date(props.examDate);
+					let endTime = props.endTime;
 					let boolState = validationMethod.validateStartTime(
 						examDate,
-						startTime
+						startTime,
+						endTime
 					);
 					return boolState;
 				}),
 		})}
-		onSubmit={(values) => console.log(values)}
+		onSubmit={(values) => props.handleSubmit(values)}
 		initialValues={{ startTime: props.value }}
 	>
 		{(formikProps) => (
@@ -234,13 +236,15 @@ export const ExamEndTimeForm = (props) => (
 		validationSchema={Yup.object({
 			endTime: Yup.string()
 				.required('Required End time')
-				.test('', 'End time cannot be less than start time', function (
-					endTime
-				) {
-					if (Date.parse(endTime) < Date.parse(props.startTime))
-						return false;
-					else return true;
-				}),
+				.test(
+					'',
+					'End time cannot be less than start time',
+					function (endTime) {
+						if (Date.parse(endTime) < Date.parse(props.startTime))
+							return false;
+						else return true;
+					}
+				),
 		})}
 		initialValues={{ endTime: props.value }}
 		onSubmit={(values) => props.handleSubmit(values)}

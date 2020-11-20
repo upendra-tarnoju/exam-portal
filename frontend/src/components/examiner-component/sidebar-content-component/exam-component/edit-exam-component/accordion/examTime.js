@@ -112,6 +112,7 @@ const ExamTime = (props) => {
 							startTimeRef={startTimeRef}
 							handleSubmit={updateExamDetails}
 							examDate={fields.examDate.new}
+							endTime={fields.endTime.new}
 						/>
 					</Grid>
 				</Collapse>

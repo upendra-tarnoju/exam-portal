@@ -1,30 +1,8 @@
-import factories from '../factories/factories';
+import moment from 'moment';
 
 let checkEmptyField = (value) => {
 	if (value === '') return '* Required';
 	else return '';
-};
-
-let validateExamPassword = (temp) => {
-	let error = '';
-	temp['current'].msg = checkEmptyField(temp['current'].value);
-	temp['new'].msg = checkEmptyField(temp['new'].value);
-	temp['reTypeNew'].msg = checkEmptyField(temp['reTypeNew'].value);
-	if (temp['current'].msg || temp['new'].msg || temp['reTypeNew'].msg) {
-		error = 'error';
-	}
-	if (temp['new'].value !== '' && temp['reTypeNew'].value !== '') {
-		if (temp['new'].value.length < 6) {
-			error = 'error';
-			temp['new'].msg = 'Minimum password length should be 6';
-		} else error = '';
-		if (temp['new'].value !== temp['reTypeNew'].value) {
-			error = 'error';
-			temp['reTypeNew'].msg = 'Password does not matched';
-		} else error = '';
-	}
-	temp['error'] = error;
-	return temp;
 };
 
 let validateQuestions = (temp) => {
@@ -33,50 +11,6 @@ let validateQuestions = (temp) => {
 		temp[i][key].error = checkEmptyField(temp[i][key].value);
 	}
 	return temp;
-};
-
-const updateExamFields = (temp, fields) => {
-	let key = Object.keys(temp)[0];
-	switch (key) {
-		case 'subject':
-		case 'examCode':
-		case 'duration':
-			temp.error = checkEmptyField(temp[key]);
-			return temp;
-
-		case 'password':
-			temp = validateExamPassword(temp.password);
-			return temp;
-
-		case 'totalMarks':
-			temp.error = checkEmptyField(temp[key]);
-			if (temp.error === '') {
-				if (temp[key] < fields.passingMarks.new) {
-					temp.error = 'Total marks can not be less than passing marks';
-				} else temp.error = '';
-			}
-			return temp;
-
-		case 'passingMarks':
-			temp.error = checkEmptyField(temp[key]);
-			if (temp.error === '') {
-				if (temp[key] > fields.totalMarks.prev) {
-					temp.error = 'Passing marks cannot be greater than total marks';
-				} else temp.error = '';
-			}
-			return temp;
-
-		case 'courses':
-			let length = Object.keys(temp[key]).length;
-			if (length === 0) {
-				temp.error = 'Select any one course';
-			} else temp.error = '';
-			return temp;
-
-		default:
-			temp.error = '';
-			return temp;
-	}
 };
 
 const createQuestionFields = (temp) => {
@@ -122,20 +56,34 @@ const createQuestionFields = (temp) => {
 	return { tempState: temp, error: error };
 };
 
-let validateStartTime = (examDate, startTime) => {
+let validateStartTime = (examDate, startTime, endTime) => {
 	let currentDate = new Date();
+	let currentTime = moment(currentDate).format('h:mma');
 
-	let currentTime = factories.formatTime(currentDate);
+	startTime = moment(startTime).format('h:mma');
+	endTime = moment(endTime).format('h:mma');
 
-	currentDate = factories.formatDate(currentDate);
+	currentDate = moment(currentDate).format('YYYY-MM-DD');
+	examDate = moment(examDate).format('YYYY-MM-DD');
 
-	examDate = factories.formatDate(examDate);
-
-	if (currentDate === examDate) {
-		if (currentTime <= startTime) return true;
+	let validExamDate = moment(currentDate).isSame(examDate);
+	if (validExamDate) {
+		let validStartTime = moment(currentTime, 'h:mma').isBefore(
+			moment(startTime, 'h:mma')
+		);
+		if (validStartTime) return true;
 		else return false;
-	} else if (currentDate < examDate) return true;
-	else return false;
+	}
+
+	validExamDate = moment(currentDate).isBefore(examDate);
+	if (validExamDate) {
+		let validStartTime = moment(startTime, 'h:mma').isBefore(
+			moment(endTime, 'h:mma')
+		);
+		if (validStartTime) return true;
+		else return false;
+	}
+	return false;
 };
 
 let validateExamDuration = (duration, startTime, endTime) => {
@@ -157,7 +105,6 @@ let validateExamDuration = (duration, startTime, endTime) => {
 };
 
 export default {
-	updateExamFields,
 	createQuestionFields,
 	validateStartTime,
 	validateExamDuration,
