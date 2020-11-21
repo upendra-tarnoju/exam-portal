@@ -26,8 +26,9 @@ const questions = {
 		let questionData = await question
 			.getSpecificData(examId)
 			.select({ _id: 1, question: 1 });
-		let examData = await exam.getById(examId).select({ examCode: 1 });
-		return { questionData, examData };
+		let examData = await exam.getById(examId);
+		let examCode = examData[0].examCode;
+		return { questionData, examCode };
 	},
 
 	getAllQuestionData: async (examId) => {

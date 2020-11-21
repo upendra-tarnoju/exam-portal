@@ -109,14 +109,14 @@ class AddQuestions extends React.Component {
 		});
 	};
 
-	handleSnackBar(status, msg) {
+	handleSnackBar = (status, msg) => {
 		this.setState({
 			snackbar: {
 				show: status,
 				msg: msg,
 			},
 		});
-	}
+	};
 
 	submitQuestion = (event) => {
 		event.preventDefault();

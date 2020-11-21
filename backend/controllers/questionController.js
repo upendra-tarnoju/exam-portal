@@ -25,9 +25,8 @@ const question = {
 		let examId = req.query.examId;
 		let queryType = req.query.queryType;
 		if (queryType === 'selective') {
-			questionHandler.getSelectiveQuestionData(examId).then((response) => {
-				res.status(200).send(response);
-			});
+			let response = await questionHandler.getSelectiveQuestionData(examId);
+			res.status(200).send(response);
 		} else {
 			questionHandler.getAllQuestionData(examId).then((response) => {
 				res.status(200).send(response);
