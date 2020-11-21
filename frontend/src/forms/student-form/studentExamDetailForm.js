@@ -31,7 +31,7 @@ let StudentExamDetailForm = (props) => {
 					})
 					.catch((err) => {
 						let msg = err.response.data.msg;
-						props.handleErrorSnackBar(true, msg);
+						props.handleErrorSnackBar(true, msg, 'error');
 					});
 			}}
 			initialValues={props.examDetails}

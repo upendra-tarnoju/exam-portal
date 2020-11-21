@@ -13,9 +13,7 @@ import {
 	Divider,
 	Button,
 	Switch,
-	Snackbar,
 } from '@material-ui/core';
-import MuiAlert from '@material-ui/lab/Alert';
 import {
 	ExpandMore,
 	Person,
@@ -32,6 +30,7 @@ import ExaminerService from '../../../../../services/examinerApi';
 import DeleteModal from '../../../../../modals/deleteModal';
 import EditStudentModal from '../edit-student-component/editStudent';
 import EditPasswordModal from '../edit-student-component/editPassword';
+import Snackbar from '../../../../customSnackbar';
 
 class ViewStudents extends React.Component {
 	constructor(props) {
@@ -39,7 +38,7 @@ class ViewStudents extends React.Component {
 		this.state = {
 			studentData: [],
 			deleteModal: { show: false, id: '' },
-			snackBar: { show: false, msg: '' },
+			snackBar: { show: false, msg: '', type: '' },
 			editModal: { show: false, data: {} },
 			passwordModal: { show: false, studentId: '' },
 		};
@@ -79,9 +78,9 @@ class ViewStudents extends React.Component {
 		});
 	};
 
-	handleSnackBar = (show, msg) => {
+	handleSnackBar = (show, msg, type) => {
 		this.setState({
-			snackBar: { show: show, msg: msg },
+			snackBar: { show: show, msg: msg, type },
 		});
 	};
 
@@ -130,6 +129,7 @@ class ViewStudents extends React.Component {
 	};
 
 	render() {
+		let { snackBar } = this.state;
 		let studentsData = this.state.studentData.map((value) => {
 			let examId = this.props.match.params.examId;
 			let checkedValue = value.exam.filter((data) => data.examId === examId);
@@ -314,18 +314,11 @@ class ViewStudents extends React.Component {
 					deleteContent={this.deleteExam}
 				/>
 				<Snackbar
-					open={this.state.snackBar.show}
-					onClose={() => this.handleSnackBar(false, '')}
-				>
-					<MuiAlert
-						elevation={6}
-						variant='filled'
-						onClose={() => this.handleSnackBar(false, '')}
-						severity='success'
-					>
-						{this.state.snackBar.msg}
-					</MuiAlert>
-				</Snackbar>
+					show={snackBar.show}
+					message={snackBar.msg}
+					snackBarType={snackBar.type}
+					handleSnackBar={this.handleSnackBar}
+				/>
 				{this.state.editModal.data !== '' ? (
 					<EditStudentModal
 						show={this.state.editModal.show}

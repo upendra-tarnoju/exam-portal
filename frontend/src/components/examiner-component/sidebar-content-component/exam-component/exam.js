@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Table from 'react-bootstrap/Table';
-import { Button, Snackbar } from '@material-ui/core';
-import MuiAlert from '@material-ui/lab/Alert';
+import { Button } from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
 
 import ExamService from '../../../../services/examApi';
@@ -12,6 +11,7 @@ import style from './exam.module.css';
 import ExamTable from './examTable';
 import * as ActionTypes from '../../../../action';
 import SortExamMenu from './menuItems';
+import Snackbar from '../../../customSnackbar';
 
 class Exam extends Component {
 	constructor(props) {
@@ -21,18 +21,18 @@ class Exam extends Component {
 			nextInputs: false,
 			pageIndex: 0,
 			pageSize: 5,
-			snackBar: { show: false, msg: '' },
+			snackBar: { show: false, msg: '', type: '' },
 			sortedBy: 'createdAt',
 		};
 		this.examService = new ExamService();
 	}
 
-	handleSnackBar = (status, msg) => {
+	handleSnackBar = (status, msg, type) => {
 		this.setState(
 			{
 				createExam: false,
 				nextInputs: false,
-				snackBar: { show: status, msg: msg },
+				snackBar: { show: status, msg: msg, type: type },
 			},
 			() => this.viewExams()
 		);
@@ -75,7 +75,7 @@ class Exam extends Component {
 	};
 
 	render() {
-		let { pageIndex, pageSize } = this.state;
+		let { pageIndex, pageSize, snackBar } = this.state;
 		const allExams = this.props.examsList.map((exam, index) => {
 			return (
 				<ExamTable
@@ -115,19 +115,11 @@ class Exam extends Component {
 					<SortExamMenu sortExams={this.handleSortOptions} />
 				</div>
 				<Snackbar
-					open={this.state.snackBar.show}
-					autoHideDuration={6000}
-					onClose={() => this.handleSnackBar(false)}
-				>
-					<MuiAlert
-						elevation={6}
-						variant='filled'
-						onClose={() => this.handleSnackBar(false)}
-						severity='success'
-					>
-						{this.state.snackBar.msg}
-					</MuiAlert>
-				</Snackbar>
+					show={snackBar.show}
+					handleSnackBar={this.handleSnackBar}
+					snackBarType={snackBar.type}
+					message={snackBar.msg}
+				/>
 				{this.state.createExam ? (
 					<div className='card mt-4 w-50 mx-auto'>
 						<div className='card-header bg-white text-center'>

@@ -3,8 +3,8 @@ import React from 'react';
 import { Form } from 'react-bootstrap';
 import Button from '@material-ui/core/Button';
 import moment from 'moment';
-import factories from '../factories/factories';
 
+import factories from '../factories/factories';
 import schema from '../schema/examPeriodSchema';
 
 let ExamPeriodForm = (props) => {

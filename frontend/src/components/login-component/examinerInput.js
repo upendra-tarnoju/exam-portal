@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 
 import ExaminerService from '../../services/examinerApi';
 import ExaminerInputForm from '../../forms/examinerInputForm';
-import { withRouter } from 'react-router-dom';
 
 class ExaminerInput extends Component {
 	constructor(props) {

@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Table, Tooltip, OverlayTrigger } from 'react-bootstrap';
-import { Snackbar, Button } from '@material-ui/core';
-import MuiAlert from '@material-ui/lab/Alert';
+import { Button } from '@material-ui/core';
 import Moment from 'react-moment';
 import Pagination from '@material-ui/lab/Pagination';
 
@@ -11,6 +10,7 @@ import CourseModal from '../../../../modals/courseModal';
 import styles from './courses.module.css';
 import CourseService from '../../../../services/courseApi';
 import DeleteModal from '../../../../modals/deleteModal';
+import Snackbar from '../../../customSnackbar';
 
 class Courses extends Component {
 	constructor(props) {
@@ -19,7 +19,7 @@ class Courses extends Component {
 			search: false,
 			modal: false,
 			modalType: '',
-			snackbar: { show: false, msg: '' },
+			snackbar: { show: false, msg: '', type: '' },
 			pageIndex: 0,
 			pageSize: 5,
 			name: '',
@@ -36,11 +36,12 @@ class Courses extends Component {
 		else this.setState({ modal, modalType });
 	};
 
-	handleSnackBar = (status, msg) => {
+	handleSnackBar = (status, msg, type) => {
 		this.setState({
 			snackbar: {
 				show: status,
 				msg: msg,
+				type: type,
 			},
 		});
 	};
@@ -69,7 +70,7 @@ class Courses extends Component {
 		this.courseService.deleteCourse(courseId).then((response) => {
 			this.viewCourses();
 			this.handleDeleteModal(false, '');
-			this.handleSnackBar(true, response.data.msg);
+			this.handleSnackBar(true, response.data.msg, 'success');
 		});
 	};
 
@@ -117,7 +118,7 @@ class Courses extends Component {
 	};
 
 	render() {
-		let { pageIndex, pageSize } = this.state;
+		let { pageIndex, pageSize, snackbar } = this.state;
 		let courses = this.props.courses.map((data, index) => (
 			<tr key={data._id}>
 				<th scope='row'>{pageIndex * pageSize + index + 1}</th>
@@ -227,19 +228,11 @@ class Courses extends Component {
 					deleteContent={this.deleteCourse}
 				/>
 				<Snackbar
-					open={this.state.snackbar.show}
-					autoHideDuration={6000}
-					onClose={() => this.handleSnackBar(false, '')}
-				>
-					<MuiAlert
-						elevation={6}
-						variant='filled'
-						onClose={() => this.handleSnackBar(false, '')}
-						severity='success'
-					>
-						{this.state.snackbar.msg}
-					</MuiAlert>
-				</Snackbar>
+					show={snackbar.show}
+					message={snackbar.msg}
+					snackBarType={snackbar.type}
+					handleSnackBar={this.handleSnackBar}
+				/>
 			</div>
 		);
 	}

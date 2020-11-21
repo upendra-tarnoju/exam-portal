@@ -33,7 +33,7 @@ class ExamTable extends Component {
 		let examId = this.props.examsList[this.state.deleteModal.id]._id;
 		this.examService.deleteExam(examId).then((response) => {
 			let msg = 'Exam deleted successfully';
-			this.props.handleSnackBar(true, msg);
+			this.props.handleSnackBar(true, msg, 'success');
 		});
 	};
 

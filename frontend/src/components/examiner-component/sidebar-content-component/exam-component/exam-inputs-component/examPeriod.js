@@ -17,7 +17,7 @@ class ExamPeriod extends Component {
 			.then((response) => {
 				let msg = 'Exam added successfully';
 				this.props.clearExamInputs();
-				this.props.handleSnackBar(true, msg);
+				this.props.handleSnackBar(true, msg, 'success');
 			});
 	};
 

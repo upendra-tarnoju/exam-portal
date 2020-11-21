@@ -1,4 +1,3 @@
-import MuiAlert from '@material-ui/lab/Alert';
 import React from 'react';
 import {
 	Button,
@@ -6,7 +5,6 @@ import {
 	Step,
 	StepLabel,
 	Typography,
-	Snackbar,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { CloudUpload } from '@material-ui/icons';
@@ -17,13 +15,14 @@ import styles from '../students.module.css';
 import * as ActionTypes from '../../../../../action';
 import FileModal from '../../../../../modals/fileModal';
 import ExaminerService from '../../../../../services/examinerApi';
+import Snackbar from '../../../../customSnackbar';
 
 class CreateStudent extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			examCode: [],
-			snackBar: { show: false, msg: '' },
+			snackBar: { show: false, msg: '', type: '' },
 			activeStep: 0,
 			file: '',
 			fileModal: { show: false },
@@ -35,8 +34,8 @@ class CreateStudent extends React.Component {
 		this.props.clearStudentFields();
 	}
 
-	handleSnackBar = (show, msg) => {
-		this.setState({ snackBar: { show, msg } });
+	handleSnackBar = (show, msg, type) => {
+		this.setState({ snackBar: { show, msg, type } });
 	};
 
 	handleFileChange = (event) => {
@@ -144,19 +143,11 @@ class CreateStudent extends React.Component {
 					</Typography>
 				</div>
 				<Snackbar
-					open={snackBar.show}
-					autoHideDuration={6000}
-					onClose={() => this.handleSnackBar(false)}
-				>
-					<MuiAlert
-						elevation={6}
-						variant='filled'
-						severity='error'
-						onClose={() => this.handleSnackBar(false)}
-					>
-						{snackBar.msg}
-					</MuiAlert>
-				</Snackbar>
+					show={snackBar.show}
+					message={snackBar.msg}
+					snackBarType={snackBar.type}
+					handleSnackBar={this.handleSnackBar}
+				/>
 				<FileModal
 					show={this.state.fileModal.show}
 					hideModal={this.handleFileModal}
