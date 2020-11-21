@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import ExamService from '../../../../../services/examApi';
 import ExamPeriodForm from '../../../../../forms/examPeriodForm';
+import * as ActionTypes from '../../../../../action';
 
 class ExamPeriod extends Component {
 	constructor(props) {
@@ -15,6 +16,7 @@ class ExamPeriod extends Component {
 			.saveExamDetails(this.props.fieldDetails, values)
 			.then((response) => {
 				let msg = 'Exam added successfully';
+				this.props.clearExamInputs();
 				this.props.handleSnackBar(true, msg);
 			});
 	};
@@ -36,4 +38,14 @@ const mapStateToProps = (state) => {
 	};
 };
 
-export default connect(mapStateToProps)(ExamPeriod);
+const mapDispatchToProps = (dispatch) => {
+	return {
+		clearExamInputs: () => {
+			dispatch({
+				type: ActionTypes.CLEAR_EXAM_DETAILS_FIELDS,
+			});
+		},
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ExamPeriod);
