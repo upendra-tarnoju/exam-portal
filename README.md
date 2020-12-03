@@ -27,7 +27,7 @@ Its an online exam portal to track the students capabilites and test them throug
 > Following step must be followed for the correct working of the project
 
 1) Git clone
-2) Move inside the **frontend** folder and perform following commands
+2) Move inside the **frontend** folder and perform following command
 ```
 - npm install
 ```
@@ -49,10 +49,8 @@ module.exports = {
 }
 ```
 ### Note
-> Gmail Id and password is requried for sending mails in the project. If still sending emails are not working then use the following method
+> Gmail Id and password is required for sending mails in the project. If sending emails feature is still not working then use the following method
 
-```
 - Login to gmail account.
 - Go to [link](https://www.google.com/settings/security/lesssecureapps)
 - Set the Access for less secure apps setting to **enable**.
-```
