@@ -10,6 +10,7 @@ import {
 	Checkbox,
 	CardActions,
 	IconButton,
+	Button,
 } from '@material-ui/core';
 import { Edit, DeleteForever } from '@material-ui/icons';
 
@@ -93,6 +94,37 @@ class ViewQuestions extends React.Component {
 		return <div className='container'>{content}</div>;
 	};
 
+	handleAddQuestion = () => {
+		let examId = this.props.match.params.examId;
+		this.props.history.push({
+			pathname: `/examiner/exam/${examId}/question/new`,
+		});
+	};
+
+	noQuestionsCard = () => (
+		<Card className='w-50 m-auto'>
+			<CardContent>
+				<p className={`${styles.heading} text-dark text-center`}>
+					This exam does not contain any questions
+				</p>
+				<p
+					className={`text-secondary ${styles.subHeading} text-center mb-0`}
+				>
+					Add new question
+				</p>
+			</CardContent>
+			<CardActions className='d-flex flex-row justify-content-center'>
+				<Button
+					size='large'
+					color='primary'
+					variant='contained'
+					onClick={this.handleAddQuestion}
+				>
+					Add
+				</Button>
+			</CardActions>
+		</Card>
+	);
 	render() {
 		let questions = this.state.questionList.map((data, index) => {
 			let optionContent = this.showOptions(
@@ -147,7 +179,7 @@ class ViewQuestions extends React.Component {
 		});
 		return (
 			<div className='container pt-5'>
-				{questions}
+				{questions.length !== 0 ? questions : <this.noQuestionsCard />}
 				<DeleteModal
 					show={this.state.deleteModal.show}
 					heading='question'
