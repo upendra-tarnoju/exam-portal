@@ -193,7 +193,9 @@ class AddQuestions extends React.Component {
 		let pathname = this.props.match.url;
 		this.editExam(pathname);
 		this.props.history.listen((location) => {
-			this.editExam(location.pathname);
+			if (!location.pathname.endsWith('questions')) {
+				this.editExam(location.pathname);
+			}
 		});
 	}
 
