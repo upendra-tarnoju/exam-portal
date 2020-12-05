@@ -3,16 +3,37 @@ import { Button } from '@material-ui/core';
 import { Formik } from 'formik';
 import { Form } from 'react-bootstrap';
 import Select from 'react-select';
-
-import schema from '../schema/addQuestionSchema';
+import * as Yup from 'yup';
 
 const AddQuestionForm = (props) => {
+	let initialSchema = {
+		question: Yup.string().required('Question is required'),
+		optionType: Yup.string().required('Option Type is required'),
+		totalOptions: Yup.string().required('Total Option is required'),
+		correctAnswer: Yup.array()
+			.min(1, 'Correct Answer is required')
+			.of(
+				Yup.object()
+					.shape({
+						label: Yup.string(),
+						value: Yup.string(),
+					})
+					.nullable()
+			)
+			.nullable(),
+	};
+
 	let [totalOptions, setTotalOptions] = React.useState([]);
 	let [correctAnswerList, setAnswerList] = React.useState([]);
+	let [validationSchema, setValidationSchema] = React.useState(
+		Yup.object(initialSchema)
+	);
+
 	let optionType = [
 		{ value: 'single', label: 'Single' },
 		{ value: 'multiple', label: 'Multiple' },
 	];
+
 	let totalOptionsList = [
 		{ value: 1, label: '1' },
 		{ value: 2, label: '2' },
@@ -22,9 +43,20 @@ const AddQuestionForm = (props) => {
 		{ value: 6, label: '6' },
 	];
 
+	let setOptionValidationSchema = (totalOptions) => {
+		let customSchema = {};
+		for (let i = 0; i < totalOptions; i++) {
+			customSchema[`option${i + 1}`] = Yup.string().required(
+				'Option is required'
+			);
+		}
+		let mergedSchema = { ...customSchema, ...initialSchema };
+		setValidationSchema(Yup.object(mergedSchema));
+	};
+
 	return (
 		<Formik
-			validationSchema={schema}
+			validationSchema={validationSchema}
 			onSubmit={(values) => {
 				console.log(values);
 			}}
@@ -122,6 +154,7 @@ const AddQuestionForm = (props) => {
 									);
 									setTotalOptions(arr);
 									setAnswerList(correctAnswerList);
+									setOptionValidationSchema(event.value);
 								}}
 								onBlur={formikProps.setFieldTouched}
 								isMulti={false}
