@@ -47,10 +47,24 @@ let capitalizeName = (name) => {
 		.join(' ');
 };
 
+let optionType = [
+	{ value: 'single', label: 'Single' },
+	{ value: 'multiple', label: 'Multiple' },
+];
+
+let totalOptionsList = [
+	{ value: 1, label: '1' },
+	{ value: 2, label: '2' },
+	{ value: 3, label: '3' },
+	{ value: 4, label: '4' },
+];
+
 export default {
 	formatDate,
 	formatTime,
 	updateExaminerCount,
 	monthMenu,
 	capitalizeName,
+	optionType,
+	totalOptionsList,
 };

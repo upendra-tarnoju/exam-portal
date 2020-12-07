@@ -2,103 +2,25 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import styles from './question.module.css';
-import validateInputs from '../../../../services/validation';
 import QuestionService from '../../../../services/questionApi';
 import * as ActionTypes from '../../../../action';
 import AddQuestionForm from '../../../../forms/addQuestionForm';
+import factories from '../../../../factories/factories';
 
 class AddQuestions extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			question: { value: '', error: '' },
-			optionsType: { value: '', error: '' },
-			options: { value: [], error: '' },
-			correctAnswer: { show: false, value: [], error: '' },
 			image: { value: '' },
 			editExam: false,
 			snackbar: { show: false, msg: '' },
 			deleteModal: false,
+			questionData: {},
+			totalOptions: [],
 		};
 		this.baseState = this.state;
 		this.questionService = new QuestionService();
 	}
-
-	handleOptionChange = (event) => {
-		let key = event.target.name;
-		let value = event.target.value;
-		let arr = [];
-		let prevOptions = this.state.options.value;
-		let size = parseInt(value, 10);
-		for (let i = 0; i < size; i++) {
-			let innerKey = `option${i + 1}`;
-			if (prevOptions.length !== 0 && i < prevOptions.length) {
-				let existingValue = prevOptions[i][innerKey].value;
-				arr[i] = { [innerKey]: { value: existingValue, error: '' } };
-			} else {
-				arr[i] = { [innerKey]: { value: '', error: '' } };
-			}
-		}
-		value = arr;
-		this.setState((prevState) => ({
-			[key]: {
-				...prevState[key],
-				value: value,
-			},
-		}));
-	};
-
-	handleChange = (event) => {
-		let key = event.target.name;
-		let value = event.target.value;
-		let regex = /\d/g;
-		let arr = [];
-		if (regex.test(key)) {
-			let optionNo = parseInt(key[key.length - 1], 10);
-			let totalOptions = this.state.options.value;
-			totalOptions[optionNo - 1][key].value = value;
-			key = 'options';
-			value = totalOptions;
-		} else if (key === 'single') {
-			arr.push(value);
-			key = 'correctAnswer';
-			value = arr;
-		} else if (key === 'multiple') {
-			let values = event.target.options;
-			for (let i = 0; i < values.length; i++) {
-				if (values[i].selected) {
-					arr.push(values[i].value);
-				}
-			}
-			key = 'correctAnswer';
-			value = arr;
-		}
-		this.setState((prevState) => ({
-			[key]: {
-				...prevState[key],
-				value: value,
-			},
-		}));
-	};
-
-	handleOptionTypeChange = (event) => {
-		let key = event.target.name;
-		let show = true;
-		let value = event.target.value;
-		if (value === 'none') {
-			show = false;
-		}
-		this.setState((prevState) => ({
-			correctAnswer: {
-				...prevState['correctAnswer'],
-				show: show,
-			},
-			[key]: {
-				...prevState[key],
-				value: value,
-			},
-		}));
-	};
 
 	handleFileChange = (event) => {
 		let file = event.target.files[0];
@@ -118,62 +40,86 @@ class AddQuestions extends React.Component {
 		});
 	};
 
-	submitQuestion = (event) => {
-		event.preventDefault();
+	submitQuestion = (values) => {
 		let examId = this.props.match.params.examId;
-		let validationState = validateInputs.createQuestionFields(this.state);
-		if (validationState.error) {
-			this.setState(validationState.tempState);
-		} else {
-			let formData = new FormData();
-			for (let key in this.state) {
-				if (key === 'options') {
-					let jsonArray = JSON.stringify(this.state[key].value);
-					formData.append(key, jsonArray);
-				} else formData.append(key, this.state[key].value);
-			}
-			formData.append('examId', examId);
-			if (this.state.editExam) {
-				let questionId = this.props.match.params.questionId;
-				this.questionService
-					.update(questionId, formData)
-					.then((response) => {
-						let data = response.data;
-						let questions = this.props.questions.map((element) =>
-							element._id === data._id
-								? Object.assign({}, element, {
-										question: data.question,
-								  })
-								: element
-						);
-						this.props.updateQuestion(questions, this.props.examCode);
-						this.props.history.push(
-							`/examiner/exam/${response.data.examId}/question`
-						);
-					});
-			} else {
-				this.questionService.create(formData).then((response) => {
-					this.props.addQuestion(response.data.newQuestion);
-					this.setState(this.baseState);
-					this.handleSnackBar(true, response.data.msg);
-				});
+		let formData = new FormData();
+		for (let key in values) {
+			if (values[key] !== '') {
+				if (key === 'optionType') {
+					formData.append(key, values.optionType.value);
+				} else if (key === 'correctAnswer') {
+					if (values[key].length === 1) {
+						formData.append(key, values[key].value);
+					} else {
+						let correctAnswer = '';
+						values.correctAnswer.forEach((element) => {
+							correctAnswer = `${element.value},${correctAnswer}`;
+						});
+						formData.append(key, correctAnswer);
+					}
+				} else formData.append(key, values[key]);
 			}
 		}
+		formData.append('examId', examId);
+		if (this.state.editExam) {
+		} else {
+			this.questionService.create(formData).then((response) => {
+				this.props.addQuestion(response.data.newQuestion);
+				this.setState(this.baseState);
+				this.handleSnackBar(true, response.data.msg);
+			});
+		}
+		// for (let key in this.state) {
+		// 	if (key === 'options') {
+		// 		let jsonArray = JSON.stringify(this.state[key].value);
+		// 		formData.append(key, jsonArray);
+		// 	} else formData.append(key, this.state[key].value);
+		// }
+
+		// if (this.state.editExam) {
+		// 	let questionId = this.props.match.params.questionId;
+		// 	this.questionService.update(questionId, formData).then((response) => {
+		// 		let data = response.data;
+		// 		let questions = this.props.questions.map((element) =>
+		// 			element._id === data._id
+		// 				? Object.assign({}, element, {
+		// 						question: data.question,
+		// 				  })
+		// 				: element
+		// 		);
+		// 		this.props.updateQuestion(questions, this.props.examCode);
+		// 		this.props.history.push(
+		// 			`/examiner/exam/${response.data.examId}/question`
+		// 		);
+		// 	});
+		// } else {
+		// 	this.questionService.create(formData).then((response) => {
+		// 		this.props.addQuestion(response.data.newQuestion);
+		// 		this.setState(this.baseState);
+		// 		this.handleSnackBar(true, response.data.msg);
+		// 	});
+		// }
 	};
 
 	setValues(questionData) {
-		let correctAnswer = questionData.correctAnswer.split(',');
-
-		let options = questionData.options.map((option) => {
-			return { [option.name]: { value: option.value, error: '' } };
+		console.log(questionData);
+		let optionType = factories.optionType.filter(
+			(data) => data.value === questionData.optionType
+		);
+		let totalOptions = new Array(questionData.options.length).fill('');
+		let options = {};
+		questionData.options.forEach((data) => {
+			options[data.name] = data.value;
 		});
 
 		this.setState({
-			question: { value: questionData.question, error: '' },
-			optionsType: { value: questionData.optionType, error: '' },
-			options: { value: options, error: '' },
-			correctAnswer: { show: true, value: correctAnswer, error: '' },
-			image: { value: '' },
+			editExam: true,
+			questionData: {
+				...options,
+				question: questionData.question,
+				optionType: optionType,
+			},
+			totalOptions: totalOptions,
 		});
 	}
 
@@ -182,7 +128,6 @@ class AddQuestions extends React.Component {
 			let questionId = pathname.split('/question/')[1];
 			this.questionService.getParticular(questionId).then((response) => {
 				this.setValues(response.data);
-				this.setState({ editExam: true });
 			});
 		} else {
 			this.setState(this.baseState);
@@ -209,12 +154,11 @@ class AddQuestions extends React.Component {
 				</div>
 				<AddQuestionForm
 					submitQuestion={this.submitQuestion}
-					state={this.state}
-					handleChange={this.handleChange}
-					handleOptionTypeChange={this.handleOptionTypeChange}
 					handleFileChange={this.handleFileChange}
-					handleOptionChange={this.handleOptionChange}
 					handleSnackBar={this.handleSnackBar}
+					editExam={this.state.editExam}
+					questionData={this.state.questionData}
+					totalOptions={this.state.totalOptions}
 				/>
 			</div>
 		);
