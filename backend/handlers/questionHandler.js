@@ -1,17 +1,22 @@
 let { question, exam } = require('../models');
 
 let createQuestionData = (data, image) => {
-	let options = JSON.parse(data.options);
-	let optionArray = options.map((option) => {
-		let key = Object.keys(option)[0];
-		return { name: key, value: option[key].value };
-	});
+	let optionArray = [];
+	for (let key in data) {
+		if (!isNaN(key.slice(-1))) {
+			optionArray.push({ name: key, value: data[key] });
+		}
+	}
+
 	return {
 		examId: data.examId,
 		question: data.question,
-		optionType: data.optionsType,
+		optionType: data.optionType,
 		options: optionArray,
-		correctAnswer: data.correctAnswer,
+		correctAnswer:
+			data.optionType === 'single'
+				? data.correctAnswer
+				: data.correctAnswer.slice(0, -1),
 		image: image ? image.filename : null,
 	};
 };

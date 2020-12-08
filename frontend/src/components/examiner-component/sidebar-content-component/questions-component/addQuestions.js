@@ -40,6 +40,8 @@ class AddQuestions extends React.Component {
 		});
 	};
 
+	setTotalOptions = (arr) => this.setState({ totalOptions: arr });
+
 	submitQuestion = (values) => {
 		let examId = this.props.match.params.examId;
 		let formData = new FormData();
@@ -48,7 +50,7 @@ class AddQuestions extends React.Component {
 				if (key === 'optionType') {
 					formData.append(key, values.optionType.value);
 				} else if (key === 'correctAnswer') {
-					if (values[key].length === 1) {
+					if (values.optionType.value === 'single') {
 						formData.append(key, values[key].value);
 					} else {
 						let correctAnswer = '';
@@ -65,7 +67,7 @@ class AddQuestions extends React.Component {
 		} else {
 			this.questionService.create(formData).then((response) => {
 				this.props.addQuestion(response.data.newQuestion);
-				this.setState(this.baseState);
+				this.setState({ questionData: {}, totalOptions: [] });
 				this.handleSnackBar(true, response.data.msg);
 			});
 		}
@@ -102,12 +104,20 @@ class AddQuestions extends React.Component {
 	};
 
 	setValues(questionData) {
-		console.log(questionData);
+		let correctAnswerArray = [];
 		let optionType = factories.optionType.filter(
 			(data) => data.value === questionData.optionType
 		);
 		let totalOptions = new Array(questionData.options.length).fill('');
 		let options = {};
+		let tempCorrectAnswerList = questionData.correctAnswer.split(',').sort();
+
+		tempCorrectAnswerList.forEach((answer) => {
+			correctAnswerArray.push({
+				label: `Option ${answer.slice(-1)}`,
+				value: `option${answer.slice(-1)}`,
+			});
+		});
 		questionData.options.forEach((data) => {
 			options[data.name] = data.value;
 		});
@@ -118,6 +128,7 @@ class AddQuestions extends React.Component {
 				...options,
 				question: questionData.question,
 				optionType: optionType,
+				correctAnswerList: correctAnswerArray,
 			},
 			totalOptions: totalOptions,
 		});
@@ -159,6 +170,7 @@ class AddQuestions extends React.Component {
 					editExam={this.state.editExam}
 					questionData={this.state.questionData}
 					totalOptions={this.state.totalOptions}
+					setTotalOptions={this.setTotalOptions}
 				/>
 			</div>
 		);

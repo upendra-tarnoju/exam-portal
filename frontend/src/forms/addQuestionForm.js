@@ -13,7 +13,6 @@ class AddQuestionForm extends React.Component {
 		super(props);
 		this.state = {
 			schema: Yup.object(this.initialSchema),
-			totalOptions: [],
 			correctAnswerList: [],
 		};
 	}
@@ -46,19 +45,11 @@ class AddQuestionForm extends React.Component {
 		correctAnswer: [],
 	};
 
-	optionType = [
-		{ value: 'single', label: 'Single' },
-		{ value: 'multiple', label: 'Multiple' },
-	];
-
-	totalOptionsList = [
-		{ value: 1, label: '1' },
-		{ value: 2, label: '2' },
-		{ value: 3, label: '3' },
-		{ value: 4, label: '4' },
-	];
-
-	setOptionValidationSchema = (totalOptions) => {
+	setOptionValidationSchema = (
+		totalOptions,
+		totalOptionsList,
+		correctAnswerList
+	) => {
 		let customSchema = {};
 		for (let i = 0; i < totalOptions; i++) {
 			customSchema[`option${i + 1}`] = Yup.string().required(
@@ -66,8 +57,22 @@ class AddQuestionForm extends React.Component {
 			);
 		}
 		let mergedSchema = { ...customSchema, ...this.initialSchema };
-		this.setState({ schema: mergedSchema });
+		this.setState({
+			schema: Yup.object(mergedSchema),
+			totalOptions: totalOptionsList,
+			correctAnswerList: correctAnswerList,
+		});
 	};
+
+	setAnswerList(value) {
+		let correctAnswerList = [...Array(value)].map((_, i) => {
+			return {
+				label: `Option ${i + 1}`,
+				value: `option${i + 1}`,
+			};
+		});
+		return correctAnswerList;
+	}
 
 	render() {
 		return (
@@ -158,19 +163,15 @@ class AddQuestionForm extends React.Component {
 										formikProps.setFieldTouched('totalOptions', true);
 										formikProps.setFieldValue('totalOptions', event);
 										let arr = new Array(event.value).fill('');
-										let correctAnswerList = [
-											...Array(event.value),
-										].map((_, i) => {
-											return {
-												label: `Option ${i + 1}`,
-												value: `option${i + 1}`,
-											};
-										});
-										this.setState({
-											totalOptions: arr,
-											correctAnswerList: correctAnswerList,
-										});
-										this.setOptionValidationSchema(event.value);
+										let correctAnswerList = this.setAnswerList(
+											event.value
+										);
+										this.props.setTotalOptions(arr);
+										this.setOptionValidationSchema(
+											event.value,
+											arr,
+											correctAnswerList
+										);
 									}}
 									onBlur={formikProps.setFieldTouched}
 									isMulti={false}
@@ -192,7 +193,7 @@ class AddQuestionForm extends React.Component {
 							</Form.Group>
 
 							{this.props.totalOptions.map((option, index) => (
-								<Form.Group>
+								<Form.Group key={index}>
 									<Form.Label>Option {index + 1}</Form.Label>
 									<Form.Control
 										name={`option${index + 1}`}
@@ -225,17 +226,28 @@ class AddQuestionForm extends React.Component {
 								</Form.Group>
 							))}
 							{formikProps.values.optionType !== '' &&
-							this.state.totalOptions.length !== 0 ? (
+							this.props.totalOptions.length !== 0 ? (
 								<Form.Group>
 									<Form.Label>Correct Answer</Form.Label>
 									<Select
-										options={this.statecorrectAnswerList}
+										options={
+											this.props.editExam
+												? this.setAnswerList(4)
+												: this.state.correctAnswerList
+										}
 										isMulti={
-											formikProps.values.optionType.value ===
-											'multiple'
+											!this.props.editExam
+												? formikProps.values.optionType.value ===
+												  'multiple'
+												: this.props.questionData.correctAnswerList
+														.length > 1
 										}
 										name='correctAnswer'
-										value={formikProps.values.correctAnswer}
+										value={
+											!this.props.editExam
+												? formikProps.values.correctAnswer
+												: this.props.questionData.correctAnswerList
+										}
 										onChange={(value) => {
 											formikProps.setFieldValue(
 												'correctAnswer',
