@@ -1,12 +1,12 @@
 import React from 'react';
 import { Button } from '@material-ui/core';
-// import MuiAlert from '@material-ui/lab/Alert';
 import { Formik } from 'formik';
 import { Form } from 'react-bootstrap';
 import Select from 'react-select';
 import * as Yup from 'yup';
 
 import factories from '../factories/factories';
+import styles from '../components/examiner-component/sidebar-content-component/questions-component/question.module.css';
 
 class AddQuestionForm extends React.Component {
 	constructor(props) {
@@ -149,8 +149,15 @@ class AddQuestionForm extends React.Component {
 										color='primary'
 										component='span'
 										size='large'
+										className={
+											typeof this.props.image === 'object'
+												? styles.btnSuccess
+												: null
+										}
 									>
-										Upload
+										{typeof this.props.image === 'object'
+											? 'Uploaded'
+											: 'Upload'}
 									</Button>
 								</label>
 							</Form.Group>
@@ -275,23 +282,9 @@ class AddQuestionForm extends React.Component {
 									variant='contained'
 									color='primary'
 								>
-									Create
+									{this.props.editExam ? 'Update' : 'Create'}
 								</Button>
 							</div>
-							{/* <Snackbar
-							open={state.snackbar.show}
-							autoHideDuration={6000}
-							onClose={() => handleSnackBar(false, '')}
-						>
-							<MuiAlert
-								elevation={6}
-								variant='filled'
-								onClose={() => handleSnackBar(false, '')}
-								severity='success'
-							>
-								{state.snackbar.msg}
-							</MuiAlert>
-						</Snackbar> */}
 						</div>
 					</Form>
 				)}

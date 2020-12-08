@@ -6,6 +6,7 @@ import QuestionService from '../../../../services/questionApi';
 import * as ActionTypes from '../../../../action';
 import AddQuestionForm from '../../../../forms/addQuestionForm';
 import factories from '../../../../factories/factories';
+import CustomSnackBar from '../../../customSnackbar';
 
 class AddQuestions extends React.Component {
 	constructor(props) {
@@ -13,7 +14,7 @@ class AddQuestions extends React.Component {
 		this.state = {
 			image: '',
 			editExam: false,
-			snackbar: { show: false, msg: '' },
+			snackbar: { show: false, msg: '', type: '' },
 			deleteModal: false,
 			questionData: {},
 			totalOptions: [],
@@ -24,16 +25,30 @@ class AddQuestions extends React.Component {
 
 	handleFileChange = (event) => {
 		let file = event.target.files[0];
-		this.setState({ image: file });
+		if (
+			file.type === 'image/jpeg' ||
+			file.type === 'image/png' ||
+			file.type === 'image/jpg'
+		) {
+			this.setState({ image: file });
+		} else {
+			let msg =
+				'Invalid image type. Supported file types are .jpeg, .jpg and .png';
+			this.handleSnackBar(true, msg, 'error');
+		}
 	};
 
-	handleSnackBar = (status, msg) => {
-		this.setState({
-			snackbar: {
-				show: status,
-				msg: msg,
+	handleSnackBar = (status, msg, type) => {
+		this.setState(
+			{
+				snackbar: {
+					show: status,
+					msg: msg,
+					type: type,
+				},
 			},
-		});
+			() => console.log(this.state.snackbar)
+		);
 	};
 
 	setTotalOptions = (arr) => this.setState({ totalOptions: arr });
@@ -67,7 +82,7 @@ class AddQuestions extends React.Component {
 			this.questionService.create(formData).then((response) => {
 				this.props.addQuestion(response.data.newQuestion);
 				this.setState({ questionData: {}, totalOptions: [] });
-				this.handleSnackBar(true, response.data.msg);
+				this.handleSnackBar(true, response.data.msg, 'success');
 			});
 		}
 		// for (let key in this.state) {
@@ -155,6 +170,7 @@ class AddQuestions extends React.Component {
 	}
 
 	render() {
+		let { snackbar } = this.state;
 		return (
 			<div className={`card ${styles.questionCard}`}>
 				<div
@@ -165,11 +181,17 @@ class AddQuestions extends React.Component {
 				<AddQuestionForm
 					submitQuestion={this.submitQuestion}
 					handleFileChange={this.handleFileChange}
-					handleSnackBar={this.handleSnackBar}
 					editExam={this.state.editExam}
 					questionData={this.state.questionData}
 					totalOptions={this.state.totalOptions}
 					setTotalOptions={this.setTotalOptions}
+					image={this.state.image}
+				/>
+				<CustomSnackBar
+					show={snackbar.show}
+					snackBarType={snackbar.type}
+					handleSnackBar={this.handleSnackBar}
+					message={snackbar.msg}
 				/>
 			</div>
 		);
