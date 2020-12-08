@@ -11,7 +11,7 @@ class AddQuestions extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			image: { value: '' },
+			image: '',
 			editExam: false,
 			snackbar: { show: false, msg: '' },
 			deleteModal: false,
@@ -24,11 +24,7 @@ class AddQuestions extends React.Component {
 
 	handleFileChange = (event) => {
 		let file = event.target.files[0];
-		this.setState({
-			image: {
-				value: file,
-			},
-		});
+		this.setState({ image: file });
 	};
 
 	handleSnackBar = (status, msg) => {
@@ -45,6 +41,9 @@ class AddQuestions extends React.Component {
 	submitQuestion = (values) => {
 		let examId = this.props.match.params.examId;
 		let formData = new FormData();
+		if (this.state.image) {
+			formData.append('image', this.state.image);
+		}
 		for (let key in values) {
 			if (values[key] !== '') {
 				if (key === 'optionType') {
