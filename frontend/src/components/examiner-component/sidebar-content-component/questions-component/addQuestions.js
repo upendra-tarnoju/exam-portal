@@ -55,32 +55,26 @@ class AddQuestions extends React.Component {
 		});
 	};
 
-	// setTotalOptions = (arr) => this.setState({ totalOptions: arr });
-
 	setQuestionSchema = (mergedSchema) => {
 		let tempState = this.state;
 
-		let mergedSchemaOptionsCount = factories.calculateOptions(mergedSchema);
-		let prevSchemaOptionsCount = factories.calculateOptions(
+		let mergedSchemaOptions = factories.calculateOptions(mergedSchema);
+		let prevSchemaOptions = factories.calculateOptions(
 			tempState.questionData
 		);
-		if (mergedSchemaOptionsCount < prevSchemaOptionsCount) {
-			for (
-				let i = mergedSchemaOptionsCount + 1;
-				i < factories.correctAnswerList.length;
-				i++
-			) {
-				delete tempState.questionData[`option${i}`];
-			}
-		} else if (mergedSchemaOptionsCount > prevSchemaOptionsCount) {
-			for (
-				let i = prevSchemaOptionsCount + 1;
-				i <= mergedSchemaOptionsCount;
-				i++
-			) {
-				tempState.questionData[`option${i}`] = '';
-			}
+
+		if (mergedSchemaOptions.length > prevSchemaOptions.length) {
+			let arr = mergedSchemaOptions.filter(
+				(data) => prevSchemaOptions.indexOf(data) === -1
+			);
+			arr.forEach((data) => (tempState.questionData[data] = ''));
+		} else if (mergedSchemaOptions.length < prevSchemaOptions.length) {
+			let arr = prevSchemaOptions.filter(
+				(data) => mergedSchemaOptions.indexOf(data) === -1
+			);
+			arr.forEach((data) => delete tempState.questionData[data]);
 		}
+
 		tempState.editQuestionSchema = Yup.object().shape(mergedSchema);
 		this.setState(tempState);
 	};
@@ -129,7 +123,7 @@ class AddQuestions extends React.Component {
 			(data) => data.value === questionData.optionType
 		);
 		let totalOptions = factories.totalOptionsList.filter(
-			(obj) => obj.value == questionData.options.length
+			(obj) => obj.value === questionData.options.length
 		);
 		let options = {};
 		let tempCorrectAnswerList = questionData.correctAnswer.split(',').sort();
@@ -157,7 +151,6 @@ class AddQuestions extends React.Component {
 				correctAnswer: correctAnswerArray,
 				totalOptions: totalOptions,
 			},
-			// selectedOptionList: totalOptions, // not used anywhere
 			editQuestionSchema: Yup.object().shape(schema),
 		});
 	};

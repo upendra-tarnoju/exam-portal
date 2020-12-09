@@ -82,13 +82,14 @@ let setOptionValidationSchema = (length) => {
 };
 
 let calculateOptions = (obj) => {
-	let length = 0;
+	// let length = 0;
+	let arr = [];
 	Object.keys(obj).forEach((data) => {
 		if (!isNaN(data.slice(-1))) {
-			length = length + 1;
+			arr.push(data);
 		}
 	});
-	return length;
+	return arr;
 };
 
 export default {

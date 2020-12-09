@@ -24,9 +24,6 @@ class AddQuestionForm extends React.Component {
 		optionType: '',
 		totalOptions: '',
 		option1: '',
-		option2: '',
-		option3: '',
-		option4: '',
 		correctAnswer: [],
 	};
 
@@ -65,6 +62,7 @@ class AddQuestionForm extends React.Component {
 	};
 
 	render() {
+		let { questionData } = this.props;
 		return (
 			<Formik
 				key={this.props.questionData.question}
@@ -184,16 +182,6 @@ class AddQuestionForm extends React.Component {
 									}}
 									onBlur={formikProps.setFieldTouched}
 									isMulti={false}
-									// value={
-									// 	!this.props.editExam
-									// 		? formikProps.values.totalOptions
-									// 		: factories.totalOptionsList.filter(
-									// 				(option) =>
-									// 					option.value ===
-									// 					this.props.questionData.totalOptions
-									// 						.length
-									// 		  )
-									// }
 									value={formikProps.values.totalOptions}
 								/>
 								{formikProps.touched.totalOptions ? (
@@ -238,7 +226,10 @@ class AddQuestionForm extends React.Component {
 									<Select
 										options={
 											this.props.editExam
-												? this.setAnswerList(4)
+												? factories.correctAnswerList.slice(
+														0,
+														questionData.totalOptions[0].value
+												  )
 												: this.state.correctAnswerList
 										}
 										// isMulti={
