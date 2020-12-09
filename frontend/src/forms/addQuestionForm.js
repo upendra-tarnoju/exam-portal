@@ -220,18 +220,22 @@ class AddQuestionForm extends React.Component {
 												? this.setAnswerList(4)
 												: this.state.correctAnswerList
 										}
+										// isMulti={
+										// 	!this.props.editExam
+										// 		? formikProps.values.optionType.value ===
+										// 		  'multiple'
+										// 		: this.props.questionData.optionType[0]
+										// 				.value !== 'single'
+										// }
 										isMulti={
-											!this.props.editExam
-												? formikProps.values.optionType.value ===
-												  'multiple'
-												: this.props.questionData.correctAnswerList
-														.length > 1
+											formikProps.values.optionType.value ===
+											'multiple'
 										}
 										name='correctAnswer'
 										value={
 											!this.props.editExam
 												? formikProps.values.correctAnswer
-												: this.props.questionData.correctAnswerList
+												: this.props.questionData.correctAnswer
 										}
 										onChange={(value) => {
 											formikProps.setFieldValue(

@@ -20,7 +20,7 @@ class AddQuestions extends React.Component {
 			questionData: {
 				question: '',
 				optionType: [],
-				correctAnswerList: [],
+				correctAnswer: [],
 				totalOptions: [],
 			},
 			editQuestionSchema: {},
@@ -65,7 +65,7 @@ class AddQuestions extends React.Component {
 		for (let key in values) {
 			if (values[key] !== '') {
 				if (key === 'optionType') {
-					formData.append(key, values.optionType.value);
+					formData.append(key, values.optionType[0].value);
 				} else if (key === 'correctAnswer') {
 					if (values.optionType.value === 'single') {
 						formData.append(key, values[key].value);
@@ -82,9 +82,9 @@ class AddQuestions extends React.Component {
 		formData.append('examId', examId);
 		if (this.state.editExam) {
 			let questionId = this.props.match.params.questionId;
-			// this.questionService.update(questionId, formData).then((response) => {
-			// 	console.log(response.data);
-			// });
+			this.questionService.update(questionId, formData).then((response) => {
+				console.log(response.data);
+			});
 		} else {
 			this.questionService.create(formData).then((response) => {
 				this.props.addQuestion(response.data.newQuestion);
@@ -92,36 +92,6 @@ class AddQuestions extends React.Component {
 				this.handleSnackBar(true, response.data.msg, 'success');
 			});
 		}
-		// for (let key in this.state) {
-		// 	if (key === 'options') {
-		// 		let jsonArray = JSON.stringify(this.state[key].value);
-		// 		formData.append(key, jsonArray);
-		// 	} else formData.append(key, this.state[key].value);
-		// }
-
-		// if (this.state.editExam) {
-		// 	let questionId = this.props.match.params.questionId;
-		// 	this.questionService.update(questionId, formData).then((response) => {
-		// 		let data = response.data;
-		// 		let questions = this.props.questions.map((element) =>
-		// 			element._id === data._id
-		// 				? Object.assign({}, element, {
-		// 						question: data.question,
-		// 				  })
-		// 				: element
-		// 		);
-		// 		this.props.updateQuestion(questions, this.props.examCode);
-		// 		this.props.history.push(
-		// 			`/examiner/exam/${response.data.examId}/question`
-		// 		);
-		// 	});
-		// } else {
-		// 	this.questionService.create(formData).then((response) => {
-		// 		this.props.addQuestion(response.data.newQuestion);
-		// 		this.setState(this.baseState);
-		// 		this.handleSnackBar(true, response.data.msg);
-		// 	});
-		// }
 	};
 
 	setValues = (questionData) => {
@@ -153,7 +123,7 @@ class AddQuestions extends React.Component {
 				...options,
 				question: questionData.question,
 				optionType: optionType,
-				correctAnswerList: correctAnswerArray,
+				correctAnswer: correctAnswerArray,
 				totalOptions: totalOptions,
 			},
 			totalOptions: totalOptions,
