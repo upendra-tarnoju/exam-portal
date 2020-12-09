@@ -81,6 +81,16 @@ let setOptionValidationSchema = (length) => {
 	return mergedSchema;
 };
 
+let calculateOptions = (obj) => {
+	let length = 0;
+	Object.keys(obj).forEach((data) => {
+		if (!isNaN(data.slice(-1))) {
+			length = length + 1;
+		}
+	});
+	return length;
+};
+
 export default {
 	formatDate,
 	formatTime,
@@ -91,4 +101,5 @@ export default {
 	totalOptionsList,
 	correctAnswerList,
 	monthMenu,
+	calculateOptions,
 };

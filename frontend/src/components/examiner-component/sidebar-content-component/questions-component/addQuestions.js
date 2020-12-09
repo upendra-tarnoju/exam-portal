@@ -23,6 +23,7 @@ class AddQuestions extends React.Component {
 				correctAnswer: [],
 				totalOptions: [],
 			},
+			selectedOptionList: [],
 			editQuestionSchema: {},
 		};
 		this.baseState = this.state;
@@ -54,7 +55,35 @@ class AddQuestions extends React.Component {
 		});
 	};
 
-	setTotalOptions = (arr) => this.setState({ totalOptions: arr });
+	// setTotalOptions = (arr) => this.setState({ totalOptions: arr });
+
+	setQuestionSchema = (mergedSchema) => {
+		let tempState = this.state;
+
+		let mergedSchemaOptionsCount = factories.calculateOptions(mergedSchema);
+		let prevSchemaOptionsCount = factories.calculateOptions(
+			tempState.questionData
+		);
+		if (mergedSchemaOptionsCount < prevSchemaOptionsCount) {
+			for (
+				let i = mergedSchemaOptionsCount + 1;
+				i < factories.correctAnswerList.length;
+				i++
+			) {
+				delete tempState.questionData[`option${i}`];
+			}
+		} else if (mergedSchemaOptionsCount > prevSchemaOptionsCount) {
+			for (
+				let i = prevSchemaOptionsCount + 1;
+				i <= mergedSchemaOptionsCount;
+				i++
+			) {
+				tempState.questionData[`option${i}`] = '';
+			}
+		}
+		tempState.editQuestionSchema = Yup.object().shape(mergedSchema);
+		this.setState(tempState);
+	};
 
 	submitQuestion = (values) => {
 		let examId = this.props.match.params.examId;
@@ -74,7 +103,7 @@ class AddQuestions extends React.Component {
 						values.correctAnswer.forEach((element) => {
 							correctAnswer = `${element.value},${correctAnswer}`;
 						});
-						formData.append(key, correctAnswer);
+						formData.append(key, correctAnswer.slice(0, -1));
 					}
 				} else formData.append(key, values[key]);
 			}
@@ -99,7 +128,9 @@ class AddQuestions extends React.Component {
 		let optionType = factories.optionType.filter(
 			(data) => data.value === questionData.optionType
 		);
-		let totalOptions = new Array(questionData.options.length).fill('');
+		let totalOptions = factories.totalOptionsList.filter(
+			(obj) => obj.value == questionData.options.length
+		);
 		let options = {};
 		let tempCorrectAnswerList = questionData.correctAnswer.split(',').sort();
 
@@ -126,7 +157,7 @@ class AddQuestions extends React.Component {
 				correctAnswer: correctAnswerArray,
 				totalOptions: totalOptions,
 			},
-			totalOptions: totalOptions,
+			// selectedOptionList: totalOptions, // not used anywhere
 			editQuestionSchema: Yup.object().shape(schema),
 		});
 	};
@@ -166,7 +197,7 @@ class AddQuestions extends React.Component {
 					handleFileChange={this.handleFileChange}
 					editExam={this.state.editExam}
 					questionData={this.state.questionData}
-					setTotalOptions={this.setTotalOptions}
+					setQuestionSchema={this.setQuestionSchema}
 					image={this.state.image}
 					editQuestionSchema={this.state.editQuestionSchema}
 				/>

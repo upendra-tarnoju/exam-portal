@@ -15,6 +15,7 @@ class AddQuestionForm extends React.Component {
 		this.state = {
 			schema: Yup.object().shape(initialSchema),
 			correctAnswerList: [],
+			totalOptions: [],
 		};
 	}
 
@@ -38,6 +39,30 @@ class AddQuestionForm extends React.Component {
 		});
 		return correctAnswerList;
 	}
+
+	static getDerivedStateFromProps = (nextProps, prevState) => {
+		let length = 0;
+		Object.keys(nextProps.questionData).forEach((value) => {
+			if (!isNaN(value.slice(-1))) {
+				length = length + 1;
+			}
+		});
+		if (nextProps.editExam) {
+			if (length === prevState.totalOptions.length) {
+				return {
+					totalOptions: factories.correctAnswerList.slice(0, length),
+				};
+			} else {
+				return {
+					totalOptions:
+						prevState.totalOptions.length === 0
+							? factories.correctAnswerList.slice(0, length)
+							: prevState.totalOptions,
+				};
+			}
+		}
+		return null;
+	};
 
 	render() {
 		return (
@@ -139,14 +164,18 @@ class AddQuestionForm extends React.Component {
 									onChange={(event) => {
 										formikProps.setFieldTouched('totalOptions', true);
 										formikProps.setFieldValue('totalOptions', event);
-										let arr = new Array(event.value).fill('');
+										let arr = factories.correctAnswerList.slice(
+											0,
+											event.value
+										);
 										let correctAnswerList = this.setAnswerList(
 											event.value
 										);
-										this.props.setTotalOptions(arr);
 										let mergedSchema = factories.setOptionValidationSchema(
 											arr.length
 										);
+										if (this.props.editExam)
+											this.props.setQuestionSchema(mergedSchema);
 										this.setState({
 											schema: Yup.object().shape(mergedSchema),
 											totalOptions: arr,
@@ -155,16 +184,17 @@ class AddQuestionForm extends React.Component {
 									}}
 									onBlur={formikProps.setFieldTouched}
 									isMulti={false}
-									value={
-										!this.props.editExam
-											? formikProps.values.totalOptions
-											: factories.totalOptionsList.filter(
-													(option) =>
-														option.value ===
-														this.props.questionData.totalOptions
-															.length
-											  )
-									}
+									// value={
+									// 	!this.props.editExam
+									// 		? formikProps.values.totalOptions
+									// 		: factories.totalOptionsList.filter(
+									// 				(option) =>
+									// 					option.value ===
+									// 					this.props.questionData.totalOptions
+									// 						.length
+									// 		  )
+									// }
+									value={formikProps.values.totalOptions}
 								/>
 								{formikProps.touched.totalOptions ? (
 									<div className='text-danger'>
@@ -173,45 +203,36 @@ class AddQuestionForm extends React.Component {
 								) : null}
 							</Form.Group>
 
-							{this.props.questionData.totalOptions.map(
-								(option, index) => (
-									<Form.Group key={index}>
-										<Form.Label>Option {index + 1}</Form.Label>
-										<Form.Control
-											name={`option${index + 1}`}
-											value={
-												formikProps.values[`option${index + 1}`]
-											}
-											onChange={(e) => {
-												let value = e.target.value;
-												formikProps.setFieldTouched(
-													`option${index + 1}`,
-													true
-												);
-												formikProps.setFieldValue(
-													`option${index + 1}`,
-													value
-												);
-											}}
-											onBlur={() => {
-												formikProps.setFieldTouched(
-													`option${index + 1}`
-												);
-											}}
-											isInvalid={
-												formikProps.touched[`option${index + 1}`] &&
-												formikProps.errors[`option${index + 1}`]
-											}
-											required
-										/>
-										<Form.Control.Feedback type='invalid'>
-											{formikProps.errors[`option${index + 1}`]}
-										</Form.Control.Feedback>
-									</Form.Group>
-								)
-							)}
+							{this.state.totalOptions.map((option, index) => (
+								<Form.Group key={index}>
+									<Form.Label>{option.label}</Form.Label>
+									<Form.Control
+										name={option.value}
+										value={formikProps.values[option.value]}
+										onChange={(e) => {
+											let value = e.target.value;
+											formikProps.setFieldTouched(
+												option.value,
+												true
+											);
+											formikProps.setFieldValue(option.value, value);
+										}}
+										onBlur={() => {
+											formikProps.setFieldTouched(option.value);
+										}}
+										isInvalid={
+											formikProps.touched[`option${index + 1}`] &&
+											formikProps.errors[`option${index + 1}`]
+										}
+										required
+									/>
+									<Form.Control.Feedback type='invalid'>
+										{formikProps.errors[`option${index + 1}`]}
+									</Form.Control.Feedback>
+								</Form.Group>
+							))}
 							{formikProps.values.optionType !== '' &&
-							this.props.questionData.totalOptions.length !== 0 ? (
+							this.state.totalOptions.length !== 0 ? (
 								<Form.Group>
 									<Form.Label>Correct Answer</Form.Label>
 									<Select
