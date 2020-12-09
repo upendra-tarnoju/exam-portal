@@ -7,32 +7,16 @@ import * as Yup from 'yup';
 
 import factories from '../factories/factories';
 import styles from '../components/examiner-component/sidebar-content-component/questions-component/question.module.css';
+import initialSchema from '../schema/questionSchema';
 
 class AddQuestionForm extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			schema: Yup.object(this.initialSchema),
+			schema: Yup.object().shape(initialSchema),
 			correctAnswerList: [],
 		};
 	}
-
-	initialSchema = {
-		question: Yup.string().required('Question is required'),
-		optionType: Yup.string().required('Option Type is required'),
-		totalOptions: Yup.string().required('Total Option is required'),
-		correctAnswer: Yup.array()
-			.min(1, 'Correct Answer is required')
-			.of(
-				Yup.object()
-					.shape({
-						label: Yup.string(),
-						value: Yup.string(),
-					})
-					.nullable()
-			)
-			.nullable(),
-	};
 
 	initialValues = {
 		question: '',
@@ -43,25 +27,6 @@ class AddQuestionForm extends React.Component {
 		option3: '',
 		option4: '',
 		correctAnswer: [],
-	};
-
-	setOptionValidationSchema = (
-		totalOptions,
-		totalOptionsList,
-		correctAnswerList
-	) => {
-		let customSchema = {};
-		for (let i = 0; i < totalOptions; i++) {
-			customSchema[`option${i + 1}`] = Yup.string().required(
-				'Option is required'
-			);
-		}
-		let mergedSchema = { ...customSchema, ...this.initialSchema };
-		this.setState({
-			schema: Yup.object(mergedSchema),
-			totalOptions: totalOptionsList,
-			correctAnswerList: correctAnswerList,
-		});
 	};
 
 	setAnswerList(value) {
@@ -78,9 +43,14 @@ class AddQuestionForm extends React.Component {
 		return (
 			<Formik
 				key={this.props.questionData.question}
-				validationSchema={this.state.schema}
-				onSubmit={(values) => {
+				validationSchema={
+					this.props.editExam
+						? this.props.editQuestionSchema
+						: this.state.schema
+				}
+				onSubmit={(values, { resetForm }) => {
 					this.props.submitQuestion(values);
+					resetForm({ values: '' });
 				}}
 				initialValues={
 					this.props.editExam
@@ -174,11 +144,14 @@ class AddQuestionForm extends React.Component {
 											event.value
 										);
 										this.props.setTotalOptions(arr);
-										this.setOptionValidationSchema(
-											event.value,
-											arr,
-											correctAnswerList
+										let mergedSchema = factories.setOptionValidationSchema(
+											arr.length
 										);
+										this.setState({
+											schema: Yup.object().shape(mergedSchema),
+											totalOptions: arr,
+											correctAnswerList: correctAnswerList,
+										});
 									}}
 									onBlur={formikProps.setFieldTouched}
 									isMulti={false}
@@ -188,7 +161,8 @@ class AddQuestionForm extends React.Component {
 											: factories.totalOptionsList.filter(
 													(option) =>
 														option.value ===
-														this.props.totalOptions.length
+														this.props.questionData.totalOptions
+															.length
 											  )
 									}
 								/>
@@ -199,41 +173,45 @@ class AddQuestionForm extends React.Component {
 								) : null}
 							</Form.Group>
 
-							{this.props.totalOptions.map((option, index) => (
-								<Form.Group key={index}>
-									<Form.Label>Option {index + 1}</Form.Label>
-									<Form.Control
-										name={`option${index + 1}`}
-										value={formikProps.values[`option${index + 1}`]}
-										onChange={(e) => {
-											let value = e.target.value;
-											formikProps.setFieldTouched(
-												`option${index + 1}`,
-												true
-											);
-											formikProps.setFieldValue(
-												`option${index + 1}`,
-												value
-											);
-										}}
-										onBlur={() => {
-											formikProps.setFieldTouched(
-												`option${index + 1}`
-											);
-										}}
-										isInvalid={
-											formikProps.touched[`option${index + 1}`] &&
-											formikProps.errors[`option${index + 1}`]
-										}
-										required
-									/>
-									<Form.Control.Feedback type='invalid'>
-										{formikProps.errors[`option${index + 1}`]}
-									</Form.Control.Feedback>
-								</Form.Group>
-							))}
+							{this.props.questionData.totalOptions.map(
+								(option, index) => (
+									<Form.Group key={index}>
+										<Form.Label>Option {index + 1}</Form.Label>
+										<Form.Control
+											name={`option${index + 1}`}
+											value={
+												formikProps.values[`option${index + 1}`]
+											}
+											onChange={(e) => {
+												let value = e.target.value;
+												formikProps.setFieldTouched(
+													`option${index + 1}`,
+													true
+												);
+												formikProps.setFieldValue(
+													`option${index + 1}`,
+													value
+												);
+											}}
+											onBlur={() => {
+												formikProps.setFieldTouched(
+													`option${index + 1}`
+												);
+											}}
+											isInvalid={
+												formikProps.touched[`option${index + 1}`] &&
+												formikProps.errors[`option${index + 1}`]
+											}
+											required
+										/>
+										<Form.Control.Feedback type='invalid'>
+											{formikProps.errors[`option${index + 1}`]}
+										</Form.Control.Feedback>
+									</Form.Group>
+								)
+							)}
 							{formikProps.values.optionType !== '' &&
-							this.props.totalOptions.length !== 0 ? (
+							this.props.questionData.totalOptions.length !== 0 ? (
 								<Form.Group>
 									<Form.Label>Correct Answer</Form.Label>
 									<Select
@@ -281,6 +259,7 @@ class AddQuestionForm extends React.Component {
 									type='submit'
 									variant='contained'
 									color='primary'
+									onClick={formikProps.handleSubmit}
 								>
 									{this.props.editExam ? 'Update' : 'Create'}
 								</Button>

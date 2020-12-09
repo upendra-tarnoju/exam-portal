@@ -1,3 +1,6 @@
+import * as Yup from 'yup';
+import initialSchema from '../schema/questionSchema';
+
 let formatDate = (date) => {
 	let formattedDate = `${date.getFullYear()}-${(
 		'0' +
@@ -66,13 +69,26 @@ let correctAnswerList = [
 	{ label: 'Option 4', value: 'option4' },
 ];
 
+let setOptionValidationSchema = (length) => {
+	let customSchema = {};
+	for (let i = 0; i < length; i++) {
+		customSchema[`option${i + 1}`] = Yup.string().required(
+			'Option is required'
+		);
+	}
+	let mergedSchema = { ...customSchema, ...initialSchema };
+
+	return mergedSchema;
+};
+
 export default {
 	formatDate,
 	formatTime,
 	updateExaminerCount,
-	monthMenu,
 	capitalizeName,
+	setOptionValidationSchema,
 	optionType,
 	totalOptionsList,
 	correctAnswerList,
+	monthMenu,
 };

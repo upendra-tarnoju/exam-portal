@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import * as Yup from 'yup';
 
 import styles from './question.module.css';
 import QuestionService from '../../../../services/questionApi';
@@ -16,8 +17,13 @@ class AddQuestions extends React.Component {
 			editExam: false,
 			snackbar: { show: false, msg: '', type: '' },
 			deleteModal: false,
-			questionData: {},
-			totalOptions: [],
+			questionData: {
+				question: '',
+				optionType: [],
+				correctAnswerList: [],
+				totalOptions: [],
+			},
+			editQuestionSchema: {},
 		};
 		this.baseState = this.state;
 		this.questionService = new QuestionService();
@@ -39,16 +45,13 @@ class AddQuestions extends React.Component {
 	};
 
 	handleSnackBar = (status, msg, type) => {
-		this.setState(
-			{
-				snackbar: {
-					show: status,
-					msg: msg,
-					type: type,
-				},
+		this.setState({
+			snackbar: {
+				show: status,
+				msg: msg,
+				type: type,
 			},
-			() => console.log(this.state.snackbar)
-		);
+		});
 	};
 
 	setTotalOptions = (arr) => this.setState({ totalOptions: arr });
@@ -78,6 +81,10 @@ class AddQuestions extends React.Component {
 		}
 		formData.append('examId', examId);
 		if (this.state.editExam) {
+			let questionId = this.props.match.params.questionId;
+			// this.questionService.update(questionId, formData).then((response) => {
+			// 	console.log(response.data);
+			// });
 		} else {
 			this.questionService.create(formData).then((response) => {
 				this.props.addQuestion(response.data.newQuestion);
@@ -117,7 +124,7 @@ class AddQuestions extends React.Component {
 		// }
 	};
 
-	setValues(questionData) {
+	setValues = (questionData) => {
 		let correctAnswerArray = [];
 		let optionType = factories.optionType.filter(
 			(data) => data.value === questionData.optionType
@@ -136,6 +143,10 @@ class AddQuestions extends React.Component {
 			options[data.name] = data.value;
 		});
 
+		let schema = factories.setOptionValidationSchema(
+			questionData.options.length
+		);
+
 		this.setState({
 			editExam: true,
 			questionData: {
@@ -143,10 +154,12 @@ class AddQuestions extends React.Component {
 				question: questionData.question,
 				optionType: optionType,
 				correctAnswerList: correctAnswerArray,
+				totalOptions: totalOptions,
 			},
 			totalOptions: totalOptions,
+			editQuestionSchema: Yup.object().shape(schema),
 		});
-	}
+	};
 
 	editExam(pathname) {
 		if (!pathname.endsWith('question/new') && !pathname.endsWith('exam')) {
@@ -183,9 +196,9 @@ class AddQuestions extends React.Component {
 					handleFileChange={this.handleFileChange}
 					editExam={this.state.editExam}
 					questionData={this.state.questionData}
-					totalOptions={this.state.totalOptions}
 					setTotalOptions={this.setTotalOptions}
 					image={this.state.image}
+					editQuestionSchema={this.state.editQuestionSchema}
 				/>
 				<CustomSnackBar
 					show={snackbar.show}
