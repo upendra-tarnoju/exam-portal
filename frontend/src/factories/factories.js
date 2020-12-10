@@ -62,6 +62,13 @@ let totalOptionsList = [
 	{ value: 4, label: '4' },
 ];
 
+let negativeMarksList = [
+	{ value: 0, label: '0' },
+	{ value: 1, label: '1' },
+	{ value: 2, label: '2' },
+	{ value: 3, label: '3' },
+];
+
 let correctAnswerList = [
 	{ label: 'Option 1', value: 'option1' },
 	{ label: 'Option 2', value: 'option2' },
@@ -102,5 +109,6 @@ export default {
 	totalOptionsList,
 	correctAnswerList,
 	monthMenu,
+	negativeMarksList,
 	calculateOptions,
 };

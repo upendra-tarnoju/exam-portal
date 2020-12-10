@@ -12,6 +12,7 @@ class ExamPeriod extends Component {
 	}
 
 	handleSubmit = (values) => {
+		console.log(values);
 		this.examService
 			.saveExamDetails(this.props.fieldDetails, values)
 			.then((response) => {

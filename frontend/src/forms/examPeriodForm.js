@@ -3,9 +3,11 @@ import React from 'react';
 import { Form } from 'react-bootstrap';
 import Button from '@material-ui/core/Button';
 import moment from 'moment';
+import Select from 'react-select';
 
 import factories from '../factories/factories';
 import schema from '../schema/examPeriodSchema';
+import { FormGroup } from '@material-ui/core';
 
 let ExamPeriodForm = (props) => {
 	let curr = new Date();
@@ -23,31 +25,28 @@ let ExamPeriodForm = (props) => {
 				endTime: moment(curr).add(3, 'hours').format('HH:mm'),
 				duration: '',
 				hideDuration: false,
+				negativeMarks: '',
 			}}
 		>
-			{({
-				values,
-				errors,
-				touched,
-				handleChange,
-				handleSubmit,
-				handleBlur,
-			}) => (
-				<Form noValidate onSubmit={handleSubmit}>
+			{(formikProps) => (
+				<Form noValidate onSubmit={formikProps.handleSubmit}>
 					<Form.Group>
 						<Form.Label>Total marks</Form.Label>
 						<Form.Control
 							type='text'
 							name='totalMarks'
 							placeholder='Total marks'
-							value={values.totalMarks}
-							onChange={handleChange}
-							onBlur={handleBlur}
-							isInvalid={touched.totalMarks && !!errors.totalMarks}
+							value={formikProps.values.totalMarks}
+							onChange={formikProps.handleChange}
+							onBlur={formikProps.handleBlur}
+							isInvalid={
+								formikProps.touched.totalMarks &&
+								!!formikProps.errors.totalMarks
+							}
 							required
 						/>
 						<Form.Control.Feedback type='invalid'>
-							{errors.totalMarks}
+							{formikProps.errors.totalMarks}
 						</Form.Control.Feedback>
 					</Form.Group>
 					<Form.Group>
@@ -56,16 +55,39 @@ let ExamPeriodForm = (props) => {
 							type='text'
 							name='passingMarks'
 							placeholder='Passing marks'
-							value={values.passingMarks}
-							onChange={handleChange}
-							onBlur={handleBlur}
-							isInvalid={touched.passingMarks && !!errors.passingMarks}
+							value={formikProps.values.passingMarks}
+							onChange={formikProps.handleChange}
+							onBlur={formikProps.handleBlur}
+							isInvalid={
+								formikProps.touched.passingMarks &&
+								!!formikProps.errors.passingMarks
+							}
 							required
 						/>
 						<Form.Control.Feedback type='invalid'>
-							{errors.passingMarks}
+							{formikProps.errors.passingMarks}
 						</Form.Control.Feedback>
 					</Form.Group>
+					<FormGroup>
+						<Form.Label>Negative marks</Form.Label>
+						<Select
+							options={factories.negativeMarksList}
+							name='negativeMarks'
+							placeholder='Negative marks'
+							onChange={(event) => {
+								formikProps.setFieldTouched('negativeMarks', true);
+								formikProps.setFieldValue('negativeMarks', event.value);
+							}}
+							onBlur={formikProps.setFieldTouched}
+							isMulti={false}
+							values={formikProps.values.negativeMarks}
+						/>
+						{formikProps.touched.negativeMarks ? (
+							<div className='text-danger'>
+								{formikProps.errors.negativeMarks}
+							</div>
+						) : null}
+					</FormGroup>
 					<div className='row'>
 						<div className='col-md-4'>
 							<Form.Group>
@@ -73,14 +95,17 @@ let ExamPeriodForm = (props) => {
 								<Form.Control
 									name='examDate'
 									type='date'
-									onChange={handleChange}
-									value={values.examDate}
-									onBlur={handleBlur}
-									isInvalid={touched.examDate && !!errors.examDate}
+									onChange={formikProps.handleChange}
+									value={formikProps.values.examDate}
+									onBlur={formikProps.handleBlur}
+									isInvalid={
+										formikProps.touched.examDate &&
+										!!formikProps.errors.examDate
+									}
 									required
 								/>
 								<Form.Control.Feedback type='invalid'>
-									{errors.examDate}
+									{formikProps.errors.examDate}
 								</Form.Control.Feedback>
 							</Form.Group>
 						</div>
@@ -90,14 +115,17 @@ let ExamPeriodForm = (props) => {
 								<Form.Control
 									name='startTime'
 									type='time'
-									onChange={handleChange}
-									value={values.startTime}
-									onBlur={handleBlur}
-									isInvalid={touched.startTime && !!errors.startTime}
+									onChange={formikProps.handleChange}
+									value={formikProps.values.startTime}
+									onBlur={formikProps.handleBlur}
+									isInvalid={
+										formikProps.touched.startTime &&
+										!!formikProps.errors.startTime
+									}
 									required
 								/>
 								<Form.Control.Feedback type='invalid'>
-									{errors.startTime}
+									{formikProps.errors.startTime}
 								</Form.Control.Feedback>
 							</Form.Group>
 						</div>
@@ -107,14 +135,17 @@ let ExamPeriodForm = (props) => {
 								<Form.Control
 									name='endTime'
 									type='time'
-									onChange={handleChange}
-									value={values.endTime}
-									onBlur={handleBlur}
-									isInvalid={touched.endTime && !!errors.endTime}
+									onChange={formikProps.handleChange}
+									value={formikProps.values.endTime}
+									onBlur={formikProps.handleBlur}
+									isInvalid={
+										formikProps.touched.endTime &&
+										!!formikProps.errors.endTime
+									}
 									required
 								/>
 								<Form.Control.Feedback type='invalid'>
-									{errors.endTime}
+									{formikProps.errors.endTime}
 								</Form.Control.Feedback>
 							</Form.Group>
 						</div>
@@ -124,23 +155,26 @@ let ExamPeriodForm = (props) => {
 							name='hideDuration'
 							label='Do you want to have exam duration to be same as difference
                      between start time and end time ?'
-							onChange={handleChange}
+							onChange={formikProps.handleChange}
 						/>
 					</Form.Group>
-					{values.hideDuration === true ? null : (
+					{formikProps.values.hideDuration === true ? null : (
 						<Form.Group>
 							<Form.Label>Exam duration</Form.Label>
 							<Form.Control
 								name='duration'
 								type='text'
-								onChange={handleChange}
-								value={values.duration}
-								onBlur={handleBlur}
-								isInvalid={touched.duration && !!errors.duration}
+								onChange={formikProps.handleChange}
+								value={formikProps.values.duration}
+								onBlur={formikProps.handleBlur}
+								isInvalid={
+									formikProps.touched.duration &&
+									!!formikProps.errors.duration
+								}
 								required
 							/>
 							<Form.Control.Feedback type='invalid'>
-								{errors.duration}
+								{formikProps.errors.duration}
 							</Form.Control.Feedback>
 						</Form.Group>
 					)}

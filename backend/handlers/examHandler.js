@@ -15,6 +15,7 @@ let createExamObject = (data, userId) => {
 		startTime: new Date(`${data.examDate} ${data.startTime}`),
 		endTime: new Date(`${data.examDate} ${data.endTime}`),
 		examDate: new Date(data.examDate),
+		negativeMarks: data.negativeMarks,
 	};
 	if (!data.hideDuration) {
 		object.duration = data.duration;

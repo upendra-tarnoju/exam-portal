@@ -40,6 +40,10 @@ const exam = new Schema({
 	duration: {
 		type: Number,
 	},
+	negativeMarks: {
+		type: Number,
+		required: true,
+	},
 });
 
 module.exports = mongoose.model('exam', exam);

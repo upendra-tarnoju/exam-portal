@@ -48,7 +48,6 @@ class Exam extends Component {
 	};
 
 	handleSortOptions = (option) => {
-		console.log(option);
 		this.setState({ sortedBy: option }, () => this.viewExams());
 	};
 

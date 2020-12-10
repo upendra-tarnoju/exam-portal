@@ -43,6 +43,7 @@ let schema = Yup.object({
 			Yup.ref('totalMarks'),
 			'Passing marks should not be greater than total marks'
 		),
+	negativeMarks: Yup.number().required('Negative marks is required'),
 	examDate: Yup.date()
 		.min(currentDate, `Selected date cannot be less than today's date`)
 		.required('Required exam date'),

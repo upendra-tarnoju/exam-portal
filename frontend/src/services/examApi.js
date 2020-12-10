@@ -24,6 +24,7 @@ class ExamService {
 				endTime: examTimeDetails.endTime,
 				duration: examTimeDetails.duration,
 				hideDuration: examTimeDetails.hideDuration,
+				negativeMarks: examTimeDetails.negativeMarks,
 			},
 			headers: {
 				'Content-Type': 'application/json',
