@@ -15,7 +15,7 @@ const question = {
 					question: response.question,
 				};
 				res.status(200).send({
-					msg: 'Question added successfully',
+					msg: 'New question added',
 					newQuestion: data,
 				});
 			});

@@ -1,188 +1,169 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import * as Yup from 'yup';
 
 import styles from './question.module.css';
-import validateInputs from '../../../../services/validation';
 import QuestionService from '../../../../services/questionApi';
 import * as ActionTypes from '../../../../action';
 import AddQuestionForm from '../../../../forms/addQuestionForm';
+import factories from '../../../../factories/factories';
+import CustomSnackBar from '../../../customSnackbar';
 
 class AddQuestions extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			question: { value: '', error: '' },
-			optionsType: { value: '', error: '' },
-			options: { value: [], error: '' },
-			correctAnswer: { show: false, value: [], error: '' },
-			image: { value: '' },
+			image: '',
 			editExam: false,
-			snackbar: { show: false, msg: '' },
+			snackbar: { show: false, msg: '', type: '' },
 			deleteModal: false,
+			questionData: {
+				question: '',
+				optionType: [],
+				correctAnswer: [],
+				totalOptions: [],
+			},
+			selectedOptionList: [],
+			editQuestionSchema: {},
 		};
 		this.baseState = this.state;
 		this.questionService = new QuestionService();
 	}
 
-	handleOptionChange = (event) => {
-		let key = event.target.name;
-		let value = event.target.value;
-		let arr = [];
-		let prevOptions = this.state.options.value;
-		let size = parseInt(value, 10);
-		for (let i = 0; i < size; i++) {
-			let innerKey = `option${i + 1}`;
-			if (prevOptions.length !== 0 && i < prevOptions.length) {
-				let existingValue = prevOptions[i][innerKey].value;
-				arr[i] = { [innerKey]: { value: existingValue, error: '' } };
-			} else {
-				arr[i] = { [innerKey]: { value: '', error: '' } };
-			}
-		}
-		value = arr;
-		this.setState((prevState) => ({
-			[key]: {
-				...prevState[key],
-				value: value,
-			},
-		}));
-	};
-
-	handleChange = (event) => {
-		let key = event.target.name;
-		let value = event.target.value;
-		let regex = /\d/g;
-		let arr = [];
-		if (regex.test(key)) {
-			let optionNo = parseInt(key[key.length - 1], 10);
-			let totalOptions = this.state.options.value;
-			totalOptions[optionNo - 1][key].value = value;
-			key = 'options';
-			value = totalOptions;
-		} else if (key === 'single') {
-			arr.push(value);
-			key = 'correctAnswer';
-			value = arr;
-		} else if (key === 'multiple') {
-			let values = event.target.options;
-			for (let i = 0; i < values.length; i++) {
-				if (values[i].selected) {
-					arr.push(values[i].value);
-				}
-			}
-			key = 'correctAnswer';
-			value = arr;
-		}
-		this.setState((prevState) => ({
-			[key]: {
-				...prevState[key],
-				value: value,
-			},
-		}));
-	};
-
-	handleOptionTypeChange = (event) => {
-		let key = event.target.name;
-		let show = true;
-		let value = event.target.value;
-		if (value === 'none') {
-			show = false;
-		}
-		this.setState((prevState) => ({
-			correctAnswer: {
-				...prevState['correctAnswer'],
-				show: show,
-			},
-			[key]: {
-				...prevState[key],
-				value: value,
-			},
-		}));
-	};
-
 	handleFileChange = (event) => {
 		let file = event.target.files[0];
-		this.setState({
-			image: {
-				value: file,
-			},
-		});
+		if (
+			file.type === 'image/jpeg' ||
+			file.type === 'image/png' ||
+			file.type === 'image/jpg'
+		) {
+			this.setState({ image: file });
+		} else {
+			let msg =
+				'Invalid image type. Supported file types are .jpeg, .jpg and .png';
+			this.handleSnackBar(true, msg, 'error');
+		}
 	};
 
-	handleSnackBar = (status, msg) => {
+	handleSnackBar = (status, msg, type) => {
 		this.setState({
 			snackbar: {
 				show: status,
 				msg: msg,
+				type: type,
 			},
 		});
 	};
 
-	submitQuestion = (event) => {
-		event.preventDefault();
+	setQuestionSchema = (mergedSchema) => {
+		let tempState = this.state;
+
+		let mergedSchemaOptions = factories.calculateOptions(mergedSchema);
+		let prevSchemaOptions = factories.calculateOptions(
+			tempState.questionData
+		);
+
+		if (mergedSchemaOptions.length > prevSchemaOptions.length) {
+			let arr = mergedSchemaOptions.filter(
+				(data) => prevSchemaOptions.indexOf(data) === -1
+			);
+			arr.forEach((data) => (tempState.questionData[data] = ''));
+		} else if (mergedSchemaOptions.length < prevSchemaOptions.length) {
+			let arr = prevSchemaOptions.filter(
+				(data) => mergedSchemaOptions.indexOf(data) === -1
+			);
+			arr.forEach((data) => delete tempState.questionData[data]);
+		}
+
+		tempState.editQuestionSchema = Yup.object().shape(mergedSchema);
+		this.setState(tempState);
+	};
+
+	submitQuestion = (values) => {
 		let examId = this.props.match.params.examId;
-		let validationState = validateInputs.createQuestionFields(this.state);
-		if (validationState.error) {
-			this.setState(validationState.tempState);
+		let formData = new FormData();
+		if (this.state.image) {
+			formData.append('image', this.state.image);
+		}
+		for (let key in values) {
+			if (values[key] !== '') {
+				if (key === 'optionType') {
+					formData.append(key, values.optionType.value);
+				} else if (key === 'correctAnswer') {
+					if (values.optionType.value === 'single') {
+						if (this.state.editExam) {
+							formData.append(key, values[key][0].value);
+						} else {
+							formData.append(key, values[key].value);
+						}
+					} else {
+						let correctAnswer = '';
+						values.correctAnswer.forEach((element) => {
+							correctAnswer = `${element.value},${correctAnswer}`;
+						});
+						formData.append(key, correctAnswer.slice(0, -1));
+					}
+				} else formData.append(key, values[key]);
+			}
+		}
+		formData.append('examId', examId);
+		if (this.state.editExam) {
+			let questionId = this.props.match.params.questionId;
+			this.questionService.update(questionId, formData).then((response) => {
+				console.log(response.data);
+			});
 		} else {
-			let formData = new FormData();
-			for (let key in this.state) {
-				if (key === 'options') {
-					let jsonArray = JSON.stringify(this.state[key].value);
-					formData.append(key, jsonArray);
-				} else formData.append(key, this.state[key].value);
-			}
-			formData.append('examId', examId);
-			if (this.state.editExam) {
-				let questionId = this.props.match.params.questionId;
-				this.questionService
-					.update(questionId, formData)
-					.then((response) => {
-						let data = response.data;
-						let questions = this.props.questions.map((element) =>
-							element._id === data._id
-								? Object.assign({}, element, {
-										question: data.question,
-								  })
-								: element
-						);
-						this.props.updateQuestion(questions, this.props.examCode);
-						this.props.history.push(
-							`/examiner/exam/${response.data.examId}/question`
-						);
-					});
-			} else {
-				this.questionService.create(formData).then((response) => {
-					this.props.addQuestion(response.data.newQuestion);
-					this.setState(this.baseState);
-					this.handleSnackBar(true, response.data.msg);
-				});
-			}
+			this.questionService.create(formData).then((response) => {
+				this.props.addQuestion(response.data.newQuestion);
+				this.setState({ questionData: {}, totalOptions: [] });
+				this.handleSnackBar(true, response.data.msg, 'success');
+			});
 		}
 	};
 
-	setValues(questionData) {
-		let correctAnswer = questionData.correctAnswer.split(',');
+	setValues = (questionData) => {
+		let correctAnswerArray = [];
+		let optionType = factories.optionType.filter(
+			(data) => data.value === questionData.optionType
+		);
+		let totalOptions = factories.totalOptionsList.filter(
+			(obj) => obj.value === questionData.options.length
+		);
+		let options = {};
+		let tempCorrectAnswerList = questionData.correctAnswer.split(',').sort();
 
-		let options = questionData.options.map((option) => {
-			return { [option.name]: { value: option.value, error: '' } };
+		tempCorrectAnswerList.forEach((answer) => {
+			correctAnswerArray.push({
+				label: `Option ${answer.slice(-1)}`,
+				value: `option${answer.slice(-1)}`,
+			});
 		});
+		questionData.options.forEach((data) => {
+			options[data.name] = data.value;
+		});
+
+		let schema = factories.setOptionValidationSchema(
+			questionData.options.length
+		);
 
 		this.setState({
-			question: { value: questionData.question, error: '' },
-			optionsType: { value: questionData.optionType, error: '' },
-			options: { value: options, error: '' },
-			correctAnswer: { show: true, value: correctAnswer, error: '' },
-			image: { value: '' },
+			editExam: true,
+			questionData: {
+				...options,
+				question: questionData.question,
+				optionType: optionType[0],
+				correctAnswer: correctAnswerArray,
+				totalOptions: totalOptions,
+			},
+			editQuestionSchema: Yup.object().shape(schema),
 		});
-	}
+	};
 
 	editExam(pathname) {
 		if (!pathname.endsWith('question/new') && !pathname.endsWith('exam')) {
 			let questionId = pathname.split('/question/')[1];
 			this.questionService.getParticular(questionId).then((response) => {
 				this.setValues(response.data);
-				this.setState({ editExam: true });
 			});
 		} else {
 			this.setState(this.baseState);
@@ -200,6 +181,7 @@ class AddQuestions extends React.Component {
 	}
 
 	render() {
+		let { snackbar } = this.state;
 		return (
 			<div className={`card ${styles.questionCard}`}>
 				<div
@@ -209,12 +191,18 @@ class AddQuestions extends React.Component {
 				</div>
 				<AddQuestionForm
 					submitQuestion={this.submitQuestion}
-					state={this.state}
-					handleChange={this.handleChange}
-					handleOptionTypeChange={this.handleOptionTypeChange}
 					handleFileChange={this.handleFileChange}
-					handleOptionChange={this.handleOptionChange}
+					editExam={this.state.editExam}
+					questionData={this.state.questionData}
+					setQuestionSchema={this.setQuestionSchema}
+					image={this.state.image}
+					editQuestionSchema={this.state.editQuestionSchema}
+				/>
+				<CustomSnackBar
+					show={snackbar.show}
+					snackBarType={snackbar.type}
 					handleSnackBar={this.handleSnackBar}
+					message={snackbar.msg}
 				/>
 			</div>
 		);

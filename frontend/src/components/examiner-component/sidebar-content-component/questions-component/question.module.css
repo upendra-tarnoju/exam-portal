@@ -35,3 +35,8 @@
 	font-family: 'Raleway';
 	font-size: 24px;
 }
+
+.btnSuccess {
+	background-color: #28a745 !important;
+	border-color: #28a745 !important;
+}

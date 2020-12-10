@@ -1,3 +1,6 @@
+import * as Yup from 'yup';
+import initialSchema from '../schema/questionSchema';
+
 let formatDate = (date) => {
 	let formattedDate = `${date.getFullYear()}-${(
 		'0' +
@@ -47,10 +50,57 @@ let capitalizeName = (name) => {
 		.join(' ');
 };
 
+let optionType = [
+	{ value: 'single', label: 'Single' },
+	{ value: 'multiple', label: 'Multiple' },
+];
+
+let totalOptionsList = [
+	{ value: 1, label: '1' },
+	{ value: 2, label: '2' },
+	{ value: 3, label: '3' },
+	{ value: 4, label: '4' },
+];
+
+let correctAnswerList = [
+	{ label: 'Option 1', value: 'option1' },
+	{ label: 'Option 2', value: 'option2' },
+	{ label: 'Option 3', value: 'option3' },
+	{ label: 'Option 4', value: 'option4' },
+];
+
+let setOptionValidationSchema = (length) => {
+	let customSchema = {};
+	for (let i = 0; i < length; i++) {
+		customSchema[`option${i + 1}`] = Yup.string().required(
+			'Option is required'
+		);
+	}
+	let mergedSchema = { ...customSchema, ...initialSchema };
+
+	return mergedSchema;
+};
+
+let calculateOptions = (obj) => {
+	// let length = 0;
+	let arr = [];
+	Object.keys(obj).forEach((data) => {
+		if (!isNaN(data.slice(-1))) {
+			arr.push(data);
+		}
+	});
+	return arr;
+};
+
 export default {
 	formatDate,
 	formatTime,
 	updateExaminerCount,
-	monthMenu,
 	capitalizeName,
+	setOptionValidationSchema,
+	optionType,
+	totalOptionsList,
+	correctAnswerList,
+	monthMenu,
+	calculateOptions,
 };
