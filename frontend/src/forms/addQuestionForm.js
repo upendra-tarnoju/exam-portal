@@ -74,6 +74,7 @@ class AddQuestionForm extends React.Component {
 				onSubmit={(values, { resetForm }) => {
 					this.props.submitQuestion(values);
 					resetForm({ values: '' });
+					this.setState({ correctAnswerList: [], totalOptions: [] });
 				}}
 				initialValues={
 					this.props.editExam
@@ -232,23 +233,12 @@ class AddQuestionForm extends React.Component {
 												  )
 												: this.state.correctAnswerList
 										}
-										// isMulti={
-										// 	!this.props.editExam
-										// 		? formikProps.values.optionType.value ===
-										// 		  'multiple'
-										// 		: this.props.questionData.optionType[0]
-										// 				.value !== 'single'
-										// }
 										isMulti={
 											formikProps.values.optionType.value ===
 											'multiple'
 										}
 										name='correctAnswer'
-										value={
-											!this.props.editExam
-												? formikProps.values.correctAnswer
-												: this.props.questionData.correctAnswer
-										}
+										value={formikProps.values.correctAnswer}
 										onChange={(value) => {
 											formikProps.setFieldValue(
 												'correctAnswer',

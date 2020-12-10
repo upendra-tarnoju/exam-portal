@@ -5,15 +5,19 @@ const Schema = mongoose.Schema;
 const questions = new Schema({
 	examId: {
 		type: String,
+		required: true,
 	},
 	question: {
 		type: String,
+		required: true,
 	},
 	optionType: {
 		type: String,
+		required: true,
 	},
 	correctAnswer: {
 		type: String,
+		required: true,
 	},
 	options: [
 		{

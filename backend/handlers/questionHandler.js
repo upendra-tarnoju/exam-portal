@@ -7,16 +7,12 @@ let createQuestionData = (data, image) => {
 			optionArray.push({ name: key, value: data[key] });
 		}
 	}
-
 	return {
 		examId: data.examId,
 		question: data.question,
 		optionType: data.optionType,
 		options: optionArray,
-		correctAnswer:
-			data.optionType === 'single'
-				? data.correctAnswer
-				: data.correctAnswer.slice(0, -1),
+		correctAnswer: data.correctAnswer,
 		image: image ? image.filename : null,
 	};
 };

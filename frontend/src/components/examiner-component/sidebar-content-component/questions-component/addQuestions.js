@@ -88,10 +88,14 @@ class AddQuestions extends React.Component {
 		for (let key in values) {
 			if (values[key] !== '') {
 				if (key === 'optionType') {
-					formData.append(key, values.optionType[0].value);
+					formData.append(key, values.optionType.value);
 				} else if (key === 'correctAnswer') {
 					if (values.optionType.value === 'single') {
-						formData.append(key, values[key].value);
+						if (this.state.editExam) {
+							formData.append(key, values[key][0].value);
+						} else {
+							formData.append(key, values[key].value);
+						}
 					} else {
 						let correctAnswer = '';
 						values.correctAnswer.forEach((element) => {
@@ -147,7 +151,7 @@ class AddQuestions extends React.Component {
 			questionData: {
 				...options,
 				question: questionData.question,
-				optionType: optionType,
+				optionType: optionType[0],
 				correctAnswer: correctAnswerArray,
 				totalOptions: totalOptions,
 			},
