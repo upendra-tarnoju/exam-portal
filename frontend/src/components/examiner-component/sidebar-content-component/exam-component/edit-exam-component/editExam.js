@@ -24,6 +24,7 @@ class EditExam extends React.Component {
 			courses: { prev: '', new: '', collapse: false, msg: '' },
 			duration: { prev: '', new: '', collapse: false, msg: '' },
 			password: { collapse: false, msg: '' },
+			negativeMarks: { prev: '', new: '', collapse: false, msg: '' },
 			editExam: true,
 		};
 		this.examService = new ExamService();
@@ -128,10 +129,25 @@ class EditExam extends React.Component {
 					prev: exam.duration,
 					new: exam.duration,
 				},
+				negativeMarks: {
+					...prevState.negativeMarks,
+					prev: exam.negativeMarks,
+					new: exam.negativeMarks,
+				},
 				editExam: boolStatus,
 			}));
 		});
 	}
+
+	changeNegativeMarks = (negativeMarks) => {
+		console.log(negativeMarks);
+		this.setState((prevState) => ({
+			negativeMarks: {
+				...prevState.negativeMarks,
+				new: negativeMarks === null ? {} : negativeMarks.value,
+			},
+		}));
+	};
 
 	handleCollapseChange = (key) => {
 		if (key === 'password') {
@@ -218,6 +234,7 @@ class EditExam extends React.Component {
 						fields={this.state}
 						handleCollapseChange={this.handleCollapseChange}
 						updateExamDetails={this.updateExamDetails}
+						handleNegativeMarksChange={this.changeNegativeMarks}
 					/>
 				) : null}
 
