@@ -10,6 +10,7 @@ let createQuestionData = (data, image) => {
 	return {
 		examId: data.examId,
 		question: data.question,
+		questionMarks: data.questionMarks,
 		optionType: data.optionType,
 		options: optionArray,
 		correctAnswer: data.correctAnswer,
@@ -26,10 +27,11 @@ const questions = {
 	getSelectiveQuestionData: async (examId) => {
 		let questionData = await question
 			.getSpecificData(examId)
-			.select({ _id: 1, question: 1 });
+			.select({ _id: 1, question: 1, questionMarks: 1 });
 		let examData = await exam.getById(examId);
 		let examCode = examData[0].examCode;
-		return { questionData, examCode };
+		let totalMarks = examData[0].totalMarks;
+		return { questionData, examCode, totalMarks };
 	},
 
 	getAllQuestionData: async (examId) => {

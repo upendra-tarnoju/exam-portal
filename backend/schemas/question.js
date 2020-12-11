@@ -11,6 +11,10 @@ const questions = new Schema({
 		type: String,
 		required: true,
 	},
+	questionMarks: {
+		type: Number,
+		required: true,
+	},
 	optionType: {
 		type: String,
 		required: true,

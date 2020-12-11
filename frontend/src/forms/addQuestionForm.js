@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 import factories from '../factories/factories';
 import styles from '../components/examiner-component/sidebar-content-component/questions-component/question.module.css';
 import initialSchema from '../schema/questionSchema';
+import { connect } from 'react-redux';
 
 class AddQuestionForm extends React.Component {
 	constructor(props) {
@@ -21,6 +22,7 @@ class AddQuestionForm extends React.Component {
 
 	initialValues = {
 		question: '',
+		questionMarks: '',
 		optionType: '',
 		totalOptions: '',
 		option1: '',
@@ -71,7 +73,17 @@ class AddQuestionForm extends React.Component {
 						? this.props.editQuestionSchema
 						: this.state.schema
 				}
-				onSubmit={(values, { resetForm }) => {
+				onSubmit={(values, { resetForm, setErrors }) => {
+					let weightage = parseInt(values.questionMarks, 10);
+					let msg = '';
+					if (weightage > this.props.marks.total) {
+						msg = 'Marks cannot be greater than total marks';
+					} else if (weightage > this.props.marks.left) {
+						msg = 'Marks cannot be greater than left marks';
+					}
+					setErrors({
+						questionMarks: msg,
+					});
 					this.props.submitQuestion(values);
 					resetForm({ values: '' });
 					this.setState({ correctAnswerList: [], totalOptions: [] });
@@ -109,10 +121,38 @@ class AddQuestionForm extends React.Component {
 								</Form.Control.Feedback>
 							</Form.Group>
 							<Form.Group>
+								<Form.Label>Marks</Form.Label>
+								<Form.Control
+									name='questionMarks'
+									placeholder='Enter question weightage'
+									value={formikProps.values.questionMarks}
+									onBlur={formikProps.handleBlur}
+									onChange={(event) => {
+										let value = event.target.value;
+										if (value === '' || value.match(/^[0-9]+$/)) {
+											formikProps.setFieldTouched(true);
+											formikProps.setFieldValue(
+												'questionMarks',
+												value
+											);
+										}
+									}}
+									isInvalid={
+										formikProps.touched.questionMarks &&
+										formikProps.errors.questionMarks
+									}
+									required
+								/>
+								<Form.Control.Feedback type='invalid'>
+									{formikProps.errors.questionMarks}
+								</Form.Control.Feedback>
+							</Form.Group>
+							<Form.Group>
 								<Form.Label>Option type</Form.Label>
 								<Select
 									options={factories.optionType}
 									name='optionType'
+									placeholder='Option type'
 									onChange={(event) => {
 										formikProps.setFieldTouched('optionType', true);
 										formikProps.setFieldValue('optionType', event);
@@ -160,6 +200,7 @@ class AddQuestionForm extends React.Component {
 								<Select
 									options={factories.totalOptionsList}
 									name='totalOptions'
+									placeholder='Total options'
 									onChange={(event) => {
 										formikProps.setFieldTouched('totalOptions', true);
 										formikProps.setFieldValue('totalOptions', event);
@@ -278,4 +319,10 @@ class AddQuestionForm extends React.Component {
 	}
 }
 
-export default AddQuestionForm;
+const mapStateToProps = (state) => {
+	return {
+		marks: state.examinerReducer.marks,
+	};
+};
+
+export default connect(mapStateToProps)(AddQuestionForm);

@@ -4,6 +4,7 @@ let initialSchema = {
 	question: Yup.string().required('Question is required'),
 	optionType: Yup.string().required('Option Type is required'),
 	totalOptions: Yup.string().required('Total Option is required'),
+	questionMarks: Yup.number().required('Question marks is required'),
 	correctAnswer: Yup.array()
 		.min(1, 'Correct Answer is required')
 		.of(

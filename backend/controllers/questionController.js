@@ -13,6 +13,7 @@ const question = {
 				let data = {
 					_id: response._id,
 					question: response.question,
+					questionMarks: response.questionMarks,
 				};
 				res.status(200).send({
 					msg: 'New question added',
@@ -59,7 +60,11 @@ const question = {
 
 	delete: async (req, res) => {
 		let questionId = req.params.questionId;
-		questionHandler.delete(questionId).then((data) => {
+		questionHandler.delete(questionId).then((response) => {
+			let data = {
+				question: response.question,
+				questionMarks: response.questionMarks,
+			};
 			res.status(200).send(data);
 		});
 	},
