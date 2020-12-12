@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 let { question, exam } = require('../models');
 
 let createQuestionData = (data, image) => {
@@ -49,16 +52,31 @@ const questions = {
 
 	update: async (questionId, data, image) => {
 		let questionObject = createQuestionData(data, image);
-		return question
+		let questionData = await question
+			.findById(questionId)
+			.select({ image: 1 });
+		let updatedQuestion = await question
 			.update(questionId, questionObject)
 			.select({ examId: 1, question: 1 });
+
+		if (
+			(data.image === null ||
+				data.image === undefined ||
+				data.image === 'null') &&
+			questionData.image !== null
+		) {
+			let pathName = `${path.dirname(require.main.filename)}/uploads/${
+				questionData.image
+			}`;
+			fs.unlinkSync(pathName);
+		}
+
+		return updatedQuestion;
 	},
 
 	delete: async (questionId) => {
 		return question.deleteById(questionId);
 	},
-
-	getQuestionImage: async (imageId) => {},
 };
 
 module.exports = questions;

@@ -81,12 +81,15 @@ class AddQuestionForm extends React.Component {
 					} else if (weightage > this.props.marks.left) {
 						msg = 'Marks cannot be greater than left marks';
 					}
-					setErrors({
-						questionMarks: msg,
-					});
-					this.props.submitQuestion(values);
-					resetForm({ values: '' });
-					this.setState({ correctAnswerList: [], totalOptions: [] });
+					if (msg !== '') {
+						setErrors({
+							questionMarks: msg,
+						});
+					} else {
+						this.props.submitQuestion(values);
+						resetForm({ values: '' });
+						this.setState({ correctAnswerList: [], totalOptions: [] });
+					}
 				}}
 				initialValues={
 					this.props.editExam
@@ -184,16 +187,22 @@ class AddQuestionForm extends React.Component {
 										component='span'
 										size='large'
 										className={
-											typeof this.props.image === 'object'
+											this.props.image !== null
 												? styles.btnSuccess
 												: null
 										}
 									>
-										{typeof this.props.image === 'object'
+										{this.props.image !== null
 											? 'Uploaded'
 											: 'Upload'}
 									</Button>
 								</label>
+								{this.props.image !== null ? (
+									<i
+										className={`fa fa-trash ${styles.removeButton}`}
+										onClick={this.props.removeQuestionImage}
+									></i>
+								) : null}
 							</Form.Group>
 							<Form.Group>
 								<Form.Label>Total Options</Form.Label>

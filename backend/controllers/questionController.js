@@ -51,11 +51,16 @@ const question = {
 		let questionId = req.params.questionId;
 		let questionData = req.body;
 		let questionImage = req.file;
-		questionHandler
-			.update(questionId, questionData, questionImage)
-			.then((data) => {
-				res.status(200).send(data);
-			});
+		if (questionData.image === 'null') {
+			questionImage = {};
+			questionImage['filename'] = null;
+		}
+		let response = questionHandler.update(
+			questionId,
+			questionData,
+			questionImage
+		);
+		res.status(200).send(response);
 	},
 
 	delete: async (req, res) => {

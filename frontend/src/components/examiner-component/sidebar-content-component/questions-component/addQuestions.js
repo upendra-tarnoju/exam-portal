@@ -13,7 +13,7 @@ class AddQuestions extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			image: '',
+			image: null,
 			editExam: false,
 			snackbar: { show: false, msg: '', type: '' },
 			deleteModal: false,
@@ -43,6 +43,10 @@ class AddQuestions extends React.Component {
 				'Invalid image type. Supported file types are .jpeg, .jpg and .png';
 			this.handleSnackBar(true, msg, 'error');
 		}
+	};
+
+	removeQuestionImage = () => {
+		this.setState({ image: null });
 	};
 
 	handleSnackBar = (status, msg, type) => {
@@ -82,9 +86,7 @@ class AddQuestions extends React.Component {
 	submitQuestion = (values) => {
 		let examId = this.props.match.params.examId;
 		let formData = new FormData();
-		if (this.state.image) {
-			formData.append('image', this.state.image);
-		}
+		formData.append('image', this.state.image);
 		for (let key in values) {
 			if (values[key] !== '') {
 				if (key === 'optionType') {
@@ -154,7 +156,9 @@ class AddQuestions extends React.Component {
 				optionType: optionType[0],
 				correctAnswer: correctAnswerArray,
 				totalOptions: totalOptions,
+				questionMarks: questionData.questionMarks,
 			},
+			image: questionData.image,
 			editQuestionSchema: Yup.object().shape(schema),
 		});
 	};
@@ -197,6 +201,7 @@ class AddQuestions extends React.Component {
 					setQuestionSchema={this.setQuestionSchema}
 					image={this.state.image}
 					editQuestionSchema={this.state.editQuestionSchema}
+					removeQuestionImage={this.removeQuestionImage}
 				/>
 				<CustomSnackBar
 					show={snackbar.show}

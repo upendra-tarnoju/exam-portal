@@ -40,3 +40,13 @@
 	background-color: #28a745 !important;
 	border-color: #28a745 !important;
 }
+
+.removeButton {
+	background-color: #3f51b5;
+	margin-left: 3px;
+	padding: 10px 12px;
+	color: white;
+	border-radius: 20px;
+	float: right;
+	cursor: pointer;
+}
