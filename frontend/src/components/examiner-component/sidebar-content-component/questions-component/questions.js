@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { Pagination } from '@material-ui/lab';
 
 import QuestionService from '../../../../services/questionApi';
 import AddQuestions from './addQuestions';
@@ -14,19 +15,24 @@ class Questions extends React.Component {
 		this.state = {
 			showDialog: false,
 			deleteIndex: '',
+			pageIndex: 0,
+			pageSize: 5,
+			questionCount: 0,
 		};
 		this.questionService = new QuestionService();
-		this.deleteQuestion = this.deleteQuestion.bind(this);
 	}
 
-	componentDidMount() {
+	viewQuestions = (query) => {
 		let examId = this.props.match.params.examId;
-		let queryType = 'selective';
-		this.questionService.getAll(examId, queryType).then((response) => {
+		this.questionService.getAll(examId, query).then((response) => {
 			let data = response.data;
 			let usedMarks = data.questionData.reduce((sum, current) => {
 				return sum + current.questionMarks;
 			}, 0);
+			this.setState({
+				questionCount: Math.ceil(data.totalQuestions / this.state.pageSize),
+				pageIndex: query.pageIndex,
+			});
 			this.props.setQuestions(
 				data.questionData,
 				data.examCode,
@@ -34,7 +40,23 @@ class Questions extends React.Component {
 				usedMarks
 			);
 		});
+	};
+
+	componentDidMount() {
+		let query = {};
+		query['queryType'] = 'selective';
+		query['pageIndex'] = this.state.pageIndex;
+		query['pageSize'] = this.state.pageSize;
+		this.viewQuestions(query);
 	}
+
+	handleQuestionChange = (event, value) => {
+		let query = {};
+		query['queryType'] = 'selective';
+		query['pageIndex'] = value - 1;
+		query['pageSize'] = this.state.pageSize;
+		this.viewQuestions(query);
+	};
 
 	editQuestion(questionId) {
 		let examId = this.props.match.params.examId;
@@ -66,6 +88,7 @@ class Questions extends React.Component {
 	};
 
 	render() {
+		let { pageIndex, pageSize } = this.state;
 		let questionList = this.props.questions.map((data, index) => {
 			return (
 				<div key={data._id} className='d-flex justify-content-between'>
@@ -73,7 +96,7 @@ class Questions extends React.Component {
 						className='my-2 cursor-pointer text-truncate'
 						onClick={() => this.editQuestion(data._id)}
 					>
-						{index + 1}) {data.question}
+						{pageIndex * pageSize + index + 1}) {data.question}
 					</div>
 					<div
 						className='align-self-center cursor-pointer'
@@ -119,12 +142,20 @@ class Questions extends React.Component {
 									<p>{this.props.marks.left}</p>
 								</div>
 								<p className='mb-1 font-weight-bold'>Questions</p>
-								<div className=''>
-									{this.props.questions.length !== 0 ? (
-										questionList
-									) : (
-										<div className='text-center'> No questions</div>
-									)}
+
+								{this.props.questions.length !== 0 ? (
+									questionList
+								) : (
+									<div className='text-center'> No questions</div>
+								)}
+
+								<div className='d-flex justify-content-center mt-2'>
+									<Pagination
+										count={this.state.questionCount}
+										variant='outlined'
+										color='primary'
+										onChange={this.handleQuestionChange}
+									/>
 								</div>
 							</div>
 						</div>

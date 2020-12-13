@@ -27,14 +27,24 @@ const questions = {
 		return question.create(questionObject);
 	},
 
-	getSelectiveQuestionData: async (examId) => {
+	getSelectiveQuestionData: async (examId, pageIndex, pageSize) => {
+		pageIndex = pageIndex * pageSize;
+		let totalQuestions = await question.getSpecificData(examId);
+
 		let questionData = await question
 			.getSpecificData(examId)
+			.skip(pageIndex)
+			.limit(pageSize)
 			.select({ _id: 1, question: 1, questionMarks: 1 });
 		let examData = await exam.getById(examId);
 		let examCode = examData[0].examCode;
 		let totalMarks = examData[0].totalMarks;
-		return { questionData, examCode, totalMarks };
+		return {
+			questionData,
+			examCode,
+			totalMarks,
+			totalQuestions: totalQuestions.length,
+		};
 	},
 
 	getAllQuestionData: async (examId) => {

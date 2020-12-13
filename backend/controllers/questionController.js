@@ -24,9 +24,13 @@ const question = {
 
 	getAllQuestions: async (req, res) => {
 		let examId = req.query.examId;
-		let queryType = req.query.queryType;
+		let { queryType, pageIndex, pageSize } = req.query;
 		if (queryType === 'selective') {
-			let response = await questionHandler.getSelectiveQuestionData(examId);
+			let response = await questionHandler.getSelectiveQuestionData(
+				examId,
+				parseInt(pageIndex, 10),
+				parseInt(pageSize, 10)
+			);
 			res.status(200).send(response);
 		} else {
 			questionHandler.getAllQuestionData(examId).then((response) => {
