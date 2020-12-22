@@ -41,15 +41,6 @@ let monthMenu = [
 	'December',
 ];
 
-let capitalizeName = (name) => {
-	return name
-		.split(' ')
-		.map(
-			(data) => data.slice(0, 1).toUpperCase() + data.slice(1, data.length)
-		)
-		.join(' ');
-};
-
 let optionType = [
 	{ value: 'single', label: 'Single' },
 	{ value: 'multiple', label: 'Multiple' },
@@ -76,6 +67,33 @@ let correctAnswerList = [
 	{ label: 'Option 4', value: 'option4' },
 ];
 
+let requiredCSVHeaders = [
+	'address',
+	'dob',
+	'email',
+	'fatherName',
+	'firstName',
+	'gender',
+	'lastName',
+	'mobileNumber',
+	'motherName',
+	'password',
+	'studentId',
+];
+
+let emailRegex = new RegExp(
+	/^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/
+);
+
+let capitalizeName = (name) => {
+	return name
+		.split(' ')
+		.map(
+			(data) => data.slice(0, 1).toUpperCase() + data.slice(1, data.length)
+		)
+		.join(' ');
+};
+
 let setOptionValidationSchema = (length) => {
 	let customSchema = {};
 	for (let i = 0; i < length; i++) {
@@ -89,7 +107,6 @@ let setOptionValidationSchema = (length) => {
 };
 
 let calculateOptions = (obj) => {
-	// let length = 0;
 	let arr = [];
 	Object.keys(obj).forEach((data) => {
 		if (!isNaN(data.slice(-1))) {
@@ -97,6 +114,46 @@ let calculateOptions = (obj) => {
 		}
 	});
 	return arr;
+};
+
+let validateHeaders = (headers) => {
+	headers = headers.split(',');
+	for (let i = 0; i < headers.length; i++) {
+		let header = `${headers[i]}`;
+		if (requiredCSVHeaders.indexOf(header.trim()) == -1) {
+			return false;
+		}
+	}
+	return true;
+};
+
+let validateCSVFields = (fields) => {
+	let validationMessage;
+	for (let i = 0; i < fields.length - 1; i++) {
+		let studentData = fields[i].split(',');
+		if (studentData.includes('')) {
+			validationMessage = 'Found empty row field';
+		} else if (!emailRegex.test(studentData[9])) {
+			validationMessage = `Invalid email Id for student Id (${studentData[0]})`;
+		}
+	}
+	return validationMessage;
+};
+
+let validateCSVFile = (csv) => {
+	let lines = csv.split('\n');
+	let validationMessage;
+	let headerStatus = validateHeaders(lines[0]);
+	if (!headerStatus) {
+		validationMessage =
+			'File does not contain required fields or fields contains wrong header name';
+		return validationMessage;
+	}
+	let studentData = lines.splice(1);
+	let fieldStatus = validateCSVFields(studentData);
+	if (fieldStatus) {
+		return fieldStatus;
+	}
 };
 
 export default {
@@ -111,4 +168,5 @@ export default {
 	monthMenu,
 	negativeMarksList,
 	calculateOptions,
+	validateCSVFile,
 };

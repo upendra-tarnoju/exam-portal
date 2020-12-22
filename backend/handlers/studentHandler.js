@@ -2,35 +2,13 @@ let bcrypt = require('bcryptjs');
 let csv = require('csvtojson');
 let fs = require('fs');
 
-let { student, users, exam, examiner } = require('../models');
+let { student, users, exam } = require('../models');
 const user = require('../models/user');
 
 let hashPassword = (password) => {
 	let salt = bcrypt.genSaltSync(10);
 	let hash = bcrypt.hashSync(password, salt);
 	return hash;
-};
-
-let checkRequiredFileFields = (fields) => {
-	let requiredFields = [
-		'studentId',
-		'firstName',
-		'lastName',
-		'fatherName',
-		'motherName',
-		'gender',
-		'address',
-		'mobileNumber',
-		'dob',
-		'emailAddress',
-		'password',
-	];
-	for (field in requiredFields) {
-		if (!fields.include(field)) {
-			return { allFound: false, field: field };
-		}
-	}
-	return { allFound: true, field: '' };
 };
 
 const students = {
@@ -133,13 +111,32 @@ const students = {
 		return studentDetails;
 	},
 
-	uploadStudentFile: async (filePath) => {
+	uploadStudentFile: async (filePath, examId, examinerId) => {
 		let csvData = await csv().fromFile(filePath);
-		let keys = Object.keys(csvData[0]);
-		let validatedField = checkRequiredFileFields(keys);
-		if (validatedField.allFound) {
-		} else {
-			return { msg: `${validatedField.field} not found in file` };
+		let existingStudent;
+		for (let i = 0; i < csvData.length; i++) {
+			let studentData = csvData[i];
+			studentData.accountType = 'student';
+			studentData.examinerId = examinerId;
+			let existingUser = await users.findByEmailAndMobileNumber(studentData);
+			studentData.password = hashPassword(studentData.password);
+			if (existingUser) {
+				existingStudent = await student.findByStudentId(
+					existingUser.userDataId,
+					studentData
+				);
+				if (!existingStudent) {
+					await student.updateExam(existingUser.userDataId, { examId });
+				}
+			} else {
+				let userData = await users.create(studentData);
+				studentData.userId = userData._id;
+				let newStudent = await student.create(studentData);
+				await users.update(userData._id, { userDataId: newStudent._id });
+				await student.updateExam(newStudent._id, {
+					examId,
+				});
+			}
 		}
 	},
 };

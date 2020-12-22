@@ -18,7 +18,9 @@ const users = new Schema({
 		required: [true, 'Email ID is required'],
 		validate: {
 			validator: (email) => {
-				return /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/.test(email);
+				return /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/.test(
+					email
+				);
 			},
 			message: 'Invalid Email ID',
 		},
@@ -30,6 +32,7 @@ const users = new Schema({
 	},
 	mobileNumber: {
 		type: String,
+		required: [true, 'Mobile number is required'],
 	},
 	accountType: {
 		type: String,

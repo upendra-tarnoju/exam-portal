@@ -16,6 +16,7 @@ import * as ActionTypes from '../../../../../action';
 import FileModal from '../../../../../modals/fileModal';
 import ExaminerService from '../../../../../services/examinerApi';
 import Snackbar from '../../../../customSnackbar';
+import factories from '../../../../../factories/factories';
 
 class CreateStudent extends React.Component {
 	constructor(props) {
@@ -38,11 +39,30 @@ class CreateStudent extends React.Component {
 		this.setState({ snackBar: { show, msg, type } });
 	};
 
+	handleFile = (e) => {
+		let content = e.target.result;
+		let validationMessage = factories.validateCSVFile(content);
+
+		if (validationMessage) {
+			this.setState({
+				file: '',
+				snackBar: { show: true, msg: validationMessage, type: 'error' },
+			});
+		} else {
+			this.handleFileModal(true);
+			// this.handleFileChange(true);
+			// this.setState({ file: e }, () => this.handleFileChange(true));
+		}
+	};
+
 	handleFileChange = (event) => {
 		let file = event.target.files[0];
 		let fileType = file.name.split('.')[1];
 		if (fileType === 'xlsx' || fileType === 'xls' || fileType === 'csv') {
-			this.setState({ file }, () => this.handleFileModal(true));
+			this.setState({ file });
+			let fileReader = new FileReader();
+			fileReader.onloadend = this.handleFile;
+			fileReader.readAsText(file);
 		} else {
 			this.setState({
 				snackBar: { show: true, msg: 'File type is not supported' },
@@ -57,6 +77,7 @@ class CreateStudent extends React.Component {
 	uploadStudentFile = () => {
 		let formData = new FormData();
 		formData.append('file', this.state.file);
+		formData.append('examCode', this.props.match.params.examId);
 		this.examinerService
 			.saveNewStudent(formData)
 			.then((response) => {})
@@ -103,7 +124,7 @@ class CreateStudent extends React.Component {
 	render() {
 		let { snackBar } = this.state;
 		return (
-			<div className='container'>
+			<div className='container mt-3'>
 				<div className='card w-50 mx-auto'>
 					<div
 						className={`card-header text-white bg-dark d-flex justify-content-between ${styles.studentCardHeader}`}
