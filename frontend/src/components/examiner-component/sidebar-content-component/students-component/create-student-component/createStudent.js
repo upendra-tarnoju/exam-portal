@@ -42,7 +42,6 @@ class CreateStudent extends React.Component {
 	handleFile = (e) => {
 		let content = e.target.result;
 		let validationMessage = factories.validateCSVFile(content);
-
 		if (validationMessage) {
 			this.setState({
 				file: '',
@@ -50,8 +49,6 @@ class CreateStudent extends React.Component {
 			});
 		} else {
 			this.handleFileModal(true);
-			// this.handleFileChange(true);
-			// this.setState({ file: e }, () => this.handleFileChange(true));
 		}
 	};
 
@@ -134,9 +131,9 @@ class CreateStudent extends React.Component {
 							accept='.xlsx, .xls, .csv'
 							className='d-none'
 							id='upload-students'
-							multiple
 							onChange={this.handleFileChange}
 							type='file'
+							onClick={(event) => (event.target.value = null)}
 						/>
 						<label htmlFor='upload-students'>
 							<Button
