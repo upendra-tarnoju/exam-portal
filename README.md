@@ -11,10 +11,10 @@ Its an online exam portal to track the students capabilites and test them throug
 
 ## User characterstics
 ### Admin
-> The administrator is the main user of the system. Admin can approve or decline new examiners. He can view all details related to examiners, different exams created by examiners.
+> The administrator is the main user of the system. He can approve or decline new examiners. He can view all details related to examiners, different exams created by examiners.
 ### Examiner
-> Examiner have ability to create questions and its options and loaded into the software. Examiners will approve students for the particular examinations.
-### Student
+> Examiner have ability to create questions and its options and loaded into the software.He can either create student or can upload csv file containing stuent information. He will approve students for the particular examinations.
+### Student (To be achieved)
 > The student would be able to logon to the system and take his/her examination. He can also check previous examination result. Student would get result immediately after giving examination.
 
 ## Modules
