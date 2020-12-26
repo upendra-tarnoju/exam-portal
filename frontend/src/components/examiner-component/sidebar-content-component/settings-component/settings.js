@@ -1,6 +1,7 @@
 import React from 'react';
 
 import ProfileForm from '../../../../forms/profileForm';
+import SnackBar from '../../../customSnackbar';
 
 const Settings = () => {
 	return (

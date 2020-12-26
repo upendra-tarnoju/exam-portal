@@ -28,4 +28,4 @@ const mapStateToProps = (state) => {
 		examinerInputWindow: state.examinerReducer.examinerInput,
 	};
 };
-export default connect(mapStateToProps, null)(Login);
+export default connect(mapStateToProps)(Login);

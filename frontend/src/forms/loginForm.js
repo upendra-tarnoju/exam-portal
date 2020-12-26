@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import schema from '../schema/loginSchema';
 import UserService from '../services/userApi';
 
-let LoginForm = ({ handleLogin, handleError }) => {
+let LoginForm = (props) => {
 	return (
 		<Formik
 			validationSchema={schema}
@@ -16,10 +16,10 @@ let LoginForm = ({ handleLogin, handleError }) => {
 					.loginExisitingUser(values)
 					.then((response) => {
 						let data = response.data;
-						handleLogin(data);
+						props.handleLogin(data);
 					})
 					.catch((error) => {
-						handleError(error);
+						props.handleError(error);
 					});
 			}}
 			initialValues={{
@@ -27,15 +27,8 @@ let LoginForm = ({ handleLogin, handleError }) => {
 				password: '',
 			}}
 		>
-			{({
-				touched,
-				values,
-				errors,
-				handleChange,
-				handleBlur,
-				handleSubmit,
-			}) => (
-				<Form noValidate onSubmit={handleSubmit}>
+			{(formikProps) => (
+				<Form noValidate onSubmit={formikProps.handleSubmit}>
 					<div className='px-3 pb-4'>
 						<Form.Group>
 							<Form.Label>Email Address</Form.Label>
@@ -43,14 +36,16 @@ let LoginForm = ({ handleLogin, handleError }) => {
 								type='text'
 								name='email'
 								placeholder='Email address'
-								value={values.email}
-								onBlur={handleBlur}
-								onChange={handleChange}
-								isInvalid={touched.email && !!errors.email}
+								value={formikProps.values.email}
+								onBlur={formikProps.handleBlur}
+								onChange={formikProps.handleChange}
+								isInvalid={
+									formikProps.touched.email && formikProps.errors.email
+								}
 								required
 							/>
 							<Form.Control.Feedback type='invalid'>
-								{errors.email}
+								{formikProps.errors.email}
 							</Form.Control.Feedback>
 						</Form.Group>
 						<Form.Group>
@@ -59,14 +54,17 @@ let LoginForm = ({ handleLogin, handleError }) => {
 								type='password'
 								name='password'
 								placeholder='Password'
-								value={values.password}
-								onBlur={handleBlur}
-								onChange={handleChange}
-								isInvalid={touched.password && !!errors.password}
+								value={formikProps.values.password}
+								onBlur={formikProps.handleBlur}
+								onChange={formikProps.handleChange}
+								isInvalid={
+									formikProps.touched.password &&
+									formikProps.errors.password
+								}
 								required
 							/>
 							<Form.Control.Feedback type='invalid'>
-								{errors.password}
+								{formikProps.errors.password}
 							</Form.Control.Feedback>
 						</Form.Group>
 						<div className='d-flex justify-content-end'>

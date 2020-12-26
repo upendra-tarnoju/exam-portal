@@ -87,6 +87,9 @@ const examiners = {
 			let salt = bcrypt.genSaltSync(10);
 			let hashedPasswod = bcrypt.hashSync(profileData.newPassword, salt);
 			await users.update(examinerId, { password: hashedPasswod });
+			return { status: 200, msg: 'Password updated' };
+		} else {
+			return { status: 401, msg: 'Incorrect current password' };
 		}
 	},
 };

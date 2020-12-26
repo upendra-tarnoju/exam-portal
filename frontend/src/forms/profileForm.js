@@ -5,16 +5,43 @@ import { Button } from '@material-ui/core';
 
 import schema from '../schema/profileSchema';
 import ExaminerService from '../services/examinerApi';
+import SnackBar from '../components/customSnackbar';
 
 const ProfileForm = (props) => {
+	let [show, setShow] = React.useState(false);
+	let [type, setType] = React.useState('');
+	let [snackBar, setSnackBar] = React.useState({
+		msg: '',
+		type: '',
+		show: false,
+	});
+
+	let closeSnackBar = (status) => {
+		setSnackBar({ msg: '', type: '', show: status });
+	};
 	return (
 		<Formik
 			validationSchema={schema}
-			onSubmit={(values) => {
+			onSubmit={(values, { resetForm }) => {
 				let examinerService = new ExaminerService();
-				examinerService.updateProfile(values).then((res) => {
-					console.log(res);
-				});
+				examinerService
+					.updateProfile(values)
+					.then((res) => {
+						setSnackBar({
+							msg: res.data.msg,
+							type: 'success',
+							show: true,
+						});
+						resetForm();
+					})
+					.catch((error) => {
+						console.log(error.response.data.msg);
+						setSnackBar({
+							msg: error.response.data.msg,
+							type: 'error',
+							show: true,
+						});
+					});
 			}}
 			initialValues={{
 				currentPassword: '',
@@ -85,6 +112,12 @@ const ProfileForm = (props) => {
 							Update
 						</Button>
 					</div>
+					<SnackBar
+						show={snackBar.show}
+						snackBarType={snackBar.type}
+						handleSnackBar={closeSnackBar}
+						message={snackBar.msg}
+					/>
 				</Form>
 			)}
 		</Formik>

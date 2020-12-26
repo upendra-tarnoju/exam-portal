@@ -83,11 +83,11 @@ const examiner = {
 	updateProfile: async (req, res) => {
 		let examinerId = req.user._id;
 		let profileData = req.body;
-		let updatedProfile = await examinerHandler.updateProfile(
+		let response = await examinerHandler.updateProfile(
 			examinerId,
 			profileData
 		);
-		res.status(200).send({ msg: 'Password changed successfullly' });
+		res.status(response.status).send({ msg: response.msg });
 	},
 };
 
