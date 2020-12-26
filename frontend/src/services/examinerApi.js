@@ -97,6 +97,19 @@ class ExaminerService {
 			},
 		});
 	};
+
+	updateProfile = (data) => {
+		let token = this.userService.getToken();
+		return axios({
+			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}/profile`,
+			method: 'patch',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			data,
+		});
+	};
 }
 
 export default ExaminerService;

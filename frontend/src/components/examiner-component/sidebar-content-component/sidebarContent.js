@@ -11,6 +11,7 @@ import ViewQuestions from './questions-component/view-questions-component/viewQu
 import Students from './students-component/students';
 import ViewStudents from './students-component/view-student-component/viewStudents';
 import CreateStudent from './students-component/create-student-component/createStudent';
+import Settings from './settings-component/settings';
 
 const SidebarContent = (props) => {
 	let handleSidebar = () => {
@@ -66,6 +67,7 @@ const SidebarContent = (props) => {
 					path='/examiner/exam/:examId/students'
 					component={ViewStudents}
 				/>
+				<Route path='/examiner/setting' component={Settings} />
 				<Route path='/examiner/students' component={Students} />
 			</Switch>
 		</div>

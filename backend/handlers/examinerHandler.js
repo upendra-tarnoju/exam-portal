@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const { users, course, examiner } = require('../models');
 
 let trimObject = (data) => {
@@ -72,6 +73,21 @@ const examiners = {
 			.limit(pageSize)
 			.select({ name: 1, description: 1 });
 		return searchCourse;
+	},
+
+	updateProfile: async (examinerId, profileData) => {
+		let user = await users.findById(examinerId).select({
+			password: 1,
+		});
+		let comparedPassword = await bcrypt.compare(
+			profileData.currentPassword,
+			user.password
+		);
+		if (comparedPassword) {
+			let salt = bcrypt.genSaltSync(10);
+			let hashedPasswod = bcrypt.hashSync(profileData.newPassword, salt);
+			await users.update(examinerId, { password: hashedPasswod });
+		}
 	},
 };
 

@@ -67,6 +67,16 @@ class ExaminerSidebar extends Component {
 					>
 						<i className='fa fa-child'></i> Students
 					</Link>
+					<Link
+						to='/examiner/setting'
+						className={`list-group-item list-group-item-action bg-dark adminIcon ${
+							this.state.selectedTab === 'setting'
+								? 'text-white'
+								: 'text-white-50'
+						}`}
+					>
+						<i className='fa fa-cog'></i> Settings
+					</Link>
 					<a
 						href='/login'
 						onClick={() => {
