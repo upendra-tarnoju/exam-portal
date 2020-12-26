@@ -19,7 +19,6 @@ class ExaminerSidebar extends Component {
 		this.setState({ selectedTab: pathName });
 		this.props.history.listen((location, action) => {
 			let pathName = location.pathname.split('/')[2];
-			console.log(pathName);
 			this.setState({ selectedTab: pathName });
 		});
 	}

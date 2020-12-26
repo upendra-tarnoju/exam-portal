@@ -79,6 +79,16 @@ const examiner = {
 			msg: 'Course deleted successfully',
 		});
 	},
+
+	updateProfile: async (req, res) => {
+		let examinerId = req.user._id;
+		let profileData = req.body;
+		let updatedProfile = await examinerHandler.updateProfile(
+			examinerId,
+			profileData
+		);
+		res.status(200).send({ msg: 'Password changed successfullly' });
+	},
 };
 
 module.exports = examiner;

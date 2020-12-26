@@ -135,5 +135,11 @@ module.exports = () => {
 		studentController.getParticularExamStudents
 	);
 
+	router.patch(
+		'/profile',
+		passport.authenticate('jwt'),
+		examinerController.updateProfile
+	);
+
 	return router;
 };
