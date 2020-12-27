@@ -82,7 +82,7 @@ let requiredCSVHeaders = [
 ];
 
 let emailRegex = new RegExp(
-	/^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/
+	/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 );
 
 let capitalizeName = (name) => {
@@ -120,7 +120,7 @@ let validateHeaders = (headers) => {
 	headers = headers.split(',');
 	for (let i = 0; i < headers.length; i++) {
 		let header = `${headers[i]}`;
-		if (requiredCSVHeaders.indexOf(header.trim()) == -1) {
+		if (requiredCSVHeaders.indexOf(header.trim()) === -1) {
 			return false;
 		}
 	}

@@ -7,9 +7,7 @@ import schema from '../schema/profileSchema';
 import ExaminerService from '../services/examinerApi';
 import SnackBar from '../components/customSnackbar';
 
-const ProfileForm = (props) => {
-	let [show, setShow] = React.useState(false);
-	let [type, setType] = React.useState('');
+const ProfileForm = () => {
 	let [snackBar, setSnackBar] = React.useState({
 		msg: '',
 		type: '',
