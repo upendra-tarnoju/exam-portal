@@ -1,32 +1,31 @@
 const { users, examiner } = require('../models');
-const bcrypt = require('bcryptjs');
 const passport = require('passport');
-const { createToken } = require('../auth').token;
 
-mapNewUser = (userData) => {
-	Object.keys(userData).forEach((key) => {
-		if (key !== 'message' || key !== 'modal')
-			userData[key] = userData[key]['value'];
-	});
-	return checkAccountStatus(userData);
-};
+const auth = require('../auth');
+const { factories } = require('../factories');
 
 const user = {
 	saveUserDetails: async (req, res) => {
 		let userData = req.body;
 		let existingUser = await users.find({ email: userData.email });
-		if (existingUser == null) {
-			let salt = bcrypt.genSaltSync(10);
-			let hash = bcrypt.hashSync(userData.password, salt);
-			userData.password = hash;
+
+		if (!existingUser) {
+			userData.password = factories.generateHashedPassword(
+				userData.password
+			);
 			userData.accountType = 'examiner';
+
 			users
 				.create(userData)
-				.then((user) => {
-					let data = { userId: user._id, accountStatus: 'pending' };
-					examiner.create(data).then((data) => {
+				.then((createdUser) => {
+					let newExaminer = {
+						userId: createdUser._id,
+						accountStatus: 'pending',
+					};
+
+					examiner.create(newExaminer).then((data) => {
 						users
-							.update(user._id, { userDataId: data._id })
+							.update(createdUser._id, { userDataId: newExaminer._id })
 							.then((response) => {
 								res.status(200).send({
 									role: 'examiner',
@@ -38,7 +37,7 @@ const user = {
 				})
 				.catch((err) => {
 					let error = Object.values(err.errors)[0].message;
-					res.status(400).send(error);
+					res.status(400).send({ msg: error });
 				});
 		} else {
 			res.status(200).send({ msg: 'User already existed' });
@@ -49,9 +48,10 @@ const user = {
 		passport.authenticate('local', (err, user, info) => {
 			if (err) return next(err);
 			if (!user) return res.status(401).json({ msg: info.message });
-			req.logIn(user, async (err) => {
-				let token = createToken(user);
-				return res.status(200).send({
+
+			req.logIn(user, (err) => {
+				let token = auth.token.create(user);
+				res.status(200).send({
 					token: token,
 					accountType: user.accountType,
 					lastLogin: user.lastLogin,

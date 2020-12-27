@@ -1,5 +1,5 @@
-const bcrypt = require('bcryptjs');
 const { users, course, examiner } = require('../models');
+const { factories } = require('../factories');
 
 let trimObject = (data) => {
 	let keys = Object.keys(data);
@@ -79,13 +79,14 @@ const examiners = {
 		let user = await users.findById(examinerId).select({
 			password: 1,
 		});
-		let comparedPassword = await bcrypt.compare(
+		let comparedPassword = factories.compareHashedPassword(
 			profileData.currentPassword,
 			user.password
 		);
 		if (comparedPassword) {
-			let salt = bcrypt.genSaltSync(10);
-			let hashedPasswod = bcrypt.hashSync(profileData.newPassword, salt);
+			let hashedPasswod = factories.generateHashedPassword(
+				profileData.newPassword
+			);
 			await users.update(examinerId, { password: hashedPasswod });
 			return { status: 200, msg: 'Password updated' };
 		} else {

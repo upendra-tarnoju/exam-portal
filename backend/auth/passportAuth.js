@@ -1,13 +1,15 @@
 const LocalStrategy = require('passport-local').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
-const bcryptjs = require('bcryptjs');
 
 const { users, examiner } = require('../models');
-const userSchema = require('../schemas').users;
+const { factories } = require('../factories');
 
 let comparePassword = (typedPassword, user, done) => {
-	let userStatus = bcryptjs.compareSync(typedPassword, user.password);
+	let userStatus = factories.compareHashedPassword(
+		typedPassword,
+		user.password
+	);
 	if (userStatus) return done(null, user);
 	else
 		return done(null, false, {
@@ -64,7 +66,7 @@ module.exports = (passport) => {
 	});
 
 	passport.deserializeUser((id, done) => {
-		userSchema.findById(id, (err, user) => {
+		users.findById(id, (err, user) => {
 			done(err, user);
 		});
 	});

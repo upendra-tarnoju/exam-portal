@@ -1,6 +1,5 @@
 const { users, examiner, student, exam } = require('../models');
 const { sender, transporter } = require('../config/mail');
-const { findLatest24HoursExaminers } = require('../models/user');
 
 const admin = {
 	getExaminerDetails: async (accountStatus, pageIndex, pageSize) => {
@@ -80,7 +79,7 @@ const admin = {
 			.skip(pageIndex)
 			.limit(pageSize);
 
-		let allExaminers = await users.findLatest24HoursExaminers(0, 0);
+		let allExaminers = await users.findLatest24HoursExaminers();
 		return { count: allExaminers.length, examiners: data };
 	},
 };

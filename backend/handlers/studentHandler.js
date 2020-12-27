@@ -1,21 +1,16 @@
-let bcrypt = require('bcryptjs');
 let csv = require('csvtojson');
-let fs = require('fs');
 
 let { student, users, exam } = require('../models');
 const user = require('../models/user');
-
-let hashPassword = (password) => {
-	let salt = bcrypt.genSaltSync(10);
-	let hash = bcrypt.hashSync(password, salt);
-	return hash;
-};
+const { factories } = require('../factories');
 
 const students = {
 	addNewStudent: async (studentData) => {
 		let existingStudent;
 		let existingUser = await users.findByEmailAndMobileNumber(studentData);
-		studentData.password = hashPassword(studentData.password);
+		studentData.password = factories.generateHashedPassword(
+			studentData.password
+		);
 		if (existingUser) {
 			existingStudent = await student.findByStudentId(
 				existingUser.userDataId,
@@ -119,7 +114,9 @@ const students = {
 			studentData.accountType = 'student';
 			studentData.examinerId = examinerId;
 			let existingUser = await users.findByEmailAndMobileNumber(studentData);
-			studentData.password = hashPassword(studentData.password);
+			studentData.password = factories.generateHashedPassword(
+				studentData.password
+			);
 			if (existingUser) {
 				existingStudent = await student.findByStudentId(
 					existingUser.userDataId,

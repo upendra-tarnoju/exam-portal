@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const createToken = (userData) => {
+const create = (userData) => {
 	let privateKey = 'gRG9lIiwiaWF0IjoxNTE2MjM5';
 	let object = {
 		userId: userData._id,
@@ -13,5 +13,5 @@ const createToken = (userData) => {
 };
 
 module.exports = {
-	createToken,
+	create,
 };

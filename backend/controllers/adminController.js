@@ -5,6 +5,7 @@ const admin = {
 		let queryType = req.query.type;
 		let pageIndex = parseInt(req.query.pageIndex);
 		let pageSize = parseInt(req.query.pageSize);
+
 		let msg = '';
 		if (queryType === 'examinerCount') {
 			let examinerCount = await adminHandler.getExaminerCount();
@@ -42,8 +43,8 @@ const admin = {
 	},
 
 	getUnexpiredExamDetails: async (req, res) => {
-		let minDate = req.query.minDate;
-		let maxDate = req.query.maxDate;
+		let { minDate, maxDate } = req.query;
+
 		let data = await adminHandler.getUnexpiredExamDetails(minDate, maxDate);
 		res.status(200).send(data);
 	},
