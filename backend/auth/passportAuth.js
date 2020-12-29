@@ -48,7 +48,10 @@ module.exports = (passport) => {
 									} else {
 										return comparePassword(password, user, done);
 									}
-								} else if (user.accountType === 'admin') {
+								} else if (
+									user.accountType === 'admin' ||
+									user.accountType === 'student'
+								) {
 									return comparePassword(password, user, done);
 								}
 							});

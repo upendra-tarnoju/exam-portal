@@ -1,6 +1,6 @@
 let csv = require('csvtojson');
 
-let { student, users, exam } = require('../models');
+let { student, users, exam, course } = require('../models');
 const user = require('../models/user');
 const { factories } = require('../factories');
 
@@ -135,6 +135,27 @@ const students = {
 				});
 			}
 		}
+	},
+	getParticularStudentExamDetails: async (studentId) => {
+		let examList = [];
+		let userData = await users.findParticularUserExam(studentId);
+		let examData = userData[0].examData.exam;
+		for (let i = 0; i < examData.length; i++) {
+			let examId = examData[i].examId;
+			let examDetail = await exam.getByExamId(examId).select({
+				examCode: 1,
+				subject: 1,
+				course: 1,
+				totalMarks: 1,
+			});
+			let courseDetails = await course
+				.findById(examDetail.course)
+				.select({ name: 1 });
+
+			examDetail.course = courseDetails.name;
+			examList.push(examDetail);
+		}
+		return { status: 200, data: examList };
 	},
 };
 

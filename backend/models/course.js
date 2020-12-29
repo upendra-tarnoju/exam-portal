@@ -46,6 +46,10 @@ class Course {
 	delete = (courseId) => {
 		return this.courseModel.findByIdAndRemove(courseId);
 	};
+
+	findById = (id) => {
+		return this.courseModel.findById(id);
+	};
 }
 
 module.exports = new Course();
