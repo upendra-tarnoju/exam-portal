@@ -34,8 +34,7 @@ class ExamList extends React.Component {
 								<Card
 									className={`p-3`}
 									style={{
-										background: () =>
-											factories.generateRandomGradient(),
+										background: factories.generateRandomGradient(),
 									}}
 								>
 									<Avatar className={`${styles.avatar} mx-auto`}>

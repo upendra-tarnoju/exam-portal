@@ -188,7 +188,7 @@ let populateColor = () => {
 let generateRandomGradient = () => {
 	let firstColor = populateColor();
 	let secondColor = populateColor();
-	let angle = Math.round(Math.random * 360);
+	let angle = Math.round(Math.random() * 360);
 
 	let gradient = `linear-gradient(${angle}deg, ${firstColor}, ${secondColor})`;
 	return gradient;
