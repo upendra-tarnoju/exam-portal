@@ -27,6 +27,8 @@ class LoginCard extends Component {
 				this.props.setExaminerInputWindow(false);
 				this.props.history.push('/examiner/exam');
 			}
+		} else {
+			this.props.history.push('/student/exam');
 		}
 	};
 

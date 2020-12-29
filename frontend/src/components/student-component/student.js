@@ -1,8 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-const Student = () => {
-	return <p>Student</p>;
+import StudentSidebar from './student-sidebar-component/studentSidebar';
+import StudentContent from './student-content-component/studentContent';
+
+const Student = (props) => {
+	return (
+		<div className={`d-flex ${props.toggle ? 'toggled' : ''}`} id='wrapper'>
+			<StudentSidebar />
+			<StudentContent />
+		</div>
+	);
 };
 
 const mapStateToProps = (state) => {
