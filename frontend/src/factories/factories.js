@@ -81,6 +81,24 @@ let requiredCSVHeaders = [
 	'studentId',
 ];
 
+var hexValues = [
+	'0',
+	'1',
+	'2',
+	'3',
+	'4',
+	'5',
+	'6',
+	'7',
+	'8',
+	'9',
+	'a',
+	'b',
+	'c',
+	'd',
+	'e',
+];
+
 let emailRegex = new RegExp(
 	/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 );
@@ -156,6 +174,26 @@ let validateCSVFile = (csv) => {
 	}
 };
 
+let populateColor = () => {
+	let value = '#';
+
+	for (let i = 0; i < 6; i++) {
+		let x = Math.round(Math.random() * 14);
+		let y = hexValues[x];
+		value += y;
+	}
+	return value;
+};
+
+let generateRandomGradient = () => {
+	let firstColor = populateColor();
+	let secondColor = populateColor();
+	let angle = Math.round(Math.random * 360);
+
+	let gradient = `linear-gradient(${angle}deg, ${firstColor}, ${secondColor})`;
+	return gradient;
+};
+
 export default {
 	formatDate,
 	formatTime,
@@ -169,4 +207,5 @@ export default {
 	negativeMarksList,
 	calculateOptions,
 	validateCSVFile,
+	generateRandomGradient,
 };

@@ -6,7 +6,6 @@ import * as ActionType from '../../../action';
 import ExamList from './exam-list-component/examList';
 
 const StudentContent = (props) => {
-	console.log(props);
 	let handleSidebar = () => {
 		let toggle = props.toggle;
 		props.setSidebar(!toggle);
