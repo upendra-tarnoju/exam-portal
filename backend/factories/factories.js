@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+let moment = require('moment');
 
 let factories = {
 	generateHashedPassword: (password) => {
@@ -34,6 +35,11 @@ let factories = {
 			object.duration = data.duration;
 		}
 		return object;
+	},
+
+	compareExamDate: (date) => {
+		let currentDate = new Date();
+		return moment(date).isSameOrAfter(currentDate);
 	},
 };
 

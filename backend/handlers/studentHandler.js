@@ -147,13 +147,20 @@ const students = {
 				subject: 1,
 				course: 1,
 				totalMarks: 1,
+				negativeMarks: 1,
+				examDate: 1,
+				startTime: 1,
 			});
-			let courseDetails = await course
-				.findById(examDetail.course)
-				.select({ name: 1 });
 
-			examDetail.course = courseDetails.name;
-			examList.push(examDetail);
+			let comparedDate = factories.compareExamDate(examDetail.examDate);
+			if (comparedDate) {
+				let courseDetails = await course
+					.findById(examDetail.course)
+					.select({ name: 1 });
+
+				examDetail.course = courseDetails.name;
+				examList.push(examDetail);
+			}
 		}
 		return { status: 200, data: examList };
 	},

@@ -136,7 +136,7 @@ const ExamCard = (props) => {
 							/>
 						);
 				}}
-				date={Date.now() + 5000}
+				date={props.exam.startTime}
 			/>
 		</Card>
 	);
