@@ -1,9 +1,7 @@
 import React from 'react';
-import { Avatar, Card } from '@material-ui/core';
 
+import ExamCard from './examCard';
 import StudentService from '../../../../services/studentApi';
-import styles from '../../student.module.css';
-import factories from '../../../../factories/factories';
 
 class ExamList extends React.Component {
 	constructor() {
@@ -31,16 +29,7 @@ class ExamList extends React.Component {
 					<div className='row mb-5'>
 						{data.map((exam) => (
 							<div className='col-md-4'>
-								<Card
-									className={`p-3`}
-									style={{
-										background: factories.generateRandomGradient(),
-									}}
-								>
-									<Avatar className={`${styles.avatar} mx-auto`}>
-										{exam.subject[0]}
-									</Avatar>
-								</Card>
+								<ExamCard exam={exam} />
 							</div>
 						))}
 					</div>
