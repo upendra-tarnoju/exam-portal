@@ -1,13 +1,14 @@
 import React from 'react';
-import './App.css';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
+import './App.css';
 import Start from './components/start';
 import SignUp from './components/signup-component/signup';
 import Login from './components/login-component/login';
 import Admin from './components/admin-component/admin';
 import Examiner from './components/examiner-component/examiner';
 import ProtectedRoute from './hoc/protectedRoute';
+import Student from './components/student-component/student';
 
 function App() {
 	return (
@@ -24,6 +25,10 @@ function App() {
 					path='/examiner'
 					component={ProtectedRoute(Examiner, 'examiner')}
 				></Route>
+				<Route
+					path='/student'
+					component={ProtectedRoute(Student, 'student')}
+				/>
 			</Switch>
 		</BrowserRouter>
 	);

@@ -104,6 +104,30 @@ class Users {
 			{ $project: { firstName: 1, lastName: 1, 'examinerData._id': 1 } },
 		]);
 	}
+
+	findParticularUserExam = (userId) => {
+		return this.userModel.aggregate([
+			{ $match: { _id: userId } },
+			{
+				$lookup: {
+					from: 'students',
+					let: { studentId: '$userDataId' },
+					pipeline: [
+						{
+							$match: {
+								$expr: {
+									$eq: ['$_id', '$$studentId'],
+								},
+							},
+						},
+					],
+					as: 'examData',
+				},
+			},
+			{ $unwind: '$examData' },
+			{ $project: { 'examData.exam': 1 } },
+		]);
+	};
 }
 
 module.exports = new Users();

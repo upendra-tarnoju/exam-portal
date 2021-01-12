@@ -26,7 +26,6 @@ class Exams {
 	};
 
 	deleteDurationById = (examId) => {
-		console.log(examId);
 		return this.examModel.findByIdAndUpdate(examId, {
 			$unset: { duration: 1 },
 		});

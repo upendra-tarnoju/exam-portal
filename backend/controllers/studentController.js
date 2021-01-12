@@ -73,6 +73,14 @@ const student = {
 		let studentData = await studentHandler.getParticularExamStudents(examId);
 		res.status(200).send(studentData);
 	},
+
+	getParticularStudentExamDetails: async (req, res) => {
+		let studentId = req.user._id;
+		let response = await studentHandler.getParticularStudentExamDetails(
+			studentId
+		);
+		res.status(response.status).send(response.data);
+	},
 };
 
 module.exports = student;
