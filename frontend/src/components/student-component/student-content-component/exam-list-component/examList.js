@@ -2,34 +2,88 @@ import React from 'react';
 
 import ExamCard from './examCard';
 import StudentService from '../../../../services/studentApi';
+import { Paper } from '@material-ui/core';
+import { Book } from '@material-ui/icons';
+import classes from '../../student.module.css';
 
 class ExamList extends React.Component {
 	constructor() {
 		super();
 		this.state = {
 			examList: [],
+			conductedExamsList: [],
+			upcomingExamsList: [],
+			todayExamsList: [],
 		};
 		this.studentService = new StudentService();
 	}
 	componentDidMount() {
 		this.studentService.getParticularStudentExamDetails().then((res) => {
 			let examData = res.data;
-			let examList = [];
-			while (examData.length > 0) {
-				examList.push(examData.splice(0, 3));
+			let conductedExamsList = [];
+			let todayExamsList = [];
+			let upcomingExamsList = [];
+			while (examData.conductedExams.length > 0) {
+				conductedExamsList.push(examData.conductedExams.splice(0, 3));
 			}
-			this.setState({ examList });
+			while (examData.todayExams.length > 0) {
+				todayExamsList.push(examData.todayExams.splice(0, 3));
+			}
+			while (examData.upcomingExams.length > 0) {
+				upcomingExamsList.push(examData.upcomingExams.splice(0, 3));
+			}
+			this.setState({
+				conductedExamsList,
+				todayExamsList,
+				upcomingExamsList,
+			});
 		});
 	}
 
 	render() {
 		return (
 			<div className='container mt-5'>
-				{this.state.examList.map((data, index) => (
-					<div className='row mb-5'>
+				<Paper className='p-3 mb-2 d-flex align-items-center' elevation={3}>
+					<Book fontSize='large' />
+					<span className={`${classes.conductedExamsHeading}`}>
+						Conducted Exams
+					</span>
+				</Paper>
+				{this.state.conductedExamsList.map((data, index) => (
+					<div className='row mb-5' key={index}>
 						{data.map((exam) => (
-							<div className='col-md-4'>
-								<ExamCard exam={exam} />
+							<div className='col-md-4' key={exam._id}>
+								<ExamCard exam={exam} type='conducted' />
+							</div>
+						))}
+					</div>
+				))}
+				<Paper className='p-3 mb-2 d-flex align-items-center' elevation={3}>
+					<Book fontSize='large' />
+					<span className={`${classes.conductedExamsHeading}`}>
+						Today's Exam
+					</span>
+				</Paper>
+				{this.state.todayExamsList.map((data, index) => (
+					<div className='row mb-5' key={index}>
+						{data.map((exam) => (
+							<div className='col-md-4' key={exam._id}>
+								<ExamCard exam={exam} type='today' />
+							</div>
+						))}
+					</div>
+				))}
+				<Paper className='p-3 mb-2 d-flex align-items-center' elevation={3}>
+					<Book fontSize='large' />
+					<span className={`${classes.conductedExamsHeading}`}>
+						Upcoming Exam
+					</span>
+				</Paper>
+				{this.state.upcomingExamsList.map((data, index) => (
+					<div className='row mb-5' key={index}>
+						{data.map((exam) => (
+							<div className='col-md-4' key={exam._id}>
+								<ExamCard exam={exam} type='upcoming' />
 							</div>
 						))}
 					</div>

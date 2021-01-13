@@ -114,7 +114,20 @@ const ExamCard = (props) => {
 			</div>
 			<CountDown
 				renderer={({ days, hours, minutes, seconds, completed }) => {
-					if (completed)
+					if (completed) {
+						if (props.type === 'conducted') {
+							return (
+								<div className='px-5 pb-3'>
+									<Button
+										variant='contained'
+										className='w-100'
+										color='primary'
+									>
+										View Score
+									</Button>
+								</div>
+							);
+						}
 						return (
 							<div className='px-5 pb-3'>
 								<Button
@@ -126,7 +139,7 @@ const ExamCard = (props) => {
 								</Button>
 							</div>
 						);
-					else
+					} else
 						return (
 							<ExamTimer
 								days={days}

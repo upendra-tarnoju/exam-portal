@@ -39,7 +39,13 @@ let factories = {
 
 	compareExamDate: (date) => {
 		let currentDate = new Date();
-		return moment(date).isSameOrAfter(currentDate);
+		if (moment(date).isSame(currentDate)) {
+			return 'same';
+		} else if (moment(date).isBefore(currentDate)) {
+			return 'before';
+		} else {
+			return 'after';
+		}
 	},
 };
 

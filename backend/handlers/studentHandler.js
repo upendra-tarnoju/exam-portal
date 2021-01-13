@@ -138,6 +138,9 @@ const students = {
 	},
 	getParticularStudentExamDetails: async (studentId) => {
 		let examList = [];
+		let upcomingExams = [];
+		let todayExams = [];
+		let conductedExams = [];
 		let userData = await users.findParticularUserExam(studentId);
 		let examData = userData[0].examData.exam;
 		for (let i = 0; i < examData.length; i++) {
@@ -153,16 +156,23 @@ const students = {
 			});
 
 			let comparedDate = factories.compareExamDate(examDetail.examDate);
-			if (comparedDate) {
-				let courseDetails = await course
-					.findById(examDetail.course)
-					.select({ name: 1 });
-
-				examDetail.course = courseDetails.name;
-				examList.push(examDetail);
+			let courseDetails = await course
+				.findById(examDetail.course)
+				.select({ name: 1 });
+			examDetail.course = courseDetails.name;
+			examList.push(examDetail);
+			if (comparedDate === 'after') {
+				upcomingExams.push(examDetail);
+			} else if (comparedDate === 'before') {
+				conductedExams.push(examDetail);
+			} else {
+				todayExams.push(examDetail);
 			}
 		}
-		return { status: 200, data: examList };
+		return {
+			status: 200,
+			data: { todayExams, conductedExams, upcomingExams },
+		};
 	},
 };
 
