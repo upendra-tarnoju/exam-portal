@@ -23,9 +23,11 @@ const user = {
 						accountStatus: 'pending',
 					};
 
-					examiner.create(newExaminer).then((data) => {
+					examiner.create(newExaminer).then((createdExaminer) => {
 						users
-							.update(createdUser._id, { userDataId: newExaminer._id })
+							.update(createdUser._id, {
+								userDataId: createdExaminer._id,
+							})
 							.then((response) => {
 								res.status(200).send({
 									role: 'examiner',

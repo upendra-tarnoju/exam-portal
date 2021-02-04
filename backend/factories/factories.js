@@ -17,7 +17,7 @@ let factories = {
 	},
 
 	createExamObject: (data, userId) => {
-		let hashedPassword = this.generateHashedPassword(data.password);
+		let hashedPassword = factories.generateHashedPassword(data.password);
 		let object = {
 			subject: data.subject,
 			course: data.course,
@@ -37,11 +37,14 @@ let factories = {
 		return object;
 	},
 
-	compareExamDate: (date) => {
+	compareExamDate: (examDate) => {
 		let currentDate = new Date();
-		if (moment(date).isSame(currentDate)) {
+		examDate = moment(examDate).format('YYYY-MM-DD');
+		currentDate = moment(currentDate).format('YYYY-MM-DD');
+
+		if (examDate == currentDate) {
 			return 'same';
-		} else if (moment(date).isBefore(currentDate)) {
+		} else if (examDate < currentDate) {
 			return 'before';
 		} else {
 			return 'after';

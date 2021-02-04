@@ -1,4 +1,5 @@
 let { exam } = require('../models');
+let { factories } = require('../factories');
 
 let setErrorMessages = (key) => {
 	if (key === 'examCode') {

@@ -15,7 +15,6 @@ const admin = {
 	getExaminerCount: async () => {
 		let examinerCount = {};
 		let examinerData = await users.findByAccountType('examiner');
-
 		examinerCount['pending'] = examinerData.filter(
 			(data) => data.examiner.accountStatus == 'pending'
 		).length;
