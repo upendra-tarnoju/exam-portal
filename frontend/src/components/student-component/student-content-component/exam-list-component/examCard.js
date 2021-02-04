@@ -11,35 +11,27 @@ const ExamTimer = (props) => {
 		<div className='d-flex justify-content-around  pb-2 text-center'>
 			<Paper className='bg-dark px-3 py-2'>
 				<div className={styles.timerContent}>{props.days}</div>
-				<div
-					className={`${styles.timerHeading} font-weight-bold text-white`}
-				>
+				<div className={`${styles.timerHeading} font-weight-bold text-white`}>
 					Days
 				</div>
 			</Paper>
 			<Paper className='bg-dark px-3 py-2'>
 				<div className={styles.timerContent}>{props.hours}</div>
 
-				<div
-					className={`${styles.timerHeading} font-weight-bold text-white`}
-				>
+				<div className={`${styles.timerHeading} font-weight-bold text-white`}>
 					Hours
 				</div>
 			</Paper>
 			<Paper className='bg-dark px-3 py-2'>
 				<div className={styles.timerContent}>{props.minutes}</div>
 
-				<div
-					className={`${styles.timerHeading} font-weight-bold text-white`}
-				>
+				<div className={`${styles.timerHeading} font-weight-bold text-white`}>
 					Minutes
 				</div>
 			</Paper>
 			<Paper className='bg-dark px-3 py-2'>
 				<div className={styles.timerContent}>{props.seconds}</div>
-				<div
-					className={`${styles.timerHeading} font-weight-bold text-white`}
-				>
+				<div className={`${styles.timerHeading} font-weight-bold text-white`}>
 					Seconds
 				</div>
 			</Paper>
@@ -68,16 +60,12 @@ const ExamCard = (props) => {
 				}}
 				className='p-3'
 			>
-				<Avatar
-					className={`${styles.avatar} mx-auto shadow ${classes.avatar}`}
-				>
+				<Avatar className={`${styles.avatar} mx-auto shadow ${classes.avatar}`}>
 					{props.exam.subject[0]}
 				</Avatar>
 			</div>
 			<div className='p-3'>
-				<p
-					className={`mb-0 text-center font-weight-bold ${styles.subject}`}
-				>
+				<p className={`mb-0 text-center font-weight-bold ${styles.subject}`}>
 					{props.exam.subject}
 				</p>
 				<p className={`mb-0 text-center ${styles.course}`}>
@@ -104,9 +92,7 @@ const ExamCard = (props) => {
 								Negative marks
 							</div>
 							<div className={`text-white ${styles.paperContent}`}>
-								{props.exam.negativeMarks
-									? props.exam.negativeMarks
-									: 0}
+								{props.exam.negativeMarks ? props.exam.negativeMarks : 0}
 							</div>
 						</Paper>
 					</div>
@@ -122,6 +108,7 @@ const ExamCard = (props) => {
 										variant='contained'
 										className='w-100'
 										color='primary'
+										onClick={() => props.handleModal(true)}
 									>
 										View Score
 									</Button>
@@ -130,11 +117,7 @@ const ExamCard = (props) => {
 						}
 						return (
 							<div className='px-5 pb-3'>
-								<Button
-									variant='contained'
-									className='w-100'
-									color='primary'
-								>
+								<Button variant='contained' className='w-100' color='primary'>
 									Take Exam
 								</Button>
 							</div>

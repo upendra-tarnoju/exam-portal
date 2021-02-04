@@ -5,6 +5,7 @@ import StudentService from '../../../../services/studentApi';
 import { Paper } from '@material-ui/core';
 import { Book } from '@material-ui/icons';
 import classes from '../../student.module.css';
+import Examkey from './examKey';
 
 class ExamList extends React.Component {
 	constructor() {
@@ -14,6 +15,7 @@ class ExamList extends React.Component {
 			conductedExamsList: [],
 			upcomingExamsList: [],
 			todayExamsList: [],
+			showModal: false,
 		};
 		this.studentService = new StudentService();
 	}
@@ -39,6 +41,10 @@ class ExamList extends React.Component {
 			});
 		});
 	}
+
+	handleModal = (showModal) => {
+		this.setState({ showModal });
+	};
 
 	render() {
 		return (
@@ -68,7 +74,11 @@ class ExamList extends React.Component {
 					<div className='row mb-5' key={index}>
 						{data.map((exam) => (
 							<div className='col-md-4' key={exam._id}>
-								<ExamCard exam={exam} type='today' />
+								<ExamCard
+									exam={exam}
+									type='today'
+									handleModal={this.handleModal}
+								/>
 							</div>
 						))}
 					</div>
@@ -88,6 +98,7 @@ class ExamList extends React.Component {
 						))}
 					</div>
 				))}
+				<Examkey open={this.state.showModal} handleClose={this.handleModal} />
 			</div>
 		);
 	}
