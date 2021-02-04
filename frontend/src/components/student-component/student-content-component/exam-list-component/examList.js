@@ -16,6 +16,7 @@ class ExamList extends React.Component {
 			upcomingExamsList: [],
 			todayExamsList: [],
 			showModal: false,
+			selectedExam: '',
 		};
 		this.studentService = new StudentService();
 	}
@@ -42,8 +43,8 @@ class ExamList extends React.Component {
 		});
 	}
 
-	handleModal = (showModal) => {
-		this.setState({ showModal });
+	handleModal = (showModal, selectedExam) => {
+		this.setState({ showModal, selectedExam });
 	};
 
 	render() {
@@ -98,7 +99,11 @@ class ExamList extends React.Component {
 						))}
 					</div>
 				))}
-				<Examkey open={this.state.showModal} handleClose={this.handleModal} />
+				<Examkey
+					selectedExam={this.state.selectedExam}
+					open={this.state.showModal}
+					handleClose={this.handleModal}
+				/>
 			</div>
 		);
 	}

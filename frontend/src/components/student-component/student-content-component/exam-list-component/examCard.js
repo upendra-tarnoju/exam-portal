@@ -104,12 +104,7 @@ const ExamCard = (props) => {
 						if (props.type === 'conducted') {
 							return (
 								<div className='px-5 pb-3'>
-									<Button
-										variant='contained'
-										className='w-100'
-										color='primary'
-										onClick={() => props.handleModal(true)}
-									>
+									<Button variant='contained' className='w-100' color='primary'>
 										View Score
 									</Button>
 								</div>
@@ -117,7 +112,12 @@ const ExamCard = (props) => {
 						}
 						return (
 							<div className='px-5 pb-3'>
-								<Button variant='contained' className='w-100' color='primary'>
+								<Button
+									variant='contained'
+									className='w-100'
+									color='primary'
+									onClick={() => props.handleModal(true, props.exam._id)}
+								>
 									Take Exam
 								</Button>
 							</div>

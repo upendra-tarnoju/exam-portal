@@ -19,6 +19,19 @@ class StudentService {
 			},
 		});
 	};
+
+	validateExamKey = (examId, examKey) => {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'get',
+			url: `${process.env.REACT_APP_BASE_URL}/${this.STUDENT_URL}/exam/${examId}`,
+			params: { key: examKey },
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	};
 }
 
 export default StudentService;
