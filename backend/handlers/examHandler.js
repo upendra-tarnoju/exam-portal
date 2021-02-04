@@ -32,9 +32,7 @@ let updateExamPassword = async (examId, examDetails) => {
 		let hashedPassword = factories.generateHashedPassword(
 			examDetails.password.new
 		);
-		await exam
-			.update(examId, { password: hashedPassword })
-			.select({ _id: 1 });
+		await exam.update(examId, { password: hashedPassword }).select({ _id: 1 });
 		return {
 			status: 200,
 			data: { msg: 'Password changed successfully' },
@@ -91,9 +89,7 @@ const exams = {
 			let response = await updatePassingMarks(key, examId, examDetails);
 			return response;
 		} else if (key === 'startTime' || key === 'endTime') {
-			updatedExam = await exam
-				.update(examId, examDetails)
-				.select({ [key]: 1 });
+			updatedExam = await exam.update(examId, examDetails).select({ [key]: 1 });
 			return { status: 200, data: updatedExam };
 		} else if (key === 'password') {
 			let response = await updateExamPassword(examId, examDetails);
@@ -107,9 +103,7 @@ const exams = {
 			await exam.deleteDurationById(examId);
 			return { status: 200, data: { msg: 'Deleted duration' } };
 		} else {
-			updatedExam = await exam
-				.update(examId, examDetails)
-				.select({ [key]: 1 });
+			updatedExam = await exam.update(examId, examDetails).select({ [key]: 1 });
 			return { status: 200, data: updatedExam };
 		}
 	},
@@ -117,6 +111,19 @@ const exams = {
 	deleteExam: async (userId, examId) => {
 		let deletedExam = await exam.deleteById(examId);
 		return deletedExam;
+	},
+
+	validateExamKey: async (examId, examKey) => {
+		let examDetails = await exam.getByExamId(examId).select({ password: 1 });
+		let validatedPassword = factories.compareHashedPassword(
+			examKey,
+			examDetails.password
+		);
+		if (validatedPassword) {
+			return { status: 200 };
+		} else {
+			return { status: 401, msg: 'Incorrect exam key' };
+		}
 	},
 };
 

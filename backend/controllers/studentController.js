@@ -60,10 +60,7 @@ const student = {
 			);
 			res.status(response.status).send(response.msg);
 		} else {
-			let response = await studentHandler.updateStudentDetails(
-				studentId,
-				data
-			);
+			let response = await studentHandler.updateStudentDetails(studentId, data);
 			res.status(response.status).send(response.data);
 		}
 	},

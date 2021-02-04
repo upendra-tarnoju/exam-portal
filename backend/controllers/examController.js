@@ -24,11 +24,7 @@ const exam = {
 		let userId = req.user._id;
 		let examDetails = req.body;
 		let examId = req.params.examId;
-		let updatedExam = await examHandler.updateExam(
-			userId,
-			examId,
-			examDetails
-		);
+		let updatedExam = await examHandler.updateExam(userId, examId, examDetails);
 		res.status(updatedExam.status).send(updatedExam.data);
 	},
 	deleteExam: async (req, res) => {
@@ -44,6 +40,13 @@ const exam = {
 		exam.courses.id = exam.courses._id;
 		delete exam.courses._id;
 		res.status(200).send(exam);
+	},
+
+	validateExamKey: async (req, res) => {
+		let examKey = req.query.key;
+		let examId = req.params.examId;
+		let response = await examHandler.validateExamKey(examId, examKey);
+		res.status(response.status).send(response.msg);
 	},
 };
 
