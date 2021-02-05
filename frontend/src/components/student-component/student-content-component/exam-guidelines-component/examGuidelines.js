@@ -13,6 +13,7 @@ import {
 	TableHead,
 	TableRow,
 	TableCell,
+	Icon,
 } from '@material-ui/core';
 import React from 'react';
 
@@ -35,11 +36,21 @@ const ExamGuidelines = () => {
 					</Typography>
 					<div class='container px-5'>
 						<div class='d-flex justify-content-around mb-3'>
-							<Paper className='w-25'>Exam - Python</Paper>
+							<Paper className='p-2 w-25 d-flex flex-row'>
+								<Avatar
+									src={require('../../../../assets/icons/exam.png')}
+									variant='square'
+									className='align-self-center'
+								/>
+								<div>
+									<p className='mb-0'>Exam</p>
+									<p className='mb-0'>Python</p>
+								</div>
+							</Paper>
 							<Paper className='w-25'>Total time - 60 mins</Paper>
 						</div>
 						<div class='d-flex justify-content-around'>
-							<Paper className='w-25'>Exam code - PY101</Paper>
+							<Paper className='w-25'>Negative marks - 0</Paper>
 							<Paper className='w-25'>Total marks - 100</Paper>
 						</div>
 					</div>
