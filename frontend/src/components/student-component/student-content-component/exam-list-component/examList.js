@@ -103,6 +103,7 @@ class ExamList extends React.Component {
 					selectedExam={this.state.selectedExam}
 					open={this.state.showModal}
 					handleClose={this.handleModal}
+					{...this.props}
 				/>
 			</div>
 		);

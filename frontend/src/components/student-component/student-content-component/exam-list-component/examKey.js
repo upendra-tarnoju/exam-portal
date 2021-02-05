@@ -14,11 +14,6 @@ import * as Yup from 'yup';
 import styles from '../../student.module.css';
 import StudentService from '../../../../services/studentApi';
 
-const validateExamkey = (examId, examKey) => {
-	let studentService = new StudentService();
-	studentService.validateExamKey(examId, examKey).then((res) => {});
-};
-
 const Examkey = (props) => {
 	return (
 		<Formik
@@ -27,7 +22,12 @@ const Examkey = (props) => {
 				password: Yup.string().required('Required'),
 			})}
 			onSubmit={(values) => {
-				validateExamkey(props.selectedExam, values.password);
+				let studentService = new StudentService();
+				studentService
+					.validateExamKey(props.selectedExam, values.password)
+					.then((res) => {
+						props.history.push(`/exam/${props.selectedExam}/guidelines`);
+					});
 			}}
 		>
 			{(formikProps) => (
