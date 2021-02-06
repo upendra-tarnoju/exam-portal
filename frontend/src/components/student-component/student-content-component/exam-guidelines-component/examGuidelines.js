@@ -13,9 +13,12 @@ import {
 	TableHead,
 	TableRow,
 	TableCell,
-	Icon,
+	CardActions,
+	Button,
 } from '@material-ui/core';
 import React from 'react';
+
+import styles from './guidelines.module.css';
 
 let guidelinesList = [
 	'Click start test on the bottom of your screen to begin the test.',
@@ -28,34 +31,74 @@ let guidelinesList = [
 
 const ExamGuidelines = () => {
 	return (
-		<div className='container mt-5'>
+		<div className='container my-5'>
 			<Card>
 				<CardContent>
-					<Typography variant='h5' className='text-center'>
+					<Typography variant='h5' className='text-center mb-2'>
 						Exam information
 					</Typography>
 					<div class='container px-5'>
 						<div class='d-flex justify-content-around mb-3'>
-							<Paper className='p-2 w-25 d-flex flex-row'>
-								<Avatar
+							<Paper
+								elevation={4}
+								className={`p-2 w-25 d-flex flex-column ${styles.examCard}`}
+							>
+								<img
+									alt='Exam icon'
 									src={require('../../../../assets/icons/exam.png')}
-									variant='square'
 									className='align-self-center'
 								/>
-								<div>
-									<p className='mb-0'>Exam</p>
-									<p className='mb-0'>Python</p>
-								</div>
+								<h3 className='align-self-center font-weight-bold text-white mt-2'>
+									Exam
+								</h3>
+								<h5 className='align-self-center'>Python</h5>
 							</Paper>
-							<Paper className='w-25'>Total time - 60 mins</Paper>
+							<Paper
+								className={`w-25 p-2 d-flex flex-column ${styles.totalTimeCard}`}
+								elevation={4}
+							>
+								<img
+									alt='Total time icon'
+									src={require('../../../../assets/icons/totalTime.png')}
+									className='align-self-center'
+								/>
+								<h3 className='align-self-center font-weight-bold text-white mt-2'>
+									Total time
+								</h3>
+								<h5 className='align-self-center'>30 mins</h5>
+							</Paper>
 						</div>
 						<div class='d-flex justify-content-around'>
-							<Paper className='w-25'>Negative marks - 0</Paper>
-							<Paper className='w-25'>Total marks - 100</Paper>
+							<Paper
+								className={`w-25 p-2 d-flex flex-column ${styles.negativeMarksCard}`}
+							>
+								<img
+									alt='Negative marks icon'
+									src={require('../../../../assets/icons/negativeMarks.png')}
+									className='align-self-center'
+								/>
+								<h3 className='align-self-center font-weight-bold text-white mt-2'>
+									Negative marks
+								</h3>
+								<h5 className='align-self-center'>0</h5>
+							</Paper>
+							<Paper
+								className={`w-25 p-2 d-flex flex-column ${styles.totalMarksCard}`}
+							>
+								<img
+									alt='Total marks icon'
+									src={require('../../../../assets/icons/totalMarks.png')}
+									className='align-self-center'
+								/>
+								<h3 className='align-self-center font-weight-bold text-white mt-2'>
+									Total marks
+								</h3>
+								<h5 className='align-self-center'>100</h5>
+							</Paper>
 						</div>
 					</div>
 
-					<Typography variant='h5' className='text-center'>
+					<Typography variant='h5' className='text-center mt-3'>
 						Basic instructions for online examination
 					</Typography>
 
@@ -66,27 +109,19 @@ const ExamGuidelines = () => {
 					<List dense='true'>
 						{guidelinesList.map((guideline, index) => (
 							<ListItem>
-								<ListItemAvatar style={{ minWidth: '30px' }}>
-									<Avatar
-										style={{ fontSize: '12px', width: '22px', height: '22px' }}
-									>
-										{index + 1}
-									</Avatar>
+								<ListItemAvatar className={styles.avatarWidth}>
+									<Avatar className={styles.avatar}>{index + 1}</Avatar>
 								</ListItemAvatar>
 								<ListItemText primary={guideline} />
 							</ListItem>
 						))}
 						<ListItem>
-							<ListItemAvatar style={{ minWidth: '30px' }}>
-								<Avatar
-									style={{ fontSize: '12px', width: '22px', height: '22px' }}
-								>
-									7
-								</Avatar>
+							<ListItemAvatar className={styles.avatarWidth}>
+								<Avatar className={styles.avatar}>7</Avatar>
 							</ListItemAvatar>
 							<ListItemText>
 								Below is the color coded table which shows the status of the
-								question
+								question.
 							</ListItemText>
 						</ListItem>
 						<TableContainer className='w-50 mx-auto mt-2' component={Paper}>
@@ -140,6 +175,11 @@ const ExamGuidelines = () => {
 							</Table>
 						</TableContainer>
 					</List>
+					<CardActions className='float-right'>
+						<Button variant='contained' color='primary' size='large'>
+							Start test
+						</Button>
+					</CardActions>
 				</CardContent>
 			</Card>
 		</div>

@@ -1,0 +1,49 @@
+.avatarWidth {
+	min-width: '30px';
+}
+
+.avatar {
+	font-size: '12px';
+	width: '22px';
+	height: '22px';
+}
+
+.examCard {
+	background-color: #ffc300 !important;
+}
+
+.totalTimeCard {
+	background-color: #ff5733 !important;
+}
+
+.examCard img,
+.totalTimeCard img,
+.negativeMarksCard img {
+	width: 3em;
+	height: 3em;
+}
+
+.totalMarksCard img {
+	width: 3em;
+	height: 3em;
+}
+
+.examCard h3,
+.totalTimeCard h3,
+.totalTimeCard h5,
+.examCard h5,
+.negativeMarksCard h3,
+.negativeMarksCard h5,
+.totalMarksCard h3,
+.totalMarksCard h5 {
+	font-family: 'Raleway';
+	letter-spacing: 1px;
+}
+
+.negativeMarksCard {
+	background-color: #900c3f !important;
+}
+
+.totalMarksCard {
+	background-color: #b9770e !important;
+}
