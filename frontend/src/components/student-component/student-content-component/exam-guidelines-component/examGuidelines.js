@@ -29,7 +29,8 @@ let guidelinesList = [
 	'Candidate will be allowed to shuffle between questions anytime during the examination as per their convience.',
 ];
 
-const ExamGuidelines = () => {
+const ExamGuidelines = (props) => {
+	let examData = props.history.location.state;
 	return (
 		<div className='container my-5'>
 			<Card>
@@ -51,7 +52,7 @@ const ExamGuidelines = () => {
 								<h3 className='align-self-center font-weight-bold text-white mt-2'>
 									Exam
 								</h3>
-								<h5 className='align-self-center'>Python</h5>
+								<h5 className='align-self-center'>{examData.subject}</h5>
 							</Paper>
 							<Paper
 								className={`w-25 p-2 d-flex flex-column ${styles.totalTimeCard}`}
@@ -65,7 +66,7 @@ const ExamGuidelines = () => {
 								<h3 className='align-self-center font-weight-bold text-white mt-2'>
 									Total time
 								</h3>
-								<h5 className='align-self-center'>30 mins</h5>
+								<h5 className='align-self-center'>{examData.duration}</h5>
 							</Paper>
 						</div>
 						<div class='d-flex justify-content-around'>
@@ -80,7 +81,7 @@ const ExamGuidelines = () => {
 								<h3 className='align-self-center font-weight-bold text-white mt-2'>
 									Negative marks
 								</h3>
-								<h5 className='align-self-center'>0</h5>
+								<h5 className='align-self-center'>{examData.negativeMarks}</h5>
 							</Paper>
 							<Paper
 								className={`w-25 p-2 d-flex flex-column ${styles.totalMarksCard}`}
@@ -93,7 +94,7 @@ const ExamGuidelines = () => {
 								<h3 className='align-self-center font-weight-bold text-white mt-2'>
 									Total marks
 								</h3>
-								<h5 className='align-self-center'>100</h5>
+								<h5 className='align-self-center'>{examData.totalMarks}</h5>
 							</Paper>
 						</div>
 					</div>

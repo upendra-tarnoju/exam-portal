@@ -13,6 +13,7 @@ import * as Yup from 'yup';
 
 import styles from '../../student.module.css';
 import StudentService from '../../../../services/studentApi';
+import factories from '../../../../factories/factories';
 
 const Examkey = (props) => {
 	return (
@@ -26,7 +27,19 @@ const Examkey = (props) => {
 				studentService
 					.validateExamKey(props.selectedExam, values.password)
 					.then((res) => {
-						props.history.push(`/exam/${props.selectedExam}/guidelines`);
+						let data = res.data.examDetails;
+						console.log(res.data.examDetails);
+						props.history.push({
+							pathname: `/exam/${props.selectedExam}/guidelines`,
+							state: {
+								totalMarks: data.totalMarks,
+								negativeMarks: data.negativeMarks,
+								subject: data.subject,
+								duration: data.duration
+									? `${data.duration} min`
+									: factories.formatDuration(data.startTime, data.endTime),
+							},
+						});
 					});
 			}}
 		>

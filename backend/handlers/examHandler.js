@@ -114,13 +114,20 @@ const exams = {
 	},
 
 	validateExamKey: async (examId, examKey) => {
-		let examDetails = await exam.getByExamId(examId).select({ password: 1 });
+		let examDetails = await exam.getByExamId(examId).select({
+			course: 0,
+			examCode: 0,
+			examinerId: 0,
+			examDate: 0,
+			createdAt: 0,
+		});
 		let validatedPassword = factories.compareHashedPassword(
 			examKey,
 			examDetails.password
 		);
 		if (validatedPassword) {
-			return { status: 200 };
+			delete examDetails['password'];
+			return { status: 200, examDetails };
 		} else {
 			return { status: 401, msg: 'Incorrect exam key' };
 		}

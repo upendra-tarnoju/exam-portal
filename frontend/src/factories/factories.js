@@ -1,4 +1,6 @@
 import * as Yup from 'yup';
+import moment from 'moment';
+
 import initialSchema from '../schema/questionSchema';
 
 let formatDate = (date) => {
@@ -106,9 +108,7 @@ let emailRegex = new RegExp(
 let capitalizeName = (name) => {
 	return name
 		.split(' ')
-		.map(
-			(data) => data.slice(0, 1).toUpperCase() + data.slice(1, data.length)
-		)
+		.map((data) => data.slice(0, 1).toUpperCase() + data.slice(1, data.length))
 		.join(' ');
 };
 
@@ -194,6 +194,11 @@ let generateRandomGradient = () => {
 	return gradient;
 };
 
+let formatDuration = (startTime, endTime) => {
+	let duration = moment(endTime).diff(moment(startTime), 'minutes');
+	return duration;
+};
+
 export default {
 	formatDate,
 	formatTime,
@@ -208,4 +213,5 @@ export default {
 	calculateOptions,
 	validateCSVFile,
 	generateRandomGradient,
+	formatDuration,
 };

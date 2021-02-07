@@ -46,7 +46,9 @@ const exam = {
 		let examKey = req.query.key;
 		let examId = req.params.examId;
 		let response = await examHandler.validateExamKey(examId, examKey);
-		res.status(response.status).send(response.msg);
+		res
+			.status(response.status)
+			.send({ msg: response.msg, examDetails: response.examDetails });
 	},
 };
 
