@@ -1,0 +1,32 @@
+.questionCard {
+	height: calc(100% - 114px) !important;
+}
+
+.question {
+	font-family: 'Raleway';
+	font-size: 20px;
+}
+
+.optionBackground {
+	background-color: #f7f7f6;
+}
+
+.options {
+	height: calc(100% - 130px) !important;
+}
+
+.palleteHeading {
+	font-size: 18px;
+	letter-spacing: 1px;
+}
+
+.pallete {
+	background-color: red;
+	border-radius: 8px;
+	padding: 12px 0px;
+}
+
+.palletesContents {
+	height: calc(100% - 140px) !important;
+	overflow-y: scroll;
+}

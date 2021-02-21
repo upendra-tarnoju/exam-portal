@@ -28,7 +28,6 @@ const Examkey = (props) => {
 					.validateExamKey(props.selectedExam, values.password)
 					.then((res) => {
 						let data = res.data.examDetails;
-						console.log(res.data.examDetails);
 						props.history.push({
 							pathname: `/exam/${props.selectedExam}/guidelines`,
 							state: {

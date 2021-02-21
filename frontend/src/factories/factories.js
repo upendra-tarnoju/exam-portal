@@ -196,7 +196,7 @@ let generateRandomGradient = () => {
 
 let formatDuration = (startTime, endTime) => {
 	let duration = moment(endTime).diff(moment(startTime), 'minutes');
-	return duration;
+	return `${duration} min`;
 };
 
 export default {

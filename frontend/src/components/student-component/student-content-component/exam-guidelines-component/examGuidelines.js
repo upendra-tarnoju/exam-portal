@@ -31,6 +31,11 @@ let guidelinesList = [
 
 const ExamGuidelines = (props) => {
 	let examData = props.history.location.state;
+
+	let redirectToQuestion = () => {
+		let examId = props.match.params.examId;
+		props.history.push(`/exam/${examId}/question`);
+	};
 	return (
 		<div className='container my-5'>
 			<Card>
@@ -177,7 +182,12 @@ const ExamGuidelines = (props) => {
 						</TableContainer>
 					</List>
 					<CardActions className='float-right'>
-						<Button variant='contained' color='primary' size='large'>
+						<Button
+							variant='contained'
+							color='primary'
+							size='large'
+							onClick={redirectToQuestion}
+						>
 							Start test
 						</Button>
 					</CardActions>
