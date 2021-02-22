@@ -17,5 +17,11 @@ module.exports = () => {
 		studentController.getParticularStudentExamDetails
 	);
 
+	router.get(
+		'/exam/:examId/question',
+		passport.authenticate('jwt'),
+		studentController.getParticularExamQuestion
+	);
+
 	return router;
 };

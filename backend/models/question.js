@@ -25,6 +25,10 @@ class Questions {
 	deleteById(id) {
 		return this.questionModel.findByIdAndDelete(id);
 	}
+
+	findByExamId(examId) {
+		return this.questionModel.find({ examId });
+	}
 }
 
 module.exports = new Questions();

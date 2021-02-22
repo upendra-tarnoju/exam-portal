@@ -1,4 +1,5 @@
 const { studentHandler, examHandler } = require('../handlers');
+const examiners = require('../handlers/examinerHandler');
 
 const student = {
 	addNewStudent: async (req, res) => {
@@ -75,6 +76,18 @@ const student = {
 		let studentId = req.user._id;
 		let response = await studentHandler.getParticularStudentExamDetails(
 			studentId
+		);
+		res.status(response.status).send(response.data);
+	},
+
+	getParticularExamQuestion: async (req, res) => {
+		let pageIndex = parseInt(req.query.pageIndex, 10);
+		let examId = req.params.examId;
+		let userId = req.user._id;
+		let response = await studentHandler.getExamQuestions(
+			pageIndex,
+			examId,
+			userId
 		);
 		res.status(response.status).send(response.data);
 	},

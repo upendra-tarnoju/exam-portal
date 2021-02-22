@@ -87,10 +87,7 @@ class Students {
 									'$userData.firstName',
 									1,
 									{
-										$subtract: [
-											{ $strLenCP: '$userData.firstName' },
-											1,
-										],
+										$subtract: [{ $strLenCP: '$userData.firstName' }, 1],
 									},
 								],
 							},
@@ -104,10 +101,7 @@ class Students {
 									'$userData.lastName',
 									1,
 									{
-										$subtract: [
-											{ $strLenCP: '$userData.lastName' },
-											1,
-										],
+										$subtract: [{ $strLenCP: '$userData.lastName' }, 1],
 									},
 								],
 							},
@@ -120,6 +114,15 @@ class Students {
 
 	findAll = () => {
 		return this.studentModel.find();
+	};
+
+	findStudentExamDetails = (userId, examId) => {
+		return this.studentModel.findOne({
+			$and: [
+				{ userId: userId },
+				{ exam: { $elemMatch: { 'exam.examId': examId } } },
+			],
+		});
 	};
 }
 

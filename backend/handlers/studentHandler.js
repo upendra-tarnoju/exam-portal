@@ -1,8 +1,16 @@
 let csv = require('csvtojson');
 
-let { student, users, exam, course } = require('../models');
-const user = require('../models/user');
+let { student, users, exam, course, question } = require('../models');
 const { factories } = require('../factories');
+
+const getQuestionData = async (examId, pageIndex) => {
+	let questionDetails = await question
+		.getSpecificData(examId)
+		.skip(pageIndex)
+		.limit(1)
+		.select({ correctAnswer: 0, createdAt: 0, modifiedAt: 0 });
+	return questionDetails;
+};
 
 const students = {
 	addNewStudent: async (studentData) => {
@@ -70,7 +78,7 @@ const students = {
 	},
 
 	updateStudentDetails: async (studentId, data) => {
-		let updatedPersonalDetails = await user
+		let updatedPersonalDetails = await users
 			.updateByUserDataId(
 				{
 					userDataId: studentId,
@@ -133,6 +141,7 @@ const students = {
 			}
 		}
 	},
+
 	getParticularStudentExamDetails: async (studentId) => {
 		let examList = [];
 		let upcomingExams = [];
@@ -170,6 +179,22 @@ const students = {
 			status: 200,
 			data: { todayExams, conductedExams, upcomingExams },
 		};
+	},
+
+	getExamQuestions: async (pageIndex, examId, userId) => {
+		let studentDetails = await student
+			.findStudentExamDetails(userId)
+			.select({ exam: 1 });
+		let exam = studentDetails.exam.find(
+			(item) => item.examId == examId && item.accountStatus == 'enabled'
+		);
+		if (exam) {
+			let totalQuestions = (await question.findByExamId(examId)).length;
+			let questionDetails = await getQuestionData(examId, pageIndex);
+			return { status: 200, data: { questionDetails, totalQuestions } };
+		} else {
+			return { status: 405, data: { msg: 'Unexpected error, Try again' } };
+		}
 	},
 };
 
