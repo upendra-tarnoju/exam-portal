@@ -196,6 +196,8 @@ const students = {
 			return { status: 405, data: { msg: 'Unexpected error, Try again' } };
 		}
 	},
+
+	saveExamQuestionAnswer: async (questionDetails) => {},
 };
 
 module.exports = students;

@@ -91,6 +91,13 @@ const student = {
 		);
 		res.status(response.status).send(response.data);
 	},
+
+	saveExamQuestionAnswer: async (req, res) => {
+		let questionDetails = req.body;
+		questionDetails['studentId'] = req.user.userId;
+		let response = await studentHandler.saveExamQuestionAnswer(questionDetails);
+		res.status(200).send();
+	},
 };
 
 module.exports = student;
