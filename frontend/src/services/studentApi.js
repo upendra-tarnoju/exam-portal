@@ -45,6 +45,19 @@ class StudentService {
 			},
 		});
 	}
+
+	saveExamQuestion(questionData) {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'post',
+			url: `${process.env.REACT_APP_BASE_URL}/${this.STUDENT_URL}/exam/${questionData.examId}/question`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			data: questionData,
+		});
+	}
 }
 
 export default StudentService;

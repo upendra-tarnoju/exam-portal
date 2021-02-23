@@ -10,6 +10,9 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 import CountDown, { zeroPad } from 'react-countdown';
+import FullScreenModal from '../../../../modals/fullScreenModal';
+import screenfull from 'screenfull';
+import { Modal } from 'react-bootstrap';
 
 import StudentService from '../../../../services/studentApi';
 import styles from './examQuestion.module.css';
@@ -25,6 +28,9 @@ class ExamQuestion extends React.Component {
 			totalQuestions: 0,
 			singleOptValue: '',
 			multiOptValue: {},
+			questionId: '',
+			fullScreenModal: true,
+			fullScreenError: false,
 		};
 		this.studentService = new StudentService();
 	}
@@ -50,9 +56,26 @@ class ExamQuestion extends React.Component {
 				totalQuestions,
 				pageIndex,
 				multiOptValue,
+				questionId: questionData._id,
 			});
 		});
 	}
+
+	saveQuestion = () => {
+		let examId = this.props.match.params.examId;
+		let { questionId, singleOptValue, multiOptValue } = this.state;
+		let multiOptAnswer = Object.values(multiOptValue).every((item) => item);
+
+		if (!multiOptAnswer && singleOptValue !== '') {
+			this.studentService
+				.saveExamQuestion({
+					questionId,
+					examId,
+					answer: singleOptValue === '' ? multiOptValue : singleOptValue,
+				})
+				.then((res) => {});
+		}
+	};
 
 	handleOptionChange = (event) => {
 		if (this.state.optionType === 'single') {
@@ -64,6 +87,20 @@ class ExamQuestion extends React.Component {
 					[event.target.name]: event.target.checked,
 				},
 			});
+		}
+	};
+
+	openFullScreen = () => {
+		if (screenfull.isEnabled) {
+			screenfull.request();
+
+			screenfull.on('change', () => {
+				if (!screenfull.isFullscreen) {
+					this.setState({ fullScreenError: true });
+				} else this.setState({ fullScreenError: false });
+			});
+
+			this.setState({ fullScreenModal: false });
 		}
 	};
 
@@ -110,6 +147,23 @@ class ExamQuestion extends React.Component {
 					</div>
 				);
 			});
+
+		const FullScreenErrorModal = () => {
+			return (
+				<Modal show={this.state.fullScreenError}>
+					<Modal.Body>You cannot exit full screen modal</Modal.Body>
+					<Modal.Footer>
+						<Button
+							variant='outlined'
+							color='primary'
+							onClick={this.openFullScreen}
+						>
+							Full Screen
+						</Button>
+					</Modal.Footer>
+				</Modal>
+			);
+		};
 
 		const RenderQuestionPallete = () => {
 			let { totalQuestions } = this.state;
@@ -193,6 +247,14 @@ class ExamQuestion extends React.Component {
 								variant='contained'
 								className='bg-info text-white mr-2'
 								size='medium'
+								onClick={this.saveQuestion}
+							>
+								Save
+							</Button>
+							<Button
+								variant='contained'
+								className='bg-info text-white mr-2'
+								size='medium'
 							>
 								Review
 							</Button>
@@ -218,6 +280,11 @@ class ExamQuestion extends React.Component {
 							Question Pallete
 						</div>
 						<RenderQuestionPallete />
+						<FullScreenModal
+							show={this.state.fullScreenModal}
+							openFullScreen={this.openFullScreen}
+						/>
+						<FullScreenErrorModal />
 					</div>
 				</div>
 			</Card>
