@@ -1,6 +1,6 @@
 let csv = require('csvtojson');
 
-let { student, users, exam, course, question } = require('../models');
+let { student, users, exam, course, question, answer } = require('../models');
 const { factories } = require('../factories');
 
 const getQuestionData = async (examId, pageIndex) => {
@@ -10,6 +10,71 @@ const getQuestionData = async (examId, pageIndex) => {
 		.limit(1)
 		.select({ correctAnswer: 0, createdAt: 0, modifiedAt: 0 });
 	return questionDetails;
+};
+
+const saveCorrectAnswer = async (
+	answerDetails,
+	questionDetails,
+	existingExamAnswers,
+	examDetails
+) => {
+	answerDetails.correct = true;
+	if (existingExamAnswers) {
+		let previousSavedAnswer = existingExamAnswers.answers.find(
+			(answer) => answer.questionId == answerDetails.questionId
+		);
+
+		if (previousSavedAnswer) {
+			if (!previousSavedAnswer.correct) {
+				answerDetails.marks =
+					existingExamAnswers.marks +
+					examDetails.negativeMarks +
+					questionDetails.questionMarks;
+				await answer.updateExamMarks(answerDetails);
+			}
+		} else {
+			answerDetails.marks =
+				existingExamAnswers.marks + questionDetails.questionMarks;
+			await answer.updateExamAnswers(answerDetails);
+		}
+	} else {
+		answerDetails.marks = questionDetails.questionMarks;
+		await answer.create(answerDetails);
+	}
+};
+
+const saveIncorrectAnswer = async (
+	answerDetails,
+	questionDetails,
+	existingExamAnswers,
+	examDetails
+) => {
+	if (existingExamAnswers) {
+		let previousSavedAnswer = existingExamAnswers.answers.find(
+			(answer) => answer.questionId == answerDetails.questionId
+		);
+		answerDetails.correct = false;
+		if (previousSavedAnswer) {
+			if (previousSavedAnswer.correct) {
+				answerDetails.marks =
+					existingExamAnswers.marks -
+					questionDetails.questionMarks -
+					examDetails.negativeMarks;
+				await answer.updateExamMarks(answerDetails);
+			} else {
+				answerDetails.marks = existingExamAnswers.marks;
+				await answer.updateExamMarks(answerDetails);
+			}
+		} else {
+			answerDetails.marks =
+				existingExamAnswers.marks - examDetails.negativeMarks;
+			await answer.updateExamAnswers(answerDetails);
+		}
+	} else {
+		answerDetails.correct = false;
+		answerDetails.marks = 0 - questionDetails.negativeMarks;
+		await answer.create(answerDetails);
+	}
 };
 
 const students = {
@@ -197,7 +262,35 @@ const students = {
 		}
 	},
 
-	saveExamQuestionAnswer: async (questionDetails) => {},
+	saveExamQuestionAnswer: async (answerDetails) => {
+		let questionDetails = await question
+			.findById(answerDetails.questionId)
+			.select({ correctAnswer: 1, questionMarks: 1 });
+
+		let examDetails = await exam
+			.getByExamId(answerDetails.examId)
+			.select({ negativeMarks: 1 });
+
+		let existingExamAnswers = await answer
+			.find(answerDetails)
+			.select({ answers: 1, marks: 1 });
+
+		if (answerDetails.answer === questionDetails.correctAnswer) {
+			await saveCorrectAnswer(
+				answerDetails,
+				questionDetails,
+				existingExamAnswers,
+				examDetails
+			);
+		} else {
+			await saveIncorrectAnswer(
+				answerDetails,
+				questionDetails,
+				existingExamAnswers,
+				examDetails
+			);
+		}
+	},
 };
 
 module.exports = students;

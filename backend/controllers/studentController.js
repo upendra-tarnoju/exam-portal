@@ -94,7 +94,8 @@ const student = {
 
 	saveExamQuestionAnswer: async (req, res) => {
 		let questionDetails = req.body;
-		questionDetails['studentId'] = req.user.userId;
+
+		questionDetails['studentId'] = req.user._id;
 		let response = await studentHandler.saveExamQuestionAnswer(questionDetails);
 		res.status(200).send();
 	},
