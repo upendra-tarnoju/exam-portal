@@ -29,7 +29,7 @@ class ExamQuestion extends React.Component {
 			singleOptValue: '',
 			multiOptValue: {},
 			questionId: '',
-			fullScreenModal: true,
+			fullScreenModal: false,
 			fullScreenError: false,
 		};
 		this.studentService = new StudentService();
@@ -68,7 +68,7 @@ class ExamQuestion extends React.Component {
 
 		if (!multiOptAnswer && singleOptValue !== '') {
 			this.studentService
-				.saveExamQuestion({
+				.saveExamAnswer({
 					questionId,
 					examId,
 					answer: singleOptValue === '' ? multiOptValue : singleOptValue,
@@ -92,7 +92,7 @@ class ExamQuestion extends React.Component {
 
 	openFullScreen = () => {
 		if (screenfull.isEnabled) {
-			screenfull.request();
+			// screenfull.request();
 
 			screenfull.on('change', () => {
 				if (!screenfull.isFullscreen) {

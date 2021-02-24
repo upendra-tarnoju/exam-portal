@@ -46,7 +46,7 @@ class StudentService {
 		});
 	}
 
-	saveExamQuestion(questionData) {
+	saveExamAnswer(questionData) {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'post',
