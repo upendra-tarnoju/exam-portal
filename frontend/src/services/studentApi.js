@@ -58,6 +58,18 @@ class StudentService {
 			data: questionData,
 		});
 	}
+
+	submitExam(examId) {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'put',
+			url: `${process.env.REACT_APP_BASE_URL}/${this.STUDENT_URL}/exam/${examId}`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	}
 }
 
 export default StudentService;

@@ -16,6 +16,7 @@ import { Modal } from 'react-bootstrap';
 
 import StudentService from '../../../../services/studentApi';
 import styles from './examQuestion.module.css';
+import SubmitExamModal from '../../../../modals/submitExamModal';
 
 class ExamQuestion extends React.Component {
 	constructor() {
@@ -29,8 +30,9 @@ class ExamQuestion extends React.Component {
 			singleOptValue: '',
 			multiOptValue: {},
 			questionId: '',
-			fullScreenModal: false,
+			fullScreenModal: true,
 			fullScreenError: false,
+			submitModal: false,
 		};
 		this.studentService = new StudentService();
 	}
@@ -92,7 +94,7 @@ class ExamQuestion extends React.Component {
 
 	openFullScreen = () => {
 		if (screenfull.isEnabled) {
-			// screenfull.request();
+			screenfull.request();
 
 			screenfull.on('change', () => {
 				if (!screenfull.isFullscreen) {
@@ -102,6 +104,15 @@ class ExamQuestion extends React.Component {
 
 			this.setState({ fullScreenModal: false });
 		}
+	};
+
+	handleSubmitExamModal = (status) => {
+		this.setState({ submitModal: status });
+	};
+
+	submitExam = () => {
+		let examId = this.props.match.params.examId;
+		this.studentService.submitExam(examId).then((res) => {});
 	};
 
 	render() {
@@ -151,7 +162,8 @@ class ExamQuestion extends React.Component {
 		const FullScreenErrorModal = () => {
 			return (
 				<Modal show={this.state.fullScreenError}>
-					<Modal.Body>You cannot exit full screen modal</Modal.Body>
+					<Modal.Header className='bg-dark text-white'>Warning</Modal.Header>
+					<Modal.Body>You cannot exit full screen mode during exam</Modal.Body>
 					<Modal.Footer>
 						<Button
 							variant='outlined'
@@ -268,7 +280,11 @@ class ExamQuestion extends React.Component {
 							>
 								Next
 							</Button>
-							<Button variant='contained' color='secondary'>
+							<Button
+								variant='contained'
+								color='secondary'
+								onClick={() => this.handleSubmitExamModal(true)}
+							>
 								Submit
 							</Button>
 						</div>
@@ -285,6 +301,10 @@ class ExamQuestion extends React.Component {
 							openFullScreen={this.openFullScreen}
 						/>
 						<FullScreenErrorModal />
+						<SubmitExamModal
+							show={this.state.submitModal}
+							submitExam={this.submitExam}
+						/>
 					</div>
 				</div>
 			</Card>

@@ -5,7 +5,9 @@ import { Button } from '@material-ui/core';
 const FullScreenModal = (props) => {
 	return (
 		<Modal show={props.show}>
-			<Modal.Header>Full screen</Modal.Header>
+			<Modal.Header className='bg-dark text-white d-flex justify-content-center'>
+				Full screen
+			</Modal.Header>
 			<Modal.Body>This exam needs to be opened in full screen mode.</Modal.Body>
 			<Modal.Footer>
 				<Button
