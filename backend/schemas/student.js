@@ -32,8 +32,17 @@ const student = new Schema({
 	},
 	exam: [
 		{
-			examId: { type: Schema.Types.ObjectId },
-			accountStatus: { type: String, default: 'enabled' },
+			examId: {
+				type: Schema.Types.ObjectId,
+			},
+			accountStatus: {
+				type: String,
+				default: 'enabled',
+			},
+			submitted: {
+				type: Boolean,
+				default: false,
+			},
 		},
 	],
 });

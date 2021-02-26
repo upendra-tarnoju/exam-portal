@@ -1,5 +1,6 @@
 const { student } = require('../schemas');
 const mongoose = require('mongoose');
+const exam = require('../controllers/examController');
 const ObjectId = mongoose.Types.ObjectId;
 
 class Students {
@@ -123,6 +124,18 @@ class Students {
 				{ exam: { $elemMatch: { 'exam.examId': examId } } },
 			],
 		});
+	};
+
+	updateExamStatus = (examId, studentId) => {
+		return this.studentModel.update(
+			{
+				$and: [
+					{ userId: mongoose.Types.ObjectId(studentId) },
+					{ 'exam.examId': mongoose.Types.ObjectId(examId) },
+				],
+			},
+			{ $set: { 'exam.$.submitted': true } }
+		);
 	};
 }
 

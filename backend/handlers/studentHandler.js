@@ -291,6 +291,10 @@ const students = {
 			);
 		}
 	},
+
+	submitExam: async (examId, studentId) => {
+		let response = await student.updateExamStatus(examId, studentId);
+	},
 };
 
 module.exports = students;
