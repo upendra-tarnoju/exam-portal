@@ -38,9 +38,7 @@ class Exams {
 				$lookup: {
 					from: 'courses',
 					let: { courseId: { $toObjectId: '$course' } },
-					pipeline: [
-						{ $match: { $expr: { $eq: ['$$courseId', '$_id'] } } },
-					],
+					pipeline: [{ $match: { $expr: { $eq: ['$$courseId', '$_id'] } } }],
 					as: 'courses',
 				},
 			},
