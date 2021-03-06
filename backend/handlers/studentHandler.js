@@ -226,7 +226,10 @@ const students = {
 				startTime: 1,
 			});
 
-			let comparedDate = factories.compareExamDate(examDetail.examDate);
+			let comparedDate = factories.compareExamDate(
+				examDetail.examDate,
+				examDetail.startTime
+			);
 			let courseDetails = await course
 				.findById(examDetail.course)
 				.select({ name: 1 });

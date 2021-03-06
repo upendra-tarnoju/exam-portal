@@ -37,14 +37,21 @@ let factories = {
 		return object;
 	},
 
-	compareExamDate: (examDate) => {
+	compareExamDate: (examDate, examEndTime) => {
 		let currentDate = new Date();
-		examDate = moment(examDate).format('YYYY-MM-DD');
-		currentDate = moment(currentDate).format('YYYY-MM-DD');
 
-		if (examDate == currentDate) {
+		let formattedExamDate = moment(examDate).format('YYYY-MM-DD');
+		let formattedCurrentDate = moment(currentDate).format('YYYY-MM-DD');
+
+		if (formattedExamDate == formattedCurrentDate) {
+			let formattedExamEndTime = moment(examEndTime).format('HH:mm:ss a');
+			let formattedCurrentTime = moment(currentDate).format('HH:mm:ss a');
+			if (formattedExamEndTime <= formattedCurrentTime) {
+				return 'before';
+			}
+
 			return 'same';
-		} else if (examDate < currentDate) {
+		} else if (formattedExamDate < formattedCurrentDate) {
 			return 'before';
 		} else {
 			return 'after';
