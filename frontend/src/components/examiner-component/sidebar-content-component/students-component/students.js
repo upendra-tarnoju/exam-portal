@@ -1,12 +1,13 @@
 import React from 'react';
 import Pagination from '@material-ui/lab/Pagination';
-
+import { Link } from 'react-router-dom';
 import { Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Moment from 'react-moment';
+import moment from 'moment';
 
 import styles from './students.module.css';
 import ExaminerService from '../../../../services/examinerApi';
-import { Link } from 'react-router-dom';
+import CustomSnackBar from '../../../customSnackbar';
 
 class Students extends React.Component {
 	constructor(props) {
@@ -16,9 +17,40 @@ class Students extends React.Component {
 			pageSize: 5,
 			pageIndex: 0,
 			totalExams: 0,
+			snackBar: {
+				status: false,
+				msg: 'You cannot add students to expired exam',
+				type: 'error',
+			},
 		};
 		this.examinerService = new ExaminerService();
 	}
+
+	addNewStudent = (student) => {
+		let currentDate = new Date();
+
+		let formattedExamDate = moment(student.examDate).format('YYYY-MM-DD');
+		let formattedCurrentDate = moment(currentDate).format('YYYY-MM-DD');
+
+		if (formattedExamDate <= formattedCurrentDate) {
+			let formattedExamEndTime = moment(student.endTime).format('HH:mm:ss a');
+			let formattedCurrentTime = moment(currentDate).format('HH:mm:ss a');
+			if (formattedExamEndTime < formattedCurrentTime) {
+				this.handleSnackBar(true);
+			} else {
+				this.props.history.push(`/examiner/exam/${student._id}/students/new`);
+			}
+		}
+	};
+
+	handleSnackBar = (status) => {
+		this.setState((prevState) => ({
+			snackBar: {
+				...prevState.snackBar,
+				status: status,
+			},
+		}));
+	};
 
 	viewStudents() {
 		let { pageIndex, pageSize } = this.state;
@@ -75,9 +107,10 @@ class Students extends React.Component {
 							placement='bottom'
 							overlay={<Tooltip id='button-tooltip'>Add student</Tooltip>}
 						>
-							<Link to={`/examiner/exam/${student._id}/students/new`}>
-								<i className='fa fa-plus cursor-pointer text-white mr-2'></i>
-							</Link>
+							<i
+								onClick={() => this.addNewStudent(student)}
+								className='fa fa-plus cursor-pointer text-white mr-2 align-self-center'
+							></i>
 						</OverlayTrigger>
 						<OverlayTrigger
 							placement='bottom'
@@ -122,6 +155,12 @@ class Students extends React.Component {
 						/>
 					</div>
 				</div>
+				<CustomSnackBar
+					handleSnackBar={this.handleSnackBar}
+					show={this.state.snackBar.status}
+					message={this.state.snackBar.msg}
+					snackBarType={this.state.snackBar.type}
+				/>
 			</div>
 		);
 	}

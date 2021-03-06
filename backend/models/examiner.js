@@ -41,10 +41,7 @@ class Examiner {
 										'$data.firstName',
 										1,
 										{
-											$subtract: [
-												{ $strLenCP: '$data.firstName' },
-												1,
-											],
+											$subtract: [{ $strLenCP: '$data.firstName' }, 1],
 										},
 									],
 								},
@@ -58,10 +55,7 @@ class Examiner {
 										'$data.lastName',
 										1,
 										{
-											$subtract: [
-												{ $strLenCP: '$data.lastName' },
-												1,
-											],
+											$subtract: [{ $strLenCP: '$data.lastName' }, 1],
 										},
 									],
 								},

@@ -78,6 +78,7 @@ class Exams {
 					examCode: 1,
 					examDate: 1,
 					startTime: 1,
+					endTime: 1,
 					totalStudents: { $size: '$student.exam' },
 				},
 			},
