@@ -77,6 +77,7 @@ class Exams {
 					subject: 1,
 					examCode: 1,
 					examDate: 1,
+					startTime: 1,
 					totalStudents: { $size: '$student.exam' },
 				},
 			},
@@ -105,6 +106,18 @@ class Exams {
 			{ $project: { _id: 0, examDate: '$_id', count: 1 } },
 			{ $sort: { examDate: 1 } },
 		]);
+	};
+
+	findExpiredExam = (examId, examDate, startTime) => {
+		return this.examModel.find({
+			$and: [
+				{
+					_id: ObjectId(examId),
+					examDate: { $lte: examDate },
+					startTime: { $lt: startTime },
+				},
+			],
+		});
 	};
 }
 

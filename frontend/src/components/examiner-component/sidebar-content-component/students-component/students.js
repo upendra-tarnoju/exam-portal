@@ -64,17 +64,16 @@ class Students extends React.Component {
 					<td>{student.subject}</td>
 					<td>{student.examCode}</td>
 					<td>
-						<Moment format='MMM Do, YYYY (hh:mm A)'>
-							{student.examDate}
+						<Moment format='MMM Do, YYYY'>{student.examDate}</Moment>
+						<Moment format='(hh:mm A)' className='ml-1'>
+							{student.startTime}
 						</Moment>
 					</td>
 					<td className='text-right'>{student.totalStudents}</td>
 					<td className='d-flex justify-content-center'>
 						<OverlayTrigger
 							placement='bottom'
-							overlay={
-								<Tooltip id='button-tooltip'>Add student</Tooltip>
-							}
+							overlay={<Tooltip id='button-tooltip'>Add student</Tooltip>}
 						>
 							<Link to={`/examiner/exam/${student._id}/students/new`}>
 								<i className='fa fa-plus cursor-pointer text-white mr-2'></i>
@@ -82,9 +81,7 @@ class Students extends React.Component {
 						</OverlayTrigger>
 						<OverlayTrigger
 							placement='bottom'
-							overlay={
-								<Tooltip id='button-tooltip'>View students</Tooltip>
-							}
+							overlay={<Tooltip id='button-tooltip'>View students</Tooltip>}
 						>
 							<Link to={`/examiner/exam/${student._id}/students`}>
 								<i className='fa fa-eye cursor-pointer text-white mt-1 mr-2'></i>
