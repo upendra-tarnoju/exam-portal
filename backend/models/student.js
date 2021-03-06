@@ -1,6 +1,5 @@
 const { student } = require('../schemas');
 const mongoose = require('mongoose');
-const exam = require('../controllers/examController');
 const ObjectId = mongoose.Types.ObjectId;
 
 class Students {
