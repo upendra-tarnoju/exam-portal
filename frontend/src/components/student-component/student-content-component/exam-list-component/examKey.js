@@ -16,6 +16,7 @@ import StudentService from '../../../../services/studentApi';
 import factories from '../../../../factories/factories';
 
 const Examkey = (props) => {
+	let [error, setError] = React.useState('');
 	return (
 		<Formik
 			initialValues={{ password: '' }}
@@ -39,6 +40,9 @@ const Examkey = (props) => {
 									: factories.formatDuration(data.startTime, data.endTime),
 							},
 						});
+					})
+					.catch((error) => {
+						setError(error.response.data.msg);
 					});
 			}}
 		>
@@ -49,12 +53,19 @@ const Examkey = (props) => {
 					maxWidth='xs'
 					fullWidth={true}
 				>
-					<DialogTitle className={styles.keyHeading}>
+					<DialogTitle className={`${styles.keyHeading} bg-dark text-white`}>
 						Enter exam key
 					</DialogTitle>
 					<Divider />
 					<DialogContent>
-						<div class='py-3'>
+						{error ? (
+							<p
+								className={`${styles.errorMessage} text-danger font-weight-bold mb-0`}
+							>
+								* {error}
+							</p>
+						) : null}
+						<div className='py-3'>
 							<TextField
 								label='Password'
 								name='password'
@@ -71,16 +82,17 @@ const Examkey = (props) => {
 						</div>
 					</DialogContent>
 					<Divider />
-					<DialogActions className='my-2'>
+					<DialogActions className='py-3 bg-dark'>
 						<Button
 							onClick={() => props.handleClose()}
-							variant='outlined'
+							variant='contained'
 							color='secondary'
+							type='button'
 						>
 							Cancel
 						</Button>
 						<Button
-							variant='outlined'
+							variant='contained'
 							color='primary'
 							type='submit'
 							onClick={formikProps.handleSubmit}
