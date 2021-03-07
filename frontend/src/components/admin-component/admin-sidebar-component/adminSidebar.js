@@ -34,9 +34,7 @@ class AdminSidebar extends Component {
 						src={require('../../../assets/logo.png')}
 						className='logo'
 					/>
-					<h4 className='text-center text-light font-weight-normal'>
-						Examin
-					</h4>
+					<h4 className='text-center text-light font-weight-normal'>Examin</h4>
 				</div>
 				<div className='list-group list-group-flush'>
 					<Link
@@ -62,9 +60,7 @@ class AdminSidebar extends Component {
 					<Link
 						to='/admin/exam'
 						className={`list-group-item list-group-item-action bg-dark ${
-							this.state.selectedTab === 'exam'
-								? 'text-white'
-								: 'text-white-50'
+							this.state.selectedTab === 'exam' ? 'text-white' : 'text-white-50'
 						}`}
 					>
 						<i className='fa fa-book'></i> Exam

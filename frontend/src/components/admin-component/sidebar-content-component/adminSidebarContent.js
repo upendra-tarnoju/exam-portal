@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 
 import ViewExaminers from './view-examiners-component/viewExaminers';
 import * as ActionType from '../../../action';
 import AdminDashboard from './admin-dashboard-component/adminDashboard';
 
-const SidebarContent = (props) => {
+const AdminSidebarContent = (props) => {
 	let handleSidebar = () => {
 		let toggle = props.toggle;
 		props.setSidebar(!toggle);
@@ -34,7 +34,8 @@ const SidebarContent = (props) => {
 			</nav>
 			<Switch>
 				<Route exact path='/admin' component={AdminDashboard} />
-				<Route path='/admin/examiner' component={ViewExaminers}></Route>
+				<Route path='/admin/examiner' component={ViewExaminers} />
+				<Redirect from='/admin/*' to='/admin' />
 			</Switch>
 		</div>
 	);
@@ -58,4 +59,7 @@ const mapDispatchToProps = (dispatch) => {
 	};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SidebarContent);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(AdminSidebarContent);

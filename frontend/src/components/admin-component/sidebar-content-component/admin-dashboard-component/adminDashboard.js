@@ -57,34 +57,31 @@ class AdminDashboard extends React.Component {
 	};
 
 	viewExamMonthData = (minDate, maxDate) => {
-		this.adminService
-			.getExamChartDetails(minDate, maxDate)
-			.then((response) => {
-				let examData = response.data;
-				this.setState((prevState) => ({
-					...prevState,
-					examChart: {
-						options: {
-							chart: { id: 'basic-bar', toolbar: { show: false } },
-							xaxis: {
-								categories: examData.map(
-									(data) =>
-										`${data.examDate}-${moment(
-											minDate.getMonth(),
-											'M'
-										).format('MMM')}`
-								),
-							},
+		this.adminService.getExamChartDetails(minDate, maxDate).then((response) => {
+			let examData = response.data;
+			this.setState((prevState) => ({
+				...prevState,
+				examChart: {
+					options: {
+						chart: { id: 'basic-bar', toolbar: { show: false } },
+						xaxis: {
+							categories: examData.map(
+								(data) =>
+									`${data.examDate}-${moment(minDate.getMonth(), 'M').format(
+										'MMM'
+									)}`
+							),
 						},
-						series: [
-							{
-								name: 'Total exams',
-								data: examData.map((data) => data.count),
-							},
-						],
 					},
-				}));
-			});
+					series: [
+						{
+							name: 'Total exams',
+							data: examData.map((data) => data.count),
+						},
+					],
+				},
+			}));
+		});
 	};
 
 	viewLatestExaminer(pageIndex, pageSize) {
@@ -100,8 +97,7 @@ class AdminDashboard extends React.Component {
 					latestExaminersPage: {
 						...prevState.latestExaminersPage,
 						pageCount: Math.ceil(
-							response.data.count /
-								this.state.latestExaminersPage.pageSize
+							response.data.count / this.state.latestExaminersPage.pageSize
 						),
 					},
 				}));
@@ -158,22 +154,19 @@ class AdminDashboard extends React.Component {
 		let maxDate = new Date(minDate.getFullYear(), minDate.getMonth() + 1, 0);
 		this.viewExamMonthData(minDate, maxDate);
 
-		this.adminService
-			.getAllExaminer({ type: 'examinerCount' })
-			.then((res) => {
-				this.setState({
-					examinerPieChart: {
-						series: Object.values(res.data),
-						options: {
-							labels: Object.keys(res.data).map(
-								(data) =>
-									data.slice(0, 1).toUpperCase() +
-									data.slice(1, data.length)
-							),
-						},
+		this.adminService.getAllExaminer({ type: 'examinerCount' }).then((res) => {
+			this.setState({
+				examinerPieChart: {
+					series: Object.values(res.data),
+					options: {
+						labels: Object.keys(res.data).map(
+							(data) =>
+								data.slice(0, 1).toUpperCase() + data.slice(1, data.length)
+						),
 					},
-				});
+				},
 			});
+		});
 
 		this.viewLatestExaminer(
 			latestExaminersPage.pageIndex,
@@ -214,7 +207,10 @@ class AdminDashboard extends React.Component {
 
 		let monthExamMenu = factories.monthMenu.map((month, index) => {
 			return (
-				<MenuItem onClick={() => this.changeExamMonthData(index + 1)}>
+				<MenuItem
+					onClick={() => this.changeExamMonthData(index + 1)}
+					key={index}
+				>
 					{month}
 				</MenuItem>
 			);
@@ -234,7 +230,7 @@ class AdminDashboard extends React.Component {
 									<p
 										className={`mb-0 ${styles.examinerPaperText} text-secondary`}
 									>
-										EXAMINERS
+										{totalExaminers === 1 ? 'EXAMINER' : 'EXAMINERS'}
 									</p>
 								</div>
 								<ButtonBase>
@@ -249,9 +245,7 @@ class AdminDashboard extends React.Component {
 						<Paper className='p-3'>
 							<div className='d-flex justify-content-between'>
 								<ButtonBase>
-									<i
-										className={`fa fa-book ${styles.dashboardIcon}`}
-									></i>
+									<i className={`fa fa-book ${styles.dashboardIcon}`}></i>
 								</ButtonBase>
 								<div className='text-center align-self-center'>
 									<p
@@ -262,7 +256,7 @@ class AdminDashboard extends React.Component {
 									<p
 										className={`mb-0 ${styles.examinerPaperText} text-secondary`}
 									>
-										EXAMS
+										{totalExams === 1 ? 'EXAM' : 'EXAMS'}
 									</p>
 								</div>
 							</div>
@@ -280,13 +274,11 @@ class AdminDashboard extends React.Component {
 									<p
 										className={`mb-0 ${styles.examinerPaperText} text-secondary`}
 									>
-										STUDENTS
+										{totalStudents === 1 ? 'STUDENT' : 'STUDENTS'}
 									</p>
 								</div>
 								<ButtonBase>
-									<i
-										className={`fa fa-child ${styles.dashboardIcon}`}
-									></i>
+									<i className={`fa fa-child ${styles.dashboardIcon}`}></i>
 								</ButtonBase>
 							</div>
 						</Paper>
@@ -295,9 +287,7 @@ class AdminDashboard extends React.Component {
 						<Paper className='p-3'>
 							<div className='d-flex justify-content-between'>
 								<ButtonBase>
-									<i
-										className={`fa fa-money ${styles.dashboardIcon}`}
-									></i>
+									<i className={`fa fa-money ${styles.dashboardIcon}`}></i>
 								</ButtonBase>
 								<div className='text-center align-self-center'>
 									<p
@@ -355,9 +345,7 @@ class AdminDashboard extends React.Component {
 					<div className='col-md-5'>
 						<Paper className='mb-3'>
 							<div className='px-3 py-2'>
-								<span className={styles.examinerChartHeading}>
-									Examiner
-								</span>
+								<span className={styles.examinerChartHeading}>Examiner</span>
 							</div>
 							<Divider />
 							<Chart
@@ -381,9 +369,7 @@ class AdminDashboard extends React.Component {
 										{this.state.latestExaminers.map((data) => (
 											<TableRow key={data._id}>
 												<TableCell component='th' scope='row'>
-													{factories.capitalizeName(
-														data.firstName
-													)}{' '}
+													{factories.capitalizeName(data.firstName)}{' '}
 													{factories.capitalizeName(data.lastName)}
 												</TableCell>
 												<TableCell align='right'>

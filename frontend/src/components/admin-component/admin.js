@@ -1,15 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import './admin.css';
 import AdminSidebar from './admin-sidebar-component/adminSidebar';
-import SidebarContent from './sidebar-content-component/sidebarContent';
+import AdminSidebarContent from './sidebar-content-component/adminSidebarContent';
 
 const Admin = (props) => {
 	return (
 		<div className={`d-flex ${props.toggle ? 'toggled' : ''}`} id='wrapper'>
 			<AdminSidebar />
-			<SidebarContent />
+			<AdminSidebarContent />
 		</div>
 	);
 };
