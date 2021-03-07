@@ -33,3 +33,17 @@
 .cardBorder {
 	border: 2px solid black;
 }
+
+.informationCard {
+	margin-top: 8em;
+	width: 28vw;
+}
+
+.informationHeading {
+	font-family: 'Raleway';
+	font-size: larger;
+}
+
+.touchIcon {
+	font-size: 5em !important;
+}

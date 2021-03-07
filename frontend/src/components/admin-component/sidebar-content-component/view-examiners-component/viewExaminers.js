@@ -1,7 +1,8 @@
 import React from 'react';
 import { Pagination } from '@material-ui/lab';
-import Snackbar from '@material-ui/core/Snackbar';
+import { Snackbar, Card, CardContent } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
+import { TouchApp } from '@material-ui/icons';
 
 import AdminService from '../../../../services/adminApi';
 import styles from './viewExaminers.module.css';
@@ -15,28 +16,28 @@ class ViewExaminer extends React.Component {
 			examinerCount: { approved: 0, pending: 0, declined: 0 },
 			pageIndex: 0,
 			pageSize: 5,
+			pageCount: 0,
 			examinerData: [],
 			accountStatus: '',
 			approveDeclineModal: { show: false, data: '' },
 			snackBar: { show: false, msg: '' },
 			page: 1,
 			selectedCard: '',
+			touched: false,
 		};
 		this.adminService = new AdminService();
 	}
 
 	componentDidMount() {
-		this.adminService
-			.getAllExaminer({ type: 'examinerCount' })
-			.then((res) => {
-				this.setState({
-					examinerCount: {
-						approved: res.data.approved,
-						pending: res.data.pending,
-						declined: res.data.declined,
-					},
-				});
+		this.adminService.getAllExaminer({ type: 'examinerCount' }).then((res) => {
+			this.setState({
+				examinerCount: {
+					approved: res.data.approved,
+					pending: res.data.pending,
+					declined: res.data.declined,
+				},
 			});
+		});
 	}
 
 	handleModal = (status) => {
@@ -71,18 +72,17 @@ class ViewExaminer extends React.Component {
 	};
 
 	handleCardClick = (type, pageNo) => {
-		let { pageIndex, pageSize } = this.state;
+		let { pageIndex, pageSize, examinerCount } = this.state;
 		this.adminService
 			.getExaminersCount(type, pageIndex, pageSize)
 			.then((res) => {
 				this.setState({
 					examinerData: res.data.examiner,
 					accountStatus: type,
-					pageCount: Math.ceil(
-						this.state.examinerCount[type] / this.state.pageSize
-					),
+					pageCount: Math.ceil(examinerCount[type] / pageSize),
 					page: pageNo,
 					selectedCard: type,
+					touched: true,
 				});
 			});
 	};
@@ -108,16 +108,23 @@ class ViewExaminer extends React.Component {
 	}
 
 	examinerData = () => {
-		let { pageIndex, pageSize } = this.state;
-		let examiners = this.state.examinerData.map((examiner, index) => (
+		let {
+			pageIndex,
+			pageSize,
+			examinerData,
+			accountStatus,
+			page,
+			pageCount,
+		} = this.state;
+
+		let examiners = examinerData.map((examiner, index) => (
 			<tr key={examiner._id}>
 				<th scope='row'>{pageIndex * pageSize + index + 1}</th>
 				<td>{examiner.data.firstName}</td>
 				<td>{examiner.data.lastName}</td>
 				<td>{examiner.data.email}</td>
 				<td>
-					{this.state.accountStatus === 'pending' ||
-					this.state.accountStatus === 'approved' ? (
+					{accountStatus === 'pending' || accountStatus === 'approved' ? (
 						<button
 							type='button'
 							className={`${styles.icon} btn p-0`}
@@ -133,13 +140,10 @@ class ViewExaminer extends React.Component {
 								);
 							}}
 						>
-							<i
-								className={'fa fa-trash-o cursor-pointer text-white'}
-							></i>
+							<i className='fa fa-trash-o cursor-pointer text-white'></i>
 						</button>
 					) : null}
-					{this.state.accountStatus === 'pending' ||
-					this.state.accountStatus === 'declined' ? (
+					{accountStatus === 'pending' || accountStatus === 'declined' ? (
 						<button
 							type='button'
 							className={`${styles.icon} btn pr-2`}
@@ -177,12 +181,12 @@ class ViewExaminer extends React.Component {
 				</table>
 				<div className='d-flex justify-content-center bg-white py-2'>
 					<Pagination
-						count={this.state.pageCount}
+						count={pageCount}
 						showFirstButton
 						showLastButton
 						onChange={this.handlePageChange}
 						size='large'
-						page={this.state.page}
+						page={page}
 					/>
 				</div>
 			</div>
@@ -190,6 +194,16 @@ class ViewExaminer extends React.Component {
 	};
 
 	render() {
+		let {
+			touched,
+			selectedCard,
+			examinerCount,
+			examinerData,
+			approveDeclineModal,
+			snackBar,
+			accountStatus,
+		} = this.state;
+
 		return (
 			<div className='container pt-4'>
 				<div className='row'>
@@ -200,13 +214,9 @@ class ViewExaminer extends React.Component {
 									this.handleCardClick('approved', 1)
 								);
 							}}
-							className={`card p-3 ${
-								styles.approvedCard
-							} cursor-pointer ${styles.iconHover} ${
-								this.state.selectedCard === 'approved'
-									? styles.cardBorder
-									: null
-							}`}
+							className={`card p-3 ${styles.approvedCard} cursor-pointer ${
+								styles.iconHover
+							} ${selectedCard === 'approved' ? styles.cardBorder : null}`}
 						>
 							<img
 								alt='approved icon'
@@ -224,20 +234,16 @@ class ViewExaminer extends React.Component {
 									Total approved
 								</p>
 								<p className={`mb-0 text-white ${styles.textStyle}`}>
-									{this.state.examinerCount.approved}
+									{examinerCount.approved}
 								</p>
 							</div>
 						</div>
 					</div>
 					<div className='col-md-4'>
 						<div
-							className={`card p-3 ${
-								styles.pendingCard
-							} cursor-pointer ${styles.iconHover} ${
-								this.state.selectedCard === 'pending'
-									? styles.cardBorder
-									: null
-							}`}
+							className={`card p-3 ${styles.pendingCard} cursor-pointer ${
+								styles.iconHover
+							} ${selectedCard === 'pending' ? styles.cardBorder : null}`}
 							onClick={() => {
 								this.setState({ pageIndex: 0 }, () =>
 									this.handleCardClick('pending', 1)
@@ -260,20 +266,16 @@ class ViewExaminer extends React.Component {
 									Total pending
 								</p>
 								<p className={`mb-0 text-white ${styles.textStyle}`}>
-									{this.state.examinerCount.pending}
+									{examinerCount.pending}
 								</p>
 							</div>
 						</div>
 					</div>
 					<div className='col-md-4'>
 						<div
-							className={`card p-3 ${
-								styles.declinedCard
-							} cursor-pointer ${styles.iconHover} ${
-								this.state.selectedCard === 'declined'
-									? styles.cardBorder
-									: null
-							}`}
+							className={`card p-3 ${styles.declinedCard} cursor-pointer ${
+								styles.iconHover
+							} ${selectedCard === 'declined' ? styles.cardBorder : null}`}
 							onClick={() => {
 								this.setState({ pageIndex: 0 }, () =>
 									this.handleCardClick('declined', 1)
@@ -296,27 +298,41 @@ class ViewExaminer extends React.Component {
 									Total declined
 								</p>
 								<p className={`mb-0 text-white ${styles.textStyle}`}>
-									{this.state.examinerCount.declined}
+									{examinerCount.declined}
 								</p>
 							</div>
 						</div>
 					</div>
 				</div>
-				{this.state.examinerData.length !== 0 ? (
+				{examinerData.length !== 0 ? (
 					<this.examinerData />
 				) : (
-					<h3 className='pt-4 font-weight-normal text-center'>
-						{this.state.msg}
-					</h3>
+					<Card className={`${styles.informationCard} mx-auto`}>
+						<div className='d-flex justify-content-center align-items-center'>
+							{touched ? (
+								<i className={`${styles.touchIcon} fa fa-user-times`} />
+							) : (
+								<TouchApp className={styles.touchIcon} />
+							)}
+						</div>
+
+						<CardContent
+							className={`${styles.informationHeading} text-center font-weight-bold mb-0`}
+						>
+							{touched
+								? `There are no examiners in ${selectedCard} section`
+								: 'Click on above options to view examiner information'}
+						</CardContent>
+					</Card>
 				)}
 				<ApproveDeclineModal
-					show={this.state.approveDeclineModal.show}
+					show={approveDeclineModal.show}
 					closeModal={this.handleModal}
-					modalData={this.state.approveDeclineModal.data}
+					modalData={approveDeclineModal.data}
 					handleSnackBar={this.handleSnackBar}
 				/>
 				<Snackbar
-					open={this.state.snackBar.show}
+					open={snackBar.show}
 					onClose={() => this.handleSnackBar(false, '')}
 				>
 					<MuiAlert
@@ -325,7 +341,7 @@ class ViewExaminer extends React.Component {
 						onClose={() => this.handleSnackBar(false, '')}
 						severity='success'
 					>
-						{this.state.snackBar.msg}
+						{snackBar.msg}
 					</MuiAlert>
 				</Snackbar>
 			</div>
