@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import './App.css';
-import Start from './components/start';
+import Home from './components/Home';
 import SignUp from './components/signup-component/signup';
 import Login from './components/login-component/login';
 import Admin from './components/admin-component/admin';
@@ -15,7 +15,7 @@ function App() {
 	return (
 		<BrowserRouter>
 			<Switch>
-				<Route exact path='/' component={Start}></Route>
+				<Route exact path='/' component={Home}></Route>
 				<Route path='/signup' component={SignUp}></Route>
 				<Route path='/login' component={Login}></Route>
 				<Route path='/admin' component={ProtectedRoute(Admin, 'admin')}></Route>
