@@ -8,3 +8,10 @@
 	font-family: 'Raleway';
 	font-size: 18px;
 }
+
+.activeTab {
+	background-color: black;
+	color: white;
+	padding: 5px 15px;
+	border-radius: 8px;
+}

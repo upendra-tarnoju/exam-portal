@@ -8,7 +8,7 @@ import ExaminerInput from './examinerInput';
 const Login = (props) => {
 	return (
 		<div className='container-fluid p-0'>
-			<Navbar />
+			<Navbar {...props} />
 			<div className='card mx-auto w-25 mt-4'>
 				<img
 					src={require('../../assets/login.jpg')}
