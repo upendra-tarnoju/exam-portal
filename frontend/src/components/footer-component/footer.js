@@ -18,21 +18,23 @@ const styles = makeStyles((theme) => ({
 const Footer = () => {
 	const classes = styles();
 	return (
-		<AppBar position='fixed' className={classes.footer}>
+		<AppBar position='fixed' className={`bg-white ${classes.footer}`}>
 			<Toolbar className='d-flex flex-row justify-content-between'>
-				<Typography>Copyright &copy; 2021. All rights reserved</Typography>
+				<Typography className='text-dark'>
+					Copyright &copy; 2021. All rights reserved
+				</Typography>
 				<div>
 					<IconButton>
-						<Facebook style={{ color: 'white' }} />
+						<Facebook style={{ color: 'black' }} />
 					</IconButton>
 					<IconButton>
-						<Instagram style={{ color: 'white' }} />
+						<Instagram style={{ color: 'black' }} />
 					</IconButton>
 					<IconButton>
-						<LinkedIn style={{ color: 'white' }} />
+						<LinkedIn style={{ color: 'black' }} />
 					</IconButton>
 					<IconButton>
-						<Twitter style={{ color: 'white' }} />
+						<Twitter style={{ color: 'black' }} />
 					</IconButton>
 				</div>
 			</Toolbar>
