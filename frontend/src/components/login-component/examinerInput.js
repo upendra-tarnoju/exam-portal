@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 
 import ExaminerService from '../../services/examinerApi';
 import ExaminerInputForm from '../../forms/examinerInputForm';
+import styles from './login.module.css';
 
 class ExaminerInput extends Component {
 	constructor(props) {
@@ -19,8 +20,10 @@ class ExaminerInput extends Component {
 
 	render() {
 		return (
-			<div>
-				<h3 className='bg-white text-center'>Enter details</h3>
+			<div className='d-flex justify-content-center flex-column py-4'>
+				<h3 className={`bg-white text-center ${styles.examinerInputHeading}`}>
+					Examiner details
+				</h3>
 				<ExaminerInputForm handleRedirect={this.handleRedirect} />
 			</div>
 		);

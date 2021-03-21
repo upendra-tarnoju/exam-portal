@@ -1,7 +1,7 @@
 import React from 'react';
 import { Formik } from 'formik';
 import { Form } from 'react-bootstrap';
-import Button from '@material-ui/core/Button';
+import { Button, FormControlLabel, Checkbox } from '@material-ui/core';
 
 import schema from '../schema/loginSchema';
 import UserService from '../services/userApi';
@@ -35,7 +35,7 @@ let LoginForm = (props) => {
 							<Form.Control
 								type='text'
 								name='email'
-								placeholder='Email address'
+								placeholder='Enter a valid email address'
 								value={formikProps.values.email}
 								onBlur={formikProps.handleBlur}
 								onChange={formikProps.handleChange}
@@ -53,13 +53,12 @@ let LoginForm = (props) => {
 							<Form.Control
 								type='password'
 								name='password'
-								placeholder='Password'
+								placeholder='Enter password'
 								value={formikProps.values.password}
 								onBlur={formikProps.handleBlur}
 								onChange={formikProps.handleChange}
 								isInvalid={
-									formikProps.touched.password &&
-									formikProps.errors.password
+									formikProps.touched.password && formikProps.errors.password
 								}
 								required
 							/>
@@ -67,11 +66,31 @@ let LoginForm = (props) => {
 								{formikProps.errors.password}
 							</Form.Control.Feedback>
 						</Form.Group>
-						<div className='d-flex justify-content-end'>
-							<Button variant='contained' color='primary' type='submit'>
-								Login
-							</Button>
+						<div className='d-flex justify-content-between'>
+							<FormControlLabel
+								control={<Checkbox checked={false} name='remember' />}
+								label='Remember me'
+								className='align-self-center'
+							/>
+							<p className='mb-0 mt-2'>Forget password</p>
 						</div>
+						<Button
+							variant='contained'
+							color='primary'
+							type='submit'
+							size='large'
+						>
+							Login
+						</Button>
+						<p className='mb-0 mt-1'>
+							Don't have an account?{' '}
+							<a
+								href='/signup'
+								className='text-danger font-weight-bold cursor-pointer'
+							>
+								Register
+							</a>
+						</p>
 					</div>
 				</Form>
 			)}

@@ -1,23 +1,29 @@
 import React from 'react';
-import Navbar from '../header/navbar';
-import LoginCard from './loginCard';
 import { connect } from 'react-redux';
+import { Card } from '@material-ui/core';
 
 import ExaminerInput from './examinerInput';
+import Navbar from '../header/navbar';
+import LoginCard from './loginCard';
+import styles from './login.module.css';
 
 const Login = (props) => {
 	return (
-		<div className='container-fluid p-0'>
+		<div className={`container-fluid h-100 p-0 ${styles.bgGrey}`}>
 			<Navbar {...props} />
-			<div className='card mx-auto w-25 mt-4'>
-				<img
-					src={require('../../assets/login.jpg')}
-					alt={'login'}
-					className='card-img-top'
-				/>
-				<div className='card-body'>
-					{props.examinerInputWindow ? <ExaminerInput /> : <LoginCard />}
-				</div>
+			<div className='container'>
+				<Card className={styles.loginCard}>
+					<div className='d-flex'>
+						<img
+							src={require('../../assets/login.jpg')}
+							className={styles.loginImage}
+							alt='loginScreen'
+						/>
+						<div className='container'>
+							{props.examinerInputWindow ? <ExaminerInput /> : <LoginCard />}
+						</div>
+					</div>
+				</Card>
 			</div>
 		</div>
 	);

@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import * as ActionTypes from '../../action';
 import UserService from '../../services/userApi';
 import LoginForm from '../../forms/loginForm';
+import styles from './login.module.css';
 
 class LoginCard extends Component {
 	constructor(props) {
@@ -40,8 +41,8 @@ class LoginCard extends Component {
 
 	render() {
 		return (
-			<div>
-				<h3 className='bg-white text-center'>Login</h3>
+			<div className='d-flex justify-content-center flex-column py-4'>
+				<h2 className={`bg-white text-center ${styles.loginHeading}`}>Login</h2>
 				{this.state.error ? (
 					<p className='mb-0 text-center text-danger font-weight-bold'>
 						* {this.state.error}
