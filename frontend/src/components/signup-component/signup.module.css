@@ -1,19 +1,53 @@
-body {
-	background: rgba(179, 220, 237, 1);
-	background-size: cover;
-	height: 100%;
+.containerBackgroundColor {
+	background-image: linear-gradient(
+		to right,
+		#5733da,
+		#5e3cda,
+		#6545da,
+		#6b4dda,
+		#7155da,
+		#5868e6,
+		#3a78ef,
+		#0187f4,
+		#009ef9,
+		#00b2f4,
+		#00c3e9,
+		#31d2de
+	);
 }
+
+.signupContainer {
+	padding: 40px 120px 40px 120px;
+}
+
+.rocketIcon {
+	font-size: 5vw !important;
+	color: white;
+}
+
+.containerHeight {
+	height: calc(100% - 68px) !important;
+}
+
+.signupHeading {
+	font-family: 'Raleway';
+}
+
+.signupSubHeading {
+	font-size: 'Raleway';
+	font-size: 18px;
+}
+
+.signupCard {
+	min-width: calc(100% - 440px);
+	border-top-left-radius: 100px !important;
+	border-bottom-left-radius: 100px !important;
+	padding: 10px 150px !important;
+}
+
 .heading {
 	font-family: 'Raleway', sans-serif;
 	font-size: 26px;
-}
-
-.textSize {
-	font-size: 12px;
-}
-
-.width35 {
-	width: 35%;
 }
 
 label {
