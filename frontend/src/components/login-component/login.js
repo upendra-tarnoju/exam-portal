@@ -6,6 +6,7 @@ import ExaminerInput from './examinerInput';
 import Navbar from '../header/navbar';
 import LoginCard from './loginCard';
 import styles from './login.module.css';
+import Footer from '../footer-component/footer';
 
 const Login = (props) => {
 	return (
@@ -25,6 +26,7 @@ const Login = (props) => {
 					</div>
 				</Card>
 			</div>
+			<Footer />
 		</div>
 	);
 };
