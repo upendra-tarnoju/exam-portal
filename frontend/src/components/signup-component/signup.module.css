@@ -17,7 +17,7 @@
 }
 
 .signupContainer {
-	padding: 40px 120px 40px 120px;
+	padding: 0px 120px 40px 120px;
 }
 
 .rocketIcon {
@@ -39,10 +39,7 @@
 }
 
 .signupCard {
-	min-width: calc(100% - 440px);
-	border-top-left-radius: 100px !important;
-	border-bottom-left-radius: 100px !important;
-	padding: 10px 150px !important;
+	border-radius: 10px;
 }
 
 .heading {

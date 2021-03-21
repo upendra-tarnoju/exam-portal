@@ -37,31 +37,33 @@ class SignUp extends Component {
 			>
 				<Navbar />
 				<div className={`${styles.containerHeight} ${styles.signupContainer}`}>
-					<div
-						className={`d-flex justify-content-between ${styles.containerHeight}`}
-					>
-						<div className='d-flex flex-wrap flex-column justify-content-center align-items-center'>
+					<div className='row h-100 justify-content-center align-items-center'>
+						<div className='col-md-5'>
 							<i
 								aria-hidden='true'
-								className={`fa fa-rocket ${styles.rocketIcon}`}
+								className={`fa align-self-center fa-rocket ${styles.rocketIcon}`}
 							></i>
 							<h2 className={`text-white ${styles.signupHeading}`}>Welcome</h2>
 							<p className={`mb-0 ${styles.signupSubHeading} text-white`}>
 								Get started and publish exam in less than 5 minutes.
 							</p>
 						</div>
-						<Card className={`pt-3 ${styles.signupCard}`}>
-							<p className={`text-center ${styles.heading}`}>
-								Sign up as examiner to continue
-							</p>
-							<SignUpForm showModal={this.showModal} />
-						</Card>
-						<ShowModal
-							show={this.state.modal}
-							handleClose={this.hideModal}
-							message={this.state.message}
-						/>
+						<div className='col-md-7'>
+							<Card className={`py-3 container ${styles.signupCard}`}>
+								<p className={`text-center ${styles.heading}`}>
+									Sign up as examiner to continue
+								</p>
+								<div className='px-5'>
+									<SignUpForm showModal={this.showModal} />
+								</div>
+							</Card>
+						</div>
 					</div>
+					<ShowModal
+						show={this.state.modal}
+						handleClose={this.hideModal}
+						message={this.state.message}
+					/>
 				</div>
 				<Footer />
 			</div>
