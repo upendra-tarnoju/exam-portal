@@ -1,70 +1,75 @@
 import React from 'react';
 import { useLocation } from 'react-router';
+import {
+	AppBar,
+	Toolbar,
+	Typography,
+	makeStyles,
+	IconButton,
+} from '@material-ui/core';
 
-import styles from '../home.module.css';
+import { MoreVert } from '@material-ui/icons';
+import AppbarCollapse from './appbarCollapse';
+
+const useStyles = makeStyles((theme) => ({
+	buttonBar: {
+		[theme.breakpoints.down('xs')]: {
+			display: 'none !important',
+		},
+		background: 'transparent',
+	},
+	verticalButton: {
+		[theme.breakpoints.up('sm')]: {
+			display: 'none !important',
+		},
+	},
+}));
 
 const Navbar = () => {
+	const classes = useStyles();
 	const location = useLocation();
 	const [active, setActive] = React.useState('');
+
+	const [anchorEl, setAnchorEl] = React.useState(null);
+
+	const handleMenuClick = (event) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
 
 	React.useEffect(() => {
 		setActive(location.pathname.split('/')[1]);
 	}, [location]);
 
 	return (
-		<nav className='navbar navbar-expand-lg bg-white'>
-			<a className={`navbar-brand ${styles.navbarHeading}`}>
+		<AppBar position='static' className='bg-white'>
+			<Toolbar>
 				<img
 					src={require('../../assets/logo.png')}
 					width='40'
 					height='40'
 					className='align-top mr-2'
+					alt='logo'
 				/>
-				Examin
-			</a>
-			<div className='collapse navbar-collapse'>
-				<ul className='navbar-nav ml-auto'>
-					<li
-						className={`mx-2 ${styles.navbarItem} cursor-pointer ${
-							active === 'login' ? styles.activeTab : 'mt-1'
-						}`}
-					>
-						<a
-							href='/login'
-							className={`${active === 'login' ? 'text-white' : 'text-dark'} `}
-						>
-							Login
-						</a>
-					</li>
-					<li
-						className={`mx-2 ${styles.navbarItem} cursor-pointer ${
-							active === 'signup' ? styles.activeTab : 'mt-1'
-						}`}
-					>
-						<a
-							href='/signup'
-							className={`${active === 'signup' ? 'text-white' : 'text-dark'} `}
-						>
-							Signup
-						</a>
-					</li>
-					<li
-						className={`mx-2 ${styles.navbarItem} cursor-pointer ${
-							active === 'pricing' ? styles.activeTab : 'mt-1'
-						}`}
-					>
-						<a
-							href='/pricing'
-							className={`${
-								active === 'pricing' ? 'text-white' : 'text-dark'
-							} `}
-						>
-							Pricing
-						</a>
-					</li>
-				</ul>
-			</div>
-		</nav>
+				<Typography variant='h6' className='text-dark'>
+					Examin
+				</Typography>
+				<AppbarCollapse
+					active={active}
+					anchorEl={anchorEl}
+					handleMenuClick={handleClose}
+				/>
+
+				<div className={`ml-auto ${classes.verticalButton}`}>
+					<IconButton onClick={handleMenuClick}>
+						<MoreVert />
+					</IconButton>
+				</div>
+			</Toolbar>
+		</AppBar>
 	);
 };
 
