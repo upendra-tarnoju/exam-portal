@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Menu, MenuItem } from '@material-ui/core';
+import { Menu, MenuItem, Link } from '@material-ui/core';
 
 const CollapseMenu = (props) => {
 	return (
@@ -11,9 +11,15 @@ const CollapseMenu = (props) => {
 			open={Boolean(props.anchorEl)}
 			onClose={props.handleMenuClick}
 		>
-			<MenuItem>Profile</MenuItem>
-			<MenuItem>My account</MenuItem>
-			<MenuItem>Logout</MenuItem>
+			<Link href='/login'>
+				<MenuItem>Login</MenuItem>
+			</Link>
+			<Link href='/signup'>
+				<MenuItem>Signup</MenuItem>
+			</Link>
+			<Link href='/pricing'>
+				<MenuItem>Pricing</MenuItem>
+			</Link>
 		</Menu>
 	);
 };
