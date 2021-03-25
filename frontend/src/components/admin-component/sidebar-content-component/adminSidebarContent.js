@@ -13,7 +13,7 @@ const AdminSidebarContent = (props) => {
 	};
 
 	return (
-		<div id='page-content-wrapper'>
+		<div id='page-content-wrapper' className='bgGrey'>
 			<nav className='navbar navbar-expand-lg navbar-light bg-dark border-bottom justify-content-between align-items-center'>
 				<button
 					type='button'

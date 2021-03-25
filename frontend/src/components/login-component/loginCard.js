@@ -41,10 +41,10 @@ class LoginCard extends Component {
 
 	render() {
 		return (
-			<div className='d-flex justify-content-center flex-column py-4'>
+			<div className='container py-3'>
 				<h2 className={`bg-white text-center ${styles.loginHeading}`}>Login</h2>
 				{this.state.error ? (
-					<p className='mb-0 text-center text-danger font-weight-bold'>
+					<p className='mb-0 text-danger font-weight-bold'>
 						* {this.state.error}
 					</p>
 				) : (
@@ -55,6 +55,10 @@ class LoginCard extends Component {
 					handleError={this.handleError}
 				/>
 			</div>
+			// <div className='py-4'>
+			//
+
+			// </div>
 		);
 	}
 }
