@@ -7,9 +7,12 @@ import {
 	makeStyles,
 	IconButton,
 } from '@material-ui/core';
+import { MoreVert, Menu } from '@material-ui/icons';
+import { connect } from 'react-redux';
 
-import { MoreVert } from '@material-ui/icons';
 import AppbarCollapse from './appbarCollapse';
+import * as ActionType from '../../action';
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
 	buttonBar: {
@@ -23,9 +26,25 @@ const useStyles = makeStyles((theme) => ({
 			display: 'none !important',
 		},
 	},
+	navbar: {
+		backgroundColor: 'white',
+		zIndex: theme.zIndex.drawer + 1,
+		transition: theme.transitions.create(['width', 'margin'], {
+			easing: theme.transitions.easing.sharp,
+			duration: theme.transitions.duration.leavingScreen,
+		}),
+	},
+
+	navbarShift: {
+		width: 'calc(100% - 240px)',
+		transition: theme.transitions.create(['width', 'margin'], {
+			easing: theme.transitions.easing.sharp,
+			duration: theme.transitions.duration.enteringScreen,
+		}),
+	},
 }));
 
-const Navbar = () => {
+const Navbar = (props) => {
 	const classes = useStyles();
 	const location = useLocation();
 	const [active, setActive] = React.useState('');
@@ -44,9 +63,25 @@ const Navbar = () => {
 		setActive(location.pathname.split('/')[1]);
 	}, [location]);
 
+	let handleSidebar = () => {
+		let toggle = props.toggle;
+		props.setSidebar(!toggle);
+	};
+
 	return (
-		<AppBar position='static' className='bg-white'>
+		<AppBar
+			position={props.authenticated ? 'fixed' : 'static'}
+			className={clsx(classes.navbar, {
+				[classes.navbarShift]: props.toggle,
+			})}
+		>
 			<Toolbar>
+				{props.authenticated ? (
+					<IconButton color='primary' onClick={handleSidebar}>
+						<Menu />
+					</IconButton>
+				) : null}
+
 				<img
 					src={require('../../assets/logo.png')}
 					width='40'
@@ -73,4 +108,22 @@ const Navbar = () => {
 	);
 };
 
-export default Navbar;
+const mapDispatchToProps = (dispatch) => {
+	return {
+		setSidebar: (toggle) => {
+			dispatch({
+				type: ActionType.COLLAPSE_SIDEBAR,
+				toggle: toggle,
+			});
+		},
+	};
+};
+
+const mapStateToProps = (state) => {
+	return {
+		toggle: state.adminReducer.sidebarToggle,
+		authenticated: state.adminReducer.authenticated,
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Navbar);
