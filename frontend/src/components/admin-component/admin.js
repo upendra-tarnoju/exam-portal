@@ -10,11 +10,8 @@ const Admin = (props) => {
 		<div>
 			<Navbar {...props} />
 			<AdminSidebar />
+			<AdminSidebarContent />
 		</div>
-		// <div className={`d-flex ${props.toggle ? 'toggled' : ''}`} id='wrapper'>
-		// 	<AdminSidebar />
-		// 	<AdminSidebarContent />
-		// </div>
 	);
 };
 

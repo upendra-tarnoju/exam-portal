@@ -72,6 +72,7 @@ class AdminSidebar extends Component {
 
 	render() {
 		let { classes, toggle } = this.props;
+		let { selectedTab } = this.state;
 		return (
 			<Drawer
 				variant='persistent'
@@ -92,28 +93,43 @@ class AdminSidebar extends Component {
 					<div className={classes.closeButton}>
 						<IconButton
 							onClick={() => {
-								this.props.setSidebar(!this.props.toggle);
+								this.props.setSidebar(!toggle);
 							}}
 						>
 							<ChevronLeft />
 						</IconButton>
 					</div>
 					<List>
-						<ListItem button>
+						<ListItem
+							button
+							component='a'
+							href='/admin'
+							selected={selectedTab === undefined}
+						>
 							<ListItemIcon>
 								<Dashboard />
 							</ListItemIcon>
 							<ListItemText primary='Dashboard' />
 						</ListItem>
 
-						<ListItem button>
+						<ListItem
+							button
+							component='a'
+							href='/admin/examiner'
+							selected={selectedTab === 'examiner'}
+						>
 							<ListItemIcon>
 								<Person />
 							</ListItemIcon>
 							<ListItemText primary='Examiners' />
 						</ListItem>
 
-						<ListItem button>
+						<ListItem
+							button
+							component='a'
+							href='/admin/setting'
+							selected={selectedTab === 'settings'}
+						>
 							<ListItemIcon>
 								<Settings />
 							</ListItemIcon>
@@ -122,63 +138,6 @@ class AdminSidebar extends Component {
 					</List>
 				</div>
 			</Drawer>
-			// <div className='bg-dark' id='sidebar-wrapper'>
-			// 	<div className='text-center pt-4'>
-			// 		<img
-			// 			alt='logo'
-			// 			src={require('../../../assets/logo.png')}
-			// 			className='logo'
-			// 		/>
-			// 		<h4 className='text-center text-light font-weight-normal'>Examin</h4>
-			// 	</div>
-			// 	<div className='list-group list-group-flush'>
-			// 		<Link
-			// 			to='/admin'
-			// 			className={`list-group-item list-group-item-action bg-dark adminIcon ${
-			// 				this.state.selectedTab === undefined
-			// 					? 'text-white'
-			// 					: 'text-white-50'
-			// 			}`}
-			// 		>
-			// 			<i className='fa fa-desktop'></i> Dashboard
-			// 		</Link>
-			// 		<Link
-			// 			to='/admin/examiner'
-			// 			className={`list-group-item list-group-item-action bg-dark ${
-			// 				this.state.selectedTab === 'examiner'
-			// 					? 'text-white'
-			// 					: 'text-white-50'
-			// 			}`}
-			// 		>
-			// 			<i className='fa fa-user-circle'></i> Examiners
-			// 		</Link>
-			// 		<Link
-			// 			to='/admin/exam'
-			// 			className={`list-group-item list-group-item-action bg-dark ${
-			// 				this.state.selectedTab === 'exam' ? 'text-white' : 'text-white-50'
-			// 			}`}
-			// 		>
-			// 			<i className='fa fa-book'></i> Exam
-			// 		</Link>
-			// 		<Link
-			// 			to='/admin/setting'
-			// 			className={`list-group-item list-group-item-action bg-dark ${
-			// 				this.state.selectedTab === 'settings'
-			// 					? 'text-white'
-			// 					: 'text-white-50'
-			// 			}`}
-			// 		>
-			// 			<i className='fa fa-cog'></i> Settings
-			// 		</Link>
-			// 		<a
-			// 			href='/login'
-
-			// 			className='list-group-item cursor-pointer list-group-item-action bg-dark text-white-50'
-			// 		>
-			// 			<i className='fa fa-sign-out'></i> Log out
-			// 		</a>
-			// 	</div>
-			// </div>
 		);
 	}
 }

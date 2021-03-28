@@ -76,7 +76,7 @@ const Navbar = (props) => {
 			})}
 		>
 			<Toolbar>
-				{props.authenticated ? (
+				{props.authenticated && !props.toggle ? (
 					<IconButton color='primary' onClick={handleSidebar}>
 						<Menu />
 					</IconButton>
