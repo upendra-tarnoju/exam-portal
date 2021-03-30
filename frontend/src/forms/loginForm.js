@@ -79,7 +79,6 @@ let LoginForm = (props) => {
 									color='primary'
 									checked={formikProps.values.rememberMe}
 									name='rememberMe'
-									checked={formikProps.values.rememberMe}
 									value={formikProps.values.rememberMe}
 									onChange={(event) =>
 										formikProps.setFieldValue(

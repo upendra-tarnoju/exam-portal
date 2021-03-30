@@ -5,8 +5,6 @@ import { Card, makeStyles } from '@material-ui/core';
 import ExaminerInput from './examinerInput';
 import Navbar from '../header/navbar';
 import LoginCard from './loginCard';
-import styles from './login.module.css';
-import Footer from '../footer-component/footer';
 import LoginImage from '../../assets/login.jpg';
 
 const useStyles = makeStyles((theme) => ({
