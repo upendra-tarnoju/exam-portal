@@ -7,22 +7,12 @@ import {
 	TextField,
 	Typography,
 	Link,
-	makeStyles,
 } from '@material-ui/core';
 
 import schema from '../schema/loginSchema';
 import UserService from '../services/userApi';
 
-const useStyles = makeStyles((theme) => ({
-	checkBoxContainer: {
-		[theme.breakpoints.up('sm')]: {
-			display: 'block',
-		},
-	},
-}));
-
 let LoginForm = (props) => {
-	const classes = useStyles();
 	return (
 		<Formik
 			validationSchema={schema}
@@ -83,31 +73,25 @@ let LoginForm = (props) => {
 							placeholder='Enter password'
 							fullWidth
 						/>
-						<div className='d-flex justify-content-between'>
-							<FormControlLabel
-								control={
-									<Checkbox
-										color='primary'
-										checked={formikProps.values.rememberMe}
-										name='rememberMe'
-										checked={formikProps.values.rememberMe}
-										value={formikProps.values.rememberMe}
-										onChange={(event) =>
-											formikProps.setFieldValue(
-												'rememberMe',
-												event.target.checked
-											)
-										}
-									/>
-								}
-								label='Remember me'
-								name='rememberMe'
-								className='align-self-center'
-							/>
-							<Link href='#' className='mt-2 text-dark'>
-								Forget password
-							</Link>
-						</div>
+						<FormControlLabel
+							control={
+								<Checkbox
+									color='primary'
+									checked={formikProps.values.rememberMe}
+									name='rememberMe'
+									checked={formikProps.values.rememberMe}
+									value={formikProps.values.rememberMe}
+									onChange={(event) =>
+										formikProps.setFieldValue(
+											'rememberMe',
+											event.target.checked
+										)
+									}
+								/>
+							}
+							label='Remember me'
+							name='rememberMe'
+						/>
 						<div className='d-flex justify-content-center'>
 							<Button
 								variant='contained'
@@ -118,7 +102,12 @@ let LoginForm = (props) => {
 								Login
 							</Button>
 						</div>
-						<Typography component='p' className='mb-0 mt-1 text-center'>
+						<Link href='#' className='text-center mt-2 text-dark'>
+							<Typography component='p' className='mb-0 mt-1 text-center'>
+								Forget password
+							</Typography>
+						</Link>
+						<Typography component='p' className='mb-0 text-center'>
 							Don't have an account ?{' '}
 							<Link
 								href='/signup'

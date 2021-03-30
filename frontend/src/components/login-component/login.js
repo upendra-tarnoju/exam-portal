@@ -16,11 +16,14 @@ const useStyles = makeStyles((theme) => ({
 		backgroundSize: 'cover',
 		backgroundRepeat: 'no-repeat',
 		padding: '60px 0px',
+		[theme.breakpoints.down('sm')]: {
+			height: 'calc(100% - 55px)',
+		},
 	},
 	loginCard: {
 		borderRadius: '10px',
 		[theme.breakpoints.down('sm')]: {
-			width: '60%',
+			width: '78%',
 		},
 		[theme.breakpoints.up('sm')]: {
 			width: '50%',
