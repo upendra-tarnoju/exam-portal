@@ -12,6 +12,9 @@ let SignUpForm = ({ showModal }) => {
 			validationSchema={schema}
 			onSubmit={(values) => {
 				let userService = new UserService();
+				delete values['firstName'];
+
+				console.log(values);
 
 				userService.saveNewUsers(values).then((response) => {
 					showModal(response.data.msg);

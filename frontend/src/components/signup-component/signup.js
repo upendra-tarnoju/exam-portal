@@ -1,11 +1,50 @@
 import React, { Component } from 'react';
-import { Card } from '@material-ui/core';
+import { Card, withStyles } from '@material-ui/core';
 
-import styles from './signup.module.css';
 import ShowModal from './showModal';
 import Navbar from '../header/navbar';
 import SignUpForm from '../../forms/signUpForm';
-import Footer from '../footer-component/footer';
+import './signup.module.css';
+
+const style = (theme) => ({
+	signUpBackground: {
+		height: 'calc(100% - 66px) !important',
+		padding: '20px 0px',
+		background:
+			'linear-gradient(to right,#5733da,#5e3cda,#6545da,#6b4dda,#7155da,#5868e6,#3a78ef,#0187f4,#009ef9,#00b2f4,#00c3e9,#31d2de)',
+	},
+	signUpCard: {
+		borderRadius: '10px',
+		[theme.breakpoints.down('xs')]: {
+			margin: '10px 0px',
+		},
+	},
+	rocketIcon: {
+		color: 'white',
+		[theme.breakpoints.down('xs')]: {
+			fontSize: '15vw !important',
+		},
+		[theme.breakpoints.up('xs')]: {
+			fontSize: '55px !important',
+		},
+
+		[theme.breakpoints.up('md')]: {
+			fontSize: '8vw !important',
+		},
+	},
+	signupHeading: {
+		fontFamily: 'Raleway',
+	},
+	signupSubHeading: {
+		fontFamily: 'Raleway',
+		fontSize: '18px',
+		textAlign: 'center',
+	},
+	cardHeading: {
+		fontFamily: 'Raleway',
+		fontSize: '21px',
+	},
+});
 
 class SignUp extends Component {
 	constructor(props) {
@@ -21,7 +60,8 @@ class SignUp extends Component {
 	};
 
 	hideModal = () => {
-		this.setState({ modal: false }, () => this.props.history.push('/login'));
+		this.setState({ modal: false });
+		// this.setState({ modal: false }, () => this.props.history.push('/login'));
 	};
 
 	handleModal = (state) => {
@@ -31,44 +71,46 @@ class SignUp extends Component {
 	};
 
 	render() {
+		const { classes } = this.props;
 		return (
-			<div
-				className={`container-fluid p-0 ${styles.containerBackgroundColor} h-100`}
-			>
-				<Navbar />
-				<div className={`${styles.containerHeight} ${styles.signupContainer}`}>
-					<div className='row h-100 justify-content-center align-items-center'>
-						<div className='col-md-5'>
-							<i
-								aria-hidden='true'
-								className={`fa align-self-center fa-rocket ${styles.rocketIcon}`}
-							></i>
-							<h2 className={`text-white ${styles.signupHeading}`}>Welcome</h2>
-							<p className={`mb-0 ${styles.signupSubHeading} text-white`}>
-								Get started and publish exam in less than 5 minutes.
-							</p>
-						</div>
-						<div className='col-md-7'>
-							<Card className={`py-3 container ${styles.signupCard}`}>
-								<p className={`text-center ${styles.heading}`}>
-									Sign up as examiner to continue
+			<div className='container-fluid p-0 h-100'>
+				<Navbar {...this.props} />
+				<div className={`${classes.signUpBackground}`}>
+					<div className='container h-100'>
+						<div className='row h-100 justify-content-center align-items-center'>
+							<div className='col-md-5 col-sm-12 d-flex flex-column align-items-center'>
+								<i
+									aria-hidden='true'
+									className={`fa align-self-center fa-rocket ${classes.rocketIcon}`}
+								></i>
+								<h2 className={`text-white ${classes.signupHeading}`}>
+									Welcome
+								</h2>
+								<p className={`mb-0 ${classes.signupSubHeading} text-white`}>
+									Get started and publish exam in less than 5 minutes.
 								</p>
-								<div className='px-5'>
-									<SignUpForm showModal={this.showModal} />
-								</div>
-							</Card>
+							</div>
+							<div className='col-md-7 col-sm-12'>
+								<Card className={`py-3 ${classes.signUpCard}`}>
+									<p className={`text-center mb-0 ${classes.cardHeading}`}>
+										Sign up as examiner to continue
+									</p>
+									<div className='px-5'>
+										<SignUpForm showModal={this.showModal} />
+									</div>
+								</Card>
+							</div>
 						</div>
 					</div>
-					<ShowModal
-						show={this.state.modal}
-						handleClose={this.hideModal}
-						message={this.state.message}
-					/>
 				</div>
-				<Footer />
+				<ShowModal
+					show={this.state.modal}
+					handleClose={this.hideModal}
+					message={this.state.message}
+				/>
 			</div>
 		);
 	}
 }
 
-export default SignUp;
+export default withStyles(style)(SignUp);
