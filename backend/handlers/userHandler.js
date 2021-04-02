@@ -1,48 +1,46 @@
-const { users, examiner } = require('../models');
 const passport = require('passport');
 
+const { users, examiner } = require('../models');
 const auth = require('../auth');
 const { factories } = require('../factories');
+const { APP_DEFAULTS, RESPONSE_MESSAGES } = require('../config');
 
 const user = {
-	saveUserDetails: async (req, res) => {
-		let userData = req.body;
-		let existingUser = await users.find({ email: userData.email });
+	saveUserDetails: async (userData) => {
+		try {
+			let existingUser = await users.find({ email: userData.email });
 
-		if (!existingUser) {
-			userData.password = factories.generateHashedPassword(
-				userData.password
-			);
-			userData.accountType = 'examiner';
+			if (!existingUser) {
+				userData.password = factories.generateHashedPassword(userData.password);
+				userData.accountType = APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER;
 
-			users
-				.create(userData)
-				.then((createdUser) => {
-					let newExaminer = {
-						userId: createdUser._id,
-						accountStatus: 'pending',
-					};
+				let createdUser = await users.create(userData);
 
-					examiner.create(newExaminer).then((createdExaminer) => {
-						users
-							.update(createdUser._id, {
-								userDataId: createdExaminer._id,
-							})
-							.then((response) => {
-								res.status(200).send({
-									role: 'examiner',
-									msg:
-										'Your account would be created shortly.You will receive email soon.',
-								});
-							});
-					});
-				})
-				.catch((err) => {
-					let error = Object.values(err.errors)[0].message;
-					res.status(400).send({ msg: error });
-				});
-		} else {
-			res.status(200).send({ msg: 'User already existed' });
+				let newExaminer = {
+					userId: createdUser._id,
+					accountStatus: APP_DEFAULTS.ACCOUNT_STATUS.PENDING,
+				};
+
+				let createdExaminer = await examiner.create(newExaminer);
+				return {
+					status: RESPONSE_MESSAGES.EXAMINER_SIGNUP.SUCCESS.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.EXAMINER_SIGNUP.SUCCESS.MSG },
+				};
+			} else {
+				return {
+					status:
+						RESPONSE_MESSAGES.EXAMINER_SIGNUP.DUPLICATE_RESOURCE.STATUS_CODE,
+					data: {
+						msg: RESPONSE_MESSAGES.EXAMINER_SIGNUP.DUPLICATE_RESOURCE.MSG,
+					},
+				};
+			}
+		} catch (error) {
+			// let error = Object.values(err.errors)[0].message;
+			// return {
+			// 	status: RESPONSE_MESSAGES.EXAMINER_SIGNUP.MONGOOSE_ERROR.STATUS_CODE,
+			// 	data: { msg: error },
+			// };
 		}
 	},
 

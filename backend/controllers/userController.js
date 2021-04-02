@@ -2,8 +2,10 @@ const { userHandler } = require('../handlers');
 
 const user = {
 	saveUserDetails: async (req, res) => {
-		let response = await userHandler.saveUserDetails(req, res);
-		return response;
+		let userData = req.body;
+		let response = await userHandler.saveUserDetails(userData);
+
+		res.status(response.status).send(response.data);
 	},
 
 	loginUser: async (req, res, next) => {
