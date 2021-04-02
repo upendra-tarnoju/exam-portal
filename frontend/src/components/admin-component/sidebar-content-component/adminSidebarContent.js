@@ -13,30 +13,14 @@ const AdminSidebarContent = (props) => {
 	};
 
 	return (
-		<div id='page-content-wrapper' className='bgGrey'>
-			<nav className='navbar navbar-expand-lg navbar-light bg-dark border-bottom justify-content-between align-items-center'>
-				<button
-					type='button'
-					className='btn btn-primary'
-					onClick={handleSidebar}
-				>
-					<i className='fa fa-bars'></i>
-				</button>
-				<div>
-					<img
-						src='https://i.pinimg.com/originals/7c/c7/a6/7cc7a630624d20f7797cb4c8e93c09c1.png'
-						height='45px'
-						alt='pic'
-						className='mr-2'
-					/>
-					<span className='text-white'>Hie, {props.name}</span>
-				</div>
-			</nav>
-			<Switch>
-				<Route exact path='/admin' component={AdminDashboard} />
-				<Route path='/admin/examiner' component={ViewExaminers} />
-				<Redirect from='/admin/*' to='/admin' />
-			</Switch>
+		<div className='bgGrey'>
+			<div className='h-100 mt-5'>
+				<Switch>
+					<Route exact path='/admin' component={AdminDashboard} />
+					<Route path='/admin/examiner' component={ViewExaminers} />
+					<Redirect from='/admin/*' to='/admin' />
+				</Switch>
+			</div>
 		</div>
 	);
 };

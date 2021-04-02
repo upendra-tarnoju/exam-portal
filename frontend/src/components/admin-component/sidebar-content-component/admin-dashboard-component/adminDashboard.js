@@ -19,12 +19,30 @@ import MuiAlert from '@material-ui/lab/Alert';
 import Chart from 'react-apexcharts';
 import moment from 'moment';
 import { AddCircleOutlineOutlined, DeleteOutline } from '@material-ui/icons';
+import { withStyles } from '@material-ui/core/styles';
 
 import AdminService from '../../../../services/adminApi';
 import styles from './adminDashboard.module.css';
 import { Pagination } from '@material-ui/lab';
 import factories from '../../../../factories/factories';
 import ApproveDeclineModal from '../../../../modals/approveDeclineModal';
+
+const useStyles = (theme) => ({
+	informationCard: {
+		[theme.breakpoints.down('sm')]: {
+			marginTop: '10px',
+		},
+	},
+	examinerChartCard: {
+		[theme.breakpoints.down('sm')]: {
+			marginTop: '15px',
+		},
+
+		[theme.breakpoints.up('sm')]: {
+			marginTop: '0px',
+		},
+	},
+});
 
 class AdminDashboard extends React.Component {
 	constructor() {
@@ -205,6 +223,8 @@ class AdminDashboard extends React.Component {
 			totalEarning,
 		} = this.state;
 
+		let { classes } = this.props;
+
 		let monthExamMenu = factories.monthMenu.map((month, index) => {
 			return (
 				<MenuItem
@@ -216,9 +236,11 @@ class AdminDashboard extends React.Component {
 			);
 		});
 		return (
-			<div className='container'>
-				<div className='row pt-5 pb-3'>
-					<div className='col-md-3'>
+			<div className='container-fluid'>
+				<div className='row h-100 py-5'>
+					<div
+						className={`col-xs-12 col-sm-6 col-md-3  ${classes.informationCard}`}
+					>
 						<Paper className='p-3'>
 							<div className='d-flex justify-content-between'>
 								<div className='text-center align-self-center'>
@@ -241,7 +263,9 @@ class AdminDashboard extends React.Component {
 							</div>
 						</Paper>
 					</div>
-					<div className='col-md-3'>
+					<div
+						className={`col-xs-12 col-sm-6 col-md-3 ${classes.informationCard}`}
+					>
 						<Paper className='p-3'>
 							<div className='d-flex justify-content-between'>
 								<ButtonBase>
@@ -262,7 +286,9 @@ class AdminDashboard extends React.Component {
 							</div>
 						</Paper>
 					</div>
-					<div className='col-md-3'>
+					<div
+						className={`col-xs-12 col-sm-6 col-md-3 ${classes.informationCard}`}
+					>
 						<Paper className='p-3'>
 							<div className='d-flex justify-content-between'>
 								<div className='text-center align-self-center'>
@@ -283,7 +309,9 @@ class AdminDashboard extends React.Component {
 							</div>
 						</Paper>
 					</div>
-					<div className='col-md-3'>
+					<div
+						className={`col-xs-12 col-sm-6 col-md-3 ${classes.informationCard}`}
+					>
 						<Paper className='p-3'>
 							<div className='d-flex justify-content-between'>
 								<ButtonBase>
@@ -441,4 +469,4 @@ class AdminDashboard extends React.Component {
 	}
 }
 
-export default AdminDashboard;
+export default withStyles(useStyles)(AdminDashboard);
