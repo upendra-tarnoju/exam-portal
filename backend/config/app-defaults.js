@@ -1,4 +1,4 @@
-module.exports = {
+const appDefaults = {
 	ACCOUNT_TYPE: {
 		EXAMINER: 'examiner',
 	},
@@ -6,3 +6,5 @@ module.exports = {
 		PENDING: 'pending',
 	},
 };
+
+module.exports = appDefaults;

@@ -3,7 +3,8 @@ const passport = require('passport');
 const { users, examiner } = require('../models');
 const auth = require('../auth');
 const { factories } = require('../factories');
-const { APP_DEFAULTS, RESPONSE_MESSAGES } = require('../config');
+const APP_DEFAULTS = require('../config/app-defaults');
+const RESPONSE_MESSAGES = require('../config/response-messages');
 
 const user = {
 	saveUserDetails: async (userData) => {
@@ -35,7 +36,8 @@ const user = {
 					},
 				};
 			}
-		} catch (error) {
+		} catch (err) {
+			throw err;
 			// let error = Object.values(err.errors)[0].message;
 			// return {
 			// 	status: RESPONSE_MESSAGES.EXAMINER_SIGNUP.MONGOOSE_ERROR.STATUS_CODE,

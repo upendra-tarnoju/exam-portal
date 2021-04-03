@@ -1,15 +1,15 @@
 const express = require('express');
-const expressJOI = require('express-joi-validation').createValidator({});
 
 const { userController, questionController } = require('../controllers');
 const { UserValidator } = require('../validator');
+const { validatorMiddleware } = require('../middleware');
 
 module.exports = () => {
 	const router = express.Router();
 
 	router.post(
 		'/signup',
-		expressJOI.body(UserValidator.SIGNUP),
+		validatorMiddleware(UserValidator.SIGNUP),
 		userController.saveUserDetails
 	);
 

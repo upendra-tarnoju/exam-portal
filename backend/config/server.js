@@ -46,13 +46,6 @@ app.use('/api/admin', adminRoutes());
 app.use('/api/examiner', examinerRoutes());
 app.use('/api/student', studentRoutes());
 
-// app.use((err, req, res, next) => {
-// 	console.log(err);
-// 	if (err.isBoom) {
-// 		return res.status(err.output.statusCode).json(err.output.payload);
-// 	}
-// });
-
 app.listen(PORT, HOST, (err) => {
 	if (err) console.log(err);
 	else console.log(`Running on ${HOST}:${PORT}`);
