@@ -12,9 +12,6 @@ let SignUpForm = ({ showModal }) => {
 			validationSchema={schema}
 			onSubmit={(values) => {
 				let userService = new UserService();
-				delete values['firstName'];
-
-				console.log(values);
 
 				userService.saveNewUsers(values).then((response) => {
 					showModal(response.data.msg);
@@ -45,7 +42,7 @@ let SignUpForm = ({ showModal }) => {
 									type='text'
 									name='firstName'
 									placeholder='First name'
-									value={values.firstName}
+									value={values.firstName || ''}
 									onBlur={handleBlur}
 									onChange={handleChange}
 									isInvalid={touched.firstName && !!errors.firstName}
