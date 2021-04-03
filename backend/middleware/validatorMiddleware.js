@@ -12,7 +12,8 @@ const requestValidator = (validations) => {
 			return next();
 		}
 
-		res.status(400).json({ errors: errors.array() });
+		let error = errors.array()[0];
+		res.status(400).json({ msg: error.msg, type: 'JOI error' });
 	};
 };
 
