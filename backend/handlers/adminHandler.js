@@ -56,14 +56,20 @@ const admin = {
 	},
 
 	getDashboardCardDetails: async () => {
-		let allExaminers = await examiner.findAll();
-		let allExams = await exam.findAll();
-		let allStudents = await student.findAll();
-		return {
-			totalExaminers: allExaminers.length,
-			totalExams: allExams.length,
-			totalStudents: allStudents.length,
-		};
+		try {
+			let criteria = {};
+
+			let totalExaminers = await examiner.countExaminers(criteria);
+			let totalExams = await exam.countExams(criteria);
+			let totalStudents = await student.countStudents(criteria);
+
+			return {
+				status: 200,
+				data: { totalExaminers, totalExams, totalStudents },
+			};
+		} catch (err) {
+			return { status: 400, data: { err } };
+		}
 	},
 
 	getUnexpiredExamDetails: async (minDate, maxDate) => {

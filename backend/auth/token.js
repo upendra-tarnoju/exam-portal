@@ -4,7 +4,7 @@ const create = (userData) => {
 	let privateKey = 'gRG9lIiwiaWF0IjoxNTE2MjM5';
 	let object = {
 		userId: userData._id,
-		type: userData.accountType,
+		type: userData.userType,
 		firstName: userData.firstName,
 		lastName: userData.lastName,
 	};

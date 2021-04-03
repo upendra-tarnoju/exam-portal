@@ -12,9 +12,6 @@ const examiner = new Schema({
 	designation: {
 		type: String,
 	},
-	accountStatus: {
-		type: String,
-	},
 });
 
 module.exports = mongoose.model('examiner', examiner);

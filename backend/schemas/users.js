@@ -34,7 +34,7 @@ const users = new Schema({
 		type: String,
 		required: [true, 'Mobile number is required'],
 	},
-	accountType: {
+	userType: {
 		type: String,
 		required: [true, 'Account type is required'],
 	},
@@ -42,12 +42,13 @@ const users = new Schema({
 		type: Date,
 		default: null,
 	},
-	institution: {
-		type: String,
-	},
-	userDataId: {
-		type: Schema.Types.ObjectId,
-	},
+	status: { type: String, required: true },
+	// institution: {
+	// 	type: String,
+	// },
+	// userDataId: {
+	// 	type: Schema.Types.ObjectId,
+	// },
 	createdAt: {
 		type: Date,
 		default: Date.now(),

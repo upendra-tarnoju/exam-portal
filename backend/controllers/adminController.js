@@ -38,8 +38,12 @@ const admin = {
 	},
 
 	getDashboardCardDetails: async (req, res) => {
-		let data = await adminHandler.getDashboardCardDetails();
-		res.status(200).send(data);
+		try {
+			let response = await adminHandler.getDashboardCardDetails();
+			res.status(response.status).send(response.data);
+		} catch (err) {
+			res.status(400).send(err);
+		}
 	},
 
 	getUnexpiredExamDetails: async (req, res) => {

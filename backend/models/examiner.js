@@ -69,8 +69,8 @@ class Examiner {
 			.limit(pageSize);
 	};
 
-	findAll = () => {
-		return this.examinerModel.find();
+	countExaminers = (criteria) => {
+		return this.examinerModel.countDocuments(criteria);
 	};
 }
 

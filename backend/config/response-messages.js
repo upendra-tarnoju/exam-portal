@@ -8,8 +8,19 @@ module.exports = {
 			STATUS_CODE: 409,
 			MSG: 'Examiner already existed',
 		},
-		MONGOOSE_ERROR: {
-			STATUS_CODE: 400,
+	},
+	ACCOUNT_STATUS: {
+		DECLINED: {
+			STATUS_CODE: 403,
+			MSG: 'Your account has been declined. Kindly contact to admin',
 		},
+		PENDING: {
+			STATUS_CODE: 403,
+			MSG: 'Your account is not approved',
+		},
+	},
+	INCORRECT_CREDENTIALS: {
+		STATUS_CODE: 403,
+		MSG: 'Incorrect credentials',
 	},
 };

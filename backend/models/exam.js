@@ -85,8 +85,8 @@ class Exams {
 		]);
 	}
 
-	findAll = () => {
-		return this.examModel.find();
+	countExams = (criteria) => {
+		return this.examModel.countDocuments(criteria);
 	};
 
 	findByExamMonth = (minDate, maxDate) => {

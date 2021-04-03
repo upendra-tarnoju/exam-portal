@@ -2,8 +2,10 @@ const LocalStrategy = require('passport-local').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 
-const { users, examiner } = require('../models');
+const { users } = require('../models');
 const { factories } = require('../factories');
+const APP_DEFAULTS = require('../config/app-defaults');
+const RESPONSE_MESSAGES = require('../config/response-messages');
 
 let comparePassword = (typedPassword, user, done) => {
 	let userStatus = factories.compareHashedPassword(
@@ -13,54 +15,39 @@ let comparePassword = (typedPassword, user, done) => {
 	if (userStatus) return done(null, user);
 	else
 		return done(null, false, {
-			message: 'Incorrect credentials',
+			...RESPONSE_MESSAGES.INCORRECT_CREDENTIALS,
 		});
 };
 
 module.exports = (passport) => {
 	passport.use(
 		new LocalStrategy((email, password, done) => {
-			users
-				.find({ email: email })
-				.select({
-					email: 1,
-					accountType: 1,
-					password: 1,
-					lastLogin: 1,
-					firstName: 1,
-					lastName: 1,
-				})
-				.then((user) => {
-					if (user) {
-						examiner
-							.find({ userId: user._id })
-							.select({ accountStatus: 1 })
-							.then((userData) => {
-								if (user.accountType === 'examiner') {
-									if (userData.accountStatus === 'pending') {
-										return done(null, false, {
-											message: 'Account not approved',
-										});
-									} else if (userData.accountStatus === 'declined') {
-										return done(null, false, {
-											message: 'Account has been closed',
-										});
-									} else {
-										return comparePassword(password, user, done);
-									}
-								} else if (
-									user.accountType === 'admin' ||
-									user.accountType === 'student'
-								) {
-									return comparePassword(password, user, done);
-								}
+			users.find({ email: email }).then((user) => {
+				if (user) {
+					if (user.userType === APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER) {
+						if (user.status === APP_DEFAULTS.ACCOUNT_STATUS.PENDING) {
+							return done(null, false, {
+								...RESPONSE_MESSAGES.ACCOUNT_STATUS.PENDING,
 							});
-					} else {
-						return done(null, false, {
-							message: 'Incorrect credentials',
-						});
+						} else if (user.status === APP_DEFAULTS.ACCOUNT_STATUS.DECLINED) {
+							return done(null, false, {
+								...RESPONSE_MESSAGES.ACCOUNT_STATUS.DECLINED,
+							});
+						} else {
+							return comparePassword(password, user, done);
+						}
+					} else if (
+						user.userType === APP_DEFAULTS.ACCOUNT_TYPE.STUDENT ||
+						APP_DEFAULTS.ACCOUNT_TYPE.ADMIN
+					) {
+						return comparePassword(password, user, done);
 					}
-				});
+				} else {
+					return done(null, false, {
+						...RESPONSE_MESSAGES.INCORRECT_CREDENTIALS,
+					});
+				}
+			});
 		})
 	);
 
@@ -77,9 +64,7 @@ module.exports = (passport) => {
 	passport.use(
 		new JwtStrategy(
 			{
-				jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(
-					'Authorization'
-				),
+				jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken('Authorization'),
 				secretOrKey: 'gRG9lIiwiaWF0IjoxNTE2MjM5',
 			},
 			function (jwtPayload, cb) {

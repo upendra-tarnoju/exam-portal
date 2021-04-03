@@ -7,7 +7,7 @@ const user = {
 			let response = await userHandler.saveUserDetails(userData);
 			res.status(response.status).send(response.data);
 		} catch (err) {
-			console.log(err);
+			throw err;
 		}
 	},
 

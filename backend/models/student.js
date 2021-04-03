@@ -112,8 +112,8 @@ class Students {
 		]);
 	}
 
-	findAll = () => {
-		return this.studentModel.find();
+	countStudents = (criteria) => {
+		return this.studentModel.countDocuments(criteria);
 	};
 
 	findStudentExamDetails = (userId, examId) => {
