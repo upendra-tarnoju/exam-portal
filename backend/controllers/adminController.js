@@ -30,15 +30,17 @@ const admin = {
 					pageSize
 				);
 
-				if (examiner.length === 0) {
+				if (response.data.length === 0) {
 					let response =
 						type === APP_DEFAULTS.EXAMINER_QUERY_TYPE.DECLINED
 							? RESPONSE_MESSAGES.EXAMINER_COUNT.DECLINED
 							: RESPONSE_MESSAGES.EXAMINER_COUNT.PENDING;
 
-					res.status(response.STATUS_CODE).send({ msg: response.MSG });
+					res
+						.status(response.STATUS_CODE)
+						.send({ msg: response.MSG, examiners: [] });
 				} else {
-					res.status(response.status).send(response.data);
+					res.status(response.status).send({ examiners: response.data });
 				}
 			}
 		} catch (err) {

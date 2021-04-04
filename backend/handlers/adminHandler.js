@@ -6,7 +6,7 @@ const RESPONSE_MESSAGES = require('../config/response-messages');
 const admin = {
 	getExaminerDetails: async (accountStatus, pageIndex, pageSize) => {
 		pageIndex = pageIndex * pageSize;
-		let examinerDetails = await examiner.findByAccountStatus(
+		let examinerDetails = await users.findByAccountStatus(
 			accountStatus,
 			pageIndex,
 			pageSize

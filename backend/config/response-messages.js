@@ -26,11 +26,11 @@ module.exports = {
 	EXAMINER_COUNT: {
 		DECLINED: {
 			STATUS_CODE: 200,
-			MSG: 'No declined examiner found',
+			MSG: 'There are no examiners in declined section',
 		},
 		PENDING: {
 			STATUS_CODE: 200,
-			MSG: 'No pending examiner found',
+			MSG: 'There are no examiners in pending section',
 		},
 	},
 	EXAMINER_STATUS: {

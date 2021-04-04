@@ -96,6 +96,49 @@ class Users {
 	countDocuments = (criteria) => {
 		return this.userModel.countDocuments(criteria);
 	};
+
+	findByAccountStatus = (accountStatus, pageIndex, pageSize) => {
+		return this.userModel
+			.aggregate([
+				{ $match: { status: accountStatus } },
+				{
+					$project: {
+						firstName: {
+							$concat: [
+								{ $toUpper: { $substrCP: ['$firstName', 0, 1] } },
+								{
+									$substrCP: [
+										'$firstName',
+										1,
+										{
+											$subtract: [{ $strLenCP: '$firstName' }, 1],
+										},
+									],
+								},
+							],
+						},
+						lastName: {
+							$concat: [
+								{ $toUpper: { $substrCP: ['$lastName', 0, 1] } },
+								{
+									$substrCP: [
+										'$lastName',
+										1,
+										{
+											$subtract: [{ $strLenCP: '$lastName' }, 1],
+										},
+									],
+								},
+							],
+						},
+						email: 1,
+						status: 1,
+					},
+				},
+			])
+			.skip(pageIndex)
+			.limit(pageSize);
+	};
 }
 
 module.exports = new Users();
