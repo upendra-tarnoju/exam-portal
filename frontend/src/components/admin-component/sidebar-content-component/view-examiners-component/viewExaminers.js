@@ -32,14 +32,12 @@ class ViewExaminer extends React.Component {
 		this.adminService
 			.getAllExaminerCount({ type: 'examinerCount' })
 			.then((res) => {
-				let examinerCount = res.data;
-				let approvedExaminer = examinerCount.find(
+				let examiners = res.data;
+				let approvedExaminer = examiners.find(
 					(data) => data._id === 'approved'
 				);
-				let pendingExaminer = examinerCount.find(
-					(data) => data._id === 'pending'
-				);
-				let declinedExaminer = examinerCount.find(
+				let pendingExaminer = examiners.find((data) => data._id === 'pending');
+				let declinedExaminer = examiners.find(
 					(data) => data._id === 'declined'
 				);
 				this.setState({
@@ -86,10 +84,10 @@ class ViewExaminer extends React.Component {
 	handleCardClick = (type, pageNo) => {
 		let { pageIndex, pageSize, examinerCount } = this.state;
 		this.adminService
-			.getExaminersCount(type, pageIndex, pageSize)
+			.viewLatestPendingExaminer(type, pageIndex, pageSize)
 			.then((res) => {
 				this.setState({
-					examinerData: res.data.examiner,
+					examinerData: res.data.examiners,
 					accountStatus: type,
 					pageCount: Math.ceil(examinerCount[type] / pageSize),
 					page: pageNo,
@@ -132,9 +130,9 @@ class ViewExaminer extends React.Component {
 		let examiners = examinerData.map((examiner, index) => (
 			<tr key={examiner._id}>
 				<th scope='row'>{pageIndex * pageSize + index + 1}</th>
-				<td>{examiner.data.firstName}</td>
-				<td>{examiner.data.lastName}</td>
-				<td>{examiner.data.email}</td>
+				<td>{examiner.firstName}</td>
+				<td>{examiner.lastName}</td>
+				<td>{examiner.email}</td>
 				<td>
 					{accountStatus === 'pending' || accountStatus === 'approved' ? (
 						<button
