@@ -9,11 +9,11 @@ class AdminService {
 		this.userService = new UserService();
 	}
 
-	getAllExaminer = (params) => {
+	getAllExaminerCount = (params) => {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'get',
-			url: `${process.env.REACT_APP_BASE_URL}/${this.adminUrl}`,
+			url: `${process.env.REACT_APP_BASE_URL}/${this.dashboardUrl}/examinerCount`,
 			params: params,
 			headers: {
 				'Content-Type': 'application/json',
@@ -22,7 +22,7 @@ class AdminService {
 		});
 	};
 
-	getExaminersCount = (type, pageIndex, pageSize) => {
+	viewLatestPendingExaminer = (type, pageIndex, pageSize) => {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'get',

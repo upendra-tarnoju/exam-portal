@@ -104,12 +104,9 @@ class AdminDashboard extends React.Component {
 
 	viewLatestExaminer(pageIndex, pageSize) {
 		this.adminService
-			.getAllExaminer({
-				type: 'latestExaminer',
-				pageIndex: pageIndex,
-				pageSize: pageSize,
-			})
+			.viewLatestPendingExaminer('latestExaminer', pageIndex, pageSize)
 			.then((response) => {
+				console.log(response.data.examiners);
 				this.setState((prevState) => ({
 					latestExaminers: response.data.examiners,
 					latestExaminersPage: {
@@ -172,15 +169,19 @@ class AdminDashboard extends React.Component {
 		let maxDate = new Date(minDate.getFullYear(), minDate.getMonth() + 1, 0);
 		this.viewExamMonthData(minDate, maxDate);
 
-		this.adminService.getAllExaminer({ type: 'examinerCount' }).then((res) => {
+		this.adminService.getAllExaminerCount().then((res) => {
 			this.setState({
 				examinerPieChart: {
-					series: Object.values(res.data),
+					series: res.data.map((value) => {
+						return value.count;
+					}),
 					options: {
-						labels: Object.keys(res.data).map(
-							(data) =>
-								data.slice(0, 1).toUpperCase() + data.slice(1, data.length)
-						),
+						labels: res.data.map((value) => {
+							return (
+								value._id.slice(0, 1).toUpperCase() +
+								value._id.slice(1, value._id.length)
+							);
+						}),
 					},
 				},
 			});
@@ -221,6 +222,7 @@ class AdminDashboard extends React.Component {
 			totalExams,
 			totalStudents,
 			totalEarning,
+			latestExaminers,
 		} = this.state;
 
 		let { classes } = this.props;
@@ -394,7 +396,7 @@ class AdminDashboard extends React.Component {
 										</TableRow>
 									</TableHead>
 									<TableBody>
-										{this.state.latestExaminers.map((data) => (
+										{latestExaminers.map((data) => (
 											<TableRow key={data._id}>
 												<TableCell component='th' scope='row'>
 													{factories.capitalizeName(data.firstName)}{' '}
