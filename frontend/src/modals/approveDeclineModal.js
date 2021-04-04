@@ -12,10 +12,16 @@ const ApproveDeclineModal = ({
 }) => {
 	const approveOrDeclineExaminer = () => {
 		let adminService = new AdminService();
-		adminService.approveOrDeclineExaminer(modalData).then((res) => {
-			closeModal(false);
-			handleSnackBar(true, res.data);
-		});
+		adminService
+			.approveOrDeclineExaminer({
+				examinerId: modalData.id,
+				accountStatus: modalData.type,
+			})
+			.then((res) => {
+				closeModal(false);
+				console.log(res.data);
+				handleSnackBar(true, res.data);
+			});
 	};
 	return (
 		<Modal

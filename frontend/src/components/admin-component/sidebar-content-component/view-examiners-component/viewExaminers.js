@@ -29,15 +29,27 @@ class ViewExaminer extends React.Component {
 	}
 
 	componentDidMount() {
-		this.adminService.getAllExaminer({ type: 'examinerCount' }).then((res) => {
-			this.setState({
-				examinerCount: {
-					approved: res.data.approved,
-					pending: res.data.pending,
-					declined: res.data.declined,
-				},
+		this.adminService
+			.getAllExaminerCount({ type: 'examinerCount' })
+			.then((res) => {
+				let examinerCount = res.data;
+				let approvedExaminer = examinerCount.find(
+					(data) => data._id === 'approved'
+				);
+				let pendingExaminer = examinerCount.find(
+					(data) => data._id === 'pending'
+				);
+				let declinedExaminer = examinerCount.find(
+					(data) => data._id === 'declined'
+				);
+				this.setState({
+					examinerCount: {
+						approved: approvedExaminer ? approvedExaminer.count : 0,
+						pending: pendingExaminer ? pendingExaminer.count : 0,
+						declined: declinedExaminer ? declinedExaminer.count : 0,
+					},
+				});
 			});
-		});
 	}
 
 	handleModal = (status) => {

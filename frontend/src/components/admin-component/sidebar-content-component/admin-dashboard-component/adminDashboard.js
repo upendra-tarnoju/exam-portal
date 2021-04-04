@@ -106,7 +106,6 @@ class AdminDashboard extends React.Component {
 		this.adminService
 			.viewLatestPendingExaminer('latestExaminer', pageIndex, pageSize)
 			.then((response) => {
-				console.log(response.data.examiners);
 				this.setState((prevState) => ({
 					latestExaminers: response.data.examiners,
 					latestExaminersPage: {
@@ -210,7 +209,7 @@ class AdminDashboard extends React.Component {
 	handleSnackBar = (status, data) => {
 		this.setState({
 			latestExaminers: this.state.latestExaminers.filter(
-				(examiner) => examiner.examinerData._id !== data._id
+				(examiner) => examiner._id !== data._id
 			),
 			snackBar: { show: status, msg: data.msg },
 		});
@@ -409,8 +408,8 @@ class AdminDashboard extends React.Component {
 															this.approveOrDeclineExaminers(
 																data.firstName,
 																data.lastName,
-																'approve',
-																data.examinerData._id
+																'approved',
+																data._id
 															);
 														}}
 													>
@@ -422,8 +421,8 @@ class AdminDashboard extends React.Component {
 															this.approveOrDeclineExaminers(
 																data.firstName,
 																data.lastName,
-																'decline',
-																data.userDataId
+																'declined',
+																data._id
 															);
 														}}
 													>
