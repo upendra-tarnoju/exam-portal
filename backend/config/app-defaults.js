@@ -8,6 +8,13 @@ const appDefaults = {
 		PENDING: 'pending',
 		DECLINED: 'declined',
 	},
+	EXAMINER_QUERY_TYPE: {
+		EXAMINER_COUNT: 'examinerCount',
+		LATEST_EXAMINER: 'latestExaminer',
+		APPROVED: 'approved',
+		PENDING: 'pending',
+		DECLINED: 'declined',
+	},
 };
 
 module.exports = appDefaults;

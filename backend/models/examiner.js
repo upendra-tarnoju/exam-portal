@@ -68,10 +68,6 @@ class Examiner {
 			.skip(pageIndex)
 			.limit(pageSize);
 	};
-
-	countExaminers = (criteria) => {
-		return this.examinerModel.countDocuments(criteria);
-	};
 }
 
 module.exports = new Examiner();

@@ -1,16 +1,18 @@
 const { adminHandler } = require('../handlers');
+const APP_DEFAULTS = require('../config/app-defaults');
 
 const admin = {
+	examinerStatusCount: async (req, res) => {
+		let examinerCount = await adminHandler.getExaminerCount();
+		res.status(200).send(examinerCount);
+	},
 	getExaminerDetails: async (req, res) => {
 		let queryType = req.query.type;
 		let pageIndex = parseInt(req.query.pageIndex);
 		let pageSize = parseInt(req.query.pageSize);
 
 		let msg = '';
-		if (queryType === 'examinerCount') {
-			let examinerCount = await adminHandler.getExaminerCount();
-			res.status(200).send(examinerCount);
-		} else if (queryType === 'latestExaminer') {
+		if (queryType === APP_DEFAULTS.EXAMINER_QUERY_TYPE.LATEST_EXAMINER) {
 			let latestPendingExaminers = await adminHandler.getLatestPendingExaminers(
 				pageIndex,
 				pageSize

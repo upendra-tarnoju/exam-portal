@@ -1,5 +1,6 @@
 const { users, examiner, student, exam } = require('../models');
 const { sender, transporter } = require('../config/mail');
+const APP_DEFAULTS = require('../config/app-defaults');
 
 const admin = {
 	getExaminerDetails: async (accountStatus, pageIndex, pageSize) => {
@@ -13,18 +14,10 @@ const admin = {
 	},
 
 	getExaminerCount: async () => {
-		let examinerCount = {};
-		let examinerData = await users.findByAccountType('examiner');
-		examinerCount['pending'] = examinerData.filter(
-			(data) => data.examiner.accountStatus == 'pending'
-		).length;
-		examinerCount['declined'] = examinerData.filter(
-			(data) => data.examiner.accountStatus == 'declined'
-		).length;
-		examinerCount['approved'] = examinerData.filter(
-			(data) => data.examiner.accountStatus == 'approved'
-		).length;
-		return examinerCount;
+		let examinerData = await users.findByUserType(
+			APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER
+		);
+		return examinerData;
 	},
 
 	approveOrDeclineExaminer: async (examinerId, accountStatus) => {
@@ -58,14 +51,20 @@ const admin = {
 	getDashboardCardDetails: async () => {
 		try {
 			let criteria = {};
+			criteria = { userType: APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER };
+			let totalExaminers = await users.countDocuments(criteria);
 
-			let totalExaminers = await examiner.countExaminers(criteria);
+			criteria = {};
 			let totalExams = await exam.countExams(criteria);
 			let totalStudents = await student.countStudents(criteria);
 
 			return {
 				status: 200,
-				data: { totalExaminers, totalExams, totalStudents },
+				data: {
+					totalExaminers,
+					totalExams,
+					totalStudents,
+				},
 			};
 		} catch (err) {
 			return { status: 400, data: { err } };

@@ -1,4 +1,5 @@
 const { users } = require('../schemas');
+const APP_DEFAULTS = require('../config/app-defaults');
 
 class Users {
 	constructor() {
@@ -14,25 +15,11 @@ class Users {
 		return userData.save();
 	};
 
-	findByAccountType = (accountType) => {
+	findByUserType = (userType) => {
 		return this.userModel.aggregate([
-			{
-				$match: { accountType: accountType },
-			},
-			{
-				$lookup: {
-					from: 'examiners',
-					localField: 'userDataId',
-					foreignField: '_id',
-					as: 'examiner',
-				},
-			},
-			{
-				$unwind: '$examiner',
-			},
-			{
-				$project: { 'examiner.accountStatus': 1 },
-			},
+			{ $match: { userType } },
+			{ $group: { _id: '$status', count: { $sum: 1 } } },
+			{ $sort: { _id: 1 } },
 		]);
 	};
 
@@ -48,10 +35,7 @@ class Users {
 		return this.userModel.findOne({
 			$and: [
 				{
-					$or: [
-						{ mobileNumber: data.mobileNumber },
-						{ email: data.email },
-					],
+					$or: [{ mobileNumber: data.mobileNumber }, { email: data.email }],
 				},
 				{
 					accountType: data.accountType,
@@ -73,35 +57,14 @@ class Users {
 			{
 				$match: {
 					$and: [
-						{ accountType: 'examiner' },
-						{
-							createdAt: {
-								$gt: new Date(Date.now() - 24 * 60 * 60 * 1000),
-							},
-						},
+						{ userType: APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER },
+						{ createdAt: { $gt: new Date(Date.now() - 24 * 60 * 60 * 1000) } },
 					],
 				},
 			},
 			{
-				$lookup: {
-					from: 'examiners',
-					let: { studentId: '$userDataId' },
-					pipeline: [
-						{
-							$match: {
-								$expr: {
-									$eq: ['$_id', '$$studentId'],
-								},
-								accountStatus: 'pending',
-							},
-						},
-						{ $project: { _id: 1 } },
-					],
-					as: 'examinerData',
-				},
+				$project: { firstName: 1, lastName: 1 },
 			},
-			{ $unwind: '$examinerData' },
-			{ $project: { firstName: 1, lastName: 1, 'examinerData._id': 1 } },
 		]);
 	}
 
@@ -127,6 +90,10 @@ class Users {
 			{ $unwind: '$examData' },
 			{ $project: { 'examData.exam': 1 } },
 		]);
+	};
+
+	countDocuments = (criteria) => {
+		return this.userModel.countDocuments(criteria);
 	};
 }
 

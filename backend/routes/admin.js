@@ -2,6 +2,8 @@ const express = require('express');
 const passport = require('passport');
 
 const { adminController } = require('../controllers');
+const { validatorMiddleware } = require('../middleware');
+const { AdminValidator } = require('../validator');
 
 module.exports = () => {
 	const router = express.Router();
@@ -9,6 +11,7 @@ module.exports = () => {
 	router.get(
 		'/examiner',
 		passport.authenticate('jwt'),
+		validatorMiddleware(AdminValidator.ADMIN_EXAMINER_DETAILS),
 		adminController.getExaminerDetails
 	);
 
@@ -28,6 +31,12 @@ module.exports = () => {
 		'/dashboard/exam',
 		passport.authenticate('jwt'),
 		adminController.getUnexpiredExamDetails
+	);
+
+	router.get(
+		'/dashboard/examinerCount',
+		passport.authenticate('jwt'),
+		adminController.examinerStatusCount
 	);
 
 	return router;
