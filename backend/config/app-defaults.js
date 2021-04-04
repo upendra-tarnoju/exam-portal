@@ -7,6 +7,7 @@ const appDefaults = {
 	ACCOUNT_STATUS: {
 		PENDING: 'pending',
 		DECLINED: 'declined',
+		APPROVED: 'approved',
 	},
 	EXAMINER_QUERY_TYPE: {
 		EXAMINER_COUNT: 'examinerCount',

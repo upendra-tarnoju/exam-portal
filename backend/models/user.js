@@ -59,6 +59,7 @@ class Users {
 					$and: [
 						{ userType: APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER },
 						{ createdAt: { $gt: new Date(Date.now() - 24 * 60 * 60 * 1000) } },
+						{ status: APP_DEFAULTS.ACCOUNT_STATUS.PENDING },
 					],
 				},
 			},

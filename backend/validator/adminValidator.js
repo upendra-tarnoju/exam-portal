@@ -1,4 +1,4 @@
-const { query } = require('express-validator');
+const { query, body } = require('express-validator');
 const APP_DEFAULTS = require('../config/app-defaults');
 
 module.exports = {
@@ -14,6 +14,9 @@ module.exports = {
 				APP_DEFAULTS.EXAMINER_QUERY_TYPE.PENDING,
 				APP_DEFAULTS.EXAMINER_QUERY_TYPE.DECLINED,
 			])
-			.withMessage('Invalid type passed in type'),
+			.withMessage('Invalid value for type'),
+	],
+	APPROVE_DECLINE_EXAMINER: [
+		body('examinerId').not().isEmpty().withMessage('Required examiner id'),
 	],
 };

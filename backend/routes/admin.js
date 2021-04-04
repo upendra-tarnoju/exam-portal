@@ -18,7 +18,8 @@ module.exports = () => {
 	router.patch(
 		'/examiner',
 		passport.authenticate('jwt'),
-		adminController.saveExaminerDetails
+		validatorMiddleware(AdminValidator.APPROVE_DECLINE_EXAMINER),
+		adminController.approveOrDeclineExaminer
 	);
 
 	router.get(

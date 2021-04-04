@@ -1,50 +1,62 @@
 const { users, examiner, student, exam } = require('../models');
 const { sender, transporter } = require('../config/mail');
 const APP_DEFAULTS = require('../config/app-defaults');
+const RESPONSE_MESSAGES = require('../config/response-messages');
 
 const admin = {
 	getExaminerDetails: async (accountStatus, pageIndex, pageSize) => {
 		pageIndex = pageIndex * pageSize;
-		let data = await examiner.findByAccountStatus(
+		let examinerDetails = await examiner.findByAccountStatus(
 			accountStatus,
 			pageIndex,
 			pageSize
 		);
-		return data;
+		return { status: 200, data: examinerDetails };
 	},
 
 	getExaminerCount: async () => {
-		let examinerData = await users.findByUserType(
-			APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER
-		);
-		return examinerData;
+		try {
+			let examinerData = await users.findByUserType(
+				APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER
+			);
+			return { status: 200, data: examinerData };
+		} catch (err) {
+			throw err;
+		}
 	},
 
-	approveOrDeclineExaminer: async (examinerId, accountStatus) => {
-		let updatedExaminer = await examiner
-			.update(examinerId, {
-				accountStatus: accountStatus,
-			})
-			.select({ accountStatus: 1 });
-		let userData = await users
-			.find({ userDataId: updatedExaminer._id })
-			.select({ email: 1 });
+	approveOrDeclineExaminer: async (userId, accountStatus) => {
+		let updatedExaminer = await users.update(userId, {
+			status: accountStatus,
+		});
 
 		let mailOptions = {
-			to: userData.email,
+			to: updatedExaminer.email,
 			from: sender,
 			subject: 'Examiner confirmation mail',
-			text: `Your email id ${userData.email} has been ${
-				updatedExaminer.accountStatus === 'approved'
+			text: `Your email id ${updatedExaminer.email} has been ${
+				updatedExaminer.status === APP_DEFAULTS.ACCOUNT_STATUS.APPROVED
 					? 'successfully registered'
 					: 'declined'
 			}  as examiner`,
 		};
+
 		transporter.sendMail(mailOptions);
+
+		let response;
+		if (updatedExaminer.status === APP_DEFAULTS.ACCOUNT_STATUS.DECLINED) {
+			response = RESPONSE_MESSAGES.EXAMINER_STATUS.DECLINED;
+		} else {
+			response = RESPONSE_MESSAGES.EXAMINER_STATUS.APPROVED;
+		}
+
 		return {
-			msg: `Examiner ${updatedExaminer.accountStatus}`,
-			accountStatus: updatedExaminer.accountStatus,
-			_id: updatedExaminer._id,
+			status: response.STATUS_CODE,
+			data: {
+				msg: response.MSG,
+				accountStatus: updatedExaminer.status,
+				_id: updatedExaminer._id,
+			},
 		};
 	},
 
@@ -77,14 +89,21 @@ const admin = {
 	},
 
 	getLatestPendingExaminers: async (pageIndex, pageSize) => {
-		pageIndex = pageIndex * pageSize;
-		let data = await users
-			.findLatest24HoursExaminers()
-			.skip(pageIndex)
-			.limit(pageSize);
+		try {
+			pageIndex = pageIndex * pageSize;
+			let pendingExaminers = await users
+				.findLatest24HoursExaminers()
+				.skip(pageIndex)
+				.limit(pageSize);
 
-		let allExaminers = await users.findLatest24HoursExaminers();
-		return { count: allExaminers.length, examiners: data };
+			let allExaminers = await users.findLatest24HoursExaminers();
+			return {
+				status: 200,
+				data: { count: allExaminers.length, examiners: pendingExaminers },
+			};
+		} catch (err) {
+			throw err;
+		}
 	},
 };
 

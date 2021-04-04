@@ -23,4 +23,24 @@ module.exports = {
 		STATUS_CODE: 403,
 		MSG: 'Incorrect credentials',
 	},
+	EXAMINER_COUNT: {
+		DECLINED: {
+			STATUS_CODE: 200,
+			MSG: 'No declined examiner found',
+		},
+		PENDING: {
+			STATUS_CODE: 200,
+			MSG: 'No pending examiner found',
+		},
+	},
+	EXAMINER_STATUS: {
+		APPROVED: {
+			STATUS_CODE: 200,
+			MSG: 'Examiner has been approved',
+		},
+		DECLINED: {
+			STATUS_CODE: 200,
+			MSG: 'Examiner has been declined',
+		},
+	},
 };
