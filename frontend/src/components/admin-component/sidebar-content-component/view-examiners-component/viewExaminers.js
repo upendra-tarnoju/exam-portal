@@ -143,9 +143,9 @@ class ViewExaminer extends React.Component {
 							title='Decline'
 							onClick={() => {
 								this.approveOrDeclineExaminers(
-									examiner.data.firstName,
-									examiner.data.lastName,
-									'decline',
+									examiner.firstName,
+									examiner.lastName,
+									'declined',
 									examiner._id
 								);
 							}}
@@ -162,9 +162,9 @@ class ViewExaminer extends React.Component {
 							title='Approve'
 							onClick={() => {
 								this.approveOrDeclineExaminers(
-									examiner.data.firstName,
-									examiner.data.lastName,
-									'approve',
+									examiner.firstName,
+									examiner.lastName,
+									'approved',
 									examiner._id
 								);
 							}}
