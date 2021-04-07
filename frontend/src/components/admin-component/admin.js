@@ -7,7 +7,7 @@ import Navbar from '../header/navbar';
 
 const Admin = (props) => {
 	return (
-		<div>
+		<div className='h-100'>
 			<Navbar {...props} />
 			<AdminSidebar />
 			<AdminSidebarContent />
