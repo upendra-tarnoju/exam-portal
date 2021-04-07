@@ -7,14 +7,9 @@ import * as ActionType from '../../../action';
 import AdminDashboard from './admin-dashboard-component/adminDashboard';
 
 const AdminSidebarContent = (props) => {
-	let handleSidebar = () => {
-		let toggle = props.toggle;
-		props.setSidebar(!toggle);
-	};
-
 	return (
 		<div className='bgGrey'>
-			<div className='h-100 mt-5'>
+			<div className='h-100'>
 				<Switch>
 					<Route exact path='/admin' component={AdminDashboard} />
 					<Route path='/admin/examiner' component={ViewExaminers} />

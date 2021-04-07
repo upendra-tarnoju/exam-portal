@@ -211,7 +211,6 @@ class ViewExaminer extends React.Component {
 			examinerData,
 			approveDeclineModal,
 			snackBar,
-			accountStatus,
 		} = this.state;
 
 		return (

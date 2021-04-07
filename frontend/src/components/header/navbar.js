@@ -7,7 +7,7 @@ import {
 	makeStyles,
 	IconButton,
 } from '@material-ui/core';
-import { MoreVert, Menu } from '@material-ui/icons';
+import { MoreVert, Menu, ChevronLeft } from '@material-ui/icons';
 import { connect } from 'react-redux';
 
 import AppbarCollapse from './appbarCollapse';
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 
 	navbarShift: {
-		width: 'calc(100% - 240px)',
+		// width: 'calc(100% - 240px)',
 		transition: theme.transitions.create(['width', 'margin'], {
 			easing: theme.transitions.easing.sharp,
 			duration: theme.transitions.duration.enteringScreen,
@@ -70,7 +70,7 @@ const Navbar = (props) => {
 
 	return (
 		<AppBar
-			position={props.authenticated ? 'fixed' : 'static'}
+			position='static'
 			className={clsx(classes.navbar, {
 				[classes.navbarShift]: props.toggle,
 			})}
@@ -80,7 +80,11 @@ const Navbar = (props) => {
 					<IconButton color='primary' onClick={handleSidebar}>
 						<Menu />
 					</IconButton>
-				) : null}
+				) : (
+					<IconButton onClick={handleSidebar}>
+						<ChevronLeft />
+					</IconButton>
+				)}
 
 				<img
 					src={require('../../assets/logo.png')}
