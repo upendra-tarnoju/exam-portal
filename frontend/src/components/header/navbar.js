@@ -76,15 +76,17 @@ const Navbar = (props) => {
 			})}
 		>
 			<Toolbar>
-				{props.authenticated && !props.toggle ? (
-					<IconButton color='primary' onClick={handleSidebar}>
-						<Menu />
-					</IconButton>
-				) : (
-					<IconButton onClick={handleSidebar}>
-						<ChevronLeft />
-					</IconButton>
-				)}
+				{props.authenticated ? (
+					!props.toggle ? (
+						<IconButton color='primary' onClick={handleSidebar}>
+							<Menu />
+						</IconButton>
+					) : (
+						<IconButton onClick={handleSidebar}>
+							<ChevronLeft />
+						</IconButton>
+					)
+				) : null}
 
 				<img
 					src={require('../../assets/logo.png')}

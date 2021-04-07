@@ -1,9 +1,60 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
+import {
+	Drawer,
+	List,
+	ListItem,
+	ListItemIcon,
+	ListItemText,
+	IconButton,
+} from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
+import {
+	ChevronLeft,
+	Dashboard,
+	Person,
+	Settings,
+	MenuBook,
+} from '@material-ui/icons';
 
 import UserService from '../../../services/userApi';
-import * as actionTypes from '../../../action';
+import * as ActionType from '../../../action';
+
+const useStyles = (theme) => ({
+	drawer: {
+		width: '240px',
+		flexShrink: 0,
+		whiteSpace: 'nowrap',
+	},
+	drawerOpen: {
+		width: '240px',
+		transition: theme.transitions.create('width', {
+			easing: theme.transitions.easing.sharp,
+			duration: theme.transitions.duration.enteringScreen,
+		}),
+	},
+	drawerClose: {
+		transition: theme.transitions.create('width', {
+			easing: theme.transitions.easing.sharp,
+			duration: theme.transitions.duration.leavingScreen,
+		}),
+		overflowX: 'hidden',
+		width: theme.spacing(7) + 1,
+		[theme.breakpoints.up('sm')]: {
+			width: theme.spacing(9) + 1,
+		},
+	},
+	toolbar: {
+		...theme.mixins.toolbar,
+	},
+	closeButton: {
+		display: 'flex',
+		justifyContent: 'flex-end',
+		marginTop: '10px',
+	},
+});
 
 class ExaminerSidebar extends Component {
 	constructor(props) {
@@ -24,85 +75,111 @@ class ExaminerSidebar extends Component {
 	}
 
 	render() {
+		let { classes, toggle } = this.props;
+		let { selectedTab } = this.state;
+
 		return (
-			<div className='bg-dark' id='sidebar-wrapper'>
-				<div className='text-center pt-4'>
-					<img
-						alt='logo'
-						src={require('../../../assets/logo.png')}
-						className='logo'
-					/>
-					<h4 className='text-center text-light font-weight-normal'>
-						Examin
-					</h4>
+			<Drawer
+				variant='persistent'
+				anchor='left'
+				open={this.props.toggle}
+				open={this.props.toggle}
+				className={clsx(classes.drawer, {
+					[classes.drawerOpen]: toggle,
+					[classes.drawerClose]: !toggle,
+				})}
+				classes={{
+					paper: clsx({
+						[classes.drawerOpen]: toggle,
+						[classes.drawerClose]: !toggle,
+					}),
+				}}
+			>
+				<div className={classes.toolbar}>
+					<div className={classes.closeButton}>
+						<IconButton
+							onClick={() => {
+								this.props.setSidebar(!toggle);
+							}}
+						>
+							<ChevronLeft />
+						</IconButton>
+					</div>
+					<List>
+						<ListItem
+							button
+							component='a'
+							href='/examiner/exam'
+							selected={selectedTab === 'exam'}
+						>
+							<ListItemIcon>
+								<MenuBook />
+							</ListItemIcon>
+							<ListItemText primary='Exam' />
+						</ListItem>
+						<ListItem
+							button
+							component='a'
+							href='/examiner/course'
+							selected={selectedTab === 'course'}
+						>
+							<ListItemIcon>
+								<Dashboard />
+							</ListItemIcon>
+							<ListItemText primary='Course' />
+						</ListItem>
+
+						<ListItem
+							button
+							component='a'
+							href='/examiner/students'
+							selected={selectedTab === 'students'}
+						>
+							<ListItemIcon>
+								<Person />
+							</ListItemIcon>
+							<ListItemText primary='Student' />
+						</ListItem>
+
+						<ListItem
+							button
+							component='a'
+							href='/examiner/settings'
+							selected={selectedTab === 'settings'}
+						>
+							<ListItemIcon>
+								<Settings />
+							</ListItemIcon>
+							<ListItemText primary='Settings' />
+						</ListItem>
+					</List>
 				</div>
-				<div className='list-group list-group-flush'>
-					<Link
-						to='/examiner/exam'
-						className={`list-group-item list-group-item-action bg-dark adminIcon ${
-							this.state.selectedTab === 'exam'
-								? 'text-white'
-								: 'text-white-50'
-						}`}
-					>
-						<i className='fa fa-book'></i> Exam
-					</Link>
-					<Link
-						to='/examiner/course'
-						className={`list-group-item list-group-item-action bg-dark adminIcon ${
-							this.state.selectedTab === 'course'
-								? 'text-white'
-								: 'text-white-50'
-						}`}
-					>
-						<i className='fa fa-certificate'></i> Course
-					</Link>
-					<Link
-						to='/examiner/students'
-						className={`list-group-item list-group-item-action bg-dark adminIcon ${
-							this.state.selectedTab === 'students'
-								? 'text-white'
-								: 'text-white-50'
-						}`}
-					>
-						<i className='fa fa-child'></i> Students
-					</Link>
-					<Link
-						to='/examiner/setting'
-						className={`list-group-item list-group-item-action bg-dark adminIcon ${
-							this.state.selectedTab === 'setting'
-								? 'text-white'
-								: 'text-white-50'
-						}`}
-					>
-						<i className='fa fa-cog'></i> Settings
-					</Link>
-					<a
-						href='/login'
-						onClick={() => {
-							this.userService.removeCookie();
-							this.props.setAuthenticatedUser(false);
-							this.props.history.push('/login');
-						}}
-						className='list-group-item cursor-pointer list-group-item-action bg-dark text-white-50'
-					>
-						<i className='fa fa-sign-out'></i> Sign Out
-					</a>
-				</div>
-			</div>
+			</Drawer>
 		);
 	}
 }
 
+const mapStateToProps = (state) => {
+	return {
+		toggle: state.adminReducer.sidebarToggle,
+		name: state.adminReducer.name,
+	};
+};
+
 const mapDispatchToProps = (dispatch) => {
 	return {
-		setAuthenticatedUser: (authenticatedState) => {
+		setSidebar: (toggle) => {
 			dispatch({
-				type: actionTypes.SET_AUTHENTICATED_USER,
-				authenticated: authenticatedState,
+				type: ActionType.COLLAPSE_SIDEBAR,
+				toggle: toggle,
 			});
 		},
 	};
 };
 
-export default withRouter(connect(null, mapDispatchToProps)(ExaminerSidebar));
+export default withRouter(
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)(withStyles(useStyles)(ExaminerSidebar))
+);

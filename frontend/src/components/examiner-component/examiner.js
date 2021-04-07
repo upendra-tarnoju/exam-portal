@@ -1,22 +1,17 @@
 import React from 'react';
-import { connect } from 'react-redux';
 
 import ExaminerSidebar from './examiner-sidebar-component/examinerSidebar';
-import SidebarContent from './sidebar-content-component/sidebarContent';
+import SidebarContent from './sidebar-content-component/studentSidebarContent';
+import Navbar from '../header/navbar';
 
 const Examiner = (props) => {
 	return (
-		<div className={`d-flex ${props.toggle ? 'toggled' : ''}`} id='wrapper'>
+		<div className='h-100'>
+			<Navbar />
 			<ExaminerSidebar />
 			<SidebarContent />
 		</div>
 	);
 };
 
-const mapStateToProps = (state) => {
-	return {
-		toggle: state.adminReducer.sidebarToggle,
-	};
-};
-
-export default connect(mapStateToProps, null)(Examiner);
+export default Examiner;
