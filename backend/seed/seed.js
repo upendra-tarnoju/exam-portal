@@ -10,6 +10,7 @@ const {
 	question,
 	student,
 } = require('../models');
+const defaultCourses = require('./default-courses');
 const examinerSchema = require('../schemas/examiner');
 const courseSchema = require('../schemas/course');
 const examSchema = require('../schemas/exam');
@@ -26,29 +27,6 @@ mongoose.connect(url, (err, conn) => {
 		console.log('Mongoose Connection is Successful');
 	}
 });
-
-let courses = [
-	{ name: 'BArch', description: 'Bachelor of Architecture' },
-	{ name: 'BBA', description: 'Bachelor of Business Administration' },
-	{ name: 'BCE', description: 'Bachelor of Civil Engineering' },
-	{ name: 'BCE', description: 'Bachelor of Civil Engineering' },
-	{ name: 'BChE', description: 'Bachelor of Chemical Engineering' },
-	{ name: 'BCA', description: 'Bachelor of Computer Applications' },
-	{ name: 'BCom', description: 'Bachelor of Commerce' },
-	{ name: 'BHA', description: 'Bachelor in Hotel Administration' },
-	{ name: 'BE', description: 'Bachelor of Engineering' },
-	{ name: 'BEE', description: 'Bachelor of Electrical Engineering' },
-	{ name: 'BJ', description: 'Bachelor of Journalism' },
-	{ name: 'BM', description: 'Bachelor of Medicine' },
-	{ name: 'BMLT', description: 'Bachelor of Medical Lab Technology' },
-	{ name: 'BPEd', description: 'Bachelor of Physical Education' },
-	{ name: 'BSc', description: 'Bachelor of Science' },
-	{ name: 'BSW', description: 'Bachelor of Social Work' },
-	{ name: 'BT', description: 'Bachelor of Tourism' },
-	{ name: 'CEE', description: 'Civil Environmental Engineering' },
-	{ name: 'CSS', description: 'Computer Science and Systems Engineering' },
-	{ name: 'DAS', description: 'Doctor of Applied Science' },
-];
 
 let subjects = [
 	{ name: 'Accounting' },
@@ -149,10 +127,7 @@ async function createExaminers() {
 		let fakeUserData = createUserFakeData(examinerPassword, 'examiner');
 		let createdUser = await users.create(fakeUserData);
 
-		let fakeExaminerData = createExaminerFakeData(
-			createdUser._id,
-			'approved'
-		);
+		let fakeExaminerData = createExaminerFakeData(createdUser._id, 'approved');
 		let createdExaminer = await examiner.create(fakeExaminerData);
 
 		await users.update(createdUser._id, {
@@ -186,6 +161,16 @@ async function createExaminers() {
 		});
 	}
 	console.log('Created examiners');
+}
+
+async function createDefaultCourses() {
+	for (let i = 0; i < defaultCourses.length; i++) {
+		let defaultCourse = defaultCourses[i];
+		await course.create({
+			...defaultCourse,
+			defaultCourse: true,
+		});
+	}
 }
 
 async function createCourses() {
@@ -234,10 +219,7 @@ async function createExam() {
 				await exam.create({
 					subject: subjects[number].name,
 					course: course[0]._id,
-					examCode: `${subjects[number].name.slice(
-						0,
-						2
-					)}${faker.random.number({
+					examCode: `${subjects[number].name.slice(0, 2)}${faker.random.number({
 						min: 101,
 						max: 999,
 					})}`,
@@ -322,7 +304,8 @@ async function createSampleData() {
 	// await createAdmin();
 	// await createExaminers();
 	// await createCourses();
-	await createExam();
+	await createDefaultCourses();
+	// await createExam();
 	// await createQuestions();
 	// await createStudent();
 	mongoose.connection.close();
