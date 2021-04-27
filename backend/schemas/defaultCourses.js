@@ -2,13 +2,12 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const course = new Schema({
-	name: { type: String, required: true, trim: true },
+const defaultCourse = new Schema({
+	name: { type: String, trim: true },
 	description: { type: String, required: true, trim: true },
-	examinerId: { type: String },
 	createdAt: { type: Date, default: Date.now },
 	modifiedAt: { type: Date, default: Date.now },
-	defaultCourse: { type: Boolean, required: true },
+	courseId: { type: Schema.Types.ObjectId },
 });
 
-module.exports = mongoose.model('course', course);
+module.exports = mongoose.model('defaultCourse', defaultCourse);

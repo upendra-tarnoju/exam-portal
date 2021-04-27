@@ -12,8 +12,9 @@ const {
 } = require('../models');
 const defaultCourses = require('./default-courses');
 const examinerSchema = require('../schemas/examiner');
-const courseSchema = require('../schemas/course');
+// const courseSchema = require('../schemas/course');
 const examSchema = require('../schemas/exam');
+const defaultCoursesSchema = require('../schemas/defaultCourses');
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
@@ -166,7 +167,7 @@ async function createExaminers() {
 async function createDefaultCourses() {
 	for (let i = 0; i < defaultCourses.length; i++) {
 		let defaultCourse = defaultCourses[i];
-		await course.create({
+		await defaultCoursesSchema.create({
 			...defaultCourse,
 			defaultCourse: true,
 		});

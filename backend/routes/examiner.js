@@ -7,7 +7,8 @@ const {
 	questionController,
 	studentController,
 } = require('../controllers');
-const { multerMiddleware } = require('../middleware');
+const { multerMiddleware, validatorMiddleware } = require('../middleware');
+const { ExaminerValidator } = require('../validator');
 
 module.exports = () => {
 	const router = express.Router();
@@ -21,13 +22,21 @@ module.exports = () => {
 	router.post(
 		'/course',
 		passport.authenticate('jwt'),
+		validatorMiddleware(ExaminerValidator.SAVE_COURSE),
 		examinerController.createCourse
+	);
+
+	router.get(
+		'/course/default',
+		passport.authenticate('jwt'),
+		examinerController.getDefaultCourses
 	);
 
 	router.get(
 		'/course',
 		passport.authenticate('jwt'),
-		examinerController.getCourses
+		validatorMiddleware(ExaminerValidator.GET_COURSES),
+		examinerController.getExaminerCourses
 	);
 
 	router.patch(

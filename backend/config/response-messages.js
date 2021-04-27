@@ -43,4 +43,14 @@ module.exports = {
 			MSG: 'Examiner has been declined',
 		},
 	},
+	COURSES: {
+		SUCCESS: {
+			STATUS_CODE: 200,
+			MSG: 'New course created',
+		},
+		DUPLICATE_RESOURCE: {
+			STATUS_CODE: 409,
+			MSG: 'Course already existed',
+		},
+	},
 };

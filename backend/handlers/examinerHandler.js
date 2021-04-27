@@ -1,5 +1,8 @@
 const { users, course, examiner } = require('../models');
 const { factories } = require('../factories');
+const Schemas = require('../schemas');
+const { queries } = require('../db');
+const RESPONSE_MESSAGES = require('../config/response-messages');
 
 let trimObject = (data) => {
 	let keys = Object.keys(data);
@@ -20,26 +23,98 @@ const examiners = {
 		return examiner.update(userData.userDataId, details);
 	},
 
-	createCourse: async (userId, courseDetails) => {
-		let existingCourse = await course.find(userId, courseDetails.name);
-		if (existingCourse.length === 0) {
-			courseDetails['examinerId'] = userId;
-			courseDetails = trimObject(courseDetails);
-			return course.create(courseDetails);
-		} else {
-			return { status: 400, msg: 'Course name already existed' };
+	getDefaultCourses: async () => {
+		try {
+			let query = {};
+			let options = { lean: true };
+			let projections = { name: 1, description: 1 };
+
+			let courseDetails = await queries.getData(
+				Schemas.defaultCourses,
+				query,
+				projections,
+				options
+			);
+
+			return { status: 200, data: courseDetails };
+		} catch (err) {
+			throw err;
 		}
 	},
 
-	getCourses: async (userId, pageIndex, pageSize) => {
-		pageIndex = pageIndex * pageSize;
-		let courses = await course
-			.findByExaminerId(userId)
-			.sort({ createdAt: -1 })
-			.skip(pageIndex)
-			.limit(pageSize)
-			.select({ examinerId: 0, modifiedAt: 0 });
-		return courses;
+	createCourse: async (userDetails, courseDetails) => {
+		try {
+			let newCourse = {};
+			let query = {
+				$and: [
+					{ examinerId: userDetails.userId, courseId: courseDetails.courseId },
+				],
+			};
+			let options = { lean: true };
+
+			let existingCourse = await queries.findOne(
+				Schemas.examinerCourses,
+				query,
+				{},
+				options
+			);
+			if (!existingCourse) {
+				newCourse.courseId = courseDetails.courseId;
+				newCourse.examinerId = userDetails._id.toString();
+				newCourse.description = courseDetails.description;
+				courseDetails = trimObject(newCourse);
+				await queries.create(Schemas.examinerCourses, courseDetails);
+
+				return {
+					status: RESPONSE_MESSAGES.COURSES.SUCCESS.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.COURSES.SUCCESS.MSG },
+				};
+			} else {
+				return {
+					status: RESPONSE_MESSAGES.COURSES.DUPLICATE_RESOURCE.STATUS_CODE,
+					msg: RESPONSE_MESSAGES.COURSES.DUPLICATE_RESOURCE.MSG,
+				};
+			}
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	getExaminerCourses: async (payload, userData) => {
+		try {
+			let pageSize = parseInt(payload.pageSize, 10);
+			let pageIndex = parseInt(payload.pageIndex, 10) * pageSize;
+
+			let query = { examinerId: userData._id };
+			let projections = { createdAt: 1, description: 1 };
+			let options = {
+				sort: { createdAt: -1 },
+				skip: pageIndex,
+				limit: pageSize,
+				lean: true,
+			};
+			let collectionOptions = {
+				path: 'courseId',
+				select: 'name',
+			};
+
+			let courseDetails = await queries.populateData(
+				Schemas.examinerCourses,
+				query,
+				projections,
+				options,
+				collectionOptions
+			);
+
+			let totalCourses = await queries.countDocuments(
+				Schemas.examinerCourses,
+				query
+			);
+
+			return { status: 200, data: { courseDetails, totalCourses } };
+		} catch (err) {
+			throw err;
+		}
 	},
 
 	getAllCourses: async (userId) => {
