@@ -12,6 +12,7 @@ const examinerCourses = new Schema({
 	courseId: { type: Schema.Types.ObjectId, ref: 'defaultCourse' },
 	name: { type: String, trim: true },
 	description: { type: String, required: true, trim: true },
+	status: { type: String, default: 'ACTIVE' },
 });
 
 module.exports = mongoose.model('examinerCourses', examinerCourses);
