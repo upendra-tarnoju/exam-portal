@@ -93,12 +93,14 @@ const examiner = {
 	},
 
 	deleteCourse: async (req, res) => {
-		let courseId = req.query.courseId;
-		let deletedCourse = await examinerHandler.deleteCourse(courseId);
-		res.status(200).send({
-			courseId: deletedCourse._id,
-			msg: 'Course deleted successfully',
-		});
+		try {
+			let payload = req.query;
+			let userDetails = req.user;
+			let response = await examinerHandler.deleteCourse(payload, userDetails);
+			res.status(response.status).send(response.data);
+		} catch (err) {
+			throw err;
+		}
 	},
 
 	updateProfile: async (req, res) => {

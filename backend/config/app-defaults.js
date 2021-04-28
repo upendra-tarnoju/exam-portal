@@ -16,6 +16,11 @@ const appDefaults = {
 		PENDING: 'pending',
 		DECLINED: 'declined',
 	},
+	COURSE_STATUS_ENUM: {
+		ACTIVE: 'ACTIVE',
+		DELETED: 'DELETED',
+		BLOCKED: 'BLOCKED',
+	},
 };
 
 module.exports = appDefaults;

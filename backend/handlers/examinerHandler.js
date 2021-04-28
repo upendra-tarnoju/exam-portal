@@ -3,6 +3,7 @@ const { factories } = require('../factories');
 const Schemas = require('../schemas');
 const { queries } = require('../db');
 const RESPONSE_MESSAGES = require('../config/response-messages');
+const APP_DEFAULTS = require('../config/app-defaults');
 
 let trimObject = (data) => {
 	let keys = Object.keys(data);
@@ -66,13 +67,14 @@ const examiners = {
 				await queries.create(Schemas.examinerCourses, courseDetails);
 
 				return {
-					status: RESPONSE_MESSAGES.COURSES.SUCCESS.STATUS_CODE,
-					data: { msg: RESPONSE_MESSAGES.COURSES.SUCCESS.MSG },
+					status: RESPONSE_MESSAGES.COURSES.CREATE.SUCCESS.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.COURSES.CREATE.SUCCESS.MSG },
 				};
 			} else {
 				return {
-					status: RESPONSE_MESSAGES.COURSES.DUPLICATE_RESOURCE.STATUS_CODE,
-					msg: RESPONSE_MESSAGES.COURSES.DUPLICATE_RESOURCE.MSG,
+					status:
+						RESPONSE_MESSAGES.COURSES.CREATE.DUPLICATE_RESOURCE.STATUS_CODE,
+					msg: RESPONSE_MESSAGES.COURSES.CREATE.DUPLICATE_RESOURCE.MSG,
 				};
 			}
 		} catch (err) {
@@ -85,7 +87,10 @@ const examiners = {
 			let pageSize = parseInt(payload.pageSize, 10);
 			let pageIndex = parseInt(payload.pageIndex, 10) * pageSize;
 
-			let query = { examinerId: userData._id };
+			let query = {
+				examinerId: userData._id,
+				status: APP_DEFAULTS.COURSE_STATUS_ENUM.ACTIVE,
+			};
 			let projections = { createdAt: 1, description: 1 };
 			let options = {
 				sort: { createdAt: -1 },
@@ -136,9 +141,39 @@ const examiners = {
 		return updatedCourse;
 	},
 
-	deleteCourse: async (courseId) => {
-		let deletedCourse = await course.delete(courseId).select({ _id: 1 });
-		return deletedCourse;
+	deleteCourse: async (payload, userDetails) => {
+		try {
+			let conditions = {
+				_id: payload.courseId,
+				examinerId: userDetails._id,
+			};
+			let toUpdate = { status: APP_DEFAULTS.COURSE_STATUS_ENUM.DELETED };
+			let options = { new: true };
+
+			let deletedCourse = await queries.findAndUpdate(
+				Schemas.examinerCourses,
+				conditions,
+				toUpdate,
+				options
+			);
+
+			if (deletedCourse) {
+				return {
+					status: RESPONSE_MESSAGES.COURSES.DELETE.SUCCESS.STATUS_CODE,
+					data: {
+						msg: RESPONSE_MESSAGES.COURSES.DELETE.SUCCESS.MSG,
+						courseId: payload.courseId,
+					},
+				};
+			} else {
+				return {
+					status: RESPONSE_MESSAGES.COURSES.DELETE.INVALID_ID.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.COURSES.DELETE.INVALID_ID.MSG },
+				};
+			}
+		} catch (err) {
+			throw err;
+		}
 	},
 
 	searchCourse: async (name, description, pageIndex, pageSize) => {

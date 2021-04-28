@@ -24,4 +24,13 @@ module.exports = {
 			.isEmpty()
 			.withMessage('Course description is required'),
 	],
+	DELETE_COURSE: [
+		query('courseId').not().isEmpty().withMessage('Course id is required'),
+		query()
+			.custom((query) => {
+				const keys = ['courseId'];
+				return Object.keys(query).every((key) => keys.includes(key));
+			})
+			.withMessage('Some extra parameters are sent'),
+	],
 };

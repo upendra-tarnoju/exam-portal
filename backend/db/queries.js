@@ -21,6 +21,10 @@ const queries = {
 	countDocuments: (model, condition) => {
 		return model.countDocuments(condition);
 	},
+
+	findAndUpdate: (model, conditions, update, options) => {
+		return model.findOneAndUpdate(conditions, update, options);
+	},
 };
 
 module.exports = queries;

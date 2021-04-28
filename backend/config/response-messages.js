@@ -44,13 +44,25 @@ module.exports = {
 		},
 	},
 	COURSES: {
-		SUCCESS: {
-			STATUS_CODE: 200,
-			MSG: 'New course created',
+		CREATE: {
+			SUCCESS: {
+				STATUS_CODE: 200,
+				MSG: 'New course created',
+			},
+			DUPLICATE_RESOURCE: {
+				STATUS_CODE: 409,
+				MSG: 'Course already existed',
+			},
 		},
-		DUPLICATE_RESOURCE: {
-			STATUS_CODE: 409,
-			MSG: 'Course already existed',
+		DELETE: {
+			SUCCESS: {
+				STATUS_CODE: 200,
+				MSG: 'Course deleted successfully',
+			},
+			INVALID_ID: {
+				STATUS_CODE: 400,
+				MSG: 'Invalid course id',
+			},
 		},
 	},
 };
