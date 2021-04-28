@@ -52,12 +52,24 @@ class CourseService {
 		});
 	};
 
-	viewCourses(state) {
+	viewCourses(query) {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'get',
 			url: `${process.env.REACT_APP_BASE_URL}/${this.COURSE_URL}`,
-			params: state,
+			params: query,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	}
+
+	viewDefaultCourses() {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'get',
+			url: `${process.env.REACT_APP_BASE_URL}/${this.COURSE_URL}/default`,
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,

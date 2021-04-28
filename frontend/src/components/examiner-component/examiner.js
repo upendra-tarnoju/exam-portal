@@ -6,7 +6,7 @@ import Navbar from '../header/navbar';
 
 const Examiner = (props) => {
 	return (
-		<div className='h-100'>
+		<div className='h-100 bgGrey'>
 			<Navbar />
 			<ExaminerSidebar />
 			<SidebarContent />

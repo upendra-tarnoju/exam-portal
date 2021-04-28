@@ -23,15 +23,15 @@ class ExamDetails extends React.Component {
 	}
 
 	componentDidMount() {
-		this.courseService.viewCourses().then((response) => {
-			this.setState({
-				courseList: response.data.map((data) => {
-					data.id = data._id;
-					delete data['_id'];
-					return data;
-				}),
-			});
-		});
+		// this.courseService.viewCourses().then((response) => {
+		// 	this.setState({
+		// 		courseList: response.data.map((data) => {
+		// 			data.id = data._id;
+		// 			delete data['_id'];
+		// 			return data;
+		// 		}),
+		// 	});
+		// });
 	}
 
 	filterByCallback = (option, data) => {
@@ -100,12 +100,8 @@ class ExamDetails extends React.Component {
 			<div>
 				<div className='d-flex justify-content-between flex-row'>
 					<div className='flex-column'>
-						<label className={`mb-0 ${styles.editExamHeading}`}>
-							Subject
-						</label>
-						<p className={styles.editExamContent}>
-							{fields.subject.prev}
-						</p>
+						<label className={`mb-0 ${styles.editExamHeading}`}>Subject</label>
+						<p className={styles.editExamContent}>{fields.subject.prev}</p>
 					</div>
 					{this.getIcons('subject', subjectRef)}
 				</div>
@@ -132,9 +128,7 @@ class ExamDetails extends React.Component {
 						<label className={`mb-0 ${styles.editExamHeading}`}>
 							Exam code
 						</label>
-						<p className={styles.editExamContent}>
-							{fields.examCode.prev}
-						</p>
+						<p className={styles.editExamContent}>{fields.examCode.prev}</p>
 					</div>
 					{this.getIcons('examCode', examCodeRef)}
 				</div>
@@ -157,12 +151,8 @@ class ExamDetails extends React.Component {
 			<div>
 				<div className='d-flex justify-content-between flex-row'>
 					<div className='flex-column'>
-						<label className={`mb-0 ${styles.editExamHeading}`}>
-							Course
-						</label>
-						<p className={styles.editExamContent}>
-							{fields.courses.prev.name}
-						</p>
+						<label className={`mb-0 ${styles.editExamHeading}`}>Course</label>
+						<p className={styles.editExamContent}>{fields.courses.prev.name}</p>
 					</div>
 					{this.getIcons('courses')}
 				</div>

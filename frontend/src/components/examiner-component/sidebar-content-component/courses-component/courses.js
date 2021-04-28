@@ -1,16 +1,46 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Table, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import {
+	Card,
+	Paper,
+	TableContainer,
+	Table,
+	TableHead,
+	TableRow,
+	Typography,
+	withStyles,
+	TableCell,
+	TableBody,
+	IconButton,
+	TablePagination,
+} from '@material-ui/core';
 import { Button } from '@material-ui/core';
 import Moment from 'react-moment';
-import Pagination from '@material-ui/lab/Pagination';
+import { Add, Edit, Delete } from '@material-ui/icons';
 
 import * as ActionTypes from '../../../../action';
 import CourseModal from '../../../../modals/courseModal';
-import styles from './courses.module.css';
 import CourseService from '../../../../services/courseApi';
 import DeleteModal from '../../../../modals/deleteModal';
 import Snackbar from '../../../customSnackbar';
+
+const StyledTableCell = withStyles((theme) => ({
+	head: {
+		backgroundColor: theme.palette.common.black,
+		color: theme.palette.common.white,
+	},
+	body: {
+		fontSize: 14,
+	},
+}))(TableCell);
+
+const StyledTableRow = withStyles((theme) => ({
+	root: {
+		'&:nth-of-type(odd)': {
+			backgroundColor: theme.palette.action.hover,
+		},
+	},
+}))(TableRow);
 
 class Courses extends Component {
 	constructor(props) {
@@ -22,6 +52,7 @@ class Courses extends Component {
 			snackbar: { show: false, msg: '', type: '' },
 			pageIndex: 0,
 			pageSize: 5,
+			totalCourses: 0,
 			name: '',
 			description: '',
 			courseId: '',
@@ -57,12 +88,7 @@ class Courses extends Component {
 	};
 
 	handleDeleteModal = (show, id) => {
-		this.setState({
-			deleteModal: {
-				show,
-				id,
-			},
-		});
+		this.setState({ deleteModal: { show, id } });
 	};
 
 	deleteCourse = () => {
@@ -99,10 +125,10 @@ class Courses extends Component {
 			})
 			.then((response) => {
 				let coursesLength = response.data.totalCourses;
-				let courses = response.data.courses;
+				let courses = response.data.courseDetails;
 				this.setState(
 					{
-						pageCount: Math.ceil(coursesLength / this.state.pageSize),
+						totalCourses: coursesLength,
 					},
 					() => this.props.setCourses(courses)
 				);
@@ -114,111 +140,111 @@ class Courses extends Component {
 	}
 
 	handlePageChange = (event, value) => {
-		this.setState({ pageIndex: value - 1 }, () => this.viewCourses());
+		this.setState({ pageIndex: value }, () => this.viewCourses());
+	};
+
+	handlePageSize = (event) => {
+		this.setState({ pageSize: parseInt(event.target.value, 10) }, () =>
+			this.viewCourses()
+		);
 	};
 
 	render() {
-		let { pageIndex, pageSize, snackbar } = this.state;
-		let courses = this.props.courses.map((data, index) => (
-			<tr key={data._id}>
-				<th scope='row'>{pageIndex * pageSize + index + 1}</th>
-				<td>{data.name}</td>
+		let { pageIndex, pageSize, snackbar, modal, totalCourses } = this.state;
 
-				<td>{data.description}</td>
-				<td>
-					<Moment format='MMM Do, YYYY (hh:mm A)'>{data.createdAt}</Moment>
-				</td>
-				<td>
-					<OverlayTrigger
-						placement='bottom'
-						overlay={<Tooltip id='button-tooltip'>Edit</Tooltip>}
-					>
-						<i
-							className='fa fa-pencil-square-o cursor-pointer text-white mr-2'
-							onClick={() =>
-								this.editCourse(data.name, data.description, data._id)
-							}
-						></i>
-					</OverlayTrigger>
-					<OverlayTrigger
-						placement='bottom'
-						overlay={<Tooltip id='button-tooltip'>Delete</Tooltip>}
-					>
-						<i
-							className='fa fa-trash-o cursor-pointer text-white'
-							onClick={() => this.handleDeleteModal(true, data._id)}
-						></i>
-					</OverlayTrigger>
-				</td>
-			</tr>
-		));
+		let { courses } = this.props;
+
+		const emptyRows =
+			pageSize - Math.min(pageSize, courses.length - pageIndex * pageSize);
+
 		return (
-			<div className='container'>
-				<div className='d-flex justify-content-end py-4'>
-					<Button
-						variant='contained'
-						color='primary'
-						className='mr-2'
-						onClick={() => this.handleCourseModal(true, 'create')}
-					>
-						Create
-					</Button>
-					<Button
-						variant='contained'
-						className='mr-2 bg-success'
-						onClick={() => this.handleCourseModal(true, 'search')}
-					>
-						Search
-					</Button>
-					{this.state.search ? (
-						<Button
-							variant='contained'
-							className='bg-danger'
-							onClick={this.clearSearch}
-						>
-							Clear search
-						</Button>
-					) : null}
-				</div>
-				<div className={`text-center ${styles.heading} mb-2`}>Courses</div>
-				{this.props.courses.length === 0 ? (
-					<p className='mb-0'>No course existed. Create a new one </p>
-				) : (
-					<div className='px-5'>
-						<Table striped bordered hover variant='dark' className='mb-0'>
-							<thead>
-								<tr>
-									<th scope='col'>S.No</th>
-									<th scope='col'>Name</th>
-									<th scope='col'>Description</th>
-									<th scope='col'>Created at</th>
-									<th scope='col'>Actions</th>
-								</tr>
-							</thead>
-							<tbody>{courses}</tbody>
-						</Table>
-						<div className='d-flex justify-content-center py-2 bg-white'>
-							<Pagination
-								count={this.state.pageCount}
-								variant='outlined'
-								color='secondary'
-								size='large'
-								onChange={this.handlePageChange}
-								showFirstButton
-								showLastButton
-							/>
+			<div className='container mt-5'>
+				<Card className='p-3'>
+					<div className='d-xs-block d-md-flex justify-content-between'>
+						<div>
+							<Typography variant='h4'>Courses</Typography>
+							<Typography variant='subtitle1'>Handle your courses</Typography>
+						</div>
+						<div className='align-self-center'>
+							<Button
+								variant='contained'
+								className='bg-dark text-white'
+								startIcon={<Add />}
+								onClick={() => this.handleCourseModal(true, 'create')}
+							>
+								Create new
+							</Button>
 						</div>
 					</div>
-				)}
+				</Card>
+				<TableContainer component={Paper} className='mt-4'>
+					<Table>
+						<TableHead>
+							<TableRow>
+								<StyledTableCell>S.No</StyledTableCell>
+								<StyledTableCell>Name</StyledTableCell>
+								<StyledTableCell>Description</StyledTableCell>
+								<StyledTableCell>Created At</StyledTableCell>
+								<StyledTableCell>Actions</StyledTableCell>
+							</TableRow>
+						</TableHead>
+						<TableBody>
+							{courses.map((course, index) => (
+								<StyledTableRow key={course._id}>
+									<StyledTableCell component='th' scope='row'>
+										{index + 1}
+									</StyledTableCell>
+									<StyledTableCell>{course.courseId.name}</StyledTableCell>
+									<StyledTableCell>{course.description}</StyledTableCell>
+									<StyledTableCell>
+										<Moment format='MMM Do, YYYY (hh:mm A)'>
+											{course.createdAt}
+										</Moment>
+									</StyledTableCell>
+									<StyledTableCell>
+										<IconButton
+											size='small'
+											onClick={() =>
+												this.editCourse(
+													course.courseId.name,
+													course.description,
+													course._id
+												)
+											}
+										>
+											<Edit fontSize='small' />
+										</IconButton>
+										<IconButton
+											size='small'
+											onClick={() => this.handleDeleteModal(true, course._id)}
+										>
+											<Delete fontSize='small' />
+										</IconButton>
+									</StyledTableCell>
+								</StyledTableRow>
+							))}
+							{emptyRows > 0 && (
+								<TableRow style={{ height: 23 * emptyRows }}>
+									<TableCell colSpan={5} />
+								</TableRow>
+							)}
+						</TableBody>
+					</Table>
+					<TablePagination
+						rowsPerPageOptions={[5, 10, 25]}
+						component='div'
+						count={totalCourses}
+						rowsPerPage={pageSize}
+						page={pageIndex}
+						onChangePage={this.handlePageChange}
+						onChangeRowsPerPage={this.handlePageSize}
+					></TablePagination>
+				</TableContainer>
+
 				<CourseModal
-					show={this.state.modal}
+					show={modal}
 					closeModal={this.handleCourseModal}
 					handleSnackBar={this.handleSnackBar}
-					handleSearch={this.handleSearch}
-					modalType={this.state.modalType}
-					name={this.state.name}
-					description={this.state.description}
-					courseId={this.state.courseId}
 					viewCourses={this.viewCourses}
 				/>
 				<DeleteModal
