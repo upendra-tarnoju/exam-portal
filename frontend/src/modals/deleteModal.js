@@ -1,30 +1,62 @@
 import React from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import {
+	Modal,
+	Button,
+	Paper,
+	makeStyles,
+	Typography,
+	Backdrop,
+	Fade,
+} from '@material-ui/core';
 
-const DeleteModal = ({ show, hideModal, heading, deleteContent }) => {
+const useStyles = makeStyles((theme) => ({
+	modal: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+}));
+
+const DeleteModal = (props) => {
+	const classes = useStyles();
 	return (
-		<Modal show={show} onHide={() => hideModal(false, '')} centered>
-			<Modal.Header closeButton>Are you sure ?</Modal.Header>
-			{heading === 'duration' ? (
-				<Modal.Body>
-					You're about to remove {heading}. As a result, duration for the
-					exam will be difference between start time and end time.
-				</Modal.Body>
-			) : (
-				<Modal.Body>
-					You're about to delete this {heading}. You can not RETREIVE this{' '}
-					{heading} later. Are you sure ?
-				</Modal.Body>
-			)}
-
-			<Modal.Footer>
-				<Button variant='success' onClick={() => hideModal(false, '')}>
-					Cancel
-				</Button>
-				<Button variant='danger' onClick={deleteContent}>
-					Confirm
-				</Button>
-			</Modal.Footer>
+		<Modal
+			open={props.show}
+			onClose={() => props.hideModal(false, '')}
+			className={classes.modal}
+			closeAfterTransition
+			BackdropComponent={Backdrop}
+			BackdropProps={{
+				timeout: 500,
+			}}
+		>
+			<Fade in={props.show}>
+				<Paper className='w-25 p-4'>
+					<Typography variant='h6' component='p'>
+						Are you sure ?
+					</Typography>
+					<Typography variant='body1' component='p' className='my-3'>
+						You're about to delete this {props.heading}. You can not retreive
+						this {props.heading} later. Are you sure ?
+					</Typography>
+					<div className='d-flex justify-content-end'>
+						<Button
+							variant='contained'
+							className='bg-white mr-2'
+							onClick={() => props.hideModal(false, '')}
+						>
+							Cancel
+						</Button>
+						<Button
+							variant='contained'
+							className='bg-dark text-white'
+							onClick={props.deleteContent}
+						>
+							Confirm
+						</Button>
+					</div>
+				</Paper>
+			</Fade>
 		</Modal>
 	);
 };
