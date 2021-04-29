@@ -23,6 +23,8 @@ import CourseModal from '../../../../modals/courseModal';
 import CourseService from '../../../../services/courseApi';
 import DeleteModal from '../../../../modals/deleteModal';
 import Snackbar from '../../../customSnackbar';
+import SearchCourseForm from '../../../../forms/course-form/searchCourseForm';
+import moment from 'moment';
 
 const StyledTableCell = withStyles((theme) => ({
 	head: {
@@ -46,7 +48,6 @@ class Courses extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			search: false,
 			modal: false,
 			modalType: '',
 			snackbar: { show: false, msg: '', type: '' },
@@ -100,9 +101,31 @@ class Courses extends Component {
 		});
 	};
 
-	handleSearch = (search) => {
-		this.setState({
-			search: search,
+	handleFilter = (filterData) => {
+		let query = {};
+		if (filterData.startDate !== '') {
+			query.startDate = moment(filterData.startDate, 'YYYY-MM-DD').valueOf();
+		}
+
+		if (filterData.endDate !== '') {
+			query.endDate = moment(filterData.endDate, 'YYYY-MM-DD').valueOf();
+		}
+
+		query = {
+			...query,
+			pageIndex: this.state.pageIndex,
+			pageSize: this.state.pageSize,
+		};
+
+		this.courseService.viewCourses(query).then((res) => {
+			let coursesLength = res.data.totalCourses;
+			let courses = res.data.courseDetails;
+			this.setState(
+				{
+					totalCourses: coursesLength,
+				},
+				() => this.props.setCourses(courses)
+			);
 		});
 	};
 
@@ -177,6 +200,10 @@ class Courses extends Component {
 						</div>
 					</div>
 				</Card>
+
+				<Card className='mt-4 p-3'>
+					<SearchCourseForm handleFilter={this.handleFilter} />
+				</Card>
 				<TableContainer component={Paper} className='mt-4'>
 					<Table>
 						<TableHead>
@@ -198,7 +225,7 @@ class Courses extends Component {
 									<StyledTableCell>{course.description}</StyledTableCell>
 									<StyledTableCell>
 										<Moment format='MMM Do, YYYY (hh:mm A)'>
-											{course.createdAt}
+											{course.createdDate}
 										</Moment>
 									</StyledTableCell>
 									<StyledTableCell>
@@ -240,7 +267,6 @@ class Courses extends Component {
 						onChangeRowsPerPage={this.handlePageSize}
 					></TablePagination>
 				</TableContainer>
-
 				<CourseModal
 					show={modal}
 					closeModal={this.handleCourseModal}

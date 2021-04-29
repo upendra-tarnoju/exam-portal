@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 import CourseService from '../services/courseApi';
 import * as ActionTypes from '../action';
-import CourseForm from '../forms/courseForm';
+import CreateCourseForm from '../forms/course-form/createCourseForm';
 
 const useStyles = (theme) => ({
 	modal: {
@@ -59,20 +59,6 @@ class CourseModal extends Component {
 		// 		this.props.closeModal();
 		// 		this.props.handleSnackBar(true, res.data.msg, 'success');
 		// 	});
-		// } else {
-		// 	this.courseService
-		// 		.viewCourses({
-		// 			search: {
-		// 				name: this.state.name,
-		// 				description: this.state.description,
-		// 			},
-		// 		})
-		// 		.then((res) => {
-		// 			let searchedCourse = res.data;
-		// 			this.props.setCourses(searchedCourse);
-		// 			this.props.closeModal();
-		// 			this.props.handleSearch(true);
-		// 		});
 		// }
 	};
 	render() {
@@ -89,7 +75,7 @@ class CourseModal extends Component {
 					</Typography>
 					<Divider />
 					<div className='px-5 py-3'>
-						<CourseForm handleSubmit={this.handleSubmit} />
+						<CreateCourseForm handleSubmit={this.handleSubmit} />
 					</div>
 				</Paper>
 			</Modal>

@@ -4,8 +4,8 @@ import { Form } from 'react-bootstrap';
 import { Button, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 
-import schema from '../schema/courseSchema';
-import CourseService from '../services/courseApi';
+import schema from '../../schema/courseSchema';
+import CourseService from '../../services/courseApi';
 
 let CourseForm = (props) => {
 	const [open, setOpen] = React.useState(false);
