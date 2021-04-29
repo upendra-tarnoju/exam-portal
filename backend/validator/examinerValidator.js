@@ -10,9 +10,21 @@ module.exports = {
 			.optional()
 			.isNumeric()
 			.withMessage('Page size must be number'),
+		query('name')
+			.optional()
+			.isString()
+			.withMessage('Course name must be string'),
+		query('startDate')
+			.optional()
+			.isString()
+			.withMessage('Start date must be string'),
+		query('endDate')
+			.optional()
+			.isString()
+			.withMessage('End date must be string'),
 		query()
 			.custom((query) => {
-				const keys = ['pageIndex', 'pageSize'];
+				const keys = ['pageIndex', 'pageSize', 'name', 'startDate', 'endDate'];
 				return Object.keys(query).every((key) => keys.includes(key));
 			})
 			.withMessage('Some extra parameters are sent'),

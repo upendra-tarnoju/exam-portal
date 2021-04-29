@@ -87,36 +87,62 @@ const examiners = {
 			let pageSize = parseInt(payload.pageSize, 10);
 			let pageIndex = parseInt(payload.pageIndex, 10) * pageSize;
 
-			let query = {
-				examinerId: userData._id,
-				status: APP_DEFAULTS.COURSE_STATUS_ENUM.ACTIVE,
-			};
-			let projections = { createdAt: 1, description: 1 };
-			let options = {
-				sort: { createdAt: -1 },
-				skip: pageIndex,
-				limit: pageSize,
-				lean: true,
-			};
-			let collectionOptions = {
+			let aggregateOptions = [];
+
+			aggregateOptions.push({
+				$match: {
+					$and: [
+						{ examinerId: userData._id },
+						{ status: APP_DEFAULTS.COURSE_STATUS_ENUM.ACTIVE },
+					],
+				},
+			});
+
+			let populateOptions = {
 				path: 'courseId',
 				select: 'name',
 			};
 
-			let courseDetails = await queries.populateData(
-				Schemas.examinerCourses,
-				query,
-				projections,
-				options,
-				collectionOptions
-			);
+			if (payload.name) {
+				aggregateOptions[0].$match.$and.push({ name: `/${payload.name}/i` });
+			}
+
+			let createdDate = {};
+
+			if (payload.startDate) {
+				createdDate.$gte = parseInt(payload.startDate, 10);
+			}
+
+			if (payload.endDate) {
+				createdDate.$lte = parseInt(payload.endDate, 10);
+			}
+
+			if (Object.keys(createdDate).length !== 0) {
+				aggregateOptions[0].$match.$and.push({ createdDate });
+			}
 
 			let totalCourses = await queries.countDocuments(
 				Schemas.examinerCourses,
-				query
+				aggregateOptions[0]['$match']
 			);
 
-			return { status: 200, data: { courseDetails, totalCourses } };
+			aggregateOptions.push(
+				{ $project: { createdDate: 1, description: 1, courseId: 1 } },
+				{ $sort: { createdDate: -1 } },
+				{ $skip: pageIndex },
+				{ $limit: pageSize }
+			);
+
+			let courseDetails = await queries.aggregateDataWithPopulate(
+				Schemas.examinerCourses,
+				aggregateOptions,
+				populateOptions
+			);
+
+			return {
+				status: 200,
+				data: { courseDetails, totalCourses: totalCourses },
+			};
 		} catch (err) {
 			throw err;
 		}

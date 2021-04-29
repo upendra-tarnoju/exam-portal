@@ -18,6 +18,20 @@ const queries = {
 			.exec();
 	},
 
+	aggregateDataWithPopulate: (model, aggregateArray, populateOptions) => {
+		return new Promise((resolve, reject) => {
+			model.aggregate(aggregateArray, (err, data) => {
+				if (err) {
+					reject(err);
+				}
+				model.populate(data, populateOptions, function (err, populatedDocs) {
+					if (err) reject(err);
+					resolve(populatedDocs);
+				});
+			});
+		});
+	},
+
 	countDocuments: (model, condition) => {
 		return model.countDocuments(condition);
 	},
