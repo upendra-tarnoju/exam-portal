@@ -35,6 +35,10 @@ module.exports = {
 			.not()
 			.isEmpty()
 			.withMessage('Course description is required'),
+		body().custom((body) => {
+			const keys = ['courseId', 'description'];
+			return Object.keys(body).every((key) => keys.includes(key));
+		}),
 	],
 	DELETE_COURSE: [
 		query('courseId').not().isEmpty().withMessage('Course id is required'),
@@ -44,5 +48,23 @@ module.exports = {
 				return Object.keys(query).every((key) => keys.includes(key));
 			})
 			.withMessage('Some extra parameters are sent'),
+	],
+	UPDATE_COURSE: [
+		body('previousCourseId')
+			.not()
+			.isEmpty()
+			.withMessage('Previous course id is required'),
+		body('newCourseId')
+			.not()
+			.isEmpty()
+			.withMessage('New course id is required'),
+		body('description')
+			.not()
+			.isEmpty()
+			.withMessage('Course description is required'),
+		body().custom((body) => {
+			const keys = ['previousCourseId', 'newCourseId', 'description'];
+			return Object.keys(body).every((key) => keys.includes(key));
+		}),
 	],
 };

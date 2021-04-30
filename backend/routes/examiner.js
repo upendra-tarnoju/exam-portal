@@ -42,6 +42,7 @@ module.exports = () => {
 	router.patch(
 		'/course',
 		passport.authenticate('jwt'),
+		validatorMiddleware(ExaminerValidator.UPDATE_COURSE),
 		examinerController.updateCourse
 	);
 

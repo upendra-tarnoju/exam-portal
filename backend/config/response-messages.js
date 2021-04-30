@@ -64,5 +64,15 @@ module.exports = {
 				MSG: 'Invalid course id',
 			},
 		},
+		UPDATE: {
+			SUCCESS: {
+				STATUS_CODE: 200,
+				MSG: 'Course updated successfully',
+			},
+			INVALID_ID: {
+				STATUS_CODE: 400,
+				MSG: 'Invalid course id',
+			},
+		},
 	},
 };

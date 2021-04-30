@@ -49,23 +49,31 @@ class Courses extends Component {
 		super(props);
 		this.state = {
 			modal: false,
-			modalType: '',
 			snackbar: { show: false, msg: '', type: '' },
 			pageIndex: 0,
 			pageSize: 5,
 			totalCourses: 0,
-			name: '',
-			description: '',
-			courseId: '',
+			course: {
+				name: { _id: '', name: '', description: '' },
+				description: '',
+				courseId: '',
+			},
 			deleteModal: { show: false, id: '' },
+			defaultCoursesList: [],
 		};
 		this.courseService = new CourseService();
 	}
 
-	handleCourseModal = (modal, modalType) => {
-		if (modalType === 'create' || modalType === 'search')
-			this.setState({ modal, modalType, name: '', description: '' });
-		else this.setState({ modal, modalType });
+	handleCourseModal = (modal) => {
+		this.setState({
+			modal,
+			course: {
+				name: { _id: '', name: '', description: '' },
+				description: '',
+				courseId: '',
+			},
+			defaultCoursesList: [],
+		});
 	};
 
 	handleSnackBar = (status, msg, type) => {
@@ -78,14 +86,24 @@ class Courses extends Component {
 		});
 	};
 
-	editCourse = (name, description, id) => {
-		this.setState({
-			modal: true,
-			modalType: 'update',
-			name: name,
-			description: description,
-			courseId: id,
-		});
+	editCourse = async (course) => {
+		const response = await this.courseService.viewDefaultCourses();
+
+		let savedCourse = response.data.filter(
+			(option) => option.name === course.courseId.name
+		)[0];
+		this.setState(
+			{
+				modal: true,
+				defaultCoursesList: response.data,
+				course: {
+					name: savedCourse,
+					description: course.description,
+					courseId: course._id,
+				},
+			},
+			() => this.state.course.name
+		);
 	};
 
 	handleDeleteModal = (show, id) => {
@@ -120,23 +138,15 @@ class Courses extends Component {
 		this.courseService.viewCourses(query).then((res) => {
 			let coursesLength = res.data.totalCourses;
 			let courses = res.data.courseDetails;
-			this.setState(
-				{
-					totalCourses: coursesLength,
-				},
-				() => this.props.setCourses(courses)
+			this.setState({ totalCourses: coursesLength }, () =>
+				this.props.setCourses(courses)
 			);
 		});
 	};
 
 	clearSearch = () => {
-		this.setState(
-			{
-				search: false,
-				pageIndex: 0,
-				pageSize: 5,
-			},
-			() => this.viewCourses()
+		this.setState({ search: false, pageIndex: 0, pageSize: 5 }, () =>
+			this.viewCourses()
 		);
 	};
 
@@ -149,11 +159,8 @@ class Courses extends Component {
 			.then((response) => {
 				let coursesLength = response.data.totalCourses;
 				let courses = response.data.courseDetails;
-				this.setState(
-					{
-						totalCourses: coursesLength,
-					},
-					() => this.props.setCourses(courses)
+				this.setState({ totalCourses: coursesLength }, () =>
+					this.props.setCourses(courses)
 				);
 			});
 	};
@@ -173,7 +180,15 @@ class Courses extends Component {
 	};
 
 	render() {
-		let { pageIndex, pageSize, snackbar, modal, totalCourses } = this.state;
+		let {
+			pageIndex,
+			pageSize,
+			snackbar,
+			modal,
+			totalCourses,
+			course,
+			defaultCoursesList,
+		} = this.state;
 
 		let { courses } = this.props;
 
@@ -181,7 +196,7 @@ class Courses extends Component {
 			pageSize - Math.min(pageSize, courses.length - pageIndex * pageSize);
 
 		return (
-			<div className='container mt-5'>
+			<div className='container py-5'>
 				<Card className='p-3'>
 					<div className='d-xs-block d-md-flex justify-content-between'>
 						<div>
@@ -193,7 +208,7 @@ class Courses extends Component {
 								variant='contained'
 								className='bg-dark text-white'
 								startIcon={<Add />}
-								onClick={() => this.handleCourseModal(true, 'create')}
+								onClick={() => this.handleCourseModal(true)}
 							>
 								Create new
 							</Button>
@@ -211,7 +226,7 @@ class Courses extends Component {
 								<StyledTableCell>S.No</StyledTableCell>
 								<StyledTableCell>Name</StyledTableCell>
 								<StyledTableCell>Description</StyledTableCell>
-								<StyledTableCell>Created At</StyledTableCell>
+								<StyledTableCell>Created Date</StyledTableCell>
 								<StyledTableCell>Actions</StyledTableCell>
 							</TableRow>
 						</TableHead>
@@ -231,13 +246,7 @@ class Courses extends Component {
 									<StyledTableCell>
 										<IconButton
 											size='small'
-											onClick={() =>
-												this.editCourse(
-													course.courseId.name,
-													course.description,
-													course._id
-												)
-											}
+											onClick={() => this.editCourse(course)}
 										>
 											<Edit fontSize='small' />
 										</IconButton>
@@ -272,6 +281,8 @@ class Courses extends Component {
 					closeModal={this.handleCourseModal}
 					handleSnackBar={this.handleSnackBar}
 					viewCourses={this.viewCourses}
+					course={course}
+					coursesList={defaultCoursesList}
 				/>
 				<DeleteModal
 					show={this.state.deleteModal.show}

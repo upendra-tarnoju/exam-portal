@@ -33,7 +33,6 @@ const examiner = {
 
 	getDefaultCourses: async (req, res) => {
 		try {
-			console.log('yses');
 			response = await examinerHandler.getDefaultCourses();
 			res.status(response.status).send(response.data);
 		} catch (err) {
@@ -55,41 +54,18 @@ const examiner = {
 		} catch (err) {
 			throw err;
 		}
-
-		// if ('pageIndex' in req.query) {
-		// 	let pageIndex = parseInt(req.query.pageIndex);
-		// 	let pageSize = parseInt(req.query.pageSize);
-		// 	let courses = await examinerHandler.getCourses(
-		// 		userId,
-		// 		pageIndex,
-		// 		pageSize
-		// 	);
-		// 	let totalCourses = await examinerHandler.getCoursesLength(userId);
-		// 	res.status(200).send({ courses, totalCourses });
-		// } else if ('search' in req.query) {
-		// 	let pageIndex = 0;
-		// 	let pageSize = 5;
-		// 	let query = JSON.parse(req.query.search);
-		// 	let searchedCourse = await examinerHandler.searchCourse(
-		// 		query.name,
-		// 		query.description,
-		// 		pageIndex,
-		// 		pageSize
-		// 	);
-		// 	res.status(200).send(searchedCourse);
-		// } else {
-		// 	let courses = await examinerHandler.getAllCourses(userId);
-		// 	res.status(200).send(courses);
-		// }
 	},
 
 	updateCourse: async (req, res) => {
-		let courseData = req.query;
-		let updatedCourse = await examinerHandler.updateCourse(courseData);
-		res.status(200).send({
-			course: updatedCourse,
-			msg: 'Course updated successfully',
-		});
+		try {
+			let courseData = req.body;
+			let userData = req.user;
+
+			let response = await examinerHandler.updateCourse(courseData, userData);
+			res.status(response.status).send(response.data);
+		} catch (err) {
+			throw err;
+		}
 	},
 
 	deleteCourse: async (req, res) => {

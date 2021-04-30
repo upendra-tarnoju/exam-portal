@@ -100,7 +100,7 @@ const examiners = {
 
 			let populateOptions = {
 				path: 'courseId',
-				select: 'name',
+				select: 'name description',
 			};
 
 			if (payload.name) {
@@ -160,11 +160,37 @@ const examiners = {
 		return courses.length;
 	},
 
-	updateCourse: async (courseData) => {
-		let updatedCourse = await course
-			.update(courseData)
-			.select({ name: 1, description: 1 });
-		return updatedCourse;
+	updateCourse: async (courseData, userData) => {
+		let conditions = {
+			courseId: courseData.previousCourseId,
+			examinerId: userData._id,
+		};
+
+		let toUpdate = {
+			courseId: courseData.newCourseId,
+			description: courseData.description,
+			modifiedDate: new Date(),
+		};
+		let options = { new: true };
+
+		let updatedCourse = await queries.findAndUpdate(
+			Schemas.examinerCourses,
+			conditions,
+			toUpdate,
+			options
+		);
+
+		if (updatedCourse) {
+			return {
+				status: RESPONSE_MESSAGES.COURSES.UPDATE.SUCCESS.STATUS_CODE,
+				data: { msg: RESPONSE_MESSAGES.COURSES.UPDATE.SUCCESS.MSG },
+			};
+		} else {
+			return {
+				status: RESPONSE_MESSAGES.COURSES.UPDATE.INVALID_ID.STATUS_CODE,
+				data: { msg: RESPONSE_MESSAGES.COURSES.UPDATE.INVALID_ID.MSG },
+			};
+		}
 	},
 
 	deleteCourse: async (payload, userDetails) => {

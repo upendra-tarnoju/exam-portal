@@ -20,15 +20,15 @@ class CourseService {
 		});
 	};
 
-	editCourse = (id, state) => {
+	editCourse = (courseDetails) => {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'patch',
 			url: `${process.env.REACT_APP_BASE_URL}/${this.COURSE_URL}`,
-			params: {
-				courseId: id,
-				name: state.name,
-				description: state.description,
+			data: {
+				previousCourseId: courseDetails.previousCourseId,
+				newCourseId: courseDetails.newCourseId,
+				description: courseDetails.description,
 			},
 			headers: {
 				'Content-Type': 'application/json',

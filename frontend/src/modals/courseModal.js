@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Divider, Modal, Paper, Typography } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -20,68 +20,63 @@ const useStyles = (theme) => ({
 	},
 });
 
-class CourseModal extends Component {
-	constructor(props) {
-		super(props);
-		this.courseService = new CourseService();
-	}
+const CourseModal = (props) => {
+	const handleSubmit = (values) => {
+		console.log(values, props.course.name._id);
+		let courseService = new CourseService();
 
-	handleSubmit = (values) => {
-		this.courseService
-			.createCourse({
-				courseId: values.name,
-				description: values.description,
-				defaultCourse: false,
-			})
-			.then((res) => {
-				this.props.closeModal(false, 'create');
-				this.props.handleSnackBar(true, res.data.msg, 'success');
-				this.props.viewCourses();
-			})
-			.catch((err) => {
-				console.log(err);
-				// this.setState({
-				// 	error: err.response.data.msg,
-				// });
-			});
-		// if (this.props.modalType === 'create') {
-
-		// } else if (this.props.modalType === 'update') {
-		// 	this.courseService.editCourse(this.props.courseId, values).then((res) => {
-		// 		let name = res.data.course.name;
-		// 		let description = res.data.course.description;
-		// 		let updatedCourse = this.props.courses.map((course) =>
-		// 			course._id === res.data.course._id
-		// 				? { ...course, name: name, description: description }
-		// 				: course
-		// 		);
-		// 		this.props.setCourses(updatedCourse);
-		// 		this.props.closeModal();
-		// 		this.props.handleSnackBar(true, res.data.msg, 'success');
-		// 	});
-		// }
+		if (props.course.name._id === '') {
+			courseService
+				.createCourse({
+					courseId: values.name._id,
+					description: values.description,
+				})
+				.then((res) => {
+					props.closeModal(false, 'create');
+					props.handleSnackBar(true, res.data.msg, 'success');
+					props.viewCourses();
+				})
+				.catch((err) => {});
+		} else {
+			courseService
+				.editCourse({
+					previousCourseId: props.course.name._id,
+					newCourseId: values.name._id,
+					description: values.description,
+				})
+				.then((res) => {
+					props.closeModal();
+					props.handleSnackBar(true, res.data.msg, 'success');
+					props.viewCourses();
+				});
+		}
 	};
-	render() {
-		let { show, closeModal, classes } = this.props;
-		return (
-			<Modal
-				className={classes.modal}
-				open={show}
-				onClose={() => closeModal(false, '')}
-			>
-				<Paper className={classes.paper}>
-					<Typography variant='h6' className='p-3'>
-						Create new course
-					</Typography>
-					<Divider />
-					<div className='px-5 py-3'>
-						<CreateCourseForm handleSubmit={this.handleSubmit} />
-					</div>
-				</Paper>
-			</Modal>
-		);
-	}
-}
+	let { show, closeModal, classes } = props;
+
+	return (
+		<Modal
+			className={classes.modal}
+			open={show}
+			onClose={() => closeModal(false, '')}
+		>
+			<Paper className={classes.paper}>
+				<Typography variant='h6' className='p-3'>
+					{props.course && props.course.name._id === ''
+						? 'Create new course'
+						: 'Update course'}
+				</Typography>
+				<Divider />
+				<div className='px-5 py-3'>
+					<CreateCourseForm
+						handleSubmit={handleSubmit}
+						course={props.course}
+						coursesList={props.coursesList}
+					/>
+				</div>
+			</Paper>
+		</Modal>
+	);
+};
 
 const mapStateToProps = (state) => {
 	return {

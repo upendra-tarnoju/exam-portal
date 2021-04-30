@@ -24,7 +24,6 @@ let CourseForm = (props) => {
 			const response = await courseService.viewDefaultCourses();
 
 			const courses = response.data;
-
 			if (active) {
 				setOptions(courses);
 			}
@@ -47,7 +46,10 @@ let CourseForm = (props) => {
 			onSubmit={(values) => {
 				props.handleSubmit(values);
 			}}
-			initialValues={{ name: '', description: '' }}
+			initialValues={{
+				name: props.course.name,
+				description: props.course.description,
+			}}
 		>
 			{(formikProps) => (
 				<Form noValidate onSubmit={formikProps.handleSubmit}>
@@ -62,13 +64,17 @@ let CourseForm = (props) => {
 						}}
 						getOptionSelected={(option, value) => option.name === value.name}
 						getOptionLabel={(option) =>
-							`${option.name} - ${option.description}`
+							option.name ? `${option.name} - ${option.description}` : ''
 						}
-						options={options}
+						options={
+							props.coursesList.length !== 0 ? props.coursesList : options
+						}
 						loading={loading}
-						onChange={(e, course) =>
-							formikProps.setFieldValue('name', course ? course._id : '')
-						}
+						onChange={(e, course) => {
+							console.log(course);
+							formikProps.setFieldValue('name', course);
+						}}
+						value={formikProps.values.name || {}}
 						renderInput={(params) => (
 							<TextField
 								{...params}
@@ -101,7 +107,9 @@ let CourseForm = (props) => {
 					/>
 					<div className='d-flex justify-content-end'>
 						<Button type='submit' variant='contained' color='primary'>
-							Create
+							{props.course && props.course.name._id !== ''
+								? 'Update'
+								: 'Create'}
 						</Button>
 					</div>
 				</Form>

@@ -7,7 +7,6 @@ import { Form } from 'react-bootstrap';
 import schema from '../../schema/searchCourseSchema';
 
 const SearchCourseForm = (props) => {
-	let searchCourse = () => {};
 	return (
 		<Formik
 			validationSchema={schema}
