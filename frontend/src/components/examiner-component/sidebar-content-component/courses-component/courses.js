@@ -159,9 +159,9 @@ class Courses extends Component {
 			.then((response) => {
 				let coursesLength = response.data.totalCourses;
 				let courses = response.data.courseDetails;
-				this.setState({ totalCourses: coursesLength }, () =>
-					this.props.setCourses(courses)
-				);
+				// this.setState({ totalCourses: coursesLength }, () =>
+				// 	this.props.setCourses(courses)
+				// );
 			});
 	};
 
@@ -231,6 +231,16 @@ class Courses extends Component {
 							</TableRow>
 						</TableHead>
 						<TableBody>
+							{courses.length === 0 ? (
+								<StyledTableRow component='th' scope='row'>
+									<StyledTableCell
+										colSpan={5}
+										className='text-center font-weight-bold'
+									>
+										No course available
+									</StyledTableCell>
+								</StyledTableRow>
+							) : null}
 							{courses.map((course, index) => (
 								<StyledTableRow key={course._id}>
 									<StyledTableCell component='th' scope='row'>
@@ -259,7 +269,7 @@ class Courses extends Component {
 									</StyledTableCell>
 								</StyledTableRow>
 							))}
-							{emptyRows > 0 && (
+							{courses.length !== 0 && emptyRows > 0 && (
 								<TableRow style={{ height: 23 * emptyRows }}>
 									<TableCell colSpan={5} />
 								</TableRow>
