@@ -56,12 +56,14 @@ module.exports = () => {
 	router.post(
 		'/exam',
 		passport.authenticate('jwt'),
+		validatorMiddleware(ExaminerValidator.SAVE_EXAM),
 		examController.saveExamDetails
 	);
 
 	router.get(
 		'/exam',
 		passport.authenticate('jwt'),
+		validatorMiddleware(ExaminerValidator.GET_EXAMS),
 		examController.getExamDetails
 	);
 

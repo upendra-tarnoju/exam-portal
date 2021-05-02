@@ -21,6 +21,14 @@ const appDefaults = {
 		DELETED: 'DELETED',
 		BLOCKED: 'BLOCKED',
 	},
+	EXAM_DURATION_STATUS: {
+		COMPLETE: 'COMPLETE',
+		SELECTIVE: 'SELECTIVE',
+	},
+	EXAM_STATUS: {
+		CREATED: 'CREATED',
+		DELETED: 'DELETED	',
+	},
 };
 
 module.exports = appDefaults;

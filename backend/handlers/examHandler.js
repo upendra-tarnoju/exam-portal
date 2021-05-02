@@ -1,5 +1,11 @@
+const moment = require('moment');
+
 let { exam } = require('../models');
 let { factories } = require('../factories');
+let APP_CONSTANTS = require('../config/app-defaults');
+let RESPONSE_MESSAGES = require('../config/response-messages');
+const queries = require('../db/queries');
+let Schema = require('../schemas');
 
 let setErrorMessages = (key) => {
 	if (key === 'examCode') {
@@ -51,21 +57,74 @@ let updateExamCodeAndSubject = async (key, examId, examDetails) => {
 };
 
 const exams = {
-	saveExamDetails: async (examDetails, userId) => {
-		let examObject = factories.createExamObject(examDetails, userId);
-		return exam.create(examObject);
+	saveExamDetails: async (examDetails, userData) => {
+		try {
+			let saveData = {
+				subject: examDetails.subject,
+				course: examDetails.course,
+				examCode: examDetails.examCode,
+				password: factories.generateHashedPassword(examDetails.password),
+				examinerId: userData._id,
+				totalMarks: parseInt(examDetails.totalMarks, 10),
+				passingMarks: parseInt(examDetails.passingMarks, 10),
+				negativeMarks: examDetails.negativeMarks,
+				examDate: moment(examDetails.examDate).valueOf(),
+				startTime: moment(examDetails.startTime).valueOf(),
+				endTime: moment(examDetails.endTime).valueOf(),
+				durationStatus: examDetails.hideDuration
+					? APP_CONSTANTS.EXAM_DURATION_STATUS.COMPLETE
+					: APP_CONSTANTS.EXAM_DURATION_STATUS.SELECTIVE,
+				status: APP_CONSTANTS.EXAM_STATUS.CREATED,
+			};
+
+			if (!examDetails.hideDuration) {
+				saveData.duration = parseInt(examDetails.duration, 10);
+			}
+
+			await queries.create(Schema.exam, saveData);
+
+			return {
+				data: { msg: RESPONSE_MESSAGES.EXAM.CREATE.SUCCESS.MSG },
+				status: RESPONSE_MESSAGES.EXAM.CREATE.SUCCESS.STATUS_CODE,
+			};
+		} catch (err) {
+			throw err;
+		}
 	},
 
-	getAllExams: async (userId, pageIndex, sortedBy) => {
-		let pageSize = 5;
-		pageIndex = pageIndex * pageSize;
-		let allExams = await exam
-			.get({ examinerId: userId })
-			.select({ password: 0 })
-			.sort({ [sortedBy]: -1 })
-			.skip(pageIndex)
-			.limit(pageSize);
-		return allExams;
+	getAllExams: async (payload, userData) => {
+		try {
+			let query = {
+				$and: [
+					{ examinerId: userData._id },
+					{ status: { $nin: [APP_CONSTANTS.EXAM_STATUS.DELETED] } },
+				],
+			};
+			let projections = { password: 0, modifiedDate: 0, examinerId: 0 };
+
+			let pageSize = parseInt(payload.pageSize, 10);
+			let pageIndex = parseInt(payload.pageIndex) * pageSize;
+			let options = { lean: true, skip: pageIndex, limit: pageSize };
+
+			let collectionOptions = { path: 'course', select: '_id description' };
+
+			let examDetails = await queries.populateData(
+				Schema.exam,
+				query,
+				projections,
+				options,
+				collectionOptions
+			);
+
+			let examCount = await queries.countDocuments(Schema.exam, query);
+
+			return {
+				status: 200,
+				data: { examsList: examDetails, count: examCount },
+			};
+		} catch (err) {
+			throw err;
+		}
 	},
 
 	getExamsLength: async (userId) => {
@@ -108,9 +167,33 @@ const exams = {
 		}
 	},
 
-	deleteExam: async (userId, examId) => {
-		let deletedExam = await exam.deleteById(examId);
-		return deletedExam;
+	deleteExam: async (examDetails) => {
+		try {
+			let conditions = { _id: examDetails.examId };
+			let toUpdate = { status: APP_CONSTANTS.EXAM_STATUS.DELETED };
+			let options = { new: true };
+
+			let updatedExam = await queries.findAndUpdate(
+				Schema.exam,
+				conditions,
+				toUpdate,
+				options
+			);
+
+			if (updatedExam) {
+				return {
+					status: RESPONSE_MESSAGES.EXAM.DELETE.SUCCESS.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.EXAM.DELETE.SUCCESS.MSG },
+				};
+			} else {
+				return {
+					status: RESPONSE_MESSAGES.EXAM.DELETE.INVALID_ID.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.EXAM.DELETE.INVALID_ID.MSG },
+				};
+			}
+		} catch (err) {
+			throw err;
+		}
 	},
 
 	validateExamKey: async (examId, examKey) => {

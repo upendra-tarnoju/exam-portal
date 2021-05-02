@@ -75,4 +75,22 @@ module.exports = {
 			},
 		},
 	},
+	EXAM: {
+		CREATE: {
+			SUCCESS: {
+				STATUS_CODE: 200,
+				MSG: 'New exam created successfully',
+			},
+		},
+		DELETE: {
+			INVALID_ID: {
+				STATUS_CODE: 400,
+				MSG: 'Invalid exam id',
+			},
+			SUCCESS: {
+				STATUS_CODE: 200,
+				MSG: 'Exam has been deleted',
+			},
+		},
+	},
 };

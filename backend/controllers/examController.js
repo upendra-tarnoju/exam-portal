@@ -2,24 +2,29 @@ const { examHandler } = require('../handlers');
 
 const exam = {
 	saveExamDetails: async (req, res) => {
-		let data = req.body;
-		let userId = req.user._id;
-		examHandler.saveExamDetails(data, userId).then((response) => {
-			delete response.password;
-			delete response.createdAt;
-			res.status(200).send(response);
-		});
+		try {
+			let examDetails = req.body;
+			let userData = req.user;
+
+			let response = await examHandler.saveExamDetails(examDetails, userData);
+			res.status(response.status).send(response.data);
+		} catch (err) {
+			throw err;
+		}
 	},
+
 	getExamDetails: async (req, res) => {
-		let userId = req.user._id;
-		let pageIndex = req.query.pageIndex;
-		let sortedBy = req.query.sort;
-		let totalExams = await examHandler.getExamsLength(userId);
-		let pageCount = Math.ceil(totalExams / 5);
-		examHandler.getAllExams(userId, pageIndex, sortedBy).then((response) => {
-			res.status(200).send({ exams: response, pageCount: pageCount });
-		});
+		try {
+			let query = req.query;
+			let userData = req.user;
+
+			let response = await examHandler.getAllExams(query, userData);
+			res.status(response.status).send(response.data);
+		} catch (err) {
+			throw err;
+		}
 	},
+
 	updateExamDetails: async (req, res) => {
 		let userId = req.user._id;
 		let examDetails = req.body;
@@ -27,11 +32,16 @@ const exam = {
 		let updatedExam = await examHandler.updateExam(userId, examId, examDetails);
 		res.status(updatedExam.status).send(updatedExam.data);
 	},
+
 	deleteExam: async (req, res) => {
-		let userId = req.user._id;
-		let examId = req.query.examId;
-		let deletedExam = await examHandler.deleteExam(userId, examId);
-		res.status(200).send(deletedExam);
+		try {
+			let examDetails = req.query;
+
+			let response = await examHandler.deleteExam(examDetails);
+			res.status(response.status).send(response.data);
+		} catch (err) {
+			throw err;
+		}
 	},
 
 	getParticularExam: async (req, res) => {

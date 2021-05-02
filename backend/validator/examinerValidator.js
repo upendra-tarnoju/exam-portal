@@ -29,6 +29,7 @@ module.exports = {
 			})
 			.withMessage('Some extra parameters are sent'),
 	],
+
 	SAVE_COURSE: [
 		body('courseId').not().isEmpty().withMessage('Course id is required'),
 		body('description')
@@ -49,6 +50,7 @@ module.exports = {
 			})
 			.withMessage('Some extra parameters are sent'),
 	],
+
 	UPDATE_COURSE: [
 		body('previousCourseId')
 			.not()
@@ -66,5 +68,88 @@ module.exports = {
 			const keys = ['previousCourseId', 'newCourseId', 'description'];
 			return Object.keys(body).every((key) => keys.includes(key));
 		}),
+	],
+
+	DELETE_EXAM: [
+		query('examId').not().isEmpty().withMessage('Exam id is required'),
+		query()
+			.custom((query) => {
+				const keys = ['examId'];
+				return Object.keys(query).every((key) => keys.includes(key));
+			})
+			.withMessage('Some extra parameters are sent'),
+	],
+
+	SAVE_EXAM: [
+		body('subject').not().isEmpty().withMessage('Subject is required'),
+		body('course').not().isEmpty().withMessage('Course id is required'),
+		body('examCode').not().isEmpty().withMessage('Exam code is required'),
+		body('password').not().isEmpty().withMessage('Password is required'),
+		body('totalMarks')
+			.not()
+			.isEmpty()
+			.withMessage('Total marks is required')
+			.isNumeric()
+			.withMessage('Total marks must be numeric'),
+		body('passingMarks')
+			.not()
+			.isEmpty()
+			.withMessage('Passing marks is required')
+			.isNumeric()
+			.withMessage('Passing marks must be numeric'),
+		body('negativeMarks')
+			.not()
+			.isEmpty()
+			.withMessage('Negative marks is required')
+			.isNumeric()
+			.withMessage('Negative marks must be numeric'),
+		body('examDate').not().isEmpty().withMessage('Exam date is required'),
+		body('startTime').not().isEmpty().withMessage('Start time is required'),
+		body('endTime').not().isEmpty().withMessage('End time is required'),
+		body('hideDuration')
+			.not()
+			.isEmpty()
+			.withMessage('Hide duration is required')
+			.isBoolean('Hide duratiion must be numeric'),
+		body('duration')
+			.optional({ nullable: true, checkFalsy: true })
+			.isNumeric()
+			.withMessage('Duration must be numeric'),
+		body()
+			.custom((query) => {
+				const keys = [
+					'subject',
+					'course',
+					'examCode',
+					'totalMarks',
+					'passingMarks',
+					'negativeMarks',
+					'examDate',
+					'startTime',
+					'endTime',
+					'hideDuration',
+					'duration',
+					'password',
+				];
+				return Object.keys(query).every((key) => keys.includes(key));
+			})
+			.withMessage('Some extra parameters are sent'),
+	],
+
+	GET_EXAMS: [
+		query('pageIndex')
+			.optional()
+			.isNumeric()
+			.withMessage('Page index must be number'),
+		query('pageSize')
+			.optional()
+			.isNumeric()
+			.withMessage('Page size must be number'),
+		query()
+			.custom((query) => {
+				const keys = ['pageIndex', 'pageSize'];
+				return Object.keys(query).every((key) => keys.includes(key));
+			})
+			.withMessage('Some extra parameters are sent'),
 	],
 };
