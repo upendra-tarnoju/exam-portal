@@ -10,11 +10,13 @@ import Students from './students-component/students';
 import ViewStudents from './students-component/view-student-component/viewStudents';
 import CreateStudent from './students-component/create-student-component/createStudent';
 import Settings from './settings-component/settings';
+import CreateExam from './exam-component/create-exam-component/createExam';
 
 const SidebarContent = (props) => {
 	return (
 		<Switch>
 			<Route exact path='/examiner/exam' component={Exam}></Route>
+			<Route path='/examiner/exam/new' component={CreateExam}></Route>
 			<Route exact path='/examiner/exam/:examId' component={EditExam}></Route>
 			<Route path='/examiner/course' component={Courses}></Route>
 			<Route

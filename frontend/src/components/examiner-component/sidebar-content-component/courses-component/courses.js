@@ -159,9 +159,9 @@ class Courses extends Component {
 			.then((response) => {
 				let coursesLength = response.data.totalCourses;
 				let courses = response.data.courseDetails;
-				// this.setState({ totalCourses: coursesLength }, () =>
-				// 	this.props.setCourses(courses)
-				// );
+				this.setState({ totalCourses: coursesLength }, () =>
+					this.props.setCourses(courses)
+				);
 			});
 	};
 

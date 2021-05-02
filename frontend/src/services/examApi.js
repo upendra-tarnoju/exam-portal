@@ -7,25 +7,12 @@ class ExamService {
 		this.EXAM_URL = 'api/examiner/exam';
 	}
 
-	saveExamDetails = (examDetails, examTimeDetails) => {
+	saveExamDetails = (examDetails) => {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'post',
 			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAM_URL}`,
-			data: {
-				subject: examDetails.subject,
-				course: examDetails.course,
-				examCode: examDetails.examCode,
-				password: examDetails.password,
-				totalMarks: examTimeDetails.totalMarks,
-				passingMarks: examTimeDetails.passingMarks,
-				examDate: examTimeDetails.examDate,
-				startTime: examTimeDetails.startTime,
-				endTime: examTimeDetails.endTime,
-				duration: examTimeDetails.duration,
-				hideDuration: examTimeDetails.hideDuration,
-				negativeMarks: examTimeDetails.negativeMarks,
-			},
+			data: examDetails,
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,

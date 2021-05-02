@@ -1,55 +1,85 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Table from 'react-bootstrap/Table';
-import { Button } from '@material-ui/core';
-import Pagination from '@material-ui/lab/Pagination';
+import Moment from 'react-moment';
+import {
+	Button,
+	Card,
+	IconButton,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	Typography,
+	Collapse,
+	withStyles,
+	Tooltip,
+	makeStyles,
+	TablePagination,
+} from '@material-ui/core';
+import {
+	Add,
+	Delete,
+	Edit,
+	KeyboardArrowDown,
+	KeyboardArrowUp,
+	ViewHeadline,
+} from '@material-ui/icons';
 
 import ExamService from '../../../../services/examApi';
-import ExamDetails from './exam-inputs-component/examDetails';
-import ExamPeriod from './exam-inputs-component/examPeriod';
-import style from './exam.module.css';
-import ExamTable from './examTable';
 import * as ActionTypes from '../../../../action';
-import SortExamMenu from './menuItems';
-import Snackbar from '../../../customSnackbar';
+import DeleteModal from '../../../../modals/deleteModal';
+import factories from '../../../../factories/factories';
+import CustomSnackBar from '../../../customSnackbar';
+
+const StyledTableCell = withStyles((theme) => ({
+	head: {
+		backgroundColor: theme.palette.common.black,
+		color: theme.palette.common.white,
+	},
+	body: {
+		fontSize: 14,
+	},
+}))(TableCell);
+
+const StyledTableRow = withStyles((theme) => ({
+	root: {
+		'&:nth-of-type(odd)': {
+			backgroundColor: theme.palette.action.hover,
+		},
+	},
+}))(TableRow);
+
+const useStylesBootstrap = makeStyles((theme) => ({
+	arrow: {
+		color: theme.palette.common.black,
+	},
+	tooltip: {
+		backgroundColor: theme.palette.common.black,
+	},
+}));
+
+const BootstrapTooltip = (props) => {
+	const classes = useStylesBootstrap();
+	return <Tooltip arrow classes={classes} {...props} />;
+};
 
 class Exam extends Component {
-	constructor(props) {
-		super(props);
+	constructor() {
+		super();
 		this.state = {
-			createExam: false,
-			nextInputs: false,
 			pageIndex: 0,
 			pageSize: 5,
-			snackBar: { show: false, msg: '', type: '' },
-			sortedBy: 'createdAt',
+			examsList: [],
+			pageCount: 0,
+			detailView: {},
+			deleteModal: { show: false, id: '' },
+			snackbar: { show: false, msg: '', type: '' },
 		};
 		this.examService = new ExamService();
 	}
-
-	handleSnackBar = (status, msg, type) => {
-		this.setState(
-			{
-				createExam: false,
-				nextInputs: false,
-				snackBar: { show: status, msg: msg, type: type },
-			},
-			() => this.viewExams()
-		);
-	};
-
-	handleStates = (key, value) => {
-		if (key === 'createExam' && value === false) {
-			this.props.clearExamInputs();
-		}
-		this.setState({
-			[key]: value,
-		});
-	};
-
-	handleSortOptions = (option) => {
-		this.setState({ sortedBy: option }, () => this.viewExams());
-	};
 
 	viewExams() {
 		this.examService
@@ -59,9 +89,10 @@ class Exam extends Component {
 				sort: this.state.sortedBy,
 			})
 			.then((res) => {
-				this.setState({ pageCount: res.data.pageCount }, () =>
-					this.props.setExamList(res.data.exams)
-				);
+				this.setState({
+					pageCount: res.data.count,
+					examsList: res.data.examsList,
+				});
 			});
 	}
 
@@ -69,119 +100,262 @@ class Exam extends Component {
 		this.viewExams();
 	}
 
+	handleDetailExamView = (index, status) => {
+		let newStatus;
+		if (status === undefined) newStatus = true;
+		else if (status) newStatus = !status;
+
+		this.setState((prevState) => ({
+			detailView: { ...prevState.detailView, [index]: newStatus },
+		}));
+	};
+
+	deleteExam = () => {
+		let examId = this.state.deleteModal.id;
+		this.examService.deleteExam(examId).then((response) => {
+			this.handleDeleteDialog(false, '');
+			this.handleSnackBar(true, response.data.msg, 'success');
+			this.viewExams();
+		});
+	};
+
+	addNewQuestion = (examId, examDate) => {
+		let currentDate = new Date();
+		let boolStatus;
+		currentDate = factories.formatDate(currentDate);
+
+		if (examDate >= currentDate) boolStatus = false;
+		else boolStatus = true;
+
+		// this.handleSnackBar(boolStatus);
+
+		if (!boolStatus) {
+			this.props.history.push(`/examiner/exam/${examId}/question/new`);
+		}
+	};
+
+	viewQuestions = (examId) => {
+		this.props.history.push(`/examiner/exam/${examId}/questions`);
+	};
+
+	createNewExam = () => {
+		this.props.history.push({ pathname: '/examiner/exam/new' });
+	};
+
+	handleDeleteDialog = (show, examId) => {
+		this.setState({ deleteModal: { show: show, id: examId } });
+	};
+
+	updateExam = (examId) => {
+		this.props.history.push({ pathname: `/examiner/exam/${examId}` });
+	};
+
+	handleSnackBar = (status, msg, type) => {
+		this.setState({ snackbar: { show: status, msg: msg, type: type } });
+	};
+
 	handlePageChange = (event, value) => {
-		this.setState({ pageIndex: value - 1 }, () => this.viewExams());
+		this.setState({ pageIndex: value }, () => this.viewExams());
+	};
+
+	handlePageSize = (event) => {
+		this.setState({ pageSize: parseInt(event.target.value, 10) }, () =>
+			this.viewExams()
+		);
 	};
 
 	render() {
-		let { pageIndex, pageSize, snackBar } = this.state;
-		const allExams = this.props.examsList.map((exam, index) => {
-			return (
-				<ExamTable
-					exam={exam}
-					index={index}
-					key={exam._id}
-					handleSnackBar={this.handleSnackBar}
-					pageIndex={pageIndex}
-					pageSize={pageSize}
-				/>
-			);
-		});
+		let {
+			examsList,
+			detailView,
+			deleteModal,
+			snackbar,
+			pageCount,
+			pageIndex,
+			pageSize,
+		} = this.state;
+
 		return (
-			<div className='p-4'>
-				<div className='d-flex justify-content-end'>
-					{this.state.createExam ? (
-						<Button
-							type='button'
-							variant='contained'
-							color='secondary'
-							onClick={() => this.handleStates('createExam', false)}
-						>
-							Cancel
-						</Button>
-					) : (
+			<div className='container p-5'>
+				<Card className='p-3'>
+					<div className='d-xs-block d-md-flex justify-content-between'>
 						<div>
+							<Typography variant='h4'>Exams</Typography>
+							<Typography variant='subtitle1'>Explore your exams</Typography>
+						</div>
+						<div className='align-self-center'>
 							<Button
-								type='submit'
 								variant='contained'
-								color='primary'
-								onClick={() => this.handleStates('createExam', true)}
+								className='bg-dark text-white'
+								startIcon={<Add />}
+								onClick={this.createNewExam}
 							>
-								Create
+								Create new
 							</Button>
 						</div>
-					)}
-					<SortExamMenu sortExams={this.handleSortOptions} />
-				</div>
-				<Snackbar
-					show={snackBar.show}
-					handleSnackBar={this.handleSnackBar}
-					snackBarType={snackBar.type}
-					message={snackBar.msg}
+					</div>
+				</Card>
+				<TableContainer component={Paper} className='mt-4'>
+					<Table>
+						<TableHead>
+							<TableRow>
+								<StyledTableCell>S.No</StyledTableCell>
+								<StyledTableCell>Subject</StyledTableCell>
+								<StyledTableCell>Exam code</StyledTableCell>
+								<StyledTableCell>Exam date</StyledTableCell>
+								<StyledTableCell>Actions</StyledTableCell>
+								<StyledTableCell></StyledTableCell>
+							</TableRow>
+						</TableHead>
+						<TableBody>
+							{examsList.map((exam, index) => (
+								<React.Fragment key={exam._id}>
+									<StyledTableRow key={exam._id}>
+										<StyledTableCell component='th' scope='row'>
+											{index + 1}
+										</StyledTableCell>
+										<StyledTableCell>{exam.subject}</StyledTableCell>
+										<StyledTableCell>{exam.examCode}</StyledTableCell>
+										<StyledTableCell>
+											<Moment format='MMM Do, YYYY (hh:mm A)'>
+												{exam.examDate}
+											</Moment>
+										</StyledTableCell>
+										<StyledTableCell>
+											<BootstrapTooltip title='Update exam'>
+												<IconButton
+													size='small'
+													onClick={() => this.updateExam(exam._id)}
+												>
+													<Edit size='small' />
+												</IconButton>
+											</BootstrapTooltip>
+											<BootstrapTooltip title='Add question'>
+												<IconButton
+													size='small'
+													onClick={() =>
+														this.addNewQuestion(exam._id, exam.examDate)
+													}
+												>
+													<Add size='small' />
+												</IconButton>
+											</BootstrapTooltip>
+											<BootstrapTooltip title='View questions'>
+												<IconButton
+													size='small'
+													onClick={() => this.viewQuestions(exam._id)}
+												>
+													<ViewHeadline size='small' />
+												</IconButton>
+											</BootstrapTooltip>
+											<BootstrapTooltip title='Delete exam'>
+												<IconButton
+													size='small'
+													onClick={() =>
+														this.handleDeleteDialog(true, exam._id)
+													}
+												>
+													<Delete size='small' />
+												</IconButton>
+											</BootstrapTooltip>
+										</StyledTableCell>
+										<StyledTableCell>
+											<IconButton
+												size='small'
+												onClick={() =>
+													this.handleDetailExamView(index, detailView[index])
+												}
+											>
+												{detailView[index] ? (
+													<KeyboardArrowUp />
+												) : (
+													<KeyboardArrowDown />
+												)}
+											</IconButton>
+										</StyledTableCell>
+									</StyledTableRow>
+									<StyledTableRow>
+										<StyledTableCell
+											colSpan={6}
+											className={!detailView[index] ? 'py-0' : ''}
+										>
+											<Collapse
+												in={detailView[index]}
+												timeout='auto'
+												unmountOnExit
+											>
+												<Table>
+													<TableHead>
+														<TableRow>
+															<StyledTableCell>Total marks</StyledTableCell>
+															<StyledTableCell>Passing marks</StyledTableCell>
+															<StyledTableCell>Negative marks</StyledTableCell>
+															<StyledTableCell>Start time</StyledTableCell>
+															<StyledTableCell>End time</StyledTableCell>
+															<StyledTableCell>Duration</StyledTableCell>
+															<StyledTableCell>Status</StyledTableCell>
+														</TableRow>
+													</TableHead>
+													<TableBody>
+														<StyledTableRow>
+															<StyledTableCell>
+																{exam.totalMarks}
+															</StyledTableCell>
+															<StyledTableCell>
+																{exam.passingMarks}
+															</StyledTableCell>
+															<StyledTableCell>
+																{exam.negativeMarks}
+															</StyledTableCell>
+															<StyledTableCell>
+																<Moment format='hh:mm A'>
+																	{exam.startTime}
+																</Moment>
+															</StyledTableCell>
+															<StyledTableCell>
+																<Moment format='hh:mm A'>{exam.endTime}</Moment>
+															</StyledTableCell>
+															<StyledTableCell>
+																{exam.duration ? exam.duration : 'None'}
+															</StyledTableCell>
+															<StyledTableCell>
+																{exam.status === 'CREATED'
+																	? 'No question added'
+																	: ''}
+															</StyledTableCell>
+														</StyledTableRow>
+													</TableBody>
+												</Table>
+											</Collapse>
+										</StyledTableCell>
+									</StyledTableRow>
+								</React.Fragment>
+							))}
+						</TableBody>
+					</Table>
+					<TablePagination
+						component='div'
+						rowsPerPageOptions={[5, 10, 25]}
+						colSpan={5}
+						count={pageCount}
+						rowsPerPage={pageSize}
+						page={pageIndex}
+						onChangePage={this.handlePageChange}
+						onChangeRowsPerPage={this.handlePageSize}
+					></TablePagination>
+				</TableContainer>
+				<DeleteModal
+					show={deleteModal.show}
+					hideModal={this.handleDeleteDialog}
+					heading='exam'
+					deleteContent={this.deleteExam}
 				/>
-				{this.state.createExam ? (
-					<div className='card mt-4 w-50 mx-auto'>
-						<div className='card-header bg-white text-center'>
-							<h3 className='font-weight-normal'>Create new Exam</h3>
-						</div>
-						{!this.state.nextInputs ? (
-							<ExamDetails handleInputs={this.handleStates} />
-						) : (
-							<ExamPeriod
-								handleInputs={this.handleStates}
-								handleSnackBar={this.handleSnackBar}
-							/>
-						)}
-					</div>
-				) : (
-					<div className='mt-2'>
-						<p className={`${style.heading} text-center`}>
-							List of all created Exams
-						</p>
-						{this.props.examsList.length !== 0 ? (
-							<div>
-								<Table
-									striped
-									bordered
-									hover
-									variant='dark'
-									className='mb-0'
-								>
-									<thead>
-										<tr>
-											<th>S.No</th>
-											<th>Subject</th>
-											<th>Exam code</th>
-											<th>Exam date</th>
-											<th className='text-right'>Total marks</th>
-											<th className='text-right'>Passing marks</th>
-											<th>Start time</th>
-											<th>End time</th>
-											<th>Created at</th>
-											<th>Exam actions</th>
-										</tr>
-									</thead>
-									<tbody>{allExams}</tbody>
-								</Table>
-								<div className='bg-white py-3 d-flex justify-content-center'>
-									<Pagination
-										count={this.state.pageCount}
-										variant='outlined'
-										color='secondary'
-										size='large'
-										onChange={this.handlePageChange}
-										showFirstButton
-										showLastButton
-									/>
-								</div>
-							</div>
-						) : (
-							<div className={`${style.heading} text-center`}>
-								No exam available. Create new exam
-							</div>
-						)}
-					</div>
-				)}
+				<CustomSnackBar
+					show={snackbar.show}
+					handleSnackBar={this.handleSnackBar}
+					snackBarType={snackbar.type}
+					message={snackbar.msg}
+				/>
 			</div>
 		);
 	}
