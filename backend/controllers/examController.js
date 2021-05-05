@@ -26,10 +26,10 @@ const exam = {
 	},
 
 	updateExamDetails: async (req, res) => {
-		let userId = req.user._id;
+		let userDetails = req.user;
 		let examDetails = req.body;
-		let examId = req.params.examId;
-		let updatedExam = await examHandler.updateExam(userId, examId, examDetails);
+		examDetails.examId = req.params.examId;
+		let updatedExam = await examHandler.updateExam(examDetails, userDetails);
 		res.status(updatedExam.status).send(updatedExam.data);
 	},
 
@@ -45,11 +45,14 @@ const exam = {
 	},
 
 	getParticularExam: async (req, res) => {
-		let examId = req.params.examId;
-		let exam = await examHandler.getParticularExam(examId);
-		exam.courses.id = exam.courses._id;
-		delete exam.courses._id;
-		res.status(200).send(exam);
+		try {
+			let params = req.params;
+			let userDetails = req.user;
+			let response = await examHandler.getParticularExam(params, userDetails);
+			res.status(response.status).send(response.data);
+		} catch (err) {
+			throw err;
+		}
 	},
 
 	validateExamKey: async (req, res) => {

@@ -92,5 +92,19 @@ module.exports = {
 				MSG: 'Exam has been deleted',
 			},
 		},
+		UPDATE: {
+			SUCCESS: {
+				STATUS_CODE: 200,
+				MSG: 'Exam updated successfully',
+			},
+			INVALID_ID: {
+				STATUS_CODE: 400,
+				MSG: 'Invalid exam id',
+			},
+			INVALID_PASSWORD: {
+				STATUS_CODE: 401,
+				MSG: 'Incorrect current password',
+			},
+		},
 	},
 };

@@ -1,4 +1,4 @@
-const { query, body } = require('express-validator');
+const { query, body, param } = require('express-validator');
 
 module.exports = {
 	GET_COURSES: [
@@ -148,6 +148,19 @@ module.exports = {
 		query()
 			.custom((query) => {
 				const keys = ['pageIndex', 'pageSize'];
+				return Object.keys(query).every((key) => keys.includes(key));
+			})
+			.withMessage('Some extra parameters are sent'),
+	],
+
+	UPDATE_EXAM: [
+		param('examId').not().isEmpty().withMessage('Exam id is required'),
+		body('course').optional(),
+		body('examCode').optional(),
+		body('subject').optional(),
+		query()
+			.custom((query) => {
+				const keys = ['examId', 'course', 'examCode', 'subject'];
 				return Object.keys(query).every((key) => keys.includes(key));
 			})
 			.withMessage('Some extra parameters are sent'),

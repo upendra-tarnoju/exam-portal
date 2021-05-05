@@ -132,38 +132,136 @@ const exams = {
 		return totalExams.length;
 	},
 
-	getParticularExam: async (examId) => {
-		let examDetails = await exam.getById(examId);
-		return examDetails[0];
+	getParticularExam: async (payload, userDetails) => {
+		try {
+			let query = { _id: payload.examId };
+			let projections = { password: 0, createdAt: 0 };
+			let collectionOptions = [
+				{
+					path: 'course',
+					select: '_id courseId',
+					populate: {
+						path: 'courseId',
+						select: 'name',
+						model: 'defaultCourse',
+					},
+					model: 'examinerCourses',
+				},
+			];
+			let options = { lean: true };
+
+			let examDetails = await queries.populateData(
+				Schema.exam,
+				query,
+				projections,
+				options,
+				collectionOptions
+			);
+
+			query = { examinerId: userDetails._id };
+			projections = {};
+			options = { lean: true };
+
+			collectionOptions = { path: 'courseId', select: 'name' };
+
+			let examinerCourses = await queries.populateData(
+				Schema.examinerCourses,
+				query,
+				projections,
+				options,
+				collectionOptions
+			);
+
+			return {
+				status: 200,
+				data: { examDetails: examDetails[0], coursesList: examinerCourses },
+			};
+		} catch (err) {
+			throw err;
+		}
 	},
 
-	updateExam: async (userId, examId, examDetails) => {
-		let key = Object.keys(examDetails)[0];
-		examDetails['examinerId'] = userId;
-		let updatedExam;
-		if (key === 'examCode' || key === 'subject') {
-			let response = updateExamCodeAndSubject(key, examId, examDetails);
-			return response;
-		} else if (key === 'passingMarks') {
-			let response = await updatePassingMarks(key, examId, examDetails);
-			return response;
-		} else if (key === 'startTime' || key === 'endTime') {
-			updatedExam = await exam.update(examId, examDetails).select({ [key]: 1 });
-			return { status: 200, data: updatedExam };
-		} else if (key === 'password') {
-			let response = await updateExamPassword(examId, examDetails);
-			return response;
-		} else if (key === 'courses') {
-			updatedExam = await exam.update(examId, {
-				course: examDetails.courses.id,
-			});
-			return { status: 200, data: updatedExam };
-		} else if (key === 'duration' && examDetails.duration === '') {
-			await exam.deleteDurationById(examId);
-			return { status: 200, data: { msg: 'Deleted duration' } };
+	updateExam: async (payload, userDetails) => {
+		let conditions = { _id: payload.examId };
+
+		let toUpdate = {};
+
+		let options = {
+			new: true,
+			fields: { password: 0, modifiedDate: 0, examinerId: 0, status: 0 },
+		};
+
+		if (payload.examCode) toUpdate.examCode = payload.examCode;
+
+		if (payload.course) toUpdate.course = payload.course;
+
+		if (payload.subject) toUpdate.subject = payload.subject;
+
+		if (payload.totalMarks) toUpdate.totalMarks = payload.totalMarks;
+
+		if (payload.passingMarks) toUpdate.passingMarks = payload.passingMarks;
+
+		if (payload.negativeMarks || payload.negativeMarks === 0)
+			toUpdate.negativeMarks = payload.negativeMarks;
+
+		if (payload.examDate) toUpdate.examDate = payload.examDate;
+
+		if (payload.startTime) toUpdate.startTime = payload.startTime;
+
+		if (payload.endTime) toUpdate.endTime = payload.endTime;
+
+		if (payload.duration) {
+			if (payload.hideDuration) {
+				toUpdate.durationStatus = APP_CONSTANTS.EXAM_DURATION_STATUS.COMPLETE;
+				toUpdate.duration = null;
+			} else {
+				toUpdate.durationStatus = APP_CONSTANTS.EXAM_DURATION_STATUS.SELECTIVE;
+				toUpdate.duration = payload.duration;
+			}
+		}
+
+		if (payload.currentPassword) {
+			let projections = {};
+			let examDetails = await queries.findOne(
+				Schema.exam,
+				conditions,
+				projections,
+				options
+			);
+
+			let passwordStatus = factories.compareHashedPassword(
+				payload.currentPassword,
+				examDetails.password
+			);
+
+			if (passwordStatus) {
+				toUpdate.password = factories.generateHashedPassword(
+					payload.newPassword
+				);
+			} else {
+				return {
+					status: RESPONSE_MESSAGES.EXAM.UPDATE.INVALID_PASSWORD.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.EXAM.UPDATE.INVALID_PASSWORD.MSG },
+				};
+			}
+		}
+
+		let updatedExam = await queries.findAndUpdate(
+			Schema.exam,
+			conditions,
+			toUpdate,
+			options
+		);
+
+		if (updatedExam) {
+			return {
+				status: RESPONSE_MESSAGES.EXAM.UPDATE.SUCCESS.STATUS_CODE,
+				data: {
+					examDetails: updatedExam,
+					msg: RESPONSE_MESSAGES.EXAM.UPDATE.SUCCESS.MSG,
+				},
+			};
 		} else {
-			updatedExam = await exam.update(examId, examDetails).select({ [key]: 1 });
-			return { status: 200, data: updatedExam };
 		}
 	},
 

@@ -39,6 +39,16 @@ const queries = {
 	findAndUpdate: (model, conditions, update, options) => {
 		return model.findOneAndUpdate(conditions, update, options);
 	},
+
+	aggregateData: (model, aggregateArray, options) => {
+		let aggregation = model.aggregate(aggregateArray);
+
+		if (options) {
+			aggregation.options = options;
+		}
+
+		return aggregation.exec();
+	},
 };
 
 module.exports = queries;
