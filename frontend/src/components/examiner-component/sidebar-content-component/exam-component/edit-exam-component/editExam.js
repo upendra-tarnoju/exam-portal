@@ -1,254 +1,162 @@
 import React from 'react';
+import {
+	Card,
+	List,
+	ListItem,
+	ListItemIcon,
+	ListItemText,
+	Typography,
+} from '@material-ui/core';
+import { Details, Lock, Phone, Timer } from '@material-ui/icons';
 import moment from 'moment';
-import { Alert, AlertTitle } from '@material-ui/lab';
 
-import styles from '../exam.module.css';
 import ExamService from '../../../../../services/examApi';
-import ExamDetails from './accordion/examDetails';
-import ExamMarks from './accordion/examMarks';
-import ExamTime from './accordion/examTime';
-import ExamPassword from './accordion/examPassword';
-import factories from '../../../../../factories/factories';
+import ExamDetailsForm from '../../../../../forms/edit-exam-form/examDetailsForm';
+import ExamMarksForm from '../../../../../forms/edit-exam-form/examMarksForm';
+import ExamTimeForm from '../../../../../forms/edit-exam-form/examTimeForm';
+import ExamPasswordForm from '../../../../../forms/edit-exam-form/examPasswordForm';
+import CustomSnackBar from '../../../../customSnackbar';
 
 class EditExam extends React.Component {
-	constructor(props) {
-		super(props);
+	constructor() {
+		super();
 		this.state = {
-			examCode: { prev: '', new: '', collapse: false, msg: '' },
-			subject: { prev: '', new: '', collapse: false, msg: '' },
-			totalMarks: { prev: '', new: '', collapse: false, msg: '' },
-			passingMarks: { prev: '', new: '', collapse: false, msg: '' },
-			examDate: { prev: '', new: '', collapse: false, msg: '' },
-			startTime: { prev: '', new: '', collapse: false, msg: '' },
-			endTime: { prev: '', new: '', collapse: false, msg: '' },
-			courses: { prev: '', new: '', collapse: false, msg: '' },
-			duration: { prev: '', new: '', collapse: false, msg: '' },
-			password: { collapse: false, msg: '' },
-			negativeMarks: { prev: '', new: '', collapse: false, msg: '' },
-			editExam: true,
+			activeTab: 0,
+			coursesList: [],
+			exam: {},
+			snackbar: { show: false, msg: '', type: '' },
 		};
 		this.examService = new ExamService();
-	}
-
-	handleExamChange = (event) => {
-		let update = false;
-		let key = event.target.name;
-		let value = event.target.value;
-		if (
-			key === 'totalMarks' ||
-			key === 'passingMarks' ||
-			key === 'duration'
-		) {
-			let letters = /^[0-9\b]+$/;
-			if (letters.test(value) || value === '') {
-				update = true;
-			}
-		} else {
-			update = true;
-		}
-		if (update) {
-			this.setState((prevState) => ({
-				[key]: {
-					...prevState[key],
-					new: value,
-				},
-			}));
-		}
-	};
-
-	changeCourse = (newCourse) => {
-		this.setState((prevState) => ({
-			courses: {
-				...prevState.courses,
-				new: newCourse !== null ? newCourse : {},
-			},
-		}));
-	};
-
-	setEditExamStatus(examDate) {
-		let currentDate = new Date();
-		currentDate = factories.formatDate(currentDate);
-		if (examDate >= currentDate) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	componentDidMount() {
 		let examId = this.props.match.params.examId;
 		this.examService.getParticularExam(examId).then((res) => {
-			let exam = res.data;
-			let examDate = moment(exam.examDate, 'YYYY-MM-DD').format(
-				'YYYY-MM-DD'
-			);
-			let boolStatus = this.setEditExamStatus(examDate);
-			this.setState((prevState) => ({
-				courses: {
-					...prevState.courses,
-					prev: exam.courses,
-					new: exam.courses,
+			let response = res.data;
+			this.setState({
+				exam: {
+					...response.examDetails,
+					course: response.examDetails.course._id,
+					examDate: moment(response.examDetails.examDate),
+					startTime: new Date(response.examDetails.startTime).toString(),
+					endTime: new Date(response.examDetails.endTime).toString(),
 				},
-				examCode: {
-					...prevState.examCode,
-					prev: exam.examCode,
-					new: exam.examCode,
-				},
-				subject: {
-					...prevState.subject,
-					prev: exam.subject,
-					new: exam.subject,
-				},
-				totalMarks: {
-					...prevState.totalMarks,
-					prev: exam.totalMarks,
-					new: exam.totalMarks,
-				},
-				passingMarks: {
-					...prevState.passingMarks,
-					prev: exam.passingMarks,
-					new: exam.passingMarks,
-				},
-				examDate: {
-					...prevState.examDate,
-					prev: exam.examDate,
-					new: exam.examDate,
-				},
-				startTime: {
-					...prevState.startTime,
-					prev: exam.startTime,
-					new: exam.startTime,
-				},
-				endTime: {
-					...prevState.endTime,
-					prev: exam.endTime,
-					new: exam.endTime,
-				},
-				duration: {
-					...prevState.duration,
-					prev: exam.duration,
-					new: exam.duration,
-				},
-				negativeMarks: {
-					...prevState.negativeMarks,
-					prev: exam.negativeMarks,
-					new: exam.negativeMarks,
-				},
-				editExam: boolStatus,
-			}));
+				coursesList: response.coursesList,
+			});
 		});
 	}
 
-	changeNegativeMarks = (negativeMarks) => {
-		console.log(negativeMarks);
-		this.setState((prevState) => ({
-			negativeMarks: {
-				...prevState.negativeMarks,
-				new: negativeMarks === null ? {} : negativeMarks.value,
+	handleSnackBar = (status, msg, type) => {
+		this.setState({
+			snackbar: {
+				show: status,
+				msg: msg,
+				type: type,
 			},
-		}));
-	};
-
-	handleCollapseChange = (key) => {
-		if (key === 'password') {
-			this.setState((prevState) => ({
-				[key]: {
-					collapse: !prevState[key].collapse,
-				},
-			}));
-		} else {
-			this.setState((prevState) => ({
-				[key]: {
-					...prevState[key],
-					collapse: !prevState[key].collapse,
-					msg: '',
-				},
-			}));
-		}
+		});
 	};
 
 	updateExamDetails = (data) => {
-		let key = Object.keys(data)[0];
 		let examId = this.props.match.params.examId;
 		this.examService
 			.updateExam(examId, data)
 			.then((response) => {
-				if (key === 'courses') {
-					this.setState((prevState) => ({
-						courses: {
-							...prevState.courses,
-							prev: prevState.courses.new,
-							collapse: false,
-						},
-					}));
-				} else {
-					this.setState({
-						[key]: {
-							prev: response.data[key],
-							new: response.data[key],
-							collapse: false,
-						},
-					});
-				}
+				this.handleSnackBar(true, response.data.msg, 'success');
+				this.setState({
+					exam: {
+						...response.data.examDetails,
+						hideDuration:
+							response.data.examDetails.durationStatus === 'COMPLETE',
+					},
+				});
 			})
 			.catch((error) => {
-				this.setState((prevState) => ({
-					[key]: {
-						...prevState[key],
-						msg: error.response.data.msg,
-					},
-				}));
+				this.handleSnackBar(true, error.response.data.msg, 'error');
 			});
 	};
 
-	deleteDuration = () => {
-		let examId = this.props.match.params.examId;
-		this.examService.updateExam(examId, { duration: '' }).then((response) => {
-			console.log(response.data);
-		});
+	handleTabChange = (newValue) => {
+		this.setState({ activeTab: newValue });
 	};
 
 	render() {
+		let { activeTab, coursesList, exam, snackbar } = this.state;
 		return (
-			<div className='container w-50 my-5'>
-				<h3 className={`text-center ${styles.heading}`}>Edit exam</h3>
-				{!this.state.editExam ? (
-					<div className='mb-2'>
-						<Alert severity='error' variant='filled'>
-							<AlertTitle>Message</AlertTitle>
-							You cannot edit <strong>expired</strong> exam
-						</Alert>
+			<div className='container py-5 px-4'>
+				<Card className='p-3 mb-4'>
+					<div className='d-xs-block d-md-flex justify-content-between'>
+						<div>
+							<Typography variant='h4'>Edit exam</Typography>
+							<Typography variant='subtitle1'>
+								Change your exam settings
+							</Typography>
+						</div>
 					</div>
-				) : null}
-				{this.state.courses.new !== '' ? (
-					<ExamDetails
-						fields={this.state}
-						handleCollapseChange={this.handleCollapseChange}
-						updateExamDetails={this.updateExamDetails}
-						handleCourseChange={this.changeCourse}
+				</Card>
+				<Card style={{ height: '430px' }}>
+					<div className='container'>
+						<div className='row'>
+							<div className='col-md-4'>
+								<List component='nav'>
+									<ListItem button onClick={() => this.handleTabChange(0)}>
+										<ListItemIcon>
+											<Details />
+										</ListItemIcon>
+										<ListItemText primary='Exam details' />
+									</ListItem>
+									<ListItem button onClick={() => this.handleTabChange(1)}>
+										<ListItemIcon>
+											<Phone />
+										</ListItemIcon>
+										<ListItemText primary='Marks' />
+									</ListItem>
+									<ListItem button onClick={() => this.handleTabChange(2)}>
+										<ListItemIcon>
+											<Timer />
+										</ListItemIcon>
+										<ListItemText primary='Time period' />
+									</ListItem>
+									<ListItem button onClick={() => this.handleTabChange(3)}>
+										<ListItemIcon>
+											<Lock />
+										</ListItemIcon>
+										<ListItemText primary='Password' />
+									</ListItem>
+								</List>
+							</div>
+							<div className='col-md-8'>
+								{activeTab === 0 ? (
+									<ExamDetailsForm
+										examDetails={exam}
+										coursesList={coursesList}
+										handleSubmit={this.updateExamDetails}
+									/>
+								) : activeTab === 1 ? (
+									<ExamMarksForm
+										examDetails={exam}
+										handleSubmit={this.updateExamDetails}
+									/>
+								) : activeTab === 2 ? (
+									<ExamTimeForm
+										examDetails={exam}
+										handleSubmit={this.updateExamDetails}
+									/>
+								) : activeTab === 3 ? (
+									<ExamPasswordForm
+										examDetails={exam}
+										handleSubmit={this.updateExamDetails}
+									/>
+								) : null}
+							</div>
+						</div>
+					</div>
+					<CustomSnackBar
+						show={snackbar.show}
+						snackBarType={snackbar.type}
+						handleSnackBar={this.handleSnackBar}
+						message={snackbar.msg}
 					/>
-				) : null}
-
-				{this.state.examDate.prev !== '' ? (
-					<ExamMarks
-						fields={this.state}
-						handleCollapseChange={this.handleCollapseChange}
-						updateExamDetails={this.updateExamDetails}
-						handleNegativeMarksChange={this.changeNegativeMarks}
-					/>
-				) : null}
-
-				<ExamTime
-					fields={this.state}
-					handleCollapseChange={this.handleCollapseChange}
-					deleteDuration={this.deleteDuration}
-					updateExamDetails={this.updateExamDetails}
-				/>
-				<ExamPassword
-					fields={this.state}
-					handleCollapseChange={this.handleCollapseChange}
-					updateExamDetails={this.updateExamDetails}
-				/>
+				</Card>
 			</div>
 		);
 	}
