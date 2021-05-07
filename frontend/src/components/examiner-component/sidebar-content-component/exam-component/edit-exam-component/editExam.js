@@ -37,7 +37,10 @@ class EditExam extends React.Component {
 				exam: {
 					...response.examDetails,
 					course: response.examDetails.course._id,
-					examDate: moment(response.examDetails.examDate),
+					duration: response.examDetails.duration
+						? response.examDetails.duration
+						: '',
+					examDate: new Date(response.examDetails.examDate),
 					startTime: new Date(response.examDetails.startTime).toString(),
 					endTime: new Date(response.examDetails.endTime).toString(),
 				},

@@ -31,7 +31,6 @@ import {
 import ExamService from '../../../../services/examApi';
 import * as ActionTypes from '../../../../action';
 import DeleteModal from '../../../../modals/deleteModal';
-import factories from '../../../../factories/factories';
 import CustomSnackBar from '../../../customSnackbar';
 
 const StyledTableCell = withStyles((theme) => ({
@@ -121,17 +120,15 @@ class Exam extends Component {
 
 	addNewQuestion = (examId, examDate) => {
 		let currentDate = new Date();
-		let boolStatus;
-		currentDate = factories.formatDate(currentDate);
+		currentDate = Date.parse(currentDate);
 
+		let boolStatus;
 		if (examDate >= currentDate) boolStatus = false;
 		else boolStatus = true;
 
-		// this.handleSnackBar(boolStatus);
-
 		if (!boolStatus) {
 			this.props.history.push(`/examiner/exam/${examId}/question/new`);
-		}
+		} else console.log('some error');
 	};
 
 	viewQuestions = (examId) => {

@@ -124,18 +124,6 @@ const ExamTimeForm = (props) => {
 											label='Duration'
 											value={formikProps.values.duration || ''}
 											onChange={formikProps.handleChange}
-											// onChange={(event) => {
-											// 	let regex = /^[0-9\b]+$/;
-											// 	if (
-											// 		regex.test(event.target.value) ||
-											// 		event.target.value == ''
-											// 	) {
-											// 		formikProps.setFieldValue(
-											// 			'duration',
-											// 			event.target.value
-											// 		);
-											// 	}
-											// }}
 											onBlur={formikProps.handleBlur}
 											error={
 												formikProps.touched.duration &&
