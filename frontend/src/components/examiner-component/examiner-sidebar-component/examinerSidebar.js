@@ -83,7 +83,6 @@ class ExaminerSidebar extends Component {
 				variant='persistent'
 				anchor='left'
 				open={this.props.toggle}
-				open={this.props.toggle}
 				className={clsx(classes.drawer, {
 					[classes.drawerOpen]: toggle,
 					[classes.drawerClose]: !toggle,

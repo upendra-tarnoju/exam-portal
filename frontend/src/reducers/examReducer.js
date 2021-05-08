@@ -1,12 +1,7 @@
 const initialState = {
 	selectedExamIndex: '',
 	examsList: [],
-	examDetails: {
-		subject: '',
-		course: '',
-		examCode: '',
-		password: '',
-	},
+	examDetails: {},
 };
 
 const examReducers = (state = initialState, action) => {
@@ -16,18 +11,6 @@ const examReducers = (state = initialState, action) => {
 			examDetails: {
 				...action.data.examDetails,
 				examMarks: action.data.examMarks,
-			},
-		};
-	}
-	if (action.type === 'clear_exam_details_fields') {
-		return {
-			...state,
-			examDetails: {
-				...state.examDetails,
-				course: '',
-				examCode: '',
-				password: '',
-				subject: '',
 			},
 		};
 	} else if (action.type === 'set_exam_list') {

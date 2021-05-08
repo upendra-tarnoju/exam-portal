@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import Moment from 'react-moment';
 import {
 	Button,
@@ -29,7 +28,6 @@ import {
 } from '@material-ui/icons';
 
 import ExamService from '../../../../services/examApi';
-import * as ActionTypes from '../../../../action';
 import DeleteModal from '../../../../modals/deleteModal';
 import CustomSnackBar from '../../../customSnackbar';
 
@@ -358,26 +356,4 @@ class Exam extends Component {
 	}
 }
 
-const mapStateToProps = (state) => {
-	return {
-		selectedExamIndex: state.examReducer.selectedExamIndex,
-		examsList: state.examReducer.examsList,
-	};
-};
-
-const mapDispatchToProps = (dispatch) => {
-	return {
-		clearExamInputs: () => {
-			dispatch({
-				type: ActionTypes.CLEAR_EXAM_DETAILS_FIELDS,
-			});
-		},
-		setExamList: (examList) => {
-			dispatch({
-				type: ActionTypes.SET_EXAM_LIST,
-				examList: examList,
-			});
-		},
-	};
-};
-export default connect(mapStateToProps, mapDispatchToProps)(Exam);
+export default Exam;

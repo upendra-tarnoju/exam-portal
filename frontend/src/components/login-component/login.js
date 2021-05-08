@@ -1,8 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { Card, makeStyles } from '@material-ui/core';
 
-import ExaminerInput from './examinerInput';
 import Navbar from '../header/navbar';
 import LoginCard from './loginCard';
 import LoginImage from '../../assets/login.jpg';
@@ -40,7 +38,7 @@ const Login = (props) => {
 			<div className={classes.loginContainer}>
 				<section className=''>
 					<Card className={`mx-auto h-100 ${classes.loginCard}`}>
-						{props.examinerInputWindow ? <ExaminerInput /> : <LoginCard />}
+						<LoginCard />
 					</Card>
 				</section>
 			</div>
@@ -48,9 +46,4 @@ const Login = (props) => {
 	);
 };
 
-const mapStateToProps = (state) => {
-	return {
-		examinerInputWindow: state.examinerReducer.examinerInput,
-	};
-};
-export default connect(mapStateToProps)(Login);
+export default Login;

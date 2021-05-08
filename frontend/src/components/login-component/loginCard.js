@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
 
-import * as ActionTypes from '../../action';
 import UserService from '../../services/userApi';
 import LoginForm from '../../forms/loginForm';
 import styles from './login.module.css';
@@ -21,13 +19,7 @@ class LoginCard extends Component {
 		if (data.userType === 'admin') {
 			this.props.history.push('/admin');
 		} else if (data.userType === 'examiner') {
-			let lastLogin = data.lastLogin;
-			if (lastLogin == null) {
-				this.props.setExaminerInputWindow(true);
-			} else {
-				this.props.setExaminerInputWindow(false);
-				this.props.history.push('/examiner/exam');
-			}
+			this.props.history.push('/examiner/exam');
 		} else {
 			this.props.history.push('/student/exam');
 		}
@@ -55,23 +47,8 @@ class LoginCard extends Component {
 					handleError={this.handleError}
 				/>
 			</div>
-			// <div className='py-4'>
-			//
-
-			// </div>
 		);
 	}
 }
 
-const mapDispatchToProps = (dispatch) => {
-	return {
-		setExaminerInputWindow: (status) => {
-			dispatch({
-				type: ActionTypes.SET_EXAMINER_INPUT_WINDOW,
-				status: status,
-			});
-		},
-	};
-};
-
-export default withRouter(connect(null, mapDispatchToProps)(LoginCard));
+export default withRouter(LoginCard);

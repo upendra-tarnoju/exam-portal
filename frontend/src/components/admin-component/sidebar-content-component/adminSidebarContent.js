@@ -1,10 +1,8 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 
 import ViewExaminers from './view-examiners-component/viewExaminers';
-import * as ActionType from '../../../action';
 import AdminDashboard from './admin-dashboard-component/adminDashboard';
 
 const useStyles = makeStyles((theme) => ({
@@ -27,25 +25,4 @@ const AdminSidebarContent = (props) => {
 	);
 };
 
-const mapStateToProps = (state) => {
-	return {
-		toggle: state.adminReducer.sidebarToggle,
-		name: state.adminReducer.name,
-	};
-};
-
-const mapDispatchToProps = (dispatch) => {
-	return {
-		setSidebar: (toggle) => {
-			dispatch({
-				type: ActionType.COLLAPSE_SIDEBAR,
-				toggle: toggle,
-			});
-		},
-	};
-};
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(AdminSidebarContent);
+export default AdminSidebarContent;

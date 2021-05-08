@@ -8,7 +8,6 @@ import {
 	Typography,
 } from '@material-ui/core';
 import { Details, Lock, Phone, Timer } from '@material-ui/icons';
-import moment from 'moment';
 
 import ExamService from '../../../../../services/examApi';
 import ExamDetailsForm from '../../../../../forms/edit-exam-form/examDetailsForm';

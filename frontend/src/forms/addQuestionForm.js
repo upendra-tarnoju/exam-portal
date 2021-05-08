@@ -24,7 +24,6 @@ import {
 import { Delete, Edit } from '@material-ui/icons';
 import { Formik } from 'formik';
 import { Form } from 'react-bootstrap';
-import { connect } from 'react-redux';
 import { Editor } from '@tinymce/tinymce-react';
 
 import styles from '../components/examiner-component/sidebar-content-component/questions-component/question.module.css';
@@ -374,10 +373,4 @@ class AddQuestionForm extends React.Component {
 	}
 }
 
-const mapStateToProps = (state) => {
-	return {
-		marks: state.examinerReducer.marks,
-	};
-};
-
-export default connect(mapStateToProps)(AddQuestionForm);
+export default AddQuestionForm;

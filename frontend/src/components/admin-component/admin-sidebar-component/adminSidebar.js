@@ -156,7 +156,6 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state) => {
 	return {
 		toggle: state.adminReducer.sidebarToggle,
-		name: state.adminReducer.name,
 	};
 };
 

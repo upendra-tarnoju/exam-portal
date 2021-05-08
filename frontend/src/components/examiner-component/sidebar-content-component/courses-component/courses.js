@@ -16,6 +16,7 @@ import {
 } from '@material-ui/core';
 import { Button } from '@material-ui/core';
 import Moment from 'react-moment';
+import moment from 'moment';
 import { Add, Edit, Delete } from '@material-ui/icons';
 
 import * as ActionTypes from '../../../../action';
@@ -24,7 +25,6 @@ import CourseService from '../../../../services/courseApi';
 import DeleteModal from '../../../../modals/deleteModal';
 import Snackbar from '../../../customSnackbar';
 import SearchCourseForm from '../../../../forms/course-form/searchCourseForm';
-import moment from 'moment';
 
 const StyledTableCell = withStyles((theme) => ({
 	head: {
