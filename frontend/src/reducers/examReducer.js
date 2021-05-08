@@ -13,9 +13,13 @@ const examReducers = (state = initialState, action) => {
 	if (action.type === 'set_exam_details') {
 		return {
 			...state,
-			examDetails: action.values,
+			examDetails: {
+				...action.data.examDetails,
+				examMarks: action.data.examMarks,
+			},
 		};
-	} else if (action.type === 'clear_exam_details_fields') {
+	}
+	if (action.type === 'clear_exam_details_fields') {
 		return {
 			...state,
 			examDetails: {

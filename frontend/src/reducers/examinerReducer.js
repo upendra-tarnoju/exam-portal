@@ -3,7 +3,6 @@ const initialState = {
 	courses: [],
 	examCode: '',
 	questions: [],
-	marks: { total: 0, left: 0, used: 0 },
 };
 
 const examinerReducers = (state = initialState, action) => {
@@ -16,17 +15,6 @@ const examinerReducers = (state = initialState, action) => {
 		return {
 			...state,
 			courses: action.courses,
-		};
-	} else if (action.type === 'set_questions') {
-		return {
-			...state,
-			questions: action.questions,
-			examCode: action.examCode,
-			marks: {
-				total: action.totalMarks,
-				left: action.totalMarks - action.usedMarks,
-				used: action.usedMarks,
-			},
 		};
 	} else if (action.type === 'add_question') {
 		return {

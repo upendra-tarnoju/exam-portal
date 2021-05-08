@@ -70,6 +70,18 @@ class ExamService {
 			},
 		});
 	};
+
+	getExamQuestionDetails(examId) {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'get',
+			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAM_URL}/${examId}/questionDetails`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	}
 }
 
 export default ExamService;

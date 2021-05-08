@@ -5,7 +5,6 @@ export const SET_EXAM_DETAILS = 'set_exam_details';
 export const COLLAPSE_SIDEBAR = 'collapse_sidebar';
 export const CLEAR_EXAM_DETAILS_FIELDS = 'clear_exam_details_fields';
 export const SET_EXAM_LIST = 'set_exam_list';
-export const SET_QUESTIONS = 'set_questions';
 export const ADD_QUESTION = 'add_question';
 export const CHANGE_STUDENT_FIELDS = 'change_student_fields';
 export const EXAM_DETAIL_FIELDS = 'exam_detail_fields';
