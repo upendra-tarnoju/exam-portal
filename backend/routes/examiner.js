@@ -68,6 +68,13 @@ module.exports = () => {
 	);
 
 	router.get(
+		'/exam/:examId/questionDetails',
+		passport.authenticate('jwt'),
+		validatorMiddleware(ExaminerValidator.GET_EXAM_DETAILS),
+		examController.getSpecificExamQuestionDetails
+	);
+
+	router.get(
 		'/exam/:examId',
 		passport.authenticate('jwt'),
 		examController.getParticularExam

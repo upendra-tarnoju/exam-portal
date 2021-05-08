@@ -154,7 +154,12 @@ module.exports = {
 	],
 
 	UPDATE_EXAM: [
-		param('examId').not().isEmpty().withMessage('Exam id is required'),
+		param('examId')
+			.not()
+			.isEmpty()
+			.withMessage('Exam id is required')
+			.isLength({ min: 24, max: 24 })
+			.withMessage('Invalid exam id'),
 		body('course').optional(),
 		body('examCode').optional(),
 		body('subject').optional(),
@@ -164,5 +169,14 @@ module.exports = {
 				return Object.keys(query).every((key) => keys.includes(key));
 			})
 			.withMessage('Some extra parameters are sent'),
+	],
+
+	GET_EXAM_DETAILS: [
+		param('examId')
+			.not()
+			.isEmpty()
+			.withMessage('Exam id is required')
+			.isLength({ min: 24, max: 24 })
+			.withMessage('Invalid exam id'),
 	],
 };

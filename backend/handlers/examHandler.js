@@ -1,4 +1,5 @@
 const moment = require('moment');
+const mongoose = require('mongoose');
 
 let { exam } = require('../models');
 let { factories } = require('../factories');
@@ -312,6 +313,36 @@ const exams = {
 		} else {
 			return { status: 401, msg: 'Incorrect exam key' };
 		}
+	},
+
+	getSpecificExamQuestionDetails: async (payload) => {
+		let aggregateArray = [
+			{ $match: { examId: mongoose.Types.ObjectId(payload.examId) } },
+			{ $group: { _id: null, examMarks: { $sum: '$questionMark' } } },
+		];
+
+		let questionDetails = await queries.aggregateData(
+			Schema.question,
+			aggregateArray
+		);
+
+		let query = { _id: payload.examId };
+		let projections = { examCode: 1, subject: 1, totalMarks: 1 };
+		let options = { lean: true };
+
+		let examDetails = await queries.findOne(
+			Schema.exam,
+			query,
+			projections,
+			options
+		);
+
+		console.log(questionDetails);
+
+		return {
+			status: 200,
+			data: { examMarks: questionDetails[0].examMarks, examDetails },
+		};
 	},
 };
 

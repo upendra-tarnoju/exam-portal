@@ -63,6 +63,14 @@ const exam = {
 			.status(response.status)
 			.send({ msg: response.msg, examDetails: response.examDetails });
 	},
+
+	getSpecificExamQuestionDetails: async (req, res) => {
+		let params = req.params;
+
+		let response = await examHandler.getSpecificExamQuestionDetails(params);
+
+		res.status(response.status).send(response.data);
+	},
 };
 
 module.exports = exam;

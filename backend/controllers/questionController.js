@@ -5,21 +5,28 @@ const { questionHandler } = require('../handlers');
 
 const question = {
 	addNewQuestion: async (req, res) => {
-		let questionData = req.body;
-		let questionImage = req.file;
-		questionHandler
-			.addNewQuestion(questionData, questionImage)
-			.then((response) => {
-				let data = {
-					_id: response._id,
-					question: response.question,
-					questionMarks: response.questionMarks,
-				};
-				res.status(200).send({
-					msg: 'New question added',
-					newQuestion: data,
-				});
-			});
+		let questionDetails = req.body;
+		// questionDetails.imageId = req.file.id;
+		let userDetails = req.user;
+		let imageDetails = req.file;
+
+		let response = await questionHandler.addNewQuestion(
+			questionDetails,
+			userDetails,
+			imageDetails
+		);
+
+		// let questionImage = req.file;
+		// questionHandler
+		// 	.addNewQuestion(questionData, questionImage)
+		// 	.then((response) => {
+		// 		let data = {
+		// 			_id: response._id,
+		// 			question: response.question,
+		// 			questionMarks: response.questionMarks,
+		// 		};
+		res.status(response.status).send(response.data);
+		// 	});
 	},
 
 	getAllQuestions: async (req, res) => {

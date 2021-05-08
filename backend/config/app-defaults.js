@@ -27,7 +27,10 @@ const appDefaults = {
 	},
 	EXAM_STATUS: {
 		CREATED: 'CREATED',
-		DELETED: 'DELETED	',
+		DELETED: 'DELETED',
+	},
+	QUESTION_STATUS: {
+		ACTIVE: 'ACTIVE',
 	},
 };
 

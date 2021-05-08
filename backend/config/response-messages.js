@@ -107,4 +107,12 @@ module.exports = {
 			},
 		},
 	},
+	QUESTION: {
+		CREATE: {
+			SUCCESS: {
+				STATUS_CODE: 200,
+				MSG: 'Question is added to exam successfully',
+			},
+		},
+	},
 };

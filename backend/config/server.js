@@ -26,8 +26,11 @@ const passport = require('passport');
 require('../db').connection;
 
 app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
 app.use(
 	session({
 		secret: 'keyboard cat',
