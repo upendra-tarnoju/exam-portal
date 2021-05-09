@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
-import AddQuestion from './addQuestions';
+import AddQuestion from './add-question-component/addQuestions';
 import * as ActionTypes from '../../../../action';
 import CustomSnackBar from '../../../customSnackbar';
 import ViewQuestionDetails from './viewQuestionDetails';
