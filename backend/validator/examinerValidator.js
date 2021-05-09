@@ -1,4 +1,5 @@
 const { query, body, param } = require('express-validator');
+const APP_CONSTANTS = require('../config/app-defaults');
 
 module.exports = {
 	GET_COURSES: [
@@ -184,5 +185,42 @@ module.exports = {
 			.withMessage('Exam id is required')
 			.isLength({ min: 24, max: 24 })
 			.withMessage('Invalid exam id'),
+	],
+
+	GET_EXAM_QUESTIONS: [
+		param('examId')
+			.not()
+			.isEmpty()
+			.withMessage('Exam id is required')
+			.isLength({ min: 24, max: 24 })
+			.withMessage('Invalid exam id'),
+	],
+
+	DELETE_QUESTION: [
+		param('questionId')
+			.not()
+			.isEmpty()
+			.withMessage('Question id is required')
+			.isLength({ min: 24, max: 24 })
+			.withMessage('Invalid question id'),
+	],
+
+	QUESTION_STATUS: [
+		param('questionId')
+			.not()
+			.isEmpty()
+			.withMessage('Question id is required')
+			.isLength({ min: 24, max: 24 })
+			.withMessage('Invalid question id'),
+		body('status')
+			.not()
+			.isEmpty()
+			.withMessage('Status is required')
+			.not()
+			.isWhitelisted([
+				APP_CONSTANTS.QUESTION_STATUS.ACTIVE,
+				APP_CONSTANTS.QUESTION_STATUS.INACTIVE,
+			])
+			.withMessage('Invalid question status'),
 	],
 };

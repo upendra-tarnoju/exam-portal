@@ -106,31 +106,48 @@ const questions = {
 		}
 	},
 
-	getSelectiveQuestionData: async (examId, pageIndex, pageSize) => {
-		pageIndex = pageIndex * pageSize;
-		let totalQuestions = await question.getSpecificData(examId);
+	getExamQuestions: async (params) => {
+		try {
+			let query = {
+				$and: [
+					{ examId: mongoose.Types.ObjectId(params.examId) },
+					{ status: { $nin: [APP_CONSTANTS.QUESTION_STATUS.DELETED] } },
+				],
+			};
+			let projections = {
+				createdDate: 0,
+				modifiedDate: 0,
+				examId: 0,
+				examinerId: 0,
+			};
+			let options = { lean: true };
 
-		let questionData = await question
-			.getSpecificData(examId)
-			.skip(pageIndex)
-			.limit(pageSize)
-			.select({ _id: 1, question: 1, questionMarks: 1 });
-		let examData = await exam.getById(examId);
-		let examCode = examData[0].examCode;
-		let totalMarks = examData[0].totalMarks;
-		return {
-			questionData,
-			examCode,
-			totalMarks,
-			totalQuestions: totalQuestions.length,
-		};
-	},
+			let questions = await queries.getData(
+				Schema.question,
+				query,
+				projections,
+				options
+			);
 
-	getAllQuestionData: async (examId) => {
-		let questionData = await question
-			.getSpecificData(examId)
-			.select({ modifiedAt: 0, examId: 0 });
-		return questionData;
+			let countDocuments = await queries.countDocuments(Schema.question, query);
+
+			query = { _id: mongoose.Types.ObjectId(params.examId) };
+			projections = { totalMarks: 1 };
+
+			let examDetails = await queries.findOne(
+				Schema.exam,
+				query,
+				projections,
+				options
+			);
+
+			return {
+				status: 200,
+				data: { questions, examDetails, count: countDocuments },
+			};
+		} catch (err) {
+			throw err;
+		}
 	},
 
 	getParticularQuestion: async (questionId) => {
@@ -161,8 +178,89 @@ const questions = {
 		return updatedQuestion;
 	},
 
-	delete: async (questionId) => {
-		return question.deleteById(questionId);
+	delete: async (params) => {
+		try {
+			let condition = { _id: mongoose.Types.ObjectId(params.questionId) };
+			let toUpdate = {
+				$set: { status: APP_CONSTANTS.QUESTION_STATUS.DELETED },
+			};
+			let options = { lean: true, new: true };
+
+			let questionDetail = await queries.findAndUpdate(
+				Schema.question,
+				condition,
+				toUpdate,
+				options
+			);
+
+			if (questionDetail) {
+				return {
+					status: RESPONSE_MESSAGES.QUESTION.DELETE.SUCCESS.STATUS_CODE,
+					data: {
+						msg: RESPONSE_MESSAGES.QUESTION.DELETE.SUCCESS.MSG,
+						question: { _id: questionDetail._id },
+					},
+				};
+			} else {
+				return {
+					status: RESPONSE_MESSAGES.QUESTION.DELETE.INVALID_ID.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.QUESTION.DELETE.INVALID_ID.MSG },
+				};
+			}
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	updateQuestionStatus: async (params, data) => {
+		try {
+			let condition = { _id: mongoose.Types.ObjectId(params.questionId) };
+			let toUpdate;
+			let options = { lean: true, new: true };
+
+			if (data.status === APP_CONSTANTS.QUESTION_STATUS.ACTIVE) {
+				toUpdate = {
+					$set: {
+						status: APP_CONSTANTS.QUESTION_STATUS.ACTIVE,
+						modifiedDate: new Date(),
+					},
+				};
+			} else {
+				toUpdate = {
+					$set: {
+						status: APP_CONSTANTS.QUESTION_STATUS.INACTIVE,
+						modifiedDate: new Date(),
+					},
+				};
+			}
+
+			let questionDetail = await queries.findAndUpdate(
+				Schema.question,
+				condition,
+				toUpdate,
+				options
+			);
+
+			if (questionDetail) {
+				return {
+					status:
+						RESPONSE_MESSAGES.QUESTION.UPDATE.STATUS[data.status].STATUS_CODE,
+					data: {
+						msg: RESPONSE_MESSAGES.QUESTION.UPDATE.STATUS[data.status].MSG,
+					},
+				};
+			} else {
+				return {
+					status:
+						RESPONSE_MESSAGES.QUESTION.UPDATE.STATUS.INVALID_ID.STATUS_CODE,
+					data: {
+						msg: RESPONSE_MESSAGES.QUESTION.UPDATE.STATUS.INVALID_ID.MSG,
+					},
+				};
+			}
+		} catch (err) {
+			throw err;
+		}
 	},
 };
 

@@ -33,6 +33,8 @@ const appDefaults = {
 	},
 	QUESTION_STATUS: {
 		ACTIVE: 'ACTIVE',
+		INACTIVE: 'INACTIVE',
+		DELETED: 'DELETED',
 	},
 };
 

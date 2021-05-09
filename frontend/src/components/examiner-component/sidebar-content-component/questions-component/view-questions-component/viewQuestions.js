@@ -7,22 +7,23 @@ import {
 	Button,
 	Paper,
 } from '@material-ui/core';
-import { Add } from '@material-ui/icons';
 
 import QuestionService from '../../../../../services/questionApi';
 import styles from '../question.module.css';
 import DeleteModal from '../../../../../modals/deleteModal';
 import QuestionCard from './questionCard';
+import CustomSnackBar from '../../../../customSnackbar';
 
 class ViewQuestions extends React.Component {
-	constructor(props) {
-		super(props);
+	constructor() {
+		super();
 		this.questionService = new QuestionService();
 		this.state = {
 			questionList: [],
 			questionCount: 0,
 			totalMarks: 0,
 			deleteModal: { show: false, id: '' },
+			snackbar: { show: false, msg: '', type: '' },
 		};
 	}
 
@@ -38,23 +39,46 @@ class ViewQuestions extends React.Component {
 	}
 
 	handleDeleteDialog = (show, id) => {
-		this.setState({
-			deleteModal: {
-				show: show,
-				id: id,
-			},
-		});
+		this.setState({ deleteModal: { show: show, id: id } });
+	};
+
+	handleSnackBar = (status, msg, type) => {
+		this.setState({ snackbar: { show: status, msg: msg, type: type } });
 	};
 
 	deleteQuestion = () => {
 		let questionId = this.state.deleteModal.id;
 		this.questionService.delete(questionId).then((response) => {
 			let questionList = this.state.questionList.filter(
-				(item) => item._id !== response.data._id
+				(item) => item._id !== response.data.question._id
 			);
 			this.setState({ questionList });
 			this.handleDeleteDialog(false, '');
+			this.handleSnackBar(true, response.data.msg, 'success');
 		});
+	};
+
+	handleQuestionStatus = (event, questionId) => {
+		let value = event.target.checked;
+		let checked;
+		let { questionList } = this.state;
+
+		if (value) checked = 'ACTIVE';
+		else checked = 'INACTIVE';
+
+		this.questionService
+			.updateQuestionStatus(questionId, { status: checked })
+			.then((res) => {
+				let updatedQuestionList = questionList.map((question) => {
+					if (question._id === questionId) {
+						question.status = checked;
+					}
+					return question;
+				});
+
+				this.setState({ questionList: updatedQuestionList });
+				this.handleSnackBar(true, res.data.msg, 'success');
+			});
 	};
 
 	handleAddQuestion = () => {
@@ -87,13 +111,15 @@ class ViewQuestions extends React.Component {
 		</Card>
 	);
 	render() {
-		let { questionCount, totalMarks, menu } = this.state;
+		let { questionCount, totalMarks, snackbar } = this.state;
 		let questions = this.state.questionList.map((data, index) => {
 			return (
 				<QuestionCard
 					index={index}
+					key={index}
 					questionDetails={data}
 					handleDeleteDialog={this.handleDeleteDialog}
+					handleQuestionStatus={this.handleQuestionStatus}
 				/>
 			);
 		});
@@ -129,6 +155,12 @@ class ViewQuestions extends React.Component {
 					heading='question'
 					deleteContent={this.deleteQuestion}
 					hideModal={this.handleDeleteDialog}
+				/>
+				<CustomSnackBar
+					show={snackbar.show}
+					snackBarType={snackbar.type}
+					handleSnackBar={this.handleSnackBar}
+					message={snackbar.msg}
 				/>
 			</div>
 		);

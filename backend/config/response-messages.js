@@ -118,5 +118,31 @@ module.exports = {
 				MSG: 'You have exceeded total marks limit',
 			},
 		},
+		DELETE: {
+			SUCCESS: {
+				STATUS_CODE: 200,
+				MSG: 'Question is deleted from exam successfully',
+			},
+			INVALID_ID: {
+				STATUS_CODE: 400,
+				MSG: 'Invalid question id',
+			},
+		},
+		UPDATE: {
+			STATUS: {
+				ACTIVE: {
+					STATUS_CODE: 200,
+					MSG: 'Question has been set to active',
+				},
+				INACTIVE: {
+					STATUS_CODE: 200,
+					MSG: 'Question has been set to inactive',
+				},
+				INVALID_ID: {
+					STATUS_CODE: 400,
+					MSG: 'Invalid question id',
+				},
+			},
+		},
 	},
 };

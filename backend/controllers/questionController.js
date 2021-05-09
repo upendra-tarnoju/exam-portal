@@ -6,7 +6,6 @@ const { questionHandler } = require('../handlers');
 const question = {
 	addNewQuestion: async (req, res) => {
 		let questionDetails = req.body;
-		// questionDetails.imageId = req.file.id;
 		let userDetails = req.user;
 		let imageDetails = req.file;
 
@@ -16,33 +15,18 @@ const question = {
 			imageDetails
 		);
 
-		// let questionImage = req.file;
-		// questionHandler
-		// 	.addNewQuestion(questionData, questionImage)
-		// 	.then((response) => {
-		// 		let data = {
-		// 			_id: response._id,
-		// 			question: response.question,
-		// 			questionMarks: response.questionMarks,
-		// 		};
 		res.status(response.status).send(response.data);
-		// 	});
 	},
 
 	getAllQuestions: async (req, res) => {
-		let examId = req.query.examId;
-		let { queryType, pageIndex, pageSize } = req.query;
-		if (queryType === 'selective') {
-			let response = await questionHandler.getSelectiveQuestionData(
-				examId,
-				parseInt(pageIndex, 10),
-				parseInt(pageSize, 10)
-			);
-			res.status(200).send(response);
-		} else {
-			questionHandler.getAllQuestionData(examId).then((response) => {
-				res.status(200).send(response);
-			});
+		try {
+			let params = req.params;
+
+			let response = await questionHandler.getExamQuestions(params);
+
+			res.status(response.status).send(response.data);
+		} catch (err) {
+			throw err;
 		}
 	},
 
@@ -75,14 +59,26 @@ const question = {
 	},
 
 	delete: async (req, res) => {
-		let questionId = req.params.questionId;
-		questionHandler.delete(questionId).then((response) => {
-			let data = {
-				question: response.question,
-				questionMarks: response.questionMarks,
-			};
-			res.status(200).send(data);
-		});
+		try {
+			let params = req.params;
+
+			let response = await questionHandler.delete(params);
+			res.status(response.status).send(response.data);
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	updateQuestionStatus: async (req, res) => {
+		try {
+			let params = req.params;
+			let data = req.body;
+			let response = await questionHandler.updateQuestionStatus(params, data);
+
+			res.status(response.status).send(response.data);
+		} catch (err) {
+			throw err;
+		}
 	},
 
 	getQuestionImage: async (req, res) => {

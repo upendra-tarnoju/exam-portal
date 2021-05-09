@@ -102,8 +102,9 @@ module.exports = () => {
 	);
 
 	router.get(
-		'/question',
+		'/exam/:examId/questions',
 		passport.authenticate('jwt'),
+		validatorMiddleware(ExaminerValidator.GET_EXAM_QUESTIONS),
 		questionController.getAllQuestions
 	);
 
@@ -111,6 +112,13 @@ module.exports = () => {
 		'/question/:questionId',
 		passport.authenticate('jwt'),
 		questionController.getParticularQuestion
+	);
+
+	router.patch(
+		'/question/:questionId/status',
+		passport.authenticate('jwt'),
+		validatorMiddleware(ExaminerValidator.QUESTION_STATUS),
+		questionController.updateQuestionStatus
 	);
 
 	router.patch(
@@ -123,6 +131,7 @@ module.exports = () => {
 	router.delete(
 		'/question/:questionId',
 		passport.authenticate('jwt'),
+		validatorMiddleware(ExaminerValidator.DELETE_QUESTION),
 		questionController.delete
 	);
 

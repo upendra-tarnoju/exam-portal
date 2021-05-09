@@ -69,6 +69,19 @@ class QuestionService {
 			},
 		});
 	}
+
+	updateQuestionStatus(questionId, data) {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'patch',
+			url: `${process.env.REACT_APP_BASE_URL}/${this.QUESTION_URL}/${questionId}/status`,
+			data: data,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	}
 }
 
 export default QuestionService;
