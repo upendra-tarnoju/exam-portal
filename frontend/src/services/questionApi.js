@@ -25,11 +25,7 @@ class QuestionService {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'get',
-			url: `${process.env.REACT_APP_BASE_URL}/${this.QUESTION_URL}`,
-			params: {
-				...query,
-				examId: examId,
-			},
+			url: `${process.env.REACT_APP_BASE_URL}/api/examiner/exam/${examId}/questions`,
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,

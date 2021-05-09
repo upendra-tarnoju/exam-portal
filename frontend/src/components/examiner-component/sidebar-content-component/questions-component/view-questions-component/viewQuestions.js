@@ -1,22 +1,18 @@
 import React from 'react';
 import {
 	Card,
-	CardActionArea,
 	CardContent,
-	CardMedia,
 	Typography,
-	FormControlLabel,
-	Radio,
-	Checkbox,
 	CardActions,
-	IconButton,
 	Button,
+	Paper,
 } from '@material-ui/core';
-import { Edit, DeleteForever } from '@material-ui/icons';
+import { Add } from '@material-ui/icons';
 
 import QuestionService from '../../../../../services/questionApi';
 import styles from '../question.module.css';
 import DeleteModal from '../../../../../modals/deleteModal';
+import QuestionCard from './questionCard';
 
 class ViewQuestions extends React.Component {
 	constructor(props) {
@@ -24,16 +20,19 @@ class ViewQuestions extends React.Component {
 		this.questionService = new QuestionService();
 		this.state = {
 			questionList: [],
+			questionCount: 0,
+			totalMarks: 0,
 			deleteModal: { show: false, id: '' },
 		};
 	}
 
 	componentDidMount() {
 		let examId = this.props.match.params.examId;
-		let queryType = 'all';
-		this.questionService.getAll(examId, queryType).then((response) => {
+		this.questionService.getAll(examId).then((response) => {
 			this.setState({
-				questionList: response.data,
+				questionList: response.data.questions,
+				questionCount: response.data.count,
+				totalMarks: response.data.examDetails.totalMarks,
 			});
 		});
 	}
@@ -56,40 +55,6 @@ class ViewQuestions extends React.Component {
 			this.setState({ questionList });
 			this.handleDeleteDialog(false, '');
 		});
-	};
-
-	showOptions = (options, correctAnswer, optionType) => {
-		let rows = [...Array(Math.ceil(options.length / 2))];
-		let optionRows = rows.map((row, index) =>
-			options.slice(index * 2, index * 2 + 2)
-		);
-		// if (optionType !== 'single') {
-		// 	correctAnswer = correctAnswer.split(',');
-		// }
-		let content = optionRows.map((row, index) => (
-			<div className='row' key={index}>
-				{row.map((option) => (
-					<div key={option._id} className='col-md-6 py-2'>
-						<div
-							className={`border border-dark px-2 rounded ${styles.optionShadow}`}
-						>
-							<FormControlLabel
-								control={
-									optionType === 'single' ? (
-										<Radio checked={option.name === correctAnswer} />
-									) : (
-										<Checkbox checked={correctAnswer.includes(option.name)} />
-									)
-								}
-								label={option.value}
-								value={option.value}
-							/>
-						</div>
-					</div>
-				))}
-			</div>
-		));
-		return <div className='container'>{content}</div>;
 	};
 
 	handleAddQuestion = () => {
@@ -122,57 +87,42 @@ class ViewQuestions extends React.Component {
 		</Card>
 	);
 	render() {
+		let { questionCount, totalMarks, menu } = this.state;
 		let questions = this.state.questionList.map((data, index) => {
-			let optionContent = this.showOptions(
-				data.options,
-				data.correctAnswer,
-				data.optionType
-			);
 			return (
-				<div>
-					<Card key={data._id} className='mb-2 w-75 mx-auto'>
-						<CardActionArea>
-							<CardMedia
-								className={styles.cardImageHeight}
-								image={
-									data.image === null
-										? 'https://directory.bodc.in/images/parish/parish_details/No_Image_Available.jpg'
-										: `${process.env.REACT_APP_BASE_URL}/api/image/${data.image}`
-								}
-							/>
-							<CardContent>
-								<Typography
-									gutterBottom
-									variant='h5'
-									component='h2'
-								>{`Question ${index + 1}`}</Typography>
-								<Typography
-									variant='body2'
-									color='textSecondary'
-									component='pre'
-									className={`mb-2 ${styles.questionSize}`}
-								>
-									{data.question}
-								</Typography>
-								{optionContent}
-							</CardContent>
-							<CardActions disableSpacing>
-								<IconButton>
-									<Edit />
-								</IconButton>
-								<IconButton
-									onClick={() => this.handleDeleteDialog(true, data._id)}
-								>
-									<DeleteForever />
-								</IconButton>
-							</CardActions>
-						</CardActionArea>
-					</Card>
-				</div>
+				<QuestionCard
+					index={index}
+					questionDetails={data}
+					handleDeleteDialog={this.handleDeleteDialog}
+				/>
 			);
 		});
 		return (
-			<div className='container pt-5'>
+			<div className='container py-5 h-100'>
+				<Card className='p-3'>
+					<div className='d-flex justify-content-between'>
+						<div>
+							<Typography variant='h4'>Exam Questions</Typography>
+							<Typography variant='subtitle1'>
+								View your exam questions
+							</Typography>
+						</div>
+						<div className='d-flex flex-row'>
+							<Paper className='d-flex flex-column bg-dark px-3 pt-1 text-white'>
+								<Typography variant='h6'>Total Questions</Typography>
+								<Typography className='align-self-center' variant='subtitle1'>
+									{questionCount}
+								</Typography>
+							</Paper>
+							<Paper className='d-flex flex-column ml-2 bg-dark px-3 pt-1 text-white'>
+								<Typography variant='h6'>Exam marks</Typography>
+								<Typography className='align-self-center' variant='subtitle1'>
+									{totalMarks}
+								</Typography>
+							</Paper>
+						</div>
+					</div>
+				</Card>
 				{questions.length !== 0 ? questions : <this.noQuestionsCard />}
 				<DeleteModal
 					show={this.state.deleteModal.show}
