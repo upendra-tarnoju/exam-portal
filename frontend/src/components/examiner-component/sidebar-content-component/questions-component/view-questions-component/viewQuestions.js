@@ -63,9 +63,9 @@ class ViewQuestions extends React.Component {
 		let optionRows = rows.map((row, index) =>
 			options.slice(index * 2, index * 2 + 2)
 		);
-		if (optionType !== 'single') {
-			correctAnswer = correctAnswer.split(',');
-		}
+		// if (optionType !== 'single') {
+		// 	correctAnswer = correctAnswer.split(',');
+		// }
 		let content = optionRows.map((row, index) => (
 			<div className='row' key={index}>
 				{row.map((option) => (
@@ -78,9 +78,7 @@ class ViewQuestions extends React.Component {
 									optionType === 'single' ? (
 										<Radio checked={option.name === correctAnswer} />
 									) : (
-										<Checkbox
-											checked={correctAnswer.includes(option.name)}
-										/>
+										<Checkbox checked={correctAnswer.includes(option.name)} />
 									)
 								}
 								label={option.value}
@@ -107,9 +105,7 @@ class ViewQuestions extends React.Component {
 				<p className={`${styles.heading} text-dark text-center`}>
 					This exam does not contain any questions
 				</p>
-				<p
-					className={`text-secondary ${styles.subHeading} text-center mb-0`}
-				>
+				<p className={`text-secondary ${styles.subHeading} text-center mb-0`}>
 					Add new question
 				</p>
 			</CardContent>
@@ -165,9 +161,7 @@ class ViewQuestions extends React.Component {
 									<Edit />
 								</IconButton>
 								<IconButton
-									onClick={() =>
-										this.handleDeleteDialog(true, data._id)
-									}
+									onClick={() => this.handleDeleteDialog(true, data._id)}
 								>
 									<DeleteForever />
 								</IconButton>

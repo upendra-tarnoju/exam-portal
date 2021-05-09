@@ -90,6 +90,7 @@ module.exports = () => {
 	router.delete(
 		'/exam',
 		passport.authenticate('jwt'),
+		validatorMiddleware(ExaminerValidator.DELETE_EXAM),
 		examController.deleteExam
 	);
 

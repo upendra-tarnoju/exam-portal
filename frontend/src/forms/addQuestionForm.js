@@ -121,11 +121,16 @@ class AddQuestionForm extends React.Component {
 			<Formik
 				validationSchema={schema}
 				onSubmit={(values, formikProps) =>
-					this.props.handleSubmit(values, optionsList).then((response) => {
-						this.props.handleSnackBar(true, response.data.msg, 'success');
-						formikProps.resetForm();
-						this.setState({ optionsList: [] });
-					})
+					this.props
+						.handleSubmit(values, optionsList)
+						.then((response) => {
+							this.props.handleSnackBar(true, response.data.msg, 'success');
+							formikProps.resetForm();
+							this.setState({ optionsList: [] });
+						})
+						.catch((err) => {
+							this.props.handleSnackBar(true, err.response.data.msg, 'error');
+						})
 				}
 				initialValues={{
 					question: '',

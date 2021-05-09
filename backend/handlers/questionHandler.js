@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const mongoose = require('mongoose');
 
 let { question, exam } = require('../models');
 let APP_CONSTANTS = require('../config/app-defaults');
@@ -7,55 +8,102 @@ let RESPONSE_MESSAGES = require('../config/response-messages');
 let { queries } = require('../db');
 let Schema = require('../schemas');
 
-// let createQuestionData = (data, image) => {
-// 	let optionArray = [];
-// 	for (let key in data) {
-// 		if (!isNaN(key.slice(-1))) {
-// 			optionArray.push({ name: key, value: data[key] });
-// 		}
-// 	}
-// 	return {
-// 		examId: data.examId,
-// 		question: data.question,
-// 		questionMarks: data.questionMarks,
-// 		optionType: data.optionType,
-// 		options: optionArray,
-// 		correctAnswer: data.correctAnswer,
-// 		image: image ? image.filename : null,
-// 	};
-// };
-
 const questions = {
 	addNewQuestion: async (questionDetails, userDetails, imageDetails) => {
-		let options = JSON.parse(questionDetails.optionsList);
-		let optionList = [];
-		let answerList = [];
-		for (let [key, obj] of Object.entries(options)) {
-			if (obj.answer) answerList.push(key);
-			optionList.push({ key: key, value: obj.value });
+		try {
+			let aggregateArray = [
+				{ $match: { examId: mongoose.Types.ObjectId(questionDetails.examId) } },
+				{
+					$group: { _id: '$totalMarks', examMarks: { $sum: '$questionMark' } },
+				},
+			];
+
+			let questionData = await queries.aggregateData(
+				Schema.question,
+				aggregateArray
+			);
+
+			let conditions = { _id: questionDetails.examId };
+			let projections = { totalMarks: 1 };
+			let options = { lean: true };
+
+			let examData = await queries.findOne(
+				Schema.exam,
+				conditions,
+				projections,
+				options
+			);
+
+			if (
+				questionData[0].examMarks + parseInt(questionDetails.questionMark) >
+				examData.totalMarks
+			) {
+				return {
+					status:
+						RESPONSE_MESSAGES.QUESTION.CREATE.TOTAL_MARKS_LIMIT.STATUS_CODE,
+					data: {
+						msg: RESPONSE_MESSAGES.QUESTION.CREATE.TOTAL_MARKS_LIMIT.MSG,
+					},
+				};
+			} else {
+				options = JSON.parse(questionDetails.optionsList);
+				let optionList = [];
+				let answerList = [];
+
+				for (let [key, obj] of Object.entries(options)) {
+					if (obj.answer) answerList.push(key);
+					optionList.push({ key: key, value: obj.value });
+				}
+
+				let questionObject = {
+					examId: questionDetails.examId,
+					question: questionDetails.question,
+					description: questionDetails.description
+						? questionDetails.description
+						: null,
+					questionMark: questionDetails.questionMark,
+					optionType: questionDetails.optionType,
+					image: imageDetails ? imageDetails.id : null,
+					examinerId: userDetails._id,
+					correctAnswer: answerList,
+					options: optionList,
+					status: APP_CONSTANTS.QUESTION_STATUS.ACTIVE,
+				};
+				await queries.create(Schema.question, questionObject);
+
+				let toUpdate;
+
+				if (
+					questionData[0].examMarks + parseInt(questionDetails.questionMark) ===
+					examData.totalMarks
+				) {
+					toUpdate = {
+						$set: {
+							status: APP_CONSTANTS.EXAM_STATUS.ACTIVE,
+							updatedDate: new Date(),
+						},
+					};
+				} else if (
+					questionData[0].examMarks + parseInt(questionDetails.questionMark) <=
+					examData.totalMarks
+				) {
+					toUpdate = {
+						$set: {
+							status: APP_CONSTANTS.EXAM_STATUS.INCOMPLETE_QUESTIONS,
+							updatedDate: new Date(),
+						},
+					};
+				}
+
+				await queries.findAndUpdate(Schema.exam, conditions, toUpdate);
+				return {
+					status: RESPONSE_MESSAGES.QUESTION.CREATE.SUCCESS.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.QUESTION.CREATE.SUCCESS.MSG },
+				};
+			}
+		} catch (err) {
+			throw err;
 		}
-
-		let questionData = {
-			examId: questionDetails.examId,
-			question: questionDetails.question,
-			description: questionDetails.description
-				? questionDetails.description
-				: null,
-			questionMark: questionDetails.questionMark,
-			optionType: questionDetails.optionType,
-			image: imageDetails ? imageDetails.id : null,
-			examinerId: userDetails._id,
-			correctAnswer: answerList,
-			options: optionList,
-			status: APP_CONSTANTS.QUESTION_STATUS.ACTIVE,
-		};
-
-		await queries.create(Schema.question, questionData);
-
-		return {
-			status: RESPONSE_MESSAGES.QUESTION.CREATE.SUCCESS.STATUS_CODE,
-			data: { msg: RESPONSE_MESSAGES.QUESTION.CREATE.SUCCESS.MSG },
-		};
 	},
 
 	getSelectiveQuestionData: async (examId, pageIndex, pageSize) => {

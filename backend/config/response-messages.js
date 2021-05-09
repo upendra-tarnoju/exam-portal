@@ -113,6 +113,10 @@ module.exports = {
 				STATUS_CODE: 200,
 				MSG: 'Question is added to exam successfully',
 			},
+			TOTAL_MARKS_LIMIT: {
+				STATUS_CODE: 400,
+				MSG: 'You have exceeded total marks limit',
+			},
 		},
 	},
 };

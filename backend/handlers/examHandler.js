@@ -8,55 +8,6 @@ let RESPONSE_MESSAGES = require('../config/response-messages');
 const queries = require('../db/queries');
 let Schema = require('../schemas');
 
-let setErrorMessages = (key) => {
-	if (key === 'examCode') {
-		return 'Exam code already existed';
-	} else if (key === 'subject') {
-		return 'Subject already existed';
-	} else if (key === 'passingMarks') {
-		return 'Passing marks cannot be greater than total marks';
-	}
-};
-
-let updatePassingMarks = async (key, examId, examDetails) => {
-	let existingExam = await exam.getById(examId);
-
-	if (existingExam.totalMarks < examDetails.passingMarks) {
-		return { status: 400, data: { msg: setErrorMessages(key) } };
-	} else {
-		updatedExam = await exam.update(examId, examDetails).select({ [key]: 1 });
-		return { status: 200, data: updatedExam };
-	}
-};
-
-let updateExamPassword = async (examId, examDetails) => {
-	let existingExam = await exam.getByExamId(examId).select({ password: 1 });
-	let passwordStatus = factories.compareHashedPassword(
-		examDetails.password.current,
-		existingExam.password
-	);
-	if (passwordStatus) {
-		let hashedPassword = factories.generateHashedPassword(
-			examDetails.password.new
-		);
-		await exam.update(examId, { password: hashedPassword }).select({ _id: 1 });
-		return {
-			status: 200,
-			data: { msg: 'Password changed successfully' },
-		};
-	} else return { status: 400, data: { msg: 'Incorrect current password' } };
-};
-
-let updateExamCodeAndSubject = async (key, examId, examDetails) => {
-	let existingExam = await exam.get(examDetails);
-	if (existingExam.length === 0) {
-		updatedExam = await exam.update(examId, examDetails).select({ [key]: 1 });
-		return { status: 200, data: updatedExam };
-	} else {
-		return { status: 409, data: { msg: setErrorMessages(key) } };
-	}
-};
-
 const exams = {
 	saveExamDetails: async (examDetails, userData) => {
 		try {
@@ -336,8 +287,6 @@ const exams = {
 			projections,
 			options
 		);
-
-		console.log(questionDetails);
 
 		return {
 			status: 200,

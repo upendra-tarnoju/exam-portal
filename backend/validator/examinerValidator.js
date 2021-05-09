@@ -41,6 +41,7 @@ module.exports = {
 			return Object.keys(body).every((key) => keys.includes(key));
 		}),
 	],
+
 	DELETE_COURSE: [
 		query('courseId').not().isEmpty().withMessage('Course id is required'),
 		query()
@@ -71,7 +72,12 @@ module.exports = {
 	],
 
 	DELETE_EXAM: [
-		query('examId').not().isEmpty().withMessage('Exam id is required'),
+		query('examId')
+			.not()
+			.isEmpty()
+			.withMessage('Exam id is required')
+			.isLength({ min: 24, max: 24 })
+			.withMessage('Invalid exam id'),
 		query()
 			.custom((query) => {
 				const keys = ['examId'];
