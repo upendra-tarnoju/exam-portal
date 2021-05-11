@@ -43,19 +43,20 @@ const question = {
 	},
 
 	update: async (req, res) => {
-		let questionId = req.params.questionId;
-		let questionData = req.body;
-		let questionImage = req.file;
-		if (questionData.image === 'null') {
-			questionImage = {};
-			questionImage['filename'] = null;
+		try {
+			let params = req.params;
+			let questionDetails = req.body;
+			let imageDetails = req.file;
+
+			let response = await questionHandler.update(
+				params,
+				questionDetails,
+				imageDetails
+			);
+			res.status(response.status).send(response.data);
+		} catch (err) {
+			throw err;
 		}
-		let response = questionHandler.update(
-			questionId,
-			questionData,
-			questionImage
-		);
-		res.status(200).send(response);
 	},
 
 	delete: async (req, res) => {

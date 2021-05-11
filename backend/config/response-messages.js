@@ -143,6 +143,22 @@ module.exports = {
 					MSG: 'Invalid question id',
 				},
 			},
+			SUCCESS: {
+				STATUS_CODE: 200,
+				MSG: 'Question updated successfully',
+			},
+			TOTAL_MARKS_LIMIT: {
+				STATUS_CODE: 400,
+				MSG: 'You have exceeded total marks limit',
+			},
+			INVALID_EXAM_ID: {
+				STATUS_CODE: 400,
+				MSG: 'Invalid exam Id',
+			},
+			INVALID_QUESTION_ID: {
+				STATUS_CODE: 400,
+				MSG: 'Invalid question id',
+			},
 		},
 	},
 };

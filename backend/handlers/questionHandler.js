@@ -84,7 +84,7 @@ const questions = {
 						},
 					};
 				} else if (
-					questionData[0].examMarks + parseInt(questionDetails.questionMark) <=
+					questionData[0].examMarks + parseInt(questionDetails.questionMark) <
 					examData.totalMarks
 				) {
 					toUpdate = {
@@ -156,26 +156,129 @@ const questions = {
 			.select({ modifiedAt: 0, createdAt: 0, __v: 0, _id: 0 });
 	},
 
-	update: async (questionId, data, image) => {
-		let questionObject = createQuestionData(data, image);
-		let questionData = await question.findById(questionId).select({ image: 1 });
-		let updatedQuestion = await question
-			.update(questionId, questionObject)
-			.select({ examId: 1, question: 1 });
+	update: async (params, payload, imageDetails) => {
+		try {
+			let aggregateArray = [
+				{
+					$match: {
+						$and: [
+							{ examId: mongoose.Types.ObjectId(payload.examId) },
+							{ _id: { $nin: [mongoose.Types.ObjectId(params.questionId)] } },
+						],
+					},
+				},
+				{
+					$group: { _id: '$totalMarks', examMarks: { $sum: '$questionMark' } },
+				},
+			];
 
-		if (
-			(data.image === null ||
-				data.image === undefined ||
-				data.image === 'null') &&
-			questionData.image !== null
-		) {
-			let pathName = `${path.dirname(require.main.filename)}/uploads/${
-				questionData.image
-			}`;
-			fs.unlinkSync(pathName);
+			let questionData = await queries.aggregateData(
+				Schema.question,
+				aggregateArray
+			);
+
+			let conditions = { _id: mongoose.Types.ObjectId(payload.examId) };
+			let projections = { totalMarks: 1 };
+			let options = { lean: true };
+
+			let examData = await queries.findOne(
+				Schema.exam,
+				conditions,
+				projections,
+				options
+			);
+
+			if (questionData.length !== 0) {
+				if (
+					questionData[0].examMarks + parseInt(payload.questionMark) >
+					examData.totalMarks
+				) {
+					return {
+						status:
+							RESPONSE_MESSAGES.QUESTION.UPDATE.TOTAL_MARKS_LIMIT.STATUS_CODE,
+						data: {
+							msg: RESPONSE_MESSAGES.QUESTION.UPDATE.TOTAL_MARKS_LIMIT.MSG,
+						},
+					};
+				} else {
+					let optionList = [];
+					let answerList = [];
+
+					options = JSON.parse(payload.optionsList);
+
+					for (let [key, obj] of Object.entries(options)) {
+						if (obj.answer) answerList.push(key);
+						optionList.push({ key: key, value: obj.value });
+					}
+					conditions = { _id: mongoose.Types.ObjectId(params.questionId) };
+
+					let toUpdate = {
+						question: payload.question,
+						description: payload.description,
+						questionMark: payload.questionMark,
+						optionType: payload.optionType,
+						options: optionList,
+						correctAnswer: answerList,
+						updatedDate: new Date(),
+					};
+
+					let updatedQuestion = await queries.findAndUpdate(
+						Schema.question,
+						conditions,
+						toUpdate
+					);
+
+					if (updatedQuestion) {
+						if (
+							questionData[0].examMarks + parseInt(payload.questionMark) ===
+							examData.totalMarks
+						) {
+							toUpdate = {
+								$set: {
+									status: APP_CONSTANTS.EXAM_STATUS.ACTIVE,
+									updatedDate: new Date(),
+								},
+							};
+						} else if (
+							questionData[0].examMarks + parseInt(payload.questionMark) <
+							examData.totalMarks
+						) {
+							toUpdate = {
+								$set: {
+									status: APP_CONSTANTS.EXAM_STATUS.INCOMPLETE_QUESTIONS,
+									updatedDate: new Date(),
+								},
+							};
+						}
+
+						conditions = { _id: mongoose.Types.ObjectId(payload.examId) };
+
+						await queries.findAndUpdate(Schema.exam, conditions, toUpdate);
+
+						return {
+							status: RESPONSE_MESSAGES.QUESTION.UPDATE.SUCCESS.STATUS_CODE,
+							data: { msg: RESPONSE_MESSAGES.QUESTION.UPDATE.SUCCESS.MSG },
+						};
+					} else {
+						return {
+							status:
+								RESPONSE_MESSAGES.QUESTION.UPDATE.INVALID_QUESTION_ID
+									.STATUS_CODE,
+							data: {
+								msg: RESPONSE_MESSAGES.QUESTION.UPDATE.INVALID_QUESTION_ID.MSG,
+							},
+						};
+					}
+				}
+			} else {
+				return {
+					status: RESPONSE_MESSAGES.QUESTION.UPDATE.INVALID_EXAM_ID.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.QUESTION.UPDATE.INVALID_EXAM_ID.MSG },
+				};
+			}
+		} catch (err) {
+			throw err;
 		}
-
-		return updatedQuestion;
 	},
 
 	delete: async (params) => {
