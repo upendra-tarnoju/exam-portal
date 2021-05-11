@@ -11,6 +11,7 @@ import ViewStudents from './students-component/view-student-component/viewStuden
 import CreateStudent from './students-component/create-student-component/createStudent';
 import Settings from './settings-component/settings';
 import CreateExam from './exam-component/create-exam-component/createExam';
+import EditQuestion from './questions-component/edit-question-component/editQuestion';
 
 const SidebarContent = (props) => {
 	return (
@@ -20,13 +21,15 @@ const SidebarContent = (props) => {
 			<Route exact path='/examiner/exam/:examId' component={EditExam}></Route>
 			<Route path='/examiner/course' component={Courses}></Route>
 			<Route
-				path='/examiner/exam/:examId/question/:questionId'
-				component={Questions}
-			></Route>
-			<Route
+				exact
 				path='/examiner/exam/:examId/question/new'
 				component={Questions}
 			></Route>
+			<Route
+				path='/examiner/exam/:examId/question/:questionId'
+				component={EditQuestion}
+			></Route>
+
 			<Route
 				path='/examiner/exam/:examId/questions'
 				component={ViewQuestions}

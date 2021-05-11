@@ -128,7 +128,7 @@ const QuestionCard = (props) => {
 				</ButtonGroup>
 			</CardContent>
 			<CardActions className='d-flex justify-content-end' disableSpacing>
-				<IconButton>
+				<IconButton onClick={() => props.editQuestion(questionDetails._id)}>
 					<Edit />
 				</IconButton>
 				<IconButton

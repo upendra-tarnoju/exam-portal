@@ -21,7 +21,16 @@ const useStyles = makeStyles((theme) => ({
 
 const NewQuestionOptionModal = (props) => {
 	const classes = useStyles();
-	let { formikProps } = props;
+	let { formikProps, submitType } = props;
+	const handleSubmit = () => {
+		if (submitType === 'updateOption') {
+			props.updateOption(formikProps);
+		} else {
+			props.addNewQption(formikProps);
+		}
+		props.hideModal(false);
+	};
+
 	return (
 		<Modal
 			open={props.show}
@@ -34,7 +43,9 @@ const NewQuestionOptionModal = (props) => {
 			<Fade in={props.show}>
 				<Paper className='w-25 p-4'>
 					<Typography variant='h6' component='p'>
-						Option
+						{props.submitType === 'updateOption'
+							? 'Update Option'
+							: 'Create new option'}
 					</Typography>
 					<TextField
 						variant='outlined'
@@ -56,9 +67,9 @@ const NewQuestionOptionModal = (props) => {
 						<Button
 							variant='contained'
 							className='bg-dark text-white'
-							onClick={() => props.addNewQption(formikProps)}
+							onClick={() => handleSubmit(formikProps)}
 						>
-							Add
+							{props.submitType === 'updateOption' ? 'Update' : 'Create'}
 						</Button>
 					</div>
 				</Paper>

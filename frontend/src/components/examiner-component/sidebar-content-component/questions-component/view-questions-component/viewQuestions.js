@@ -88,6 +88,11 @@ class ViewQuestions extends React.Component {
 		});
 	};
 
+	editQuestion = (questionId) => {
+		let examId = this.props.match.params.examId;
+		this.props.history.push(`/examiner/exam/${examId}/question/${questionId}`);
+	};
+
 	noQuestionsCard = () => (
 		<Card className='w-50 m-auto'>
 			<CardContent>
@@ -120,6 +125,7 @@ class ViewQuestions extends React.Component {
 					questionDetails={data}
 					handleDeleteDialog={this.handleDeleteDialog}
 					handleQuestionStatus={this.handleQuestionStatus}
+					editQuestion={this.editQuestion}
 				/>
 			);
 		});
