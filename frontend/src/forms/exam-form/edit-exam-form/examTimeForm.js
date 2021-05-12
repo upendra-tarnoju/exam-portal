@@ -15,7 +15,7 @@ import {
 	Typography,
 } from '@material-ui/core';
 
-import schema from '../../schema/edit-exam/examTimeSchema';
+import schema from '../../../schema/exam/edit-exam/examTimeSchema';
 
 const ExamTimeForm = (props) => {
 	return (

@@ -21,7 +21,7 @@ import {
 	TimePicker,
 } from '@material-ui/pickers';
 
-import schema from '../schema/newExamSchema';
+import schema from '../../schema/exam/newExamSchema';
 
 let NewExamForm = (props) => {
 	let [visibility, setVisibility] = React.useState(true);

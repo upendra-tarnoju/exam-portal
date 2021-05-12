@@ -3,7 +3,7 @@ import React from 'react';
 import { Form } from 'react-bootstrap';
 import { TextField, Typography, Button } from '@material-ui/core';
 
-import schema from '../../schema/edit-exam/examMarksSchema';
+import schema from '../../../schema/exam/edit-exam/examMarksSchema';
 
 const ExamMarksForm = (props) => {
 	return (

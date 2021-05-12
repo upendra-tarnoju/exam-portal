@@ -34,7 +34,24 @@ let validateExamDuration = (duration, startTime, endTime) => {
 	else return false;
 };
 
-const schema = Yup.object({
+let schema = Yup.object({
+	subject: Yup.string().required('Subject is required'),
+	course: Yup.string().required('Course name is required'),
+	examCode: Yup.string().required('Exam code is required'),
+	password: Yup.string()
+		.required('Password is required')
+		.min(6, 'Minimum password length should be 6'),
+	totalMarks: Yup.string()
+		.matches(/^[0-9\b]+$/, 'Invalid total marks')
+		.min(1)
+		.required('Total marks is required'),
+	passingMarks: Yup.number()
+		.required('Passing marks is required')
+		.max(
+			Yup.ref('totalMarks'),
+			'Passing marks should not be greater than total marks'
+		),
+	negativeMarks: Yup.number().required('Negative marks is required'),
 	examDate: Yup.date()
 		.min(currentDate, `Selected date cannot be less than today's date`)
 		.required('Required exam date')

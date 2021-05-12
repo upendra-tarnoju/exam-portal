@@ -12,7 +12,7 @@ import {
 } from '@material-ui/core';
 import { Form } from 'react-bootstrap';
 
-import schema from '../../schema/edit-exam/examDetailsSchema';
+import schema from '../../../schema/exam/edit-exam/examDetailsSchema';
 
 const ExamDetailsForm = (props) => {
 	return (

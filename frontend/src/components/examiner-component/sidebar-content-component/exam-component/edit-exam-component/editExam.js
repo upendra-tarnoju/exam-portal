@@ -10,10 +10,10 @@ import {
 import { Details, Lock, Phone, Timer } from '@material-ui/icons';
 
 import ExamService from '../../../../../services/examApi';
-import ExamDetailsForm from '../../../../../forms/edit-exam-form/examDetailsForm';
-import ExamMarksForm from '../../../../../forms/edit-exam-form/examMarksForm';
-import ExamTimeForm from '../../../../../forms/edit-exam-form/examTimeForm';
-import ExamPasswordForm from '../../../../../forms/edit-exam-form/examPasswordForm';
+import ExamDetailsForm from '../../../../../forms/exam-form/edit-exam-form/examDetailsForm';
+import ExamMarksForm from '../../../../../forms/exam-form/edit-exam-form/examMarksForm';
+import ExamTimeForm from '../../../../../forms/exam-form/edit-exam-form/examTimeForm';
+import ExamPasswordForm from '../../../../../forms/exam-form/edit-exam-form/examPasswordForm';
 import CustomSnackBar from '../../../../customSnackbar';
 
 class EditExam extends React.Component {

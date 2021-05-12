@@ -3,7 +3,7 @@ import { Form } from 'react-bootstrap';
 import { Button, TextField, Typography } from '@material-ui/core';
 import { Formik } from 'formik';
 
-import schema from '../../schema/edit-exam/examPasswordSchema';
+import schema from '../../../schema/exam/edit-exam/examPasswordSchema';
 
 const ExamPasswordForm = (props) => {
 	return (
