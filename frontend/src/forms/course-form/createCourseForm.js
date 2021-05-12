@@ -4,7 +4,7 @@ import { Form } from 'react-bootstrap';
 import { Button, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 
-import schema from '../../schema/courseSchema';
+import schema from '../../schema/course/createCourseSchema';
 import CourseService from '../../services/courseApi';
 
 let CourseForm = (props) => {

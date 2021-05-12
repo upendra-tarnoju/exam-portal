@@ -4,7 +4,7 @@ import { Search } from '@material-ui/icons';
 import { TextField, Button } from '@material-ui/core';
 import { Form } from 'react-bootstrap';
 
-import schema from '../../schema/searchCourseSchema';
+import schema from '../../schema/course/searchCourseSchema';
 
 const SearchCourseForm = (props) => {
 	return (
