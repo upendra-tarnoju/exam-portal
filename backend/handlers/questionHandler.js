@@ -1,8 +1,7 @@
-const fs = require('fs');
-const path = require('path');
 const mongoose = require('mongoose');
+const Grid = require('gridfs-stream');
 
-let { question, exam } = require('../models');
+let { question } = require('../models');
 let APP_CONSTANTS = require('../config/app-defaults');
 let RESPONSE_MESSAGES = require('../config/response-messages');
 let { queries } = require('../db');
@@ -220,6 +219,7 @@ const questions = {
 						options: optionList,
 						correctAnswer: answerList,
 						updatedDate: new Date(),
+						image: imageDetails && imageDetails.id ? imageDetails.id : null,
 					};
 
 					let updatedQuestion = await queries.findAndUpdate(
@@ -297,6 +297,12 @@ const questions = {
 			);
 
 			if (questionDetail) {
+				condition = { _id: questionDetail.examId };
+				toUpdate = {
+					status: APP_CONSTANTS.EXAM_STATUS.INCOMPLETE_QUESTIONS,
+					updatedDate: new Date(),
+				};
+				await queries.findAndUpdate(Schema.exam, condition, toUpdate);
 				return {
 					status: RESPONSE_MESSAGES.QUESTION.DELETE.SUCCESS.STATUS_CODE,
 					data: {
@@ -361,6 +367,20 @@ const questions = {
 					},
 				};
 			}
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	getQuestionImage: async (params) => {
+		try {
+			gfs = Grid(mongoose.connection.db, mongoose.mongo);
+			let image = { _id: mongoose.Types.ObjectId(params.imageId) };
+
+			let imageData = await gfs.collection('images').findOne(image);
+			let readStream = gfs.createReadStream(imageData.filename);
+
+			return readStream;
 		} catch (err) {
 			throw err;
 		}

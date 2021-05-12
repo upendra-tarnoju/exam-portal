@@ -20,7 +20,6 @@ const url = `mongodb://${process.env.MONGO_HOSTNAME}:${process.env.MONGO_PORT}/$
 const dbStorage = new GridFsStorage({
 	url,
 	file: async (req, file) => {
-		console.log('hello');
 		const buf = crypto.randomBytes(16);
 		if (
 			file.mimetype === 'image/jpeg' ||

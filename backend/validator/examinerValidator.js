@@ -223,4 +223,32 @@ module.exports = {
 			])
 			.withMessage('Invalid question status'),
 	],
+
+	UPDATE_QUESTION: [
+		param('questionId')
+			.not()
+			.isEmpty()
+			.withMessage('Question id is required')
+			.isLength({ min: 24, max: 24 })
+			.withMessage('Invalid question id'),
+		body('question').not().isEmpty().withMessage('Question is required'),
+		body('questionMark')
+			.not()
+			.isEmpty()
+			.withMessage('Question mark is required')
+			.not()
+			.isNumeric()
+			.withMessage('Question marks must be numeric'),
+		body('examId')
+			.not()
+			.isEmpty()
+			.withMessage('Exam id is required')
+			.isLength({ min: 24, max: 24 })
+			.withMessage('Invalid exam id'),
+		,
+		body('optionsList')
+			.not()
+			.isEmpty()
+			.withMessage('Option list cannot be empty'),
+	],
 };

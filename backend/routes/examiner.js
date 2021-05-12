@@ -125,6 +125,7 @@ module.exports = () => {
 		'/question/:questionId',
 		passport.authenticate('jwt'),
 		multerMiddleware.upload.single('image'),
+		// validatorMiddleware(ExaminerValidator.UPDATE_QUESTION),
 		questionController.update
 	);
 

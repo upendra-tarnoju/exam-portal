@@ -83,12 +83,10 @@ const question = {
 	},
 
 	getQuestionImage: async (req, res) => {
-		let imageId = req.params.imageId;
-		let uploadDirectory = path.join(`uploads/${imageId}`);
-		fs.readFile(uploadDirectory, (err, data) => {
-			res.writeHead(200, { 'Content-Type': 'image/jpg' });
-			res.end(data, 'Base64');
-		});
+		let params = req.params;
+
+		let response = await questionHandler.getQuestionImage(params);
+		response.pipe(res);
 	},
 };
 
