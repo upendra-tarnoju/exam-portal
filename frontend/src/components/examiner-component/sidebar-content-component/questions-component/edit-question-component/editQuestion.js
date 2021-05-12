@@ -13,7 +13,7 @@ class EditQuestion extends React.Component {
 			questionDetails: {},
 			optionsList: [],
 			selectedIndex: '',
-			image: null,
+			image: { value: null, src: '' },
 			snackbar: { show: false, msg: '', type: '' },
 		};
 		this.questionService = new QuestionService();
@@ -38,6 +38,10 @@ class EditQuestion extends React.Component {
 					questionMark: questionData.questionMark,
 					optionType: questionData.optionType,
 					description: questionData.description,
+				},
+				image: {
+					value: '',
+					src: `${process.env.REACT_APP_BASE_URL}/api/image/${questionData.image}`,
 				},
 				optionsList,
 			});
@@ -72,7 +76,7 @@ class EditQuestion extends React.Component {
 			}
 
 			examFormData.append('optionsList', JSON.stringify(optionObj));
-			examFormData.append('image', image);
+			examFormData.append('image', image.value);
 			this.questionService.update(questionId, examFormData).then((res) => {
 				this.handleSnackBar(true, res.data.msg, 'success');
 			});
@@ -140,8 +144,36 @@ class EditQuestion extends React.Component {
 		this.setState({ snackbar: { show: status, msg: msg, type: type } });
 	};
 
+	handleFileChange = (event) => {
+		if (event.target.files) {
+			let file = event.target.files[0];
+			if (
+				file.type === 'image/jpeg' ||
+				file.type === 'image/png' ||
+				file.type === 'image/jpg'
+			) {
+				this.setState({
+					image: { value: file, src: URL.createObjectURL(file) },
+				});
+			} else {
+				let msg =
+					'Invalid image type. Supported file types are .jpeg, .jpg and .png';
+				this.handleSnackBar(true, msg, 'error');
+			}
+		} else {
+			this.setState({ image: { value: null, src: '' } });
+		}
+	};
+
+	deleteQuestion = () => {
+		let questionId = this.props.match.params.questionId;
+		this.questionService.delete(questionId).then((response) => {
+			this.props.history.goBack();
+		});
+	};
+
 	render() {
-		let { questionDetails, optionsList, snackbar } = this.state;
+		let { questionDetails, optionsList, snackbar, image } = this.state;
 		return (
 			<div className='container-fluid p-5'>
 				<Card className='p-3 mb-3'>
@@ -151,7 +183,11 @@ class EditQuestion extends React.Component {
 							<Typography variant='subtitle1'>Edit exam question</Typography>
 						</div>
 						<div className='align-self-center'>
-							<Fab color='primary' aria-label='add'>
+							<Fab
+								color='primary'
+								aria-label='add'
+								onClick={this.deleteQuestion}
+							>
 								<Delete />
 							</Fab>
 						</div>
@@ -168,6 +204,8 @@ class EditQuestion extends React.Component {
 							updateOption={this.updateOption}
 							handleSelectedIndex={this.handleSelectedIndex}
 							handleSubmit={this.submitQuestion}
+							image={image}
+							handleFileChange={this.handleFileChange}
 						/>
 					</div>
 				</Card>

@@ -61,7 +61,7 @@ const useStylesBootstrap = makeStyles((theme) => ({
 }));
 
 const EditQuestionForm = (props) => {
-	let { questionDetails, optionsList } = props;
+	let { questionDetails, optionsList, image } = props;
 	let [optionModal, setOptionModal] = React.useState(false);
 	let [submitType, setSubmitType] = React.useState('updateOption');
 
@@ -118,9 +118,56 @@ const EditQuestionForm = (props) => {
 							formikProps.setFieldValue('description', content);
 						}}
 					/>
-					<Typography variant='h6' className='mt-2 mb-1'>
+					<Typography variant='h6' className='my-2 text-center'>
 						Image
 					</Typography>
+					<div className='d-flex justify-content-center'>
+						{image.value === null ? (
+							<img
+								height='300px'
+								alt='default'
+								src='https://directory.bodc.in/images/parish/parish_details/No_Image_Available.jpg'
+							/>
+						) : (
+							<img height='300px' alt='selected' src={image.src} />
+						)}
+					</div>
+					<div className='d-flex justify-content-center align-items-start mt-2'>
+						<div>
+							<input
+								accept='image/*'
+								className='d-none'
+								id='questionImage'
+								multiple
+								type='file'
+								onChange={props.handleFileChange}
+							/>
+							<label htmlFor='questionImage'>
+								<Button
+									variant='contained'
+									color='primary'
+									component='span'
+									className={image.value !== null ? 'bg-success' : ''}
+								>
+									{image.value !== null ? 'Uploaded' : 'Upload'}
+								</Button>
+							</label>
+						</div>
+						{image.value !== null ? (
+							<label>
+								<Button
+									variant='contained'
+									color='primary'
+									component='span'
+									className='bg-danger ml-2'
+									onClick={props.handleFileChange}
+								>
+									Remove
+								</Button>
+							</label>
+						) : null}
+					</div>
+
 					<div className='row mt-3'>
 						<div className='col-md-6'>
 							<Typography variant='h6' className='mt-2 mb-1'>
