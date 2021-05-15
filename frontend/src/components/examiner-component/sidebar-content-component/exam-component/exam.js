@@ -30,6 +30,7 @@ import {
 import ExamService from '../../../../services/examApi';
 import DeleteModal from '../../../../modals/deleteModal';
 import CustomSnackBar from '../../../customSnackbar';
+import SearchExamForm from '../../../../forms/exam-form/searchExamForm';
 
 const StyledTableCell = withStyles((theme) => ({
 	head: {
@@ -78,12 +79,13 @@ class Exam extends Component {
 		this.examService = new ExamService();
 	}
 
-	viewExams() {
+	viewExams = (filteredValues) => {
 		this.examService
 			.getAllExams({
 				pageIndex: this.state.pageIndex,
 				pageSize: this.state.pageSize,
 				sort: this.state.sortedBy,
+				...filteredValues,
 			})
 			.then((res) => {
 				this.setState({
@@ -91,10 +93,11 @@ class Exam extends Component {
 					examsList: res.data.examsList,
 				});
 			});
-	}
+	};
 
 	componentDidMount() {
-		this.viewExams();
+		let filteredValues = {};
+		this.viewExams(filteredValues);
 	}
 
 	handleDetailExamView = (index, status) => {
@@ -159,6 +162,15 @@ class Exam extends Component {
 		);
 	};
 
+	handleFilter = (filteredValues) => {
+		for (let [key, value] of Object.entries(filteredValues)) {
+			if (value === '') {
+				delete filteredValues[key];
+			} else filteredValues[key] = value.toString();
+		}
+		this.viewExams(filteredValues);
+	};
+
 	render() {
 		let {
 			examsList,
@@ -189,6 +201,12 @@ class Exam extends Component {
 							</Button>
 						</div>
 					</div>
+				</Card>
+				<Card className='mt-4 p-3'>
+					<SearchExamForm
+						handleFilter={this.handleFilter}
+						viewExams={this.viewExams}
+					/>
 				</Card>
 				<TableContainer component={Paper} className='mt-4'>
 					<Table>
@@ -315,8 +333,8 @@ class Exam extends Component {
 															</StyledTableCell>
 															<StyledTableCell>
 																{exam.status === 'CREATED'
-																	? 'No question added'
-																	: ''}
+																	? 'NO QUESTION ADDED'
+																	: exam.status}
 															</StyledTableCell>
 														</StyledTableRow>
 													</TableBody>
