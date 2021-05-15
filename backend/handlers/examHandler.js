@@ -46,19 +46,46 @@ const exams = {
 
 	getAllExams: async (payload, userData) => {
 		try {
+			let date = {};
 			let query = {
-				$and: [
-					{ examinerId: userData._id },
-					{ status: { $nin: [APP_CONSTANTS.EXAM_STATUS.DELETED] } },
-				],
+				$and: [{ examinerId: userData._id }],
 			};
+
+			if (payload.name) {
+				query.$and.push({
+					$or: [
+						{ examCode: { $regex: RegExp(payload.name, 'i') } },
+						{ subject: { $regex: RegExp(payload.name, 'i') } },
+					],
+				});
+			}
+
+			if (payload.startDate) date.$gte = moment(payload.startDate).valueOf();
+
+			if (payload.endDate) date.$lte = moment(payload.endDate).valueOf();
+
+			if (Object.keys(date).length !== 0) query.$and.push({ examDate: date });
+
+			if (payload.status) {
+				query.$and.push({
+					status: { $in: [payload.status] },
+				});
+			} else {
+				query.$and.push({
+					status: { $nin: [APP_CONSTANTS.EXAM_STATUS.DELETED] },
+				});
+			}
+
 			let projections = { password: 0, modifiedDate: 0, examinerId: 0 };
 
 			let pageSize = parseInt(payload.pageSize, 10);
 			let pageIndex = parseInt(payload.pageIndex) * pageSize;
 			let options = { lean: true, skip: pageIndex, limit: pageSize };
 
-			let collectionOptions = { path: 'course', select: '_id description' };
+			let collectionOptions = {
+				path: APP_CONSTANTS.DATABASE_MODEL.COURSE,
+				select: '_id description',
+			};
 
 			let examDetails = await queries.populateData(
 				Schema.exam,
@@ -72,6 +99,7 @@ const exams = {
 
 			return {
 				status: 200,
+				// data: { examsList: [], count: 0 },
 				data: { examsList: examDetails, count: examCount },
 			};
 		} catch (err) {

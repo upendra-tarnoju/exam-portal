@@ -3,13 +3,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const exam = new Schema({
-	subject: { type: String, required: true },
+	subject: { type: String, required: true, index: true },
 	course: {
 		type: Schema.Types.ObjectId,
 		required: true,
 		ref: 'examinerCourses',
 	},
-	examCode: { type: String, required: true },
+	examCode: { type: String, required: true, index: true },
 	password: { type: String, required: true },
 	examinerId: { type: String, required: true },
 	createdDate: { type: Number, default: Date.now },

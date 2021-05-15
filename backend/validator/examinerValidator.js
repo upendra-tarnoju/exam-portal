@@ -152,9 +152,20 @@ module.exports = {
 			.optional()
 			.isNumeric()
 			.withMessage('Page size must be number'),
+		query('name').optional(),
+		query('status').optional(),
+		query('startDate').optional(),
+		query('endDate').optional(),
 		query()
 			.custom((query) => {
-				const keys = ['pageIndex', 'pageSize'];
+				const keys = [
+					'pageIndex',
+					'pageSize',
+					'name',
+					'status',
+					'startDate',
+					'endDate',
+				];
 				return Object.keys(query).every((key) => keys.includes(key));
 			})
 			.withMessage('Some extra parameters are sent'),

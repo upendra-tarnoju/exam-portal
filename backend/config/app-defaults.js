@@ -1,4 +1,7 @@
 const appDefaults = {
+	DATABASE_MODEL: {
+		COURSE: 'course',
+	},
 	ACCOUNT_TYPE: {
 		EXAMINER: 'examiner',
 		ADMIN: 'admin',
