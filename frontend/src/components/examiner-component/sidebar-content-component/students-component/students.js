@@ -27,20 +27,20 @@ class Students extends React.Component {
 	}
 
 	addNewStudent = (student) => {
-		let currentDate = new Date();
+		this.props.history.push(`/examiner/student/new`);
+		// let currentDate = new Date();
 
-		let formattedExamDate = moment(student.examDate).format('YYYY-MM-DD');
-		let formattedCurrentDate = moment(currentDate).format('YYYY-MM-DD');
+		// let formattedExamDate = moment(student.examDate).format('YYYY-MM-DD');
+		// let formattedCurrentDate = moment(currentDate).format('YYYY-MM-DD');
 
-		if (formattedExamDate <= formattedCurrentDate) {
-			let formattedExamEndTime = moment(student.endTime).format('HH:mm:ss a');
-			let formattedCurrentTime = moment(currentDate).format('HH:mm:ss a');
-			if (formattedExamEndTime < formattedCurrentTime) {
-				this.handleSnackBar(true);
-			} else {
-				this.props.history.push(`/examiner/exam/${student._id}/students/new`);
-			}
-		}
+		// if (formattedExamDate <= formattedCurrentDate) {
+		// 	let formattedExamEndTime = moment(student.endTime).format('HH:mm:ss a');
+		// 	let formattedCurrentTime = moment(currentDate).format('HH:mm:ss a');
+		// 	if (formattedExamEndTime < formattedCurrentTime) {
+		// 		this.handleSnackBar(true);
+		// 	} else {
+		// 	}
+		// }
 	};
 
 	handleSnackBar = (status) => {

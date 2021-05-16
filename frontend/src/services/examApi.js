@@ -82,6 +82,19 @@ class ExamService {
 			},
 		});
 	}
+
+	getExamList(params) {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'get',
+			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAM_URL}/examDetails`,
+			params: params,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	}
 }
 
 export default ExamService;

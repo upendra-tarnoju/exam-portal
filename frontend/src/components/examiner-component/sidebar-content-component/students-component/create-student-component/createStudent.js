@@ -5,9 +5,11 @@ import {
 	Step,
 	StepLabel,
 	Typography,
+	Card,
+	IconButton,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { CloudUpload } from '@material-ui/icons';
+import { ChevronLeft, CloudUpload } from '@material-ui/icons';
 
 import PersonalDetailsForm from '../../../../../forms/student-form/personalDetailForm';
 import StudentExamDetailForm from '../../../../../forms/student-form/studentExamDetailForm';
@@ -17,6 +19,8 @@ import FileModal from '../../../../../modals/fileModal';
 import ExaminerService from '../../../../../services/examinerApi';
 import Snackbar from '../../../../customSnackbar';
 import factories from '../../../../../factories/factories';
+import NewStudentForm from '../../../../../forms/student-form/newStudentForm';
+import StudentService from '../../../../../services/studentApi';
 
 class CreateStudent extends React.Component {
 	constructor(props) {
@@ -29,6 +33,7 @@ class CreateStudent extends React.Component {
 			fileModal: { show: false },
 		};
 		this.examinerService = new ExaminerService();
+		this.studentService = new StudentService();
 	}
 
 	componentDidMount() {
@@ -118,60 +123,88 @@ class CreateStudent extends React.Component {
 		this.setState({ activeStep: step });
 	};
 
+	createStudent = (values) => {
+		this.examinerService
+			.saveNewStudent(values)
+			.then((res) => {
+				let studentData = res.data;
+				this.props.history.replace(
+					`/examiner/exam-setup/student/${studentData.studentId}`
+				);
+			})
+			.catch((err) => {
+				this.handleSnackBar(true, err.response.data.msg, 'error');
+			});
+	};
+
 	render() {
 		let { snackBar } = this.state;
 		return (
-			<div className='container mt-3'>
-				<div className='card w-50 mx-auto'>
-					<div
-						className={`card-header text-white bg-dark d-flex justify-content-between ${styles.studentCardHeader}`}
-					>
-						Add Student
-						<input
-							accept='.xlsx, .xls, .csv'
-							className='d-none'
-							id='upload-students'
-							onChange={this.handleFileChange}
-							type='file'
-							onClick={(event) => (event.target.value = null)}
-						/>
-						<label htmlFor='upload-students'>
-							<Button
-								variant='contained'
-								color='primary'
-								startIcon={<CloudUpload />}
-								component='span'
-							>
-								Upload
-							</Button>
-						</label>
-					</div>
-					<Stepper activeStep={this.state.activeStep} alternativeLabel>
-						<Step key='personalDetails'>
-							<StepLabel>Personal details</StepLabel>
-						</Step>
-						<Step key='examDetails'>
-							<StepLabel>Exam details</StepLabel>
-						</Step>
-					</Stepper>
-					<Typography component={'span'} variant={'body2'}>
-						<div className='container p-0'>
-							{this.getStepperContent(this.state.activeStep)}
+			<div className='container h-100 py-4'>
+				<Card className='p-3'>
+					<div className='d-xs-block d-md-flex justify-content-between'>
+						<div>
+							<Typography variant='h4'>Student</Typography>
+							<Typography variant='subtitle1'>Create new student</Typography>
 						</div>
-					</Typography>
-				</div>
+					</div>
+				</Card>
+				<Card className='mt-4 p-4'>
+					<NewStudentForm handleSubmit={this.createStudent} />
+				</Card>
 				<Snackbar
 					show={snackBar.show}
 					message={snackBar.msg}
 					snackBarType={snackBar.type}
 					handleSnackBar={this.handleSnackBar}
 				/>
-				<FileModal
-					show={this.state.fileModal.show}
-					hideModal={this.handleFileModal}
-					uploadFile={this.uploadStudentFile}
-				/>
 			</div>
+			// <div className='container mt-3'>
+			// 	<div className='card w-50 mx-auto'>
+			// 		<div
+			// 			className={`card-header text-white bg-dark d-flex justify-content-between ${styles.studentCardHeader}`}
+			// 		>
+			// 			Add Student
+			// 			<input
+			// 				accept='.xlsx, .xls, .csv'
+			// 				className='d-none'
+			// 				id='upload-students'
+			// 				onChange={this.handleFileChange}
+			// 				type='file'
+			// 				onClick={(event) => (event.target.value = null)}
+			// 			/>
+			// 			<label htmlFor='upload-students'>
+			// 				<Button
+			// 					variant='contained'
+			// 					color='primary'
+			// 					startIcon={<CloudUpload />}
+			// 					component='span'
+			// 				>
+			// 					Upload
+			// 				</Button>
+			// 			</label>
+			// 		</div>
+			// 		<Stepper activeStep={this.state.activeStep} alternativeLabel>
+			// 			<Step key='personalDetails'>
+			// 				<StepLabel>Personal details</StepLabel>
+			// 			</Step>
+			// 			<Step key='examDetails'>
+			// 				<StepLabel>Exam details</StepLabel>
+			// 			</Step>
+			// 		</Stepper>
+			// 		<Typography component={'span'} variant={'body2'}>
+			// 			<div className='container p-0'>
+			// 				{this.getStepperContent(this.state.activeStep)}
+			// 			</div>
+			// 		</Typography>
+			// 	</div>
+
+			// 	<FileModal
+			// 		show={this.state.fileModal.show}
+			// 		hideModal={this.handleFileModal}
+			// 		uploadFile={this.uploadStudentFile}
+			// 	/>
+			// </div>
 		);
 	}
 }
