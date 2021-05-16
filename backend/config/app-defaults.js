@@ -1,6 +1,8 @@
 const appDefaults = {
 	DATABASE_MODEL: {
 		COURSE: 'course',
+		EXAMINER_COURSES: 'examinerCourses',
+		USERS: 'users',
 	},
 	ACCOUNT_TYPE: {
 		EXAMINER: 'examiner',
@@ -11,6 +13,7 @@ const appDefaults = {
 		PENDING: 'pending',
 		DECLINED: 'declined',
 		APPROVED: 'approved',
+		ACTIVE: 'active',
 	},
 	EXAMINER_QUERY_TYPE: {
 		EXAMINER_COUNT: 'examinerCount',
@@ -38,6 +41,11 @@ const appDefaults = {
 		ACTIVE: 'ACTIVE',
 		INACTIVE: 'INACTIVE',
 		DELETED: 'DELETED',
+	},
+	GENDER: {
+		MALE: 'male',
+		FEMALE: 'female',
+		OTHER: 'other',
 	},
 };
 

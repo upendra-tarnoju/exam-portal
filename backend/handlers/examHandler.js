@@ -161,87 +161,96 @@ const exams = {
 		}
 	},
 
-	updateExam: async (payload, userDetails) => {
-		let conditions = { _id: payload.examId };
+	updateExam: async (payload) => {
+		try {
+			let conditions = { _id: payload.examId };
 
-		let toUpdate = {};
+			let toUpdate = {};
 
-		let options = {
-			new: true,
-			fields: { password: 0, modifiedDate: 0, examinerId: 0, status: 0 },
-		};
+			let options = {
+				new: true,
+				fields: { password: 0, modifiedDate: 0, examinerId: 0, status: 0 },
+			};
 
-		if (payload.examCode) toUpdate.examCode = payload.examCode;
+			if (payload.examCode) toUpdate.examCode = payload.examCode;
 
-		if (payload.course) toUpdate.course = payload.course;
+			if (payload.course) toUpdate.course = payload.course;
 
-		if (payload.subject) toUpdate.subject = payload.subject;
+			if (payload.subject) toUpdate.subject = payload.subject;
 
-		if (payload.totalMarks) toUpdate.totalMarks = payload.totalMarks;
+			if (payload.totalMarks) toUpdate.totalMarks = payload.totalMarks;
 
-		if (payload.passingMarks) toUpdate.passingMarks = payload.passingMarks;
+			if (payload.passingMarks) toUpdate.passingMarks = payload.passingMarks;
 
-		if (payload.negativeMarks || payload.negativeMarks === 0)
-			toUpdate.negativeMarks = payload.negativeMarks;
+			if (payload.negativeMarks || payload.negativeMarks === 0)
+				toUpdate.negativeMarks = payload.negativeMarks;
 
-		if (payload.examDate) toUpdate.examDate = payload.examDate;
+			if (payload.examDate) toUpdate.examDate = payload.examDate;
 
-		if (payload.startTime) toUpdate.startTime = payload.startTime;
+			if (payload.startTime) toUpdate.startTime = payload.startTime;
 
-		if (payload.endTime) toUpdate.endTime = payload.endTime;
+			if (payload.endTime) toUpdate.endTime = payload.endTime;
 
-		if (payload.duration) {
-			if (payload.hideDuration) {
-				toUpdate.durationStatus = APP_CONSTANTS.EXAM_DURATION_STATUS.COMPLETE;
-				toUpdate.duration = null;
-			} else {
-				toUpdate.durationStatus = APP_CONSTANTS.EXAM_DURATION_STATUS.SELECTIVE;
-				toUpdate.duration = payload.duration;
+			if (payload.duration) {
+				if (payload.hideDuration) {
+					toUpdate.durationStatus = APP_CONSTANTS.EXAM_DURATION_STATUS.COMPLETE;
+					toUpdate.duration = null;
+				} else {
+					toUpdate.durationStatus =
+						APP_CONSTANTS.EXAM_DURATION_STATUS.SELECTIVE;
+					toUpdate.duration = payload.duration;
+				}
 			}
-		}
 
-		if (payload.currentPassword) {
-			let projections = {};
-			let examDetails = await queries.findOne(
+			if (payload.currentPassword) {
+				let projections = {};
+				let examDetails = await queries.findOne(
+					Schema.exam,
+					conditions,
+					projections,
+					options
+				);
+
+				let passwordStatus = factories.compareHashedPassword(
+					payload.currentPassword,
+					examDetails.password
+				);
+
+				if (passwordStatus) {
+					toUpdate.password = factories.generateHashedPassword(
+						payload.newPassword
+					);
+				} else {
+					return {
+						status: RESPONSE_MESSAGES.EXAM.UPDATE.INVALID_PASSWORD.STATUS_CODE,
+						data: { msg: RESPONSE_MESSAGES.EXAM.UPDATE.INVALID_PASSWORD.MSG },
+					};
+				}
+			}
+
+			let updatedExam = await queries.findAndUpdate(
 				Schema.exam,
 				conditions,
-				projections,
+				toUpdate,
 				options
 			);
 
-			let passwordStatus = factories.compareHashedPassword(
-				payload.currentPassword,
-				examDetails.password
-			);
-
-			if (passwordStatus) {
-				toUpdate.password = factories.generateHashedPassword(
-					payload.newPassword
-				);
+			if (updatedExam) {
+				return {
+					status: RESPONSE_MESSAGES.EXAM.UPDATE.SUCCESS.STATUS_CODE,
+					data: {
+						examDetails: updatedExam,
+						msg: RESPONSE_MESSAGES.EXAM.UPDATE.SUCCESS.MSG,
+					},
+				};
 			} else {
 				return {
-					status: RESPONSE_MESSAGES.EXAM.UPDATE.INVALID_PASSWORD.STATUS_CODE,
-					data: { msg: RESPONSE_MESSAGES.EXAM.UPDATE.INVALID_PASSWORD.MSG },
+					status: RESPONSE_MESSAGES.EXAM.UPDATE.INVALID_ID.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.EXAM.UPDATE.INVALID_ID.MSG },
 				};
 			}
-		}
-
-		let updatedExam = await queries.findAndUpdate(
-			Schema.exam,
-			conditions,
-			toUpdate,
-			options
-		);
-
-		if (updatedExam) {
-			return {
-				status: RESPONSE_MESSAGES.EXAM.UPDATE.SUCCESS.STATUS_CODE,
-				data: {
-					examDetails: updatedExam,
-					msg: RESPONSE_MESSAGES.EXAM.UPDATE.SUCCESS.MSG,
-				},
-			};
-		} else {
+		} catch (err) {
+			throw err;
 		}
 	},
 
@@ -320,6 +329,53 @@ const exams = {
 			status: 200,
 			data: { examMarks: questionDetails[0].examMarks, examDetails },
 		};
+	},
+
+	getExamList: async (payload, userDetails) => {
+		try {
+			let query = { examinerId: mongoose.Types.ObjectId(userDetails._id) };
+			let projections = { examCode: 1, subject: 1 };
+			let options = { lean: true };
+			let examDetails = await queries.getData(
+				Schema.exam,
+				query,
+				projections,
+				options
+			);
+
+			query = { _id: mongoose.Types.ObjectId(payload.studentId) };
+			projections = { _id: 1 };
+
+			let collectionOptions = {
+				path: 'userId',
+				select: '_id firstName lastName',
+			};
+
+			let studentDetails = await queries.populateData(
+				Schema.student,
+				query,
+				projections,
+				options,
+				collectionOptions
+			);
+
+			if (studentDetails.length !== 0) {
+				studentDetails = {
+					_id: studentDetails[0]._id,
+					userId: studentDetails[0].userId._id,
+					firstName: studentDetails[0].userId.firstName,
+					lastName: studentDetails[0].userId.lastName,
+				};
+				return { status: 200, data: { examDetails, studentDetails } };
+			} else {
+				return {
+					status: RESPONSE_MESSAGES.STUDENT.INVALID_STUDENT_ID.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.STUDENT.INVALID_STUDENT_ID.MSG },
+				};
+			}
+		} catch (err) {
+			throw err;
+		}
 	},
 };
 

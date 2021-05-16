@@ -1,7 +1,13 @@
 let csv = require('csvtojson');
+const mongoose = require('mongoose');
+const moment = require('moment');
 
 let { student, users, exam, course, question, answer } = require('../models');
+const { queries } = require('../db');
+const Schema = require('../schemas');
 const { factories } = require('../factories');
+const RESPONSE_MESSAGES = require('../config/response-messages');
+const APP_CONSTANTS = require('../config/app-defaults');
 
 const getQuestionData = async (examId, pageIndex) => {
 	let questionDetails = await question
@@ -78,37 +84,90 @@ const saveIncorrectAnswer = async (
 };
 
 const students = {
-	addNewStudent: async (studentData) => {
-		let existingStudent;
-		let existingUser = await users.findByEmailAndMobileNumber(studentData);
-		studentData.password = factories.generateHashedPassword(
-			studentData.password
-		);
-		if (existingUser) {
-			existingStudent = await student.findByStudentId(
-				existingUser.userDataId,
-				studentData
+	addNewStudent: async (userDetails, studentDetails, imageDetails) => {
+		try {
+			let query = {
+				$and: [
+					{
+						email: studentDetails.email,
+						mobileNumber: studentDetails.mobileNumber,
+					},
+				],
+			};
+			let projections = { _id: 1 };
+			let options = { lean: true };
+
+			let existingUser = await queries.findOne(
+				Schema.users,
+				query,
+				projections,
+				options
 			);
-			if (existingStudent) {
-				let msg = 'Student is already added in this exam';
-				return { status: 400, msg: msg };
-			} else {
-				await student.updateExam(existingUser.userDataId, {
-					examId: studentData.examCode,
-				});
-				let msg = 'New student added';
-				return { status: 200, msg: msg };
+
+			if (existingUser) {
+				query = {
+					$and: [
+						{
+							studentId: studentDetails.studentId,
+							examinerId: mongoose.Types.ObjectId(userDetails._id),
+						},
+					],
+				};
+				projections = { _id: 1 };
+				options = { lean: true };
+				let existingStudent = await queries.findOne(
+					Schema.student,
+					query,
+					projections,
+					options
+				);
+
+				if (existingStudent) {
+					return {
+						status:
+							RESPONSE_MESSAGES.STUDENT.CREATE.EXISITING_STUDENT.STATUS_CODE,
+						data: {
+							msg: RESPONSE_MESSAGES.STUDENT.CREATE.EXISITING_STUDENT.MSG,
+						},
+					};
+				}
 			}
-		} else {
-			let userData = await users.create(studentData);
-			studentData.userId = userData._id;
-			let newStudent = await student.create(studentData);
-			await users.update(userData._id, { userDataId: newStudent._id });
-			await student.updateExam(newStudent._id, {
-				examId: studentData.examCode,
-			});
-			let msg = 'New student added';
-			return { status: 200, msg: msg };
+
+			let newUser = {
+				firstName: studentDetails.firstName,
+				lastName: studentDetails.lastName,
+				email: studentDetails.email,
+				password: factories.generateHashedPassword(studentDetails.password),
+				mobileNumber: studentDetails.mobileNumber,
+				userType: APP_CONSTANTS.ACCOUNT_TYPE.STUDENT,
+				status: APP_CONSTANTS.ACCOUNT_STATUS.ACTIVE,
+			};
+
+			let savedUser = await queries.create(Schema.users, newUser);
+			console.log(studentDetails);
+
+			let newStudent = {
+				userId: savedUser._id,
+				fatherName: studentDetails.fatherName,
+				motherName: studentDetails.motherName,
+				dob: parseInt(studentDetails.dob, 10),
+				address: studentDetails.address,
+				examinerId: userDetails._id,
+				studentId: studentDetails.studentId,
+				gender: studentDetails.gender,
+			};
+
+			let savedStudent = await queries.create(Schema.student, newStudent);
+
+			return {
+				status: RESPONSE_MESSAGES.STUDENT.CREATE.SUCCESS.STATUS_CODE,
+				data: {
+					msg: RESPONSE_MESSAGES.STUDENT.CREATE.SUCCESS.MSG,
+					studentId: savedStudent._id,
+				},
+			};
+		} catch (err) {
+			throw err;
 		}
 	},
 

@@ -75,6 +75,13 @@ module.exports = () => {
 	);
 
 	router.get(
+		'/exam/examDetails',
+		passport.authenticate('jwt'),
+		validatorMiddleware(ExaminerValidator.GET_EXAM_LIST),
+		examController.getExamList
+	);
+
+	router.get(
 		'/exam/:examId',
 		passport.authenticate('jwt'),
 		examController.getParticularExam
@@ -139,6 +146,7 @@ module.exports = () => {
 	router.post(
 		'/student',
 		passport.authenticate('jwt'),
+		validatorMiddleware(ExaminerValidator.CREATE_STUDENT),
 		multerMiddleware.upload.single('file'),
 		studentController.addNewStudent
 	);

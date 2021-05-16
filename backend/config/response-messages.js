@@ -161,4 +161,20 @@ module.exports = {
 			},
 		},
 	},
+	STUDENT: {
+		CREATE: {
+			EXISITING_STUDENT: {
+				STATUS_CODE: 409,
+				MSG: 'Student Id already exited',
+			},
+			SUCCESS: {
+				STATUS_CODE: 200,
+				MSG: 'New student created successfully',
+			},
+		},
+		INVALID_STUDENT_ID: {
+			STATUS_CODE: 400,
+			MSG: 'Invalid student id',
+		},
+	},
 };

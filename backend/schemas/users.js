@@ -1,11 +1,25 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
+const APP_CONSTANTS = require('../config/app-defaults');
+
+const userStatusEnum = [
+	APP_CONSTANTS.ACCOUNT_STATUS.APPROVED,
+	APP_CONSTANTS.ACCOUNT_STATUS.PENDING,
+	APP_CONSTANTS.ACCOUNT_STATUS.DECLINED,
+	APP_CONSTANTS.ACCOUNT_STATUS.ACTIVE,
+];
+
+const userTypeEnum = [
+	APP_CONSTANTS.ACCOUNT_TYPE.ADMIN,
+	APP_CONSTANTS.ACCOUNT_TYPE.EXAMINER,
+	APP_CONSTANTS.ACCOUNT_TYPE.STUDENT,
+];
 
 const users = new Schema({
 	firstName: {
 		type: String,
-		required: [true, 'First name is required x	'],
+		required: [true, 'First name is required'],
 		lowercase: true,
 	},
 	lastName: {
@@ -37,22 +51,15 @@ const users = new Schema({
 	userType: {
 		type: String,
 		required: [true, 'Account type is required'],
+		enum: userTypeEnum,
 	},
 	lastLogin: {
 		type: Date,
 		default: null,
 	},
-	status: { type: String, required: true },
-	// institution: {
-	// 	type: String,
-	// },
-	// userDataId: {
-	// 	type: Schema.Types.ObjectId,
-	// },
-	createdAt: {
-		type: Date,
-		default: Date.now(),
-	},
+	status: { type: String, required: true, enum: userStatusEnum },
+	createdDate: { type: Number, default: Date.now },
+	modifiedDate: { type: Number, default: Date.now },
 });
 
 module.exports = mongoose.model('users', users);

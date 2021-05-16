@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
-
 const Schema = mongoose.Schema;
+
+const APP_CONSTANTS = require('../config/app-defaults');
 
 const exam = new Schema({
 	subject: { type: String, required: true, index: true },
 	course: {
 		type: Schema.Types.ObjectId,
 		required: true,
-		ref: 'examinerCourses',
+		ref: APP_CONSTANTS.DATABASE_MODEL.EXAMINER_COURSES,
 	},
 	examCode: { type: String, required: true, index: true },
 	password: { type: String, required: true },

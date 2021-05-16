@@ -262,4 +262,114 @@ module.exports = {
 			.isEmpty()
 			.withMessage('Option list cannot be empty'),
 	],
+
+	GET_EXAM_LIST: [
+		query('studentId')
+			.not()
+			.isEmpty()
+			.withMessage('Student id is required')
+			.isLength({ min: 24, max: 24 })
+			.withMessage('Invalid student id'),
+	],
+
+	CREATE_STUDENT: [
+		body('firstName')
+			.not()
+			.isEmpty()
+			.withMessage('First name is required')
+			.isString()
+			.withMessage('First name must be string'),
+		body('lastName')
+			.not()
+			.isEmpty()
+			.withMessage('Last name is required')
+			.isString()
+			.withMessage('Last name must be string'),
+		body('fatherName')
+			.not()
+			.isEmpty()
+			.withMessage('Father name is required')
+			.isString()
+			.withMessage('Father name must be string'),
+		body('motherName')
+			.not()
+			.isEmpty()
+			.withMessage('Mother name is required')
+			.isString()
+			.withMessage('Mother name must be string'),
+		body('address')
+			.not()
+			.isEmpty()
+			.withMessage('Address is required')
+			.isString()
+			.withMessage('Address must be string'),
+		body('city')
+			.not()
+			.isEmpty()
+			.withMessage('City is required')
+			.isString()
+			.withMessage('City must be string'),
+		body('state')
+			.not()
+			.isEmpty()
+			.withMessage('State is required')
+			.isString()
+			.withMessage('State must be string'),
+		body('email')
+			.not()
+			.isEmpty()
+			.withMessage('Email is required')
+			.isString()
+			.withMessage('State must be string'),
+		body('password')
+			.not()
+			.isEmpty()
+			.withMessage('Password is required')
+			.isString()
+			.withMessage('Password must be string'),
+		body('dob')
+			.not()
+			.isEmpty()
+			.withMessage('Date of birth is required')
+			.isNumeric()
+			.withMessage('Date of birth must be number'),
+		body('gender')
+			.not()
+			.isEmpty()
+			.withMessage('Gender is required')
+			.isString()
+			.withMessage('Gender must be string'),
+		body('studentId')
+			.not()
+			.isEmpty()
+			.withMessage('Student ID is required')
+			.isString()
+			.withMessage('Student ID must be string'),
+		body('mobileNumber')
+			.not()
+			.isEmpty()
+			.withMessage('Mobile number is required')
+			.isString()
+			.withMessage('Mobile number must be string'),
+		body()
+			.custom((body) => {
+				const keys = [
+					'firstName',
+					'lastName',
+					'fatherName',
+					'motherName',
+					'address',
+					'city',
+					'state',
+					'email',
+					'password',
+					'dob',
+					'gender',
+					'studentId',
+					'mobileNumber',
+				];
+				return Object.keys(body).every((key) => keys.includes(key));
+			})
+			.withMessage('Some extra parameters are sent'),
+	],
 };

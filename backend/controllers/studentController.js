@@ -2,27 +2,20 @@ const { studentHandler, examHandler } = require('../handlers');
 
 const student = {
 	addNewStudent: async (req, res) => {
-		let examinerId = req.user._id;
-		if (req.file !== undefined) {
-			if (req.file.originalname.includes('.csv')) {
-				let filePath = req.file.path;
-				let examId = req.body.examCode;
-				let msg = await studentHandler.uploadStudentFile(
-					filePath,
-					examId,
-					examinerId
-				);
-				res.status(200).send({ msg });
-			} else {
-				res.status(400).send({ msg: 'File type is not supported' });
-			}
-		} else {
-			let studentData = req.body;
-			studentData.examinerId = examinerId;
-			studentData.accountType = 'student';
+		try {
+			let userDetails = req.user;
+			let imageDetails = req.file;
+			let studentDetails = req.body;
 
-			let response = await studentHandler.addNewStudent(studentData);
-			res.status(response.status).send({ msg: response.msg });
+			let response = await studentHandler.addNewStudent(
+				userDetails,
+				studentDetails,
+				imageDetails
+			);
+
+			res.status(response.status).send(response.data);
+		} catch (err) {
+			throw err;
 		}
 	},
 
