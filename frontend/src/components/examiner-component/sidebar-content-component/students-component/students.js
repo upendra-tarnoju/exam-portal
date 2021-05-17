@@ -3,7 +3,6 @@ import Pagination from '@material-ui/lab/Pagination';
 import { Link } from 'react-router-dom';
 import { Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Moment from 'react-moment';
-import moment from 'moment';
 
 import styles from './students.module.css';
 import ExaminerService from '../../../../services/examinerApi';

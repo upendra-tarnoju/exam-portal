@@ -9,7 +9,7 @@ import {
 	Checkbox,
 } from '@material-ui/core';
 import React from 'react';
-import CountDown, { zeroPad } from 'react-countdown';
+// import CountDown, { zeroPad } from 'react-countdown';
 import FullScreenModal from '../../../../modals/fullScreenModal';
 import screenfull from 'screenfull';
 import { Modal } from 'react-bootstrap';
@@ -117,13 +117,13 @@ class ExamQuestion extends React.Component {
 
 	render() {
 		let { question, totalQuestions, pageIndex, singleOption } = this.state;
-		const renderCountTime = ({ hours, minutes, seconds }) => {
-			return (
-				<span>
-					{zeroPad(hours)}:{zeroPad(minutes)}:{zeroPad(seconds)}
-				</span>
-			);
-		};
+		// const renderCountTime = ({ hours, minutes, seconds }) => {
+		// 	return (
+		// 		<span>
+		// 			{zeroPad(hours)}:{zeroPad(minutes)}:{zeroPad(seconds)}
+		// 		</span>
+		// 	);
+		// };
 
 		const SingleOption = () =>
 			this.state.options.map((option, index) => {

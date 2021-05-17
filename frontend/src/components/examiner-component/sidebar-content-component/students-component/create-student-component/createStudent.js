@@ -1,21 +1,10 @@
 import React from 'react';
-import {
-	Button,
-	Stepper,
-	Step,
-	StepLabel,
-	Typography,
-	Card,
-	IconButton,
-} from '@material-ui/core';
+import { Typography, Card } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { ChevronLeft, CloudUpload } from '@material-ui/icons';
 
 import PersonalDetailsForm from '../../../../../forms/student-form/personalDetailForm';
 import StudentExamDetailForm from '../../../../../forms/student-form/studentExamDetailForm';
-import styles from '../students.module.css';
 import * as ActionTypes from '../../../../../action';
-import FileModal from '../../../../../modals/fileModal';
 import ExaminerService from '../../../../../services/examinerApi';
 import Snackbar from '../../../../customSnackbar';
 import factories from '../../../../../factories/factories';

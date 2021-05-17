@@ -49,7 +49,7 @@ class AssignExam extends React.Component {
 	}
 
 	assignStudentToExam = () => {
-		let {} = this.state;
+		// let {} = this.state;
 	};
 
 	selectExam = (examId) => {
@@ -58,7 +58,7 @@ class AssignExam extends React.Component {
 
 	render() {
 		let { classes } = this.props;
-		let { studentDetails, examDetails, snackBar } = this.state;
+		let { studentDetails, examDetails } = this.state;
 
 		let rows = [...Array(Math.ceil(examDetails.length / 3))];
 
