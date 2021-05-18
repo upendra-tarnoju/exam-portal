@@ -8,6 +8,7 @@ const appDefaults = {
 		EXAMINER: 'examiner',
 		ADMIN: 'admin',
 		STUDENT: 'student',
+		SUB_ADMIN: 'subAdmin',
 	},
 	ACCOUNT_STATUS: {
 		PENDING: 'pending',

@@ -15,6 +15,8 @@ module.exports = () => {
 
 	router.post('/login', userController.loginUser);
 
+	router.get('/collegeList', userController.getCollegeList);
+
 	router.get('/image/:imageId', questionController.getQuestionImage);
 
 	return router;

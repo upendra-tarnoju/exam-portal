@@ -17,6 +17,11 @@ module.exports = {
 			.withMessage('Required mobile number')
 			.isLength(10)
 			.withMessage('Invalid mobile number'),
+		body('college._id').not().isEmpty().withMessage('College id is required'),
+		body('college.name')
+			.not()
+			.isEmpty()
+			.withMessage('College name is required'),
 		body()
 			.custom((body) => {
 				const keys = [
@@ -25,6 +30,7 @@ module.exports = {
 					'email',
 					'password',
 					'mobileNumber',
+					'college',
 				];
 				return Object.keys(body).every((key) => keys.includes(key));
 			})

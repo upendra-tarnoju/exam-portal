@@ -14,6 +14,7 @@ const userTypeEnum = [
 	APP_CONSTANTS.ACCOUNT_TYPE.ADMIN,
 	APP_CONSTANTS.ACCOUNT_TYPE.EXAMINER,
 	APP_CONSTANTS.ACCOUNT_TYPE.STUDENT,
+	APP_CONSTANTS.ACCOUNT_TYPE.SUB_ADMIN,
 ];
 
 const users = new Schema({
@@ -60,6 +61,7 @@ const users = new Schema({
 	status: { type: String, required: true, enum: userStatusEnum },
 	createdDate: { type: Number, default: Date.now },
 	modifiedDate: { type: Number, default: Date.now },
+	collegeId: { type: Schema.Types.ObjectId, default: null },
 });
 
 module.exports = mongoose.model('users', users);

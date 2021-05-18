@@ -7,3 +7,4 @@ exports.student = require('./student');
 exports.answers = require('./answer');
 exports.defaultCourses = require('./defaultCourses');
 exports.examinerCourses = require('./examinerCourses');
+exports.college = require('./college');
