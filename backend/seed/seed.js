@@ -11,10 +11,12 @@ const {
 	student,
 } = require('../models');
 const defaultCourses = require('./default-courses');
+const defaultColleges = require('./colleges');
 const examinerSchema = require('../schemas/examiner');
 // const courseSchema = require('../schemas/course');
 const examSchema = require('../schemas/exam');
 const defaultCoursesSchema = require('../schemas/defaultCourses');
+const collegeSchema = require('../schemas/college');
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
@@ -174,6 +176,18 @@ async function createDefaultCourses() {
 	}
 }
 
+async function createColleges() {
+	for (let i = 0; i < defaultColleges.length; i++) {
+		let college = defaultColleges[i];
+		await collegeSchema.create({
+			name: college.university,
+			state: college.state,
+			city: college.city,
+			address: college.address,
+		});
+	}
+}
+
 async function createCourses() {
 	let approvedExaminers = await examinerSchema.find({
 		accountStatus: 'approved',
@@ -305,10 +319,11 @@ async function createSampleData() {
 	// await createAdmin();
 	// await createExaminers();
 	// await createCourses();
-	await createDefaultCourses();
+	// await createDefaultCourses();
 	// await createExam();
 	// await createQuestions();
 	// await createStudent();
+	await createColleges();
 	mongoose.connection.close();
 }
 
