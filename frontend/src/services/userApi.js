@@ -38,5 +38,12 @@ class UserService {
 		cookie.remove('token');
 		cookie.remove('type');
 	};
+
+	getCollegeList = () => {
+		return axios({
+			method: 'get',
+			url: `${process.env.REACT_APP_BASE_URL}/api/collegeList`,
+		});
+	};
 }
 export default UserService;

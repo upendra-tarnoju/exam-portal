@@ -60,8 +60,7 @@ class SignUp extends Component {
 	};
 
 	hideModal = () => {
-		this.setState({ modal: false });
-		// this.setState({ modal: false }, () => this.props.history.push('/login'));
+		this.setState({ modal: false }, () => this.props.history.push('/login'));
 	};
 
 	handleModal = (state) => {
@@ -93,7 +92,7 @@ class SignUp extends Component {
 							<div className='col-md-7 col-sm-12'>
 								<Card className={`py-3 ${classes.signUpCard}`}>
 									<p className={`text-center mb-0 ${classes.cardHeading}`}>
-										Sign up as examiner to continue
+										Sign up as sub admin to continue
 									</p>
 									<div className='px-5'>
 										<SignUpForm showModal={this.showModal} />

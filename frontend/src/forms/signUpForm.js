@@ -1,20 +1,54 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
 import { Formik } from 'formik';
-import Button from '@material-ui/core/Button';
+import { TextField, Button, CircularProgress } from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
 
 import schema from '../schema/signUpSchema';
 import UserService from '../services/userApi';
 
-let SignUpForm = ({ showModal }) => {
+let SignUpForm = (props) => {
+	const [open, setOpen] = React.useState(false);
+	const [options, setOptions] = React.useState([]);
+	const loading = open && options.length === 0;
+
+	React.useEffect(() => {
+		let active = true;
+
+		if (!loading) {
+			return undefined;
+		}
+
+		(async () => {
+			let userService = new UserService();
+			let response = await userService.getCollegeList();
+			let colleges = response.data.collegeList;
+
+			if (active) {
+				setOptions(colleges);
+			}
+		})();
+
+		return () => {
+			active = false;
+		};
+	}, [loading]);
+
+	React.useEffect(() => {
+		if (!open) {
+			setOptions([]);
+		}
+	}, [open]);
+
 	return (
 		<Formik
 			validationSchema={schema}
 			onSubmit={(values) => {
 				let userService = new UserService();
+				console.log(values);
 
 				userService.saveNewUsers(values).then((response) => {
-					showModal(response.data.msg);
+					props.showModal(response.data.msg);
 				});
 			}}
 			initialValues={{
@@ -23,105 +57,142 @@ let SignUpForm = ({ showModal }) => {
 				mobileNumber: '',
 				email: '',
 				password: '',
+				college: '',
 			}}
 		>
-			{({
-				touched,
-				values,
-				errors,
-				handleChange,
-				handleBlur,
-				handleSubmit,
-			}) => (
-				<Form noValidate onSubmit={handleSubmit}>
-					<div className='row'>
+			{(formikProps) => (
+				<Form noValidate onSubmit={formikProps.handleSubmit}>
+					<div className='row mt-3'>
 						<div className='col-md-6'>
-							<Form.Group>
-								<Form.Label>First name</Form.Label>
-								<Form.Control
-									type='text'
-									name='firstName'
-									placeholder='First name'
-									value={values.firstName || ''}
-									onBlur={handleBlur}
-									onChange={handleChange}
-									isInvalid={touched.firstName && !!errors.firstName}
-									required
-								/>
-								<Form.Control.Feedback type='invalid'>
-									{errors.firstName}
-								</Form.Control.Feedback>
-							</Form.Group>
+							<TextField
+								variant='outlined'
+								className='w-100'
+								name='firstName'
+								label='First name'
+								value={formikProps.values.firstName}
+								onChange={formikProps.handleChange}
+								onBlur={formikProps.handleBlur}
+								error={
+									formikProps.touched.firstName &&
+									!!formikProps.errors.firstName
+								}
+								helperText={
+									formikProps.touched.firstName && formikProps.errors.firstName
+								}
+							/>
 						</div>
 						<div className='col-md-6'>
-							<Form.Group>
-								<Form.Label>Last name</Form.Label>
-								<Form.Control
-									type='text'
-									name='lastName'
-									placeholder='Last name'
-									value={values.lastName}
-									onBlur={handleBlur}
-									onChange={handleChange}
-									isInvalid={touched.lastName && !!errors.lastName}
-									required
-								/>
-								<Form.Control.Feedback type='invalid'>
-									{errors.lastName}
-								</Form.Control.Feedback>
-							</Form.Group>
+							<TextField
+								variant='outlined'
+								className='w-100'
+								name='lastName'
+								label='Last name'
+								value={formikProps.values.lastName}
+								onChange={formikProps.handleChange}
+								onBlur={formikProps.handleBlur}
+								error={
+									formikProps.touched.lastName && !!formikProps.errors.lastName
+								}
+								helperText={
+									formikProps.touched.lastName && formikProps.errors.lastName
+								}
+							/>
 						</div>
 					</div>
-					<Form.Group>
-						<Form.Label>Mobile number</Form.Label>
-						<Form.Control
-							type='text'
-							name='mobileNumber'
-							placeholder='Mobile number'
-							value={values.mobileNumber}
-							onBlur={handleBlur}
-							onChange={handleChange}
-							isInvalid={touched.mobileNumber && !!errors.mobileNumber}
-							required
-						/>
-						<Form.Control.Feedback type='invalid'>
-							{errors.mobileNumber}
-						</Form.Control.Feedback>
-					</Form.Group>
-					<Form.Group>
-						<Form.Label>Email Address</Form.Label>
-						<Form.Control
-							type='text'
-							name='email'
-							placeholder='Email address'
-							value={values.email}
-							onBlur={handleBlur}
-							onChange={handleChange}
-							isInvalid={touched.email && !!errors.email}
-							required
-						/>
-						<Form.Control.Feedback type='invalid'>
-							{errors.email}
-						</Form.Control.Feedback>
-					</Form.Group>
-					<Form.Group>
-						<Form.Label>Password</Form.Label>
-						<Form.Control
-							type='password'
-							name='password'
-							placeholder='Password'
-							value={values.password}
-							onBlur={handleBlur}
-							onChange={handleChange}
-							isInvalid={touched.password && !!errors.password}
-							required
-						/>
-						<Form.Control.Feedback type='invalid'>
-							{errors.password}
-						</Form.Control.Feedback>
-					</Form.Group>
-					<div className='d-flex justify-content-end'>
-						<Button type='submit' variant='contained' color='primary'>
+					<TextField
+						variant='outlined'
+						className='w-100 mt-3'
+						name='mobileNumber'
+						label='Mobile number'
+						value={formikProps.values.mobileNumber}
+						onChange={(event) => {
+							let regex = /^[0-9\b]+$/;
+							if (regex.test(event.target.value) || event.target.value === '') {
+								formikProps.setFieldValue('mobileNumber', event.target.value);
+							}
+						}}
+						onBlur={formikProps.handleBlur}
+						error={
+							formikProps.touched.mobileNumber &&
+							!!formikProps.errors.mobileNumber
+						}
+						helperText={
+							formikProps.touched.mobileNumber &&
+							formikProps.errors.mobileNumber
+						}
+					/>
+					<Autocomplete
+						style={{ width: 300 }}
+						open={open}
+						onOpen={() => {
+							setOpen(true);
+						}}
+						onClose={() => {
+							setOpen(false);
+						}}
+						getOptionSelected={(option, value) => option.name === value.name}
+						getOptionLabel={(option) => option.name}
+						options={options}
+						loading={loading}
+						className='w-100 mt-3'
+						onChange={(e, college) => {
+							formikProps.setFieldValue('college', college);
+						}}
+						renderInput={(params) => (
+							<TextField
+								{...params}
+								label='College'
+								variant='outlined'
+								error={!!formikProps.errors.college}
+								helperText={formikProps.errors.college}
+								onBlur={formikProps.handleBlur}
+								InputProps={{
+									...params.InputProps,
+									endAdornment: (
+										<React.Fragment>
+											{loading ? (
+												<CircularProgress color='inherit' size={20} />
+											) : null}
+											{params.InputProps.endAdornment}
+										</React.Fragment>
+									),
+								}}
+							/>
+						)}
+					/>
+					<TextField
+						variant='outlined'
+						className='w-100 mt-3'
+						name='email'
+						label='Email'
+						value={formikProps.values.email}
+						onChange={formikProps.handleChange}
+						onBlur={formikProps.handleBlur}
+						error={formikProps.touched.email && !!formikProps.errors.email}
+						helperText={formikProps.touched.email && formikProps.errors.email}
+					/>
+					<TextField
+						variant='outlined'
+						className='w-100 mt-3'
+						name='password'
+						label='Password'
+						type='password'
+						value={formikProps.values.password}
+						onChange={formikProps.handleChange}
+						onBlur={formikProps.handleBlur}
+						error={
+							formikProps.touched.password && !!formikProps.errors.password
+						}
+						helperText={
+							formikProps.touched.password && formikProps.errors.password
+						}
+					/>
+					<div className='d-flex justify-content-end mt-3'>
+						<Button
+							type='submit'
+							variant='contained'
+							className='bg-dark text-white'
+						>
 							Request for Sign Up
 						</Button>
 					</div>

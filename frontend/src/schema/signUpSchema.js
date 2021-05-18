@@ -12,6 +12,7 @@ let schema = Yup.object({
 	password: Yup.string()
 		.min(6, 'Minimum password length should be 6')
 		.required('Password is required'),
+	college: Yup.string().required('College name is required'),
 });
 
 export default schema;
