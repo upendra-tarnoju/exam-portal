@@ -55,7 +55,7 @@ const users = new Schema({
 		enum: userTypeEnum,
 	},
 	lastLogin: {
-		type: Date,
+		type: Number,
 		default: null,
 	},
 	status: { type: String, required: true, enum: userStatusEnum },

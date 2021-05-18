@@ -1,19 +1,29 @@
 const LocalStrategy = require('passport-local').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
+const mongoose = require('mongoose');
+const moment = require('moment');
 
 const { users } = require('../models');
 const { factories } = require('../factories');
 const APP_DEFAULTS = require('../config/app-defaults');
 const RESPONSE_MESSAGES = require('../config/response-messages');
+const { queries } = require('../db');
+const Schema = require('../schemas');
 
-let comparePassword = (typedPassword, user, done) => {
+let comparePassword = async (typedPassword, user, done) => {
 	let userStatus = factories.compareHashedPassword(
 		typedPassword,
 		user.password
 	);
-	if (userStatus) return done(null, user);
-	else
+	if (userStatus) {
+		let condition = { _id: mongoose.Types.ObjectId(user._id) };
+		let toUpdate = { lastLogin: moment().valueOf() };
+		let options = {};
+
+		await queries.findAndUpdate(Schema.users, condition, toUpdate, options);
+		return done(null, user);
+	} else
 		return done(null, false, {
 			...RESPONSE_MESSAGES.INCORRECT_CREDENTIALS,
 		});
@@ -21,10 +31,24 @@ let comparePassword = (typedPassword, user, done) => {
 
 module.exports = (passport) => {
 	passport.use(
-		new LocalStrategy((email, password, done) => {
-			users.find({ email: email }).then((user) => {
+		new LocalStrategy(async (email, password, done) => {
+			try {
+				let query = { email: email };
+				let projections = { userType: 1, status: 1, password: 1 };
+				let options = { lean: true };
+
+				let user = await queries.findOne(
+					Schema.users,
+					query,
+					projections,
+					options
+				);
+
 				if (user) {
-					if (user.userType === APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER) {
+					if (
+						user.userType === APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER ||
+						user.userType === APP_DEFAULTS.ACCOUNT_TYPE.SUB_ADMIN
+					) {
 						if (user.status === APP_DEFAULTS.ACCOUNT_STATUS.PENDING) {
 							return done(null, false, {
 								...RESPONSE_MESSAGES.ACCOUNT_STATUS.PENDING,
@@ -47,7 +71,9 @@ module.exports = (passport) => {
 						...RESPONSE_MESSAGES.INCORRECT_CREDENTIALS,
 					});
 				}
-			});
+			} catch (err) {
+				throw err;
+			}
 		})
 	);
 
