@@ -15,11 +15,14 @@ class LoginCard extends Component {
 	}
 
 	handleLogin = (data) => {
+		console.log(data);
 		this.userService.setCookie(data.token, data.userType);
 		if (data.userType === 'admin') {
 			this.props.history.push('/admin');
 		} else if (data.userType === 'examiner') {
 			this.props.history.push('/examiner/exam');
+		} else if (data.userType === 'subAdmin') {
+			this.props.history.push('/subAdmin');
 		} else {
 			this.props.history.push('/student/exam');
 		}
