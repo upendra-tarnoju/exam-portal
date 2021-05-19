@@ -40,5 +40,18 @@ module.exports = () => {
 		adminController.examinerStatusCount
 	);
 
+	router.get(
+		'/subAdmin',
+		passport.authenticate('jwt'),
+		adminController.getSubAdminList
+	);
+
+	router.patch(
+		'/subAdmin/status',
+		passport.authenticate('jwt'),
+		validatorMiddleware(AdminValidator.APPROVE_DECLINE_SUBADMIN),
+		adminController.updateSubAdminStatus
+	);
+
 	return router;
 };

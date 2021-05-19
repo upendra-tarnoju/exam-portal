@@ -177,4 +177,18 @@ module.exports = {
 			MSG: 'Invalid student id',
 		},
 	},
+	SUB_ADMIN: {
+		INVALID_ID: {
+			STATUS_CODE: 400,
+			MSG: 'Invalid sub admin id',
+		},
+		STATUS_APPROVED: {
+			STATUS_CODE: 200,
+			MSG: 'Sub admin has been approved',
+		},
+		STATUS_DECLINED: {
+			STATUS_CODE: 200,
+			MSG: 'Sub admin has been declined',
+		},
+	},
 };

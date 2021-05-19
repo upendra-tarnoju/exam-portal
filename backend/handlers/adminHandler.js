@@ -1,7 +1,11 @@
+const mongoose = require('mongoose');
+
 const { users, examiner, student, exam } = require('../models');
 const { sender, transporter } = require('../config/mail');
 const APP_DEFAULTS = require('../config/app-defaults');
 const RESPONSE_MESSAGES = require('../config/response-messages');
+const { queries } = require('../db');
+const Schema = require('../schemas');
 
 const admin = {
 	getExaminerDetails: async (accountStatus, pageIndex, pageSize) => {
@@ -101,6 +105,91 @@ const admin = {
 				status: 200,
 				data: { count: allExaminers.length, examiners: pendingExaminers },
 			};
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	getSubAdminList: async (payload) => {
+		try {
+			let pageIndex = parseInt(payload.pageIndex, 10);
+			let pageSize = parseInt(payload.pageSize, 10);
+			pageIndex = pageIndex * pageSize;
+			let query = { userType: APP_DEFAULTS.ACCOUNT_TYPE.SUB_ADMIN };
+			let options = { lean: true, skip: pageIndex, limit: pageSize };
+			let projections = {
+				firstName: 1,
+				lastName: 1,
+				mobileNumber: 1,
+				collegeId: 1,
+				email: 1,
+				status: 1,
+			};
+			let populateOptions = {
+				path: 'collegeId',
+				select: 'name',
+			};
+
+			let subAdminList = await queries.populateData(
+				Schema.users,
+				query,
+				projections,
+				options,
+				populateOptions
+			);
+
+			let count = await queries.countDocuments(Schema.users, query);
+
+			return { status: 200, data: { subAdminList, count } };
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	updateSubAdminStatus: async (payload) => {
+		try {
+			let conditions = { _id: mongoose.Types.ObjectId(payload.subAdminId) };
+			let options = { lean: true, new: true };
+			let toUpdate;
+
+			if (payload.status === APP_DEFAULTS.ACCOUNT_STATUS.APPROVED) {
+				toUpdate = {
+					status: APP_DEFAULTS.ACCOUNT_STATUS.APPROVED,
+					modifiedDate: Date.now(),
+				};
+			} else if (payload.status === APP_DEFAULTS.ACCOUNT_STATUS.DECLINED) {
+				toUpdate = {
+					status: APP_DEFAULTS.ACCOUNT_STATUS.DECLINED,
+					modifiedDate: Date.now(),
+				};
+			}
+
+			let updatedSubAdmin = await queries.findAndUpdate(
+				Schema.users,
+				conditions,
+				toUpdate,
+				options
+			);
+
+			if (updatedSubAdmin) {
+				if (updatedSubAdmin.status === APP_DEFAULTS.ACCOUNT_STATUS.APPROVED) {
+					return {
+						status: RESPONSE_MESSAGES.SUB_ADMIN.STATUS_APPROVED.STATUS_CODE,
+						data: { msg: RESPONSE_MESSAGES.SUB_ADMIN.STATUS_APPROVED.MSG },
+					};
+				} else if (
+					updatedSubAdmin.status === APP_DEFAULTS.ACCOUNT_STATUS.DECLINED
+				) {
+					return {
+						status: RESPONSE_MESSAGES.SUB_ADMIN.STATUS_DECLINED.STATUS_CODE,
+						data: { msg: RESPONSE_MESSAGES.SUB_ADMIN.STATUS_DECLINED.MSG },
+					};
+				}
+			} else
+				return {
+					status: RESPONSE_MESSAGES.SUB_ADMIN.INVALID_ID.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.SUB_ADMIN.INVALID_ID.MSG },
+				};
 		} catch (err) {
 			throw err;
 		}

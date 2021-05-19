@@ -20,4 +20,19 @@ module.exports = {
 	APPROVE_DECLINE_EXAMINER: [
 		body('examinerId').not().isEmpty().withMessage('Required examiner id'),
 	],
+
+	APPROVE_DECLINE_SUBADMIN: [
+		body('subAdminId')
+			.not()
+			.isEmpty()
+			.withMessage('Required sub admin id')
+			.isLength({ min: 24, max: 24 })
+			.withMessage('Invalid sub admin id'),
+		body('status').not().isEmpty().withMessage('Required status'),
+		// .isIn([
+		// 	APP_DEFAULTS.ACCOUNT_STATUS.DECLINED,
+		// 	APP_DEFAULTS.ACCOUNT_STATUS.APPROVED,
+		// ])
+		// .withMessage('Invalid value for status'),
+	],
 };

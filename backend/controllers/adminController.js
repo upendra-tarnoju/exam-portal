@@ -11,6 +11,7 @@ const admin = {
 			throw err;
 		}
 	},
+
 	getExaminerDetails: async (req, res) => {
 		try {
 			let { type, pageIndex, pageSize } = req.query;
@@ -74,6 +75,26 @@ const admin = {
 
 		let data = await adminHandler.getUnexpiredExamDetails(minDate, maxDate);
 		res.status(200).send(data);
+	},
+
+	getSubAdminList: async (req, res) => {
+		try {
+			let payload = req.query;
+			let response = await adminHandler.getSubAdminList(payload);
+			res.status(response.status).send(response.data);
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	updateSubAdminStatus: async (req, res) => {
+		try {
+			let payload = req.body;
+			let response = await adminHandler.updateSubAdminStatus(payload);
+			res.status(response.status).send(response.data);
+		} catch (err) {
+			throw err;
+		}
 	},
 };
 

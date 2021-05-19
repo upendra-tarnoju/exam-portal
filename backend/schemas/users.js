@@ -61,7 +61,7 @@ const users = new Schema({
 	status: { type: String, required: true, enum: userStatusEnum },
 	createdDate: { type: Number, default: Date.now },
 	modifiedDate: { type: Number, default: Date.now },
-	collegeId: { type: Schema.Types.ObjectId, default: null },
+	collegeId: { type: Schema.Types.ObjectId, default: null, ref: 'colleges' },
 });
 
 module.exports = mongoose.model('users', users);
