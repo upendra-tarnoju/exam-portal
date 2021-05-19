@@ -34,7 +34,13 @@ module.exports = (passport) => {
 		new LocalStrategy(async (email, password, done) => {
 			try {
 				let query = { email: email };
-				let projections = { userType: 1, status: 1, password: 1 };
+				let projections = {
+					userType: 1,
+					status: 1,
+					password: 1,
+					firstName: 1,
+					lastName: 1,
+				};
 				let options = { lean: true };
 
 				let user = await queries.findOne(

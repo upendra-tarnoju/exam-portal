@@ -118,16 +118,6 @@ class ViewSubAdmin extends React.Component {
 							<Typography variant='h4'>Sub admin</Typography>
 							<Typography variant='subtitle1'>View your sub admin</Typography>
 						</div>
-						<div className='align-self-center'>
-							<Button
-								variant='contained'
-								className='bg-dark text-white'
-								startIcon={<Add />}
-								onClick={this.createNewSubAdmin}
-							>
-								Create new
-							</Button>
-						</div>
 					</div>
 				</Card>
 				<Card className='mt-3'>
