@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core';
 
 import ViewExaminers from './view-examiners-component/viewExaminers';
 import AdminDashboard from './admin-dashboard-component/adminDashboard';
+import ViewSubAdmin from './view-sub-admin-component/viewSubAdmin';
 
 const useStyles = makeStyles((theme) => ({
 	containerHeight: {
@@ -19,6 +20,7 @@ const AdminSidebarContent = (props) => {
 			<Switch>
 				<Route exact path='/admin' component={AdminDashboard} />
 				<Route path='/admin/examiner' component={ViewExaminers} />
+				<Route path='/admin/subadmin/details' component={ViewSubAdmin} />
 				<Redirect from='/admin/*' to='/admin' />
 			</Switch>
 		</div>

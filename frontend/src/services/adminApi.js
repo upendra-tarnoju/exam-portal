@@ -6,6 +6,7 @@ class AdminService {
 	constructor() {
 		this.adminUrl = 'api/admin/examiner';
 		this.dashboardUrl = 'api/admin/dashboard';
+		this.subAdminUrl = 'api/admin/subAdmin';
 		this.userService = new UserService();
 	}
 
@@ -77,6 +78,32 @@ class AdminService {
 				minDate,
 				maxDate,
 			},
+		});
+	};
+
+	getSubAdminList = (params) => {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'get',
+			url: `${process.env.REACT_APP_BASE_URL}/${this.subAdminUrl}`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			params: params,
+		});
+	};
+
+	changeSubAdminStatus = (data) => {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'patch',
+			url: `${process.env.REACT_APP_BASE_URL}/${this.subAdminUrl}/status`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			data: data,
 		});
 	};
 }

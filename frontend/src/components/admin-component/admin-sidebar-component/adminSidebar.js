@@ -11,7 +11,13 @@ import {
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { ChevronLeft, Dashboard, Person, Settings } from '@material-ui/icons';
+import {
+	ChevronLeft,
+	Dashboard,
+	Person,
+	Settings,
+	SupervisorAccount,
+} from '@material-ui/icons';
 
 import * as ActionType from '../../../action';
 import AdminService from '../../../services/adminApi';
@@ -122,6 +128,18 @@ class AdminSidebar extends Component {
 								<Person />
 							</ListItemIcon>
 							<ListItemText primary='Examiners' />
+						</ListItem>
+
+						<ListItem
+							button
+							component='a'
+							href='/admin/subadmin/details'
+							selected={selectedTab === 'subAdmin'}
+						>
+							<ListItemIcon>
+								<SupervisorAccount />
+							</ListItemIcon>
+							<ListItemText primary='Sub admin' />
 						</ListItem>
 
 						<ListItem
