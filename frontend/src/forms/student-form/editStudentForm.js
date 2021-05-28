@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import moment from 'moment';
 import { MenuItem, TextField } from '@material-ui/core';
 
-import schema from '../../schema/editStudentSchema';
+import schema from '../../schema/student/editStudentSchema';
 import ExaminerService from '../../services/examinerApi';
 
 let gender = [
@@ -30,12 +30,10 @@ const EditStudentForm = (props) => {
 			}}
 			onSubmit={(values) => {
 				let examinerService = new ExaminerService();
-				examinerService
-					.updateStudent(props.student._id, values)
-					.then((res) => {
-						let data = res.data;
-						props.updateStudent(data.personalDetails, data.otherDetails);
-					});
+				examinerService.updateStudent(props.student._id, values).then((res) => {
+					let data = res.data;
+					props.updateStudent(data.personalDetails, data.otherDetails);
+				});
 			}}
 		>
 			{(formikProps) => (

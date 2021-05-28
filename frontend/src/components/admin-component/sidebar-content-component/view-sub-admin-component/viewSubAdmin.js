@@ -2,7 +2,6 @@ import React from 'react';
 import {
 	Typography,
 	Card,
-	Button,
 	TableCell,
 	TableRow,
 	withStyles,
@@ -17,7 +16,7 @@ import {
 	Tooltip,
 	TablePagination,
 } from '@material-ui/core';
-import { Add, CheckBox, DeleteOutline } from '@material-ui/icons';
+import { CheckBox, DeleteOutline } from '@material-ui/icons';
 
 import AdminService from '../../../../services/adminApi';
 import CustomSnackBar from '../../../customSnackbar';
