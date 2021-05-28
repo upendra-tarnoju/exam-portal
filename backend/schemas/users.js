@@ -18,16 +18,8 @@ const userTypeEnum = [
 ];
 
 const users = new Schema({
-	firstName: {
-		type: String,
-		required: [true, 'First name is required'],
-		lowercase: true,
-	},
-	lastName: {
-		type: String,
-		required: [true, 'Last name is required'],
-		lowercase: true,
-	},
+	firstName: { type: String, required: true, lowercase: true },
+	lastName: { type: String, required: true, lowercase: true },
 	email: {
 		type: String,
 		required: [true, 'Email ID is required'],
@@ -40,28 +32,15 @@ const users = new Schema({
 			message: 'Invalid Email ID',
 		},
 	},
-	password: {
-		type: String,
-		required: [true, 'Password is required'],
-		minlength: [6, 'Minimum length of password should be 6'],
-	},
-	mobileNumber: {
-		type: String,
-		required: [true, 'Mobile number is required'],
-	},
-	userType: {
-		type: String,
-		required: [true, 'Account type is required'],
-		enum: userTypeEnum,
-	},
-	lastLogin: {
-		type: Number,
-		default: null,
-	},
+	password: { type: String, default: null },
+	mobileNumber: { type: String, required: true },
+	userType: { type: String, required: true, enum: userTypeEnum },
+	lastLogin: { type: Number, default: null },
 	status: { type: String, required: true, enum: userStatusEnum },
 	createdDate: { type: Number, default: Date.now },
 	modifiedDate: { type: Number, default: Date.now },
 	collegeId: { type: Schema.Types.ObjectId, default: null, ref: 'colleges' },
+	subAdmin: { type: Schema.Types.ObjectId, default: null },
 });
 
 module.exports = mongoose.model('users', users);

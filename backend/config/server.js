@@ -21,6 +21,7 @@ const {
 	adminRoutes,
 	examinerRoutes,
 	studentRoutes,
+	subAdminRoutes,
 } = require('../routes');
 const passport = require('passport');
 require('../db').connection;
@@ -48,6 +49,7 @@ app.use('/api', routes());
 app.use('/api/admin', adminRoutes());
 app.use('/api/examiner', examinerRoutes());
 app.use('/api/student', studentRoutes());
+app.use('/api/subAdmin', subAdminRoutes());
 
 app.listen(PORT, HOST, (err) => {
 	if (err) console.log(err);

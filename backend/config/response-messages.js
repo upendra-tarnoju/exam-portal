@@ -2,11 +2,21 @@ module.exports = {
 	EXAMINER_SIGNUP: {
 		SUCCESS: {
 			STATUS_CODE: 200,
-			MSG: 'Your account would be created shortly.You will receive email soon.',
+			MSG: 'Examiner account would be created shortly. Password will be sent to registered email',
 		},
 		DUPLICATE_RESOURCE: {
 			STATUS_CODE: 409,
 			MSG: 'Examiner already existed',
+		},
+	},
+	SUB_ADMIN_SIGNUP: {
+		SUCCESS: {
+			STATUS_CODE: 200,
+			MSG: 'Your account would be created shortly.You will receive email soon.',
+		},
+		DUPLICATE_RESOURCE: {
+			STATUS_CODE: 409,
+			MSG: 'User already existed',
 		},
 	},
 	ACCOUNT_STATUS: {

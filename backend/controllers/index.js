@@ -4,3 +4,4 @@ exports.examinerController = require('./examinerController');
 exports.examController = require('./examController');
 exports.questionController = require('./questionController');
 exports.studentController = require('./studentController');
+exports.subAdminController = require('./subAdminController');
