@@ -9,6 +9,16 @@ module.exports = {
 			MSG: 'Examiner already existed',
 		},
 	},
+	REMOVE_EXAMINER: {
+		SUCCESS: {
+			STATUS_CODE: 200,
+			MSG: 'Examiner has been removed',
+		},
+		INVALID_ID: {
+			STATUS_CODE: 400,
+			MSG: 'Invalid examiner Id',
+		},
+	},
 	SUB_ADMIN_SIGNUP: {
 		SUCCESS: {
 			STATUS_CODE: 200,

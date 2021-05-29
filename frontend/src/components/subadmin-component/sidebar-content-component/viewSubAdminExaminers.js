@@ -4,6 +4,7 @@ import {
 	Card,
 	Chip,
 	IconButton,
+	makeStyles,
 	Paper,
 	Table,
 	TableBody,
@@ -12,6 +13,7 @@ import {
 	TableHead,
 	TablePagination,
 	TableRow,
+	Tooltip,
 	Typography,
 	withStyles,
 } from '@material-ui/core';
@@ -21,6 +23,7 @@ import Moment from 'react-moment';
 import CreateExaminerModal from '../../../modals/createExaminerModal';
 import SubAdminService from '../../../services/subAdminApi';
 import Snackbar from '../../customSnackbar';
+import DeleteModal from '../../../modals/deleteModal';
 
 const StyledTableCell = withStyles((theme) => ({
 	head: {
@@ -40,22 +43,37 @@ const StyledTableRow = withStyles((theme) => ({
 	},
 }))(TableRow);
 
+const useStylesBootstrap = makeStyles((theme) => ({
+	arrow: {
+		color: theme.palette.common.black,
+	},
+	tooltip: {
+		backgroundColor: theme.palette.common.black,
+	},
+}));
+
+const BootstrapTooltip = (props) => {
+	const classes = useStylesBootstrap();
+	return <Tooltip arrow classes={classes} {...props} />;
+};
+
 class ViewSubAdminExaminers extends React.Component {
 	constructor() {
 		super();
 		this.state = {
 			examinerList: [],
 			snackbar: { show: false, msg: '', type: '' },
-			deleteModal: false,
+			createExaminer: false,
 			pageIndex: 0,
 			pageSize: 5,
 			totalExaminers: 0,
+			deleteModal: { show: false, id: '' },
 		};
 		this.subAdminService = new SubAdminService();
 	}
 
 	handleCreateExaminerModal = (show) => {
-		this.setState({ deleteModal: show });
+		this.setState({ createExaminer: show });
 	};
 
 	handleSnackBar = (status, msg, type) => {
@@ -83,6 +101,7 @@ class ViewSubAdminExaminers extends React.Component {
 				this.setState({
 					examinerList: res.data.examinerList,
 					totalExaminers: res.data.count,
+					deleteModal: { id: '', show: false },
 				});
 			});
 	}
@@ -97,14 +116,26 @@ class ViewSubAdminExaminers extends React.Component {
 		);
 	};
 
+	handleDeleteModal = (show, id) => {
+		this.setState({ deleteModal: { show, id } });
+	};
+
 	componentDidMount() {
 		this.viewExaminerList();
 	}
+
+	deleteExaminer = () => {
+		let { deleteModal } = this.state;
+		this.subAdminService.removeExaminer(deleteModal.id).then((res) => {
+			this.viewExaminerList();
+		});
+	};
 
 	render() {
 		let {
 			examinerList,
 			deleteModal,
+			createExaminer,
 			snackbar,
 			pageIndex,
 			pageSize,
@@ -189,15 +220,21 @@ class ViewSubAdminExaminers extends React.Component {
 										)}
 									</StyledTableCell>
 									<StyledTableCell>
-										<IconButton size='small'>
-											<Edit fontSize='small' />
-										</IconButton>
-										<IconButton
-											size='small'
-											onClick={() => this.handleDeleteModal(true, examiner._id)}
-										>
-											<Delete fontSize='small' />
-										</IconButton>
+										<BootstrapTooltip title='Edit'>
+											<IconButton size='small'>
+												<Edit fontSize='small' />
+											</IconButton>
+										</BootstrapTooltip>
+										<BootstrapTooltip title='Delete'>
+											<IconButton
+												size='small'
+												onClick={() =>
+													this.handleDeleteModal(true, examiner._id)
+												}
+											>
+												<Delete fontSize='small' />
+											</IconButton>
+										</BootstrapTooltip>
 									</StyledTableCell>
 								</StyledTableRow>
 							))}
@@ -214,7 +251,7 @@ class ViewSubAdminExaminers extends React.Component {
 					></TablePagination>
 				</TableContainer>
 				<CreateExaminerModal
-					show={deleteModal}
+					show={createExaminer}
 					handleSubmit={this.handleSubmit}
 					hideModal={this.handleCreateExaminerModal}
 				/>
@@ -223,6 +260,12 @@ class ViewSubAdminExaminers extends React.Component {
 					message={snackbar.msg}
 					snackBarType={snackbar.type}
 					handleSnackBar={this.handleSnackBar}
+				/>
+				<DeleteModal
+					show={deleteModal.show}
+					hideModal={this.handleDeleteModal}
+					heading='examiner'
+					deleteContent={this.deleteExaminer}
 				/>
 			</div>
 		);

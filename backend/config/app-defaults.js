@@ -15,6 +15,7 @@ const appDefaults = {
 		DECLINED: 'declined',
 		APPROVED: 'approved',
 		ACTIVE: 'active',
+		DELETED: 'deleted',
 	},
 	EXAMINER_QUERY_TYPE: {
 		EXAMINER_COUNT: 'examinerCount',

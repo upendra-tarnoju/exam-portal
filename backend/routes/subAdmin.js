@@ -18,5 +18,11 @@ module.exports = () => {
 		subAdminController.requestNewExaminer
 	);
 
+	router.delete(
+		'/examiner/:id',
+		passport.authenticate('jwt'),
+		subAdminController.removeExaminers
+	);
+
 	return router;
 };

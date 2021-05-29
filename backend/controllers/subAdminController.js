@@ -28,6 +28,16 @@ const subAdmin = {
 			throw err;
 		}
 	},
+
+	removeExaminers: async (req, res) => {
+		try {
+			let examinerDetails = req.params;
+			let response = await subAdminHandler.removeExaminers(examinerDetails);
+			res.status(response.status).send(response.data);
+		} catch (err) {
+			throw err;
+		}
+	},
 };
 
 module.exports = subAdmin;

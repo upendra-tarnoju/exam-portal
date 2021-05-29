@@ -32,6 +32,18 @@ class SubAdminService {
 			},
 		});
 	};
+
+	removeExaminer = (examinerId) => {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'delete',
+			url: `${process.env.REACT_APP_BASE_URL}/api/subAdmin/examiner/${examinerId}`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	};
 }
 
 export default SubAdminService;

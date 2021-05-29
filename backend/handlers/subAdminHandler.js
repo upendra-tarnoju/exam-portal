@@ -15,6 +15,7 @@ const subAdmin = {
 				$and: [
 					{ userType: APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER },
 					{ subAdmin: mongoose.Types.ObjectId(userDetails._id) },
+					{ status: { $ne: APP_DEFAULTS.ACCOUNT_STATUS.DELETED } },
 				],
 			};
 
@@ -50,8 +51,11 @@ const subAdmin = {
 	requestNewExaminer: async (examinerDetails, userDetails) => {
 		try {
 			let query = {
-				email: examinerDetails.email,
-				userType: APP_DEFAULTS.ACCOUNT_TYPE.SUB_ADMIN,
+				$and: [
+					{ email: examinerDetails.email },
+					{ userType: APP_DEFAULTS.ACCOUNT_TYPE.SUB_ADMIN },
+					{ status: { $ne: APP_DEFAULTS.ACCOUNT_STATUS.DELETED } },
+				],
 			};
 			let options = { lean: true };
 			let projections = {};
@@ -95,6 +99,35 @@ const subAdmin = {
 					data: {
 						msg: RESPONSE_MESSAGES.EXAMINER_SIGNUP.DUPLICATE_RESOURCE.MSG,
 					},
+				};
+			}
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	removeExaminers: async (examinerDetails) => {
+		try {
+			let conditions = { _id: mongoose.Types.ObjectId(examinerDetails.id) };
+			let options = { lean: true };
+			let toUpdate = { $set: { status: APP_DEFAULTS.ACCOUNT_STATUS.DELETED } };
+
+			let deletedExaminer = await queries.findAndUpdate(
+				Schema.users,
+				conditions,
+				toUpdate,
+				options
+			);
+
+			if (deletedExaminer) {
+				return {
+					status: RESPONSE_MESSAGES.REMOVE_EXAMINER.SUCCESS.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.REMOVE_EXAMINER.SUCCESS.MSG },
+				};
+			} else {
+				return {
+					status: RESPONSE_MESSAGES.REMOVE_EXAMINER.INVALID_ID.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.REMOVE_EXAMINER.INVALID_ID.MSG },
 				};
 			}
 		} catch (err) {
