@@ -20,10 +20,10 @@ import {
 import { Add, Delete, Edit } from '@material-ui/icons';
 import Moment from 'react-moment';
 
-import CreateExaminerModal from '../../../modals/createExaminerModal';
-import SubAdminService from '../../../services/subAdminApi';
-import Snackbar from '../../customSnackbar';
-import DeleteModal from '../../../modals/deleteModal';
+import CreateExaminerModal from '../../../../modals/createExaminerModal';
+import SubAdminService from '../../../../services/subAdminApi';
+import Snackbar from '../../../customSnackbar';
+import DeleteModal from '../../../../modals/deleteModal';
 
 const StyledTableCell = withStyles((theme) => ({
 	head: {
