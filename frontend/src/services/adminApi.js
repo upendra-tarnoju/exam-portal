@@ -23,16 +23,12 @@ class AdminService {
 		});
 	};
 
-	viewLatestPendingExaminer = (type, pageIndex, pageSize) => {
+	getAllExaminers = (params) => {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'get',
 			url: `${process.env.REACT_APP_BASE_URL}/${this.adminUrl}`,
-			params: {
-				type: type,
-				pageIndex: pageIndex,
-				pageSize: pageSize,
-			},
+			params,
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,
@@ -40,12 +36,12 @@ class AdminService {
 		});
 	};
 
-	approveOrDeclineExaminer = (modalData) => {
+	approveOrDeclineExaminer = (data) => {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'patch',
 			url: `${process.env.REACT_APP_BASE_URL}/${this.adminUrl}`,
-			data: modalData,
+			data,
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,

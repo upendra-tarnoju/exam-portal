@@ -127,6 +127,7 @@ class ViewSubAdminExaminers extends React.Component {
 	deleteExaminer = () => {
 		let { deleteModal } = this.state;
 		this.subAdminService.removeExaminer(deleteModal.id).then((res) => {
+			this.handleSnackBar(true, res.data.msg, 'success');
 			this.viewExaminerList();
 		});
 	};

@@ -103,19 +103,19 @@ class AdminDashboard extends React.Component {
 	};
 
 	viewLatestExaminer(pageIndex, pageSize) {
-		this.adminService
-			.viewLatestPendingExaminer('latestExaminer', pageIndex, pageSize)
-			.then((response) => {
-				this.setState((prevState) => ({
-					latestExaminers: response.data.examiners,
-					latestExaminersPage: {
-						...prevState.latestExaminersPage,
-						pageCount: Math.ceil(
-							response.data.count / this.state.latestExaminersPage.pageSize
-						),
-					},
-				}));
-			});
+		// this.adminService
+		// 	.viewLatestPendingExaminer('latestExaminer', pageIndex, pageSize)
+		// 	.then((response) => {
+		// 		this.setState((prevState) => ({
+		// 			latestExaminers: response.data.examiners,
+		// 			latestExaminersPage: {
+		// 				...prevState.latestExaminersPage,
+		// 				pageCount: Math.ceil(
+		// 					response.data.count / this.state.latestExaminersPage.pageSize
+		// 				),
+		// 			},
+		// 		}));
+		// 	});
 	}
 
 	handlePageChange = (event, value) => {

@@ -1,61 +1,64 @@
-import Modal from 'react-bootstrap/Modal';
-import Button from '@material-ui/core/Button';
+import {
+	Modal,
+	Paper,
+	withStyles,
+	Typography,
+	Button,
+	Backdrop,
+	Fade,
+} from '@material-ui/core';
 import React from 'react';
 
-import AdminService from '../services/adminApi';
+const useStyles = (theme) => ({
+	modal: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+});
 
-const ApproveDeclineModal = ({
-	show,
-	closeModal,
-	modalData,
-	handleSnackBar,
-}) => {
-	const approveOrDeclineExaminer = () => {
-		let adminService = new AdminService();
-		adminService
-			.approveOrDeclineExaminer({
-				examinerId: modalData.id,
-				accountStatus: modalData.type,
-			})
-			.then((res) => {
-				closeModal(false);
-				console.log(res.data);
-				handleSnackBar(true, res.data);
-			});
-	};
+const ApproveDeclineModal = (props) => {
+	let { show, classes } = props;
+
 	return (
 		<Modal
-			show={show}
-			animation={false}
-			onHide={() => closeModal(false)}
-			centered
+			className={classes.modal}
+			closeAfterTransition
+			BackdropComponent={Backdrop}
+			BackdropProps={{
+				timeout: 500,
+			}}
+			open={show}
 		>
-			<Modal.Header closeButton>
-				<Modal.Title>Message</Modal.Title>
-			</Modal.Header>
-			<Modal.Body className='text-center'>
-				<p>{modalData.fullName}</p>
-				<h4>Are you sure you want to {modalData.type} this examiner ?</h4>
-			</Modal.Body>
-			<Modal.Footer>
-				<Button
-					variant='contained'
-					color='secondary'
-					onClick={() => closeModal(false)}
-					className='mr-2'
-				>
-					Close
-				</Button>
-				<Button
-					variant='contained'
-					color='primary'
-					onClick={approveOrDeclineExaminer}
-				>
-					{modalData.type}
-				</Button>
-			</Modal.Footer>
+			<Fade in={props.show}>
+				<Paper className='w-50 p-4'>
+					<Typography variant='h6' component='p'>
+						Are you sure ?
+					</Typography>
+					<Typography variant='body1' component='p' className='my-3'>
+						You're about to {props.type === 'approved' ? 'approve' : 'decline'}{' '}
+						this examiner. Are you sure you want to do this?
+					</Typography>
+					<div className='d-flex justify-content-end'>
+						<Button
+							variant='contained'
+							className='bg-white mr-2'
+							onClick={() => props.closeModal(false)}
+						>
+							Cancel
+						</Button>
+						<Button
+							variant='contained'
+							className='bg-dark text-white'
+							onClick={props.approveDeclineExaminer}
+						>
+							Confirm
+						</Button>
+					</div>
+				</Paper>
+			</Fade>
 		</Modal>
 	);
 };
 
-export default ApproveDeclineModal;
+export default withStyles(useStyles)(ApproveDeclineModal);
