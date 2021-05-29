@@ -14,36 +14,40 @@ const admin = {
 
 	getExaminerDetails: async (req, res) => {
 		try {
-			let { type, pageIndex, pageSize } = req.query;
+			let { pageIndex, pageSize } = req.query;
 			pageIndex = parseInt(pageIndex);
 			pageSize = parseInt(pageSize);
 
-			if (type === APP_DEFAULTS.EXAMINER_QUERY_TYPE.LATEST_EXAMINER) {
-				let response = await adminHandler.getLatestPendingExaminers(
-					pageIndex,
-					pageSize
-				);
-				res.status(response.status).send(response.data);
-			} else {
-				let response = await adminHandler.getExaminerDetails(
-					type,
-					pageIndex,
-					pageSize
-				);
+			let response = await adminHandler.getExaminerDetails(pageIndex, pageSize);
 
-				if (response.data.length === 0) {
-					let response =
-						type === APP_DEFAULTS.EXAMINER_QUERY_TYPE.DECLINED
-							? RESPONSE_MESSAGES.EXAMINER_COUNT.DECLINED
-							: RESPONSE_MESSAGES.EXAMINER_COUNT.PENDING;
+			res.status(response.status).send(response.data);
 
-					res
-						.status(response.STATUS_CODE)
-						.send({ msg: response.MSG, examiners: [] });
-				} else {
-					res.status(response.status).send({ examiners: response.data });
-				}
-			}
+			// if (type === APP_DEFAULTS.EXAMINER_QUERY_TYPE.LATEST_EXAMINER) {
+			// 	let response = await adminHandler.getLatestPendingExaminers(
+			// 		pageIndex,
+			// 		pageSize
+			// 	);
+			// 	res.status(response.status).send(response.data);
+			// } else {
+			// 	let response = await adminHandler.getExaminerDetails(
+			// 		type,
+			// 		pageIndex,
+			// 		pageSize
+			// 	);
+
+			// 	if (response.data.length === 0) {
+			// 		let response =
+			// 			type === APP_DEFAULTS.EXAMINER_QUERY_TYPE.DECLINED
+			// 				? RESPONSE_MESSAGES.EXAMINER_COUNT.DECLINED
+			// 				: RESPONSE_MESSAGES.EXAMINER_COUNT.PENDING;
+
+			// 		res
+			// 			.status(response.STATUS_CODE)
+			// 			.send({ msg: response.MSG, examiners: [] });
+			// 	} else {
+			// 		res.status(response.status).send({ examiners: response.data });
+			// 	}
+			// }
 		} catch (err) {
 			throw err;
 		}
@@ -51,14 +55,13 @@ const admin = {
 
 	approveOrDeclineExaminer: async (req, res) => {
 		try {
-			let { examinerId, accountStatus } = req.body;
+			let payload = req.body;
 
-			let response = await adminHandler.approveOrDeclineExaminer(
-				examinerId,
-				accountStatus
-			);
+			let response = await adminHandler.approveOrDeclineExaminer(payload);
 			res.status(response.status).send(response.data);
-		} catch (err) {}
+		} catch (err) {
+			throw err;
+		}
 	},
 
 	getDashboardCardDetails: async (req, res) => {

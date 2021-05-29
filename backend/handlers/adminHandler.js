@@ -1,21 +1,78 @@
 const mongoose = require('mongoose');
+const moment = require('moment');
+const generatorPassword = require('generate-password');
 
-const { users, examiner, student, exam } = require('../models');
+const { users, student, exam } = require('../models');
 const { sender, transporter } = require('../config/mail');
 const APP_DEFAULTS = require('../config/app-defaults');
 const RESPONSE_MESSAGES = require('../config/response-messages');
 const { queries } = require('../db');
 const Schema = require('../schemas');
+const { factories } = require('../factories');
 
 const admin = {
-	getExaminerDetails: async (accountStatus, pageIndex, pageSize) => {
-		pageIndex = pageIndex * pageSize;
-		let examinerDetails = await users.findByAccountStatus(
-			accountStatus,
-			pageIndex,
-			pageSize
-		);
-		return { status: 200, data: examinerDetails };
+	getExaminerDetails: async (pageIndex, pageSize) => {
+		try {
+			pageIndex = pageIndex * pageSize;
+
+			let options = { lean: true };
+
+			let aggregateArray = [
+				{ $match: { userType: APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER } },
+				{ $sort: { modifiedDate: -1 } },
+				{ $skip: pageIndex },
+				{ $limit: pageSize },
+				{
+					$project: {
+						firstName: {
+							$concat: [
+								{ $toUpper: { $substrCP: ['$firstName', 0, 1] } },
+								{
+									$substrCP: [
+										'$firstName',
+										1,
+										{
+											$subtract: [{ $strLenCP: '$firstName' }, 1],
+										},
+									],
+								},
+							],
+						},
+						lastName: {
+							$concat: [
+								{ $toUpper: { $substrCP: ['$lastName', 0, 1] } },
+								{
+									$substrCP: [
+										'$lastName',
+										1,
+										{
+											$subtract: [{ $strLenCP: '$lastName' }, 1],
+										},
+									],
+								},
+							],
+						},
+						email: 1,
+						status: 1,
+						createdDate: 1,
+					},
+				},
+			];
+
+			let examinerDetails = await queries.aggregateData(
+				Schema.users,
+				aggregateArray,
+				options
+			);
+
+			let conditions = { userType: APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER };
+
+			let count = await queries.countDocuments(Schema.users, conditions);
+
+			return { status: 200, data: { examinerDetails, count: count } };
+		} catch (err) {
+			throw err;
+		}
 	},
 
 	getExaminerCount: async () => {
@@ -29,10 +86,29 @@ const admin = {
 		}
 	},
 
-	approveOrDeclineExaminer: async (userId, accountStatus) => {
-		let updatedExaminer = await users.update(userId, {
-			status: accountStatus,
+	approveOrDeclineExaminer: async (payload) => {
+		let query = { _id: mongoose.Types.ObjectId(payload.examinerId) };
+
+		let options = { lean: true, new: true };
+		let newPassword = generatorPassword.generate({
+			length: 14,
+			numbers: true,
+			uppercase: true,
 		});
+
+		let hashedPassword = factories.generateHashedPassword(newPassword);
+		let toUpdate = {
+			status: payload.status,
+			password: hashedPassword,
+			modifiedDate: moment().valueOf(),
+		};
+
+		let updatedExaminer = await queries.findAndUpdate(
+			Schema.users,
+			query,
+			toUpdate,
+			options
+		);
 
 		let mailOptions = {
 			to: updatedExaminer.email,
@@ -40,7 +116,7 @@ const admin = {
 			subject: 'Examiner confirmation mail',
 			text: `Your email id ${updatedExaminer.email} has been ${
 				updatedExaminer.status === APP_DEFAULTS.ACCOUNT_STATUS.APPROVED
-					? 'successfully registered'
+					? `successfully registered.The password is ${newPassword}`
 					: 'declined'
 			}  as examiner`,
 		};
@@ -56,11 +132,7 @@ const admin = {
 
 		return {
 			status: response.STATUS_CODE,
-			data: {
-				msg: response.MSG,
-				accountStatus: updatedExaminer.status,
-				_id: updatedExaminer._id,
-			},
+			data: { msg: response.MSG },
 		};
 	},
 
