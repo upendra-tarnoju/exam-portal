@@ -44,6 +44,19 @@ class SubAdminService {
 			},
 		});
 	};
+
+	downloadExcelFile = () => {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'get',
+			url: `${process.env.REACT_APP_BASE_URL}/api/subAdmin/student/download`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			responseType: 'blob',
+		});
+	};
 }
 
 export default SubAdminService;

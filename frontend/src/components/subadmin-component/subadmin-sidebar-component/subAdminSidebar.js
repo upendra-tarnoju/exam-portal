@@ -120,7 +120,7 @@ class SubAdminSidebar extends Component {
 						<ListItem
 							button
 							component='a'
-							href='/subadmin/student'
+							href='/subAdmin/students'
 							selected={selectedTab === 'student'}
 						>
 							<ListItemIcon>
