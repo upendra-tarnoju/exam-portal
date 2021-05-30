@@ -1,3 +1,4 @@
+const { response } = require('express');
 const { subAdminHandler } = require('../handlers');
 
 const subAdmin = {
@@ -37,6 +38,20 @@ const subAdmin = {
 		} catch (err) {
 			throw err;
 		}
+	},
+
+	downloadSampleExcelFile: async (req, res) => {
+		let filename = 'sample.xlsx';
+		let workbook = await subAdminHandler.downloadSampleExcelFile();
+
+		res.setHeader(
+			'Content-Type',
+			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+		);
+
+		res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+
+		workbook.xlsx.write(res).then(() => res.end());
 	},
 };
 

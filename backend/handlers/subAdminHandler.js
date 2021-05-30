@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const exceljs = require('exceljs');
 
 const APP_DEFAULTS = require('../config/app-defaults');
 const RESPONSE_MESSAGES = require('../config/response-messages');
@@ -133,6 +134,27 @@ const subAdmin = {
 		} catch (err) {
 			throw err;
 		}
+	},
+
+	downloadSampleExcelFile: async () => {
+		let workbook = new exceljs.Workbook();
+		let workSheet = workbook.addWorksheet('Students');
+		workSheet.columns = [
+			{ header: 'Student ID	', key: 'studentId', width: 12 },
+			{ header: 'First name', key: 'firstName', width: 12 },
+			{ header: 'Last name', key: 'lastName', width: 12 },
+			{ header: 'Mobile number', key: 'mobileNumber', width: 12 },
+			{ header: 'Father name', key: 'fatherName', width: 12 },
+			{ header: 'Mother name', key: 'motherName', width: 12 },
+			{ header: 'Gender', key: 'gender', width: 12 },
+			{ header: 'Date of birth', key: 'dob', width: 12 },
+			{ header: 'Address', key: 'address', width: 12 },
+			{ header: 'City', key: 'city', width: 12 },
+			{ header: 'State', key: 'state', width: 12 },
+			{ header: 'Email', key: 'email', width: 12 },
+			{ header: 'Password', key: 'password', width: 12 },
+		];
+		return workbook;
 	},
 };
 

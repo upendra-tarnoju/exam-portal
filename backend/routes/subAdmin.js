@@ -24,5 +24,11 @@ module.exports = () => {
 		subAdminController.removeExaminers
 	);
 
+	router.get(
+		'/student/download',
+		passport.authenticate('jwt'),
+		subAdminController.downloadSampleExcelFile
+	);
+
 	return router;
 };
