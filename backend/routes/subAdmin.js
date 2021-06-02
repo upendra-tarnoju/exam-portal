@@ -2,6 +2,7 @@ const express = require('express');
 const passport = require('passport');
 
 const { subAdminController } = require('../controllers');
+const { multerMiddleware } = require('../middleware');
 
 module.exports = () => {
 	const router = express.Router();
@@ -28,6 +29,13 @@ module.exports = () => {
 		'/student/download',
 		passport.authenticate('jwt'),
 		subAdminController.downloadSampleExcelFile
+	);
+
+	router.post(
+		'/student/upload',
+		passport.authenticate('jwt'),
+		multerMiddleware.physicalUpload.single('studentFile'),
+		subAdminController.uploadStudentFile
 	);
 
 	return router;

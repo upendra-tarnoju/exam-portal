@@ -3,7 +3,7 @@ const path = require('path');
 const crypto = require('crypto');
 const GridFsStorage = require('multer-gridfs-storage');
 
-const physicalStorage = multer.diskStorage({
+const physicalDBStorage = multer.diskStorage({
 	destination: function (req, file, cb) {
 		let pathName = `${path.dirname(require.main.filename)}/uploads/`;
 		cb(null, pathName);
@@ -17,7 +17,7 @@ const physicalStorage = multer.diskStorage({
 
 const url = `mongodb://${process.env.MONGO_HOSTNAME}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
 
-const dbStorage = new GridFsStorage({
+const imageDBStorage = new GridFsStorage({
 	url,
 	file: async (req, file) => {
 		const buf = crypto.randomBytes(16);
@@ -35,6 +35,7 @@ const dbStorage = new GridFsStorage({
 	},
 });
 
-const upload = multer({ storage: dbStorage });
+const upload = multer({ storage: imageDBStorage });
+const physicalUpload = multer({ storage: physicalDBStorage });
 
-module.exports = { upload: upload };
+module.exports = { upload: upload, excelUpload: excelUpload, physicalUpload };

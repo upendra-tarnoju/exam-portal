@@ -53,6 +53,20 @@ const subAdmin = {
 
 		workbook.xlsx.write(res).then(() => res.end());
 	},
+
+	uploadStudentFile: async (req, res) => {
+		try {
+			let studentData = req.file;
+			let userDetails = req.user;
+			let response = await subAdminHandler.uploadStudentFile(
+				studentData,
+				userDetails
+			);
+			res.status(response.status).send(response.data);
+		} catch (err) {
+			throw err;
+		}
+	},
 };
 
 module.exports = subAdmin;

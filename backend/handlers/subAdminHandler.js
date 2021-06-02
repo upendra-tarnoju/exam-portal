@@ -1,9 +1,13 @@
 const mongoose = require('mongoose');
 const exceljs = require('exceljs');
+const fs = require('fs');
+const path = require('path');
+const xlsx = require('xlsx');
 
 const APP_DEFAULTS = require('../config/app-defaults');
 const RESPONSE_MESSAGES = require('../config/response-messages');
 const { queries } = require('../db');
+const { factories } = require('../factories');
 const Schema = require('../schemas');
 
 const subAdmin = {
@@ -139,22 +143,89 @@ const subAdmin = {
 	downloadSampleExcelFile: async () => {
 		let workbook = new exceljs.Workbook();
 		let workSheet = workbook.addWorksheet('Students');
-		workSheet.columns = [
-			{ header: 'Student ID	', key: 'studentId', width: 12 },
-			{ header: 'First name', key: 'firstName', width: 12 },
-			{ header: 'Last name', key: 'lastName', width: 12 },
-			{ header: 'Mobile number', key: 'mobileNumber', width: 12 },
-			{ header: 'Father name', key: 'fatherName', width: 12 },
-			{ header: 'Mother name', key: 'motherName', width: 12 },
-			{ header: 'Gender', key: 'gender', width: 12 },
-			{ header: 'Date of birth', key: 'dob', width: 12 },
-			{ header: 'Address', key: 'address', width: 12 },
-			{ header: 'City', key: 'city', width: 12 },
-			{ header: 'State', key: 'state', width: 12 },
-			{ header: 'Email', key: 'email', width: 12 },
-			{ header: 'Password', key: 'password', width: 12 },
-		];
+		workSheet.columns = factories.studentExcelFileColumns();
 		return workbook;
+	},
+
+	uploadStudentFile: async (payload, userDetails) => {
+		try {
+			let filePath = `${path.dirname(require.main.filename)}\\uploads\\${
+				payload.filename
+			}`;
+
+			let workbook = xlsx.readFile(filePath);
+			let studentDetails = xlsx.utils.sheet_to_json(
+				workbook.Sheets[Object.keys(workbook.Sheets)[0]]
+			);
+
+			if (studentDetails.length === 0) {
+				return {
+					status: RESPONSE_MESSAGES.EXCEL_FILE_UPLOAD.EMPTY_FILE.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.EXCEL_FILE_UPLOAD.EMPTY_FILE.MSG },
+				};
+			} else {
+				let validStudentHeaders = factories
+					.studentExcelFileColumns()
+					.map((data) => data.header);
+
+				let excelFileHeaders = Object.keys(studentDetails[0]);
+
+				if (validStudentHeaders.length < excelFileHeaders.length) {
+					return {
+						status: RESPONSE_MESSAGES.EXCEL_FILE_UPLOAD.MISSING_KEY.STATUS_CODE,
+						data: { msg: RESPONSE_MESSAGES.EXCEL_FILE_UPLOAD.MISSING_KEY.MSG },
+					};
+				} else {
+					for (let header of excelFileHeaders) {
+						if (!validStudentHeaders.includes(header)) {
+							console.log(header);
+							console.log(validStudentHeaders);
+							return {
+								status:
+									RESPONSE_MESSAGES.EXCEL_FILE_UPLOAD.INVALID_KEY.STATUS_CODE,
+								data: {
+									msg: RESPONSE_MESSAGES.EXCEL_FILE_UPLOAD.INVALID_KEY.MSG,
+								},
+							};
+						}
+					}
+
+					for (let student of studentDetails) {
+						let userObject = {
+							firstName: student['First name'],
+							lastName: student['Last name'],
+							email: student['Email'],
+							password: await factories.generateHashedPassword(
+								student['Password'].toString()
+							),
+							mobileNumber: student['Mobile number'],
+							userType: APP_DEFAULTS.ACCOUNT_TYPE.STUDENT,
+							status: APP_DEFAULTS.ACCOUNT_STATUS.APPROVED,
+							subAdmin: userDetails._id,
+						};
+
+						let newUser = await queries.create(Schema.users, userObject);
+
+						let studentObject = {
+							userId: newUser._id,
+							fatherName: student['Father name'],
+							motherName: student['Mother name'],
+							dob: student['Date of birth'],
+							address: student['Address'],
+							studentId: student['Student ID'],
+							gender: student['Gender'],
+						};
+
+						await queries.create(Schema.student, studentObject);
+					}
+				}
+			}
+
+			fs.unlinkSync(filePath);
+			return { status: 200, data: {} };
+		} catch (err) {
+			throw err;
+		}
 	},
 };
 

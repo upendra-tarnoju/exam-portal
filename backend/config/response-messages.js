@@ -211,4 +211,18 @@ module.exports = {
 			MSG: 'Sub admin has been declined',
 		},
 	},
+	EXCEL_FILE_UPLOAD: {
+		EMPTY_FILE: {
+			STATUS_CODE: 400,
+			MSG: 'File data cannot be empty',
+		},
+		INVALID_KEY: {
+			STATUS_CODE: 400,
+			MSG: 'Invalid key. Make sure you do not change the headers of file',
+		},
+		MISSING_KEY: {
+			STATUS_CODE: 400,
+			MSG: 'Missing headers in the file',
+		},
+	},
 };

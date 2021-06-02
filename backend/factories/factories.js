@@ -16,27 +16,6 @@ let factories = {
 		return comparedPasswordStatus;
 	},
 
-	createExamObject: (data, userId) => {
-		let hashedPassword = factories.generateHashedPassword(data.password);
-		let object = {
-			subject: data.subject,
-			course: data.course,
-			examCode: data.examCode,
-			password: hashedPassword,
-			totalMarks: parseInt(data.totalMarks, 10),
-			passingMarks: parseInt(data.passingMarks, 10),
-			examinerId: userId,
-			startTime: new Date(`${data.examDate} ${data.startTime}`),
-			endTime: new Date(`${data.examDate} ${data.endTime}`),
-			examDate: new Date(data.examDate),
-			negativeMarks: data.negativeMarks,
-		};
-		if (!data.hideDuration) {
-			object.duration = data.duration;
-		}
-		return object;
-	},
-
 	compareExamDate: (examDate, examEndTime) => {
 		let currentDate = new Date();
 
@@ -56,6 +35,24 @@ let factories = {
 		} else {
 			return 'after';
 		}
+	},
+
+	studentExcelFileColumns: () => {
+		return [
+			{ header: 'Student ID', key: 'studentId', width: 12 },
+			{ header: 'First name', key: 'firstName', width: 12 },
+			{ header: 'Last name', key: 'lastName', width: 12 },
+			{ header: 'Mobile number', key: 'mobileNumber', width: 12 },
+			{ header: 'Father name', key: 'fatherName', width: 12 },
+			{ header: 'Mother name', key: 'motherName', width: 12 },
+			{ header: 'Gender', key: 'gender', width: 12 },
+			{ header: 'Date of birth', key: 'dob', width: 12 },
+			{ header: 'Address', key: 'address', width: 12 },
+			{ header: 'City', key: 'city', width: 12 },
+			{ header: 'State', key: 'state', width: 12 },
+			{ header: 'Email', key: 'email', width: 12 },
+			{ header: 'Password', key: 'password', width: 12 },
+		];
 	},
 };
 
