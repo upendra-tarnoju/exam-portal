@@ -57,6 +57,19 @@ class SubAdminService {
 			responseType: 'blob',
 		});
 	};
+
+	uploadStudentExcelFile = (formData) => {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'post',
+			url: `${process.env.REACT_APP_BASE_URL}/api/subAdmin/student/upload`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			data: formData,
+		});
+	};
 }
 
 export default SubAdminService;

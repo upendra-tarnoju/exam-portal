@@ -24,6 +24,26 @@ const useStyles = makeStyles((theme) => ({
 
 const CreateStudentSelectionModal = (props) => {
 	const classes = useStyles();
+	const studentFileUploadRef = React.useRef();
+
+	const openFileUplaod = () => {
+		studentFileUploadRef.current.click();
+	};
+
+	const onFileChange = (event) => {
+		let file = event.target.files[0];
+		if (
+			file.type ===
+			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+		) {
+			let formData = new FormData();
+			formData.append('studentFile', file);
+			props.uploadStudentFile(formData);
+			event.target.value = null;
+		} else {
+			props.handleSnackBar(true, 'Invalid file type', 'error');
+		}
+	};
 
 	return (
 		<Modal
@@ -86,7 +106,10 @@ const CreateStudentSelectionModal = (props) => {
 							</Typography>
 						</div>
 					</div>
-					<div className='d-flex justify-content-between bg-secondary p-3 rounded cursor-pointer'>
+					<div
+						className='d-flex justify-content-between bg-secondary p-3 rounded cursor-pointer'
+						onClick={openFileUplaod}
+					>
 						<i
 							className={`fa fa-cloud-upload ${classes.icon} align-self-center`}
 						/>
@@ -103,6 +126,13 @@ const CreateStudentSelectionModal = (props) => {
 							</Typography>
 						</div>
 					</div>
+					<input
+						type='file'
+						className='d-none'
+						ref={studentFileUploadRef}
+						onChange={onFileChange}
+						accept='.xls,.xlsx'
+					/>
 				</Paper>
 			</Fade>
 		</Modal>

@@ -22,7 +22,7 @@ class LoginCard extends Component {
 		} else if (data.userType === 'examiner') {
 			this.props.history.push('/examiner/exam');
 		} else if (data.userType === 'subAdmin') {
-			this.props.history.push('/subAdmin');
+			this.props.history.push('/subAdmin/examiners');
 		} else {
 			this.props.history.push('/student/exam');
 		}

@@ -4,12 +4,14 @@ import { Add } from '@material-ui/icons';
 
 import CreateStudentSelectionModal from '../../../../modals/createStudentSelectionModal';
 import SubAdminService from '../../../../services/subAdminApi';
+import Snackbar from '../../../customSnackbar';
 
 class SubAdminStudents extends React.Component {
 	constructor() {
 		super();
 		this.state = {
 			selectionModal: false,
+			snackbar: { show: false, msg: '', type: '' },
 		};
 		this.subAdminService = new SubAdminService();
 	}
@@ -30,8 +32,16 @@ class SubAdminStudents extends React.Component {
 		});
 	};
 
+	uploadStudentFile = (formData) => {
+		this.subAdminService.uploadStudentExcelFile(formData).then((res) => {});
+	};
+
+	handleSnackBar = (status, msg, type) => {
+		this.setState({ snackbar: { show: status, msg: msg, type: type } });
+	};
+
 	render() {
-		let { selectionModal } = this.state;
+		let { selectionModal, snackbar } = this.state;
 		return (
 			<div className='container py-5'>
 				<Card className='p-3'>
@@ -56,6 +66,14 @@ class SubAdminStudents extends React.Component {
 					show={selectionModal}
 					hideModal={this.handleSelectionModal}
 					downloadSampleStudentFile={this.downloadSampleStudentFile}
+					uploadStudentFile={this.uploadStudentFile}
+					handleSnackBar={this.handleSnackBar}
+				/>
+				<Snackbar
+					show={snackbar.show}
+					message={snackbar.msg}
+					snackBarType={snackbar.type}
+					handleSnackBar={this.handleSnackBar}
 				/>
 			</div>
 		);
