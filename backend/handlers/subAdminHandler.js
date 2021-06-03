@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require('moment');
 const exceljs = require('exceljs');
 const fs = require('fs');
 const path = require('path');
@@ -9,6 +10,86 @@ const RESPONSE_MESSAGES = require('../config/response-messages');
 const { queries } = require('../db');
 const { factories } = require('../factories');
 const Schema = require('../schemas');
+
+let validateStudent = async (student, index) => {
+	let mobileNumberRegex = new RegExp('^[789]d{9}$');
+
+	if ('Student ID' in student) {
+		let query = { studentId: student['Student ID'] };
+		let projections = {};
+		let options = { lean: true };
+		let exisitingStudent = await queries.findOne(
+			Schema.student,
+			query,
+			projections,
+			options
+		);
+
+		if (exisitingStudent) {
+			return { row: index + 2, error: 'Student ID already existed' };
+		}
+	} else {
+		return { row: index + 2, error: 'Student ID cannot be empty' };
+	}
+
+	if (!('First name' in student)) {
+		return { row: index + 2, error: 'First name cannot be empty' };
+	}
+
+	if (!('Last name' in student)) {
+		return { row: index + 2, error: 'Last name cannot be empty' };
+	}
+
+	if (!('Mobile number' in student)) {
+		return { row: index + 2, error: 'Mobile number cannot be empty' };
+	} else if (mobileNumberRegex.test(student['Mobile number'])) {
+		console.log(student['Mobile number']);
+		return { row: index + 2, error: 'Invalid mobile number' };
+	}
+
+	if (!('Father name' in student)) {
+		return { row: index + 2, error: 'Father name cannot be empty' };
+	}
+
+	if (!('Mother name' in student)) {
+		return { row: index + 2, error: 'Mother name cannot be empty' };
+	}
+
+	if (!('Gender' in student)) {
+		return { row: index + 2, error: 'Gender cannot be empty' };
+	} else if (
+		student['Gender'] !== 'male' &&
+		student['Gender'] !== 'female' &&
+		student['Gender'] !== 'others'
+	) {
+		return {
+			row: index + 2,
+			error: 'Valid value for gender is male, female or others',
+		};
+	}
+
+	if (!('Address' in student)) {
+		return { row: index + 2, error: 'Address cannot be empty' };
+	}
+
+	if (!('State' in student)) {
+		return { row: index + 2, error: 'State cannot be empty' };
+	}
+
+	if (!('City' in student)) {
+		return { row: index + 2, error: 'City cannot be empty' };
+	}
+
+	if (!('Email' in student)) {
+		return { row: index + 2, error: 'Email cannot be empty' };
+	}
+
+	if (!('Password' in student)) {
+		return { row: index + 2, error: 'Password cannot be empty' };
+	}
+
+	return {};
+};
 
 const subAdmin = {
 	getSubAdminExaminers: async (payload, userDetails) => {
@@ -149,6 +230,8 @@ const subAdmin = {
 
 	uploadStudentFile: async (payload, userDetails) => {
 		try {
+			let fileListError = [];
+
 			let filePath = `${path.dirname(require.main.filename)}\\uploads\\${
 				payload.filename
 			}`;
@@ -178,8 +261,6 @@ const subAdmin = {
 				} else {
 					for (let header of excelFileHeaders) {
 						if (!validStudentHeaders.includes(header)) {
-							console.log(header);
-							console.log(validStudentHeaders);
 							return {
 								status:
 									RESPONSE_MESSAGES.EXCEL_FILE_UPLOAD.INVALID_KEY.STATUS_CODE,
@@ -190,39 +271,43 @@ const subAdmin = {
 						}
 					}
 
-					for (let student of studentDetails) {
-						let userObject = {
-							firstName: student['First name'],
-							lastName: student['Last name'],
-							email: student['Email'],
-							password: await factories.generateHashedPassword(
-								student['Password'].toString()
-							),
-							mobileNumber: student['Mobile number'],
-							userType: APP_DEFAULTS.ACCOUNT_TYPE.STUDENT,
-							status: APP_DEFAULTS.ACCOUNT_STATUS.APPROVED,
-							subAdmin: userDetails._id,
-						};
+					for (let [index, student] of studentDetails.entries()) {
+						let validateStatus = await validateStudent(student, index);
 
-						let newUser = await queries.create(Schema.users, userObject);
+						if (Object.keys(validateStatus).length === 0) {
+							let userObject = {
+								firstName: student['First name'],
+								lastName: student['Last name'],
+								email: student['Email'],
+								password: factories.generateHashedPassword(
+									student['Password'].toString()
+								),
+								mobileNumber: student['Mobile number'],
+								userType: APP_DEFAULTS.ACCOUNT_TYPE.STUDENT,
+								status: APP_DEFAULTS.ACCOUNT_STATUS.APPROVED,
+								subAdmin: userDetails._id,
+							};
 
-						let studentObject = {
-							userId: newUser._id,
-							fatherName: student['Father name'],
-							motherName: student['Mother name'],
-							dob: student['Date of birth'],
-							address: student['Address'],
-							studentId: student['Student ID'],
-							gender: student['Gender'],
-						};
+							let newUser = await queries.create(Schema.users, userObject);
 
-						await queries.create(Schema.student, studentObject);
+							let studentObject = {
+								userId: newUser._id,
+								fatherName: student['Father name'],
+								motherName: student['Mother name'],
+								dob: moment(student['Date of birth'], 'mm/DD/YYYY').valueOf(),
+								address: student['Address'],
+								studentId: student['Student ID'],
+								gender: student['Gender'],
+							};
+
+							await queries.create(Schema.student, studentObject);
+						} else fileListError.push(validateStatus);
 					}
 				}
 			}
 
 			fs.unlinkSync(filePath);
-			return { status: 200, data: {} };
+			return { status: 200, data: { fileListError } };
 		} catch (err) {
 			throw err;
 		}

@@ -38,4 +38,4 @@ const imageDBStorage = new GridFsStorage({
 const upload = multer({ storage: imageDBStorage });
 const physicalUpload = multer({ storage: physicalDBStorage });
 
-module.exports = { upload: upload, excelUpload: excelUpload, physicalUpload };
+module.exports = { upload: upload, physicalUpload };
