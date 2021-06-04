@@ -196,6 +196,12 @@ module.exports = {
 			STATUS_CODE: 400,
 			MSG: 'Invalid student id',
 		},
+		FILE_UPLOAD: {
+			SUCCESS: {
+				STATUS_CODE: 200,
+				MSG: 'File uploaded successfully',
+			},
+		},
 	},
 	SUB_ADMIN: {
 		INVALID_ID: {

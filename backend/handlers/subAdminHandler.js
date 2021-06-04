@@ -307,7 +307,72 @@ const subAdmin = {
 			}
 
 			fs.unlinkSync(filePath);
-			return { status: 200, data: { fileListError } };
+
+			if (fileListError.length === 0) {
+				return {
+					status: RESPONSE_MESSAGES.STUDENT.FILE_UPLOAD.SUCCESS.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.STUDENT.FILE_UPLOAD.SUCCESS.MSG },
+				};
+			} else {
+				return { status: 200, data: { fileListError } };
+			}
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	listStudents: async (payload, userDetails) => {
+		try {
+			let pageIndex = parseInt(payload.pageIndex);
+			let pageSize = parseInt(payload.pageSize);
+			pageIndex = pageIndex * pageSize;
+
+			let aggregateData = [
+				{
+					$match: {
+						$and: [
+							{ subAdmin: mongoose.Types.ObjectId(userDetails._id) },
+							{ userType: APP_DEFAULTS.ACCOUNT_TYPE.STUDENT },
+						],
+					},
+				},
+				{
+					$lookup: {
+						from: 'students',
+						localField: '_id',
+						foreignField: 'userId',
+						as: 'studentsData',
+					},
+				},
+				{ $unwind: '$studentsData' },
+				{
+					$project: {
+						email: 1,
+						firstName: 1,
+						lastName: 1,
+						mobileNumber: 1,
+						'studentsData.studentId': 1,
+					},
+				},
+				{ $skip: pageIndex },
+				{ $limit: pageSize },
+			];
+
+			let studentList = await queries.aggregateData(
+				Schema.users,
+				aggregateData
+			);
+
+			let condition = {
+				$and: [
+					{ subAdmin: mongoose.Types.ObjectId(userDetails._id) },
+					{ userType: APP_DEFAULTS.ACCOUNT_TYPE.STUDENT },
+				],
+			};
+
+			let count = await queries.countDocuments(Schema.users, condition);
+
+			return { status: 200, data: { studentList, count } };
 		} catch (err) {
 			throw err;
 		}

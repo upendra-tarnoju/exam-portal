@@ -67,6 +67,17 @@ const subAdmin = {
 			throw err;
 		}
 	},
+
+	listStudents: async (req, res) => {
+		try {
+			let payload = req.query;
+			let userDetails = req.user;
+			let response = await subAdminHandler.listStudents(payload, userDetails);
+			res.status(response.status).send(response.data);
+		} catch (err) {
+			throw err;
+		}
+	},
 };
 
 module.exports = subAdmin;

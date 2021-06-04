@@ -38,5 +38,11 @@ module.exports = () => {
 		subAdminController.uploadStudentFile
 	);
 
+	router.get(
+		'/student/list',
+		passport.authenticate('jwt'),
+		subAdminController.listStudents
+	);
+
 	return router;
 };

@@ -17,6 +17,7 @@ const admin = {
 			let { pageIndex, pageSize } = req.query;
 			pageIndex = parseInt(pageIndex);
 			pageSize = parseInt(pageSize);
+			pageIndex = pageIndex * pageSize;
 
 			let response = await adminHandler.getExaminerDetails(pageIndex, pageSize);
 
