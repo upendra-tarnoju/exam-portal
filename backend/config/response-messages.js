@@ -202,6 +202,16 @@ module.exports = {
 				MSG: 'File uploaded successfully',
 			},
 		},
+		DELETE: {
+			SUCCESS: {
+				STATUS_CODE: 200,
+				MSG: 'Student has been removed successfully',
+			},
+			INVALID_ID: {
+				STATUS_CODE: 400,
+				MSG: 'Invalid student id',
+			},
+		},
 	},
 	SUB_ADMIN: {
 		INVALID_ID: {

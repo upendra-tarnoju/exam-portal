@@ -78,6 +78,16 @@ const subAdmin = {
 			throw err;
 		}
 	},
+
+	removeStudent: async (req, res) => {
+		try {
+			let payload = req.params;
+			let response = await subAdminHandler.removeStudent(payload);
+			res.status(response.status).send(response.data);
+		} catch (err) {
+			throw err;
+		}
+	},
 };
 
 module.exports = subAdmin;

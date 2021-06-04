@@ -44,5 +44,11 @@ module.exports = () => {
 		subAdminController.listStudents
 	);
 
+	router.delete(
+		'/student/:studentId',
+		passport.authenticate('jwt'),
+		subAdminController.removeStudent
+	);
+
 	return router;
 };

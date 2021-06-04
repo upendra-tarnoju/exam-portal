@@ -333,6 +333,7 @@ const subAdmin = {
 						$and: [
 							{ subAdmin: mongoose.Types.ObjectId(userDetails._id) },
 							{ userType: APP_DEFAULTS.ACCOUNT_TYPE.STUDENT },
+							{ status: { $ne: APP_DEFAULTS.ACCOUNT_STATUS.DELETED } },
 						],
 					},
 				},
@@ -367,12 +368,47 @@ const subAdmin = {
 				$and: [
 					{ subAdmin: mongoose.Types.ObjectId(userDetails._id) },
 					{ userType: APP_DEFAULTS.ACCOUNT_TYPE.STUDENT },
+					{ status: { $ne: APP_DEFAULTS.ACCOUNT_STATUS.DELETED } },
 				],
 			};
 
 			let count = await queries.countDocuments(Schema.users, condition);
 
 			return { status: 200, data: { studentList, count } };
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	removeStudent: async (payload) => {
+		try {
+			let condition = { _id: mongoose.Types.ObjectId(payload.studentId) };
+			let toUpdate = {
+				$set: {
+					status: APP_DEFAULTS.ACCOUNT_STATUS.DELETED,
+					modifiedDate: Date.now(),
+				},
+			};
+			let options = { lean: true };
+
+			let deletedStudent = await queries.findAndUpdate(
+				Schema.users,
+				condition,
+				toUpdate,
+				options
+			);
+
+			if (deletedStudent) {
+				return {
+					status: RESPONSE_MESSAGES.STUDENT.DELETE.SUCCESS.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.STUDENT.DELETE.SUCCESS.MSG },
+				};
+			} else {
+				return {
+					status: RESPONSE_MESSAGES.STUDENT.DELETE.INVALID_ID.STATUS_CODE,
+					data: { msg: RESPONSE_MESSAGES.STUDENT.DELETE.INVALID_ID.MSG },
+				};
+			}
 		} catch (err) {
 			throw err;
 		}
