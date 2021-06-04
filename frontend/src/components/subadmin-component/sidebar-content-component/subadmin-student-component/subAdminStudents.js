@@ -21,6 +21,7 @@ import { Add, Delete, Edit } from '@material-ui/icons';
 import CreateStudentSelectionModal from '../../../../modals/createStudentSelectionModal';
 import SubAdminService from '../../../../services/subAdminApi';
 import Snackbar from '../../../customSnackbar';
+import DeleteModal from '../../../../modals/deleteModal';
 
 const StyledTableCell = withStyles((theme) => ({
 	head: {
@@ -64,12 +65,25 @@ class SubAdminStudents extends React.Component {
 			pageIndex: 0,
 			pageSize: 10,
 			pageCount: 0,
+			deleteModal: { show: false, id: '' },
 		};
 		this.subAdminService = new SubAdminService();
 	}
 
 	handleSelectionModal = (status) => {
 		this.setState({ selectionModal: status });
+	};
+
+	handleDeleteModal = (show, id) => {
+		this.setState({ deleteModal: { show, id } });
+	};
+
+	removeStudent = () => {
+		let { deleteModal } = this.state;
+		this.subAdminService.removeStudent(deleteModal.id).then((res) => {
+			this.handleSnackBar(true, res.data.msg, 'success');
+			this.viewStudents();
+		});
 	};
 
 	downloadSampleStudentFile = () => {
@@ -100,6 +114,7 @@ class SubAdminStudents extends React.Component {
 			this.setState({
 				studentsList: res.data.studentList,
 				pageCount: res.data.count,
+				deleteModal: { show: false, id: '' },
 			});
 		});
 	};
@@ -130,6 +145,7 @@ class SubAdminStudents extends React.Component {
 			pageIndex,
 			pageSize,
 			pageCount,
+			deleteModal,
 		} = this.state;
 		return (
 			<div className='container py-5'>
@@ -184,7 +200,10 @@ class SubAdminStudents extends React.Component {
 											</IconButton>
 										</BootstrapTooltip>
 										<BootstrapTooltip title='Delete student'>
-											<IconButton size='small'>
+											<IconButton
+												size='small'
+												onClick={() => this.handleDeleteModal(true, data._id)}
+											>
 												<Delete size='small' />
 											</IconButton>
 										</BootstrapTooltip>
@@ -216,6 +235,12 @@ class SubAdminStudents extends React.Component {
 					message={snackbar.msg}
 					snackBarType={snackbar.type}
 					handleSnackBar={this.handleSnackBar}
+				/>
+				<DeleteModal
+					show={deleteModal.show}
+					hideModal={this.handleDeleteModal}
+					heading='student'
+					deleteContent={this.removeStudent}
 				/>
 			</div>
 		);

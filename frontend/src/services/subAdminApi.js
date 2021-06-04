@@ -84,6 +84,19 @@ class SubAdminService {
 			params: data,
 		});
 	};
+
+	removeStudent = (studentId) => {
+		let token = this.userService.getToken();
+
+		return axios({
+			method: 'delete',
+			url: `${process.env.REACT_APP_BASE_URL}/api/subAdmin/student/${studentId}`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	};
 }
 
 export default SubAdminService;
