@@ -1,10 +1,58 @@
 import React from 'react';
-import { Button, Card, Typography } from '@material-ui/core';
-import { Add } from '@material-ui/icons';
+import {
+	Button,
+	Card,
+	IconButton,
+	makeStyles,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TablePagination,
+	TableRow,
+	Tooltip,
+	Typography,
+	withStyles,
+} from '@material-ui/core';
+import { Add, Delete, Edit } from '@material-ui/icons';
 
 import CreateStudentSelectionModal from '../../../../modals/createStudentSelectionModal';
 import SubAdminService from '../../../../services/subAdminApi';
 import Snackbar from '../../../customSnackbar';
+
+const StyledTableCell = withStyles((theme) => ({
+	head: {
+		backgroundColor: theme.palette.common.black,
+		color: theme.palette.common.white,
+	},
+	body: {
+		fontSize: 14,
+	},
+}))(TableCell);
+
+const StyledTableRow = withStyles((theme) => ({
+	root: {
+		'&:nth-of-type(odd)': {
+			backgroundColor: theme.palette.action.hover,
+		},
+	},
+}))(TableRow);
+
+const useStylesBootstrap = makeStyles((theme) => ({
+	arrow: {
+		color: theme.palette.common.black,
+	},
+	tooltip: {
+		backgroundColor: theme.palette.common.black,
+	},
+}));
+
+const BootstrapTooltip = (props) => {
+	const classes = useStylesBootstrap();
+	return <Tooltip arrow classes={classes} {...props} />;
+};
 
 class SubAdminStudents extends React.Component {
 	constructor() {
@@ -12,6 +60,10 @@ class SubAdminStudents extends React.Component {
 		this.state = {
 			selectionModal: false,
 			snackbar: { show: false, msg: '', type: '' },
+			studentsList: [],
+			pageIndex: 0,
+			pageSize: 10,
+			pageCount: 0,
 		};
 		this.subAdminService = new SubAdminService();
 	}
@@ -33,18 +85,55 @@ class SubAdminStudents extends React.Component {
 	};
 
 	uploadStudentFile = (formData) => {
-		this.subAdminService.uploadStudentExcelFile(formData).then((res) => {});
+		this.subAdminService.uploadStudentExcelFile(formData).then((res) => {
+			this.setState({ selectionModal: false });
+			if ('fileListError' in res.data) {
+			} else {
+				this.handleSnackBar(true, res.data.msg, 'success');
+			}
+		});
+	};
+
+	viewStudents = () => {
+		let { pageIndex, pageSize } = this.state;
+		this.subAdminService.listStudents({ pageIndex, pageSize }).then((res) => {
+			this.setState({
+				studentsList: res.data.studentList,
+				pageCount: res.data.count,
+			});
+		});
+	};
+
+	handlePageChange = (event, value) => {
+		this.setState({ pageIndex: value }, () => this.viewStudents());
+	};
+
+	handlePageSize = (event) => {
+		this.setState({ pageSize: parseInt(event.target.value, 10) }, () =>
+			this.viewStudents()
+		);
 	};
 
 	handleSnackBar = (status, msg, type) => {
 		this.setState({ snackbar: { show: status, msg: msg, type: type } });
 	};
 
+	componentDidMount() {
+		this.viewStudents();
+	}
+
 	render() {
-		let { selectionModal, snackbar } = this.state;
+		let {
+			selectionModal,
+			snackbar,
+			studentsList,
+			pageIndex,
+			pageSize,
+			pageCount,
+		} = this.state;
 		return (
 			<div className='container py-5'>
-				<Card className='p-3'>
+				<Card className='p-3 mb-3'>
 					<div className='d-xs-block d-md-flex justify-content-between'>
 						<div>
 							<Typography variant='h4'>Students</Typography>
@@ -62,6 +151,59 @@ class SubAdminStudents extends React.Component {
 						</div>
 					</div>
 				</Card>
+				<TableContainer component={Paper}>
+					<Table>
+						<TableHead>
+							<StyledTableRow>
+								<StyledTableCell>S.No</StyledTableCell>
+								<StyledTableCell>Student ID</StyledTableCell>
+								<StyledTableCell>Name</StyledTableCell>
+								<StyledTableCell>Email</StyledTableCell>
+								<StyledTableCell>Mobile number</StyledTableCell>
+								<StyledTableCell>Actions</StyledTableCell>
+							</StyledTableRow>
+						</TableHead>
+						<TableBody>
+							{studentsList.map((data, index) => (
+								<StyledTableRow>
+									<StyledTableCell component='th' scope='row'>
+										{index + 1}
+									</StyledTableCell>
+									<StyledTableCell>
+										{data.studentsData.studentId}
+									</StyledTableCell>
+									<StyledTableCell>
+										{data.firstName} {data.lastName}
+									</StyledTableCell>
+									<StyledTableCell>{data.email}</StyledTableCell>
+									<StyledTableCell>{data.mobileNumber}</StyledTableCell>
+									<StyledTableCell>
+										<BootstrapTooltip title='Edit student'>
+											<IconButton size='small'>
+												<Edit size='small' />
+											</IconButton>
+										</BootstrapTooltip>
+										<BootstrapTooltip title='Delete student'>
+											<IconButton size='small'>
+												<Delete size='small' />
+											</IconButton>
+										</BootstrapTooltip>
+									</StyledTableCell>
+								</StyledTableRow>
+							))}
+						</TableBody>
+					</Table>
+					<TablePagination
+						component='div'
+						rowsPerPageOptions={[10, 50, 100]}
+						colSpan={5}
+						count={pageCount}
+						rowsPerPage={pageSize}
+						page={pageIndex}
+						onChangePage={this.handlePageChange}
+						onChangeRowsPerPage={this.handlePageSize}
+					></TablePagination>
+				</TableContainer>
 				<CreateStudentSelectionModal
 					show={selectionModal}
 					hideModal={this.handleSelectionModal}

@@ -70,6 +70,20 @@ class SubAdminService {
 			data: formData,
 		});
 	};
+
+	listStudents = (data) => {
+		let token = this.userService.getToken();
+
+		return axios({
+			method: 'get',
+			url: `${process.env.REACT_APP_BASE_URL}/api/subAdmin/student/list`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			params: data,
+		});
+	};
 }
 
 export default SubAdminService;
