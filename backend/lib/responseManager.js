@@ -3,8 +3,12 @@ const RESPONSE_MESSAGES = require('../config/response-messages');
 const responseManager = {
 	sendErrorResponse: (err, res) => {
 		let response;
-		console.log(err);
-		if (err.name == 'CastError') {
+		console.log(err, err.name);
+		if (
+			err.name == 'CastError' ||
+			err.name == 'ValidationError' ||
+			err.name == 'RangeError'
+		) {
 			response = {
 				status: RESPONSE_MESSAGES.DB_ERROR.STATUS_CODE,
 				data: { msg: RESPONSE_MESSAGES.DB_ERROR.MSG },
@@ -20,6 +24,11 @@ const responseManager = {
 			data: { msg: data.response.MSG, ...data.finalData },
 		};
 
+		console.log(
+			'>>>>>>>>>>>>>>>response.status',
+			data.response,
+			data.response.MSG
+		);
 		res.status(response.status).send(response.data);
 	},
 };

@@ -284,7 +284,7 @@ const subAdmin = {
 								),
 								mobileNumber: student['Mobile number'],
 								userType: APP_DEFAULTS.ACCOUNT_TYPE.STUDENT,
-								status: APP_DEFAULTS.ACCOUNT_STATUS.APPROVED,
+								status: APP_DEFAULTS.ACCOUNT_STATUS.ACTIVE,
 								subAdmin: userDetails._id,
 							};
 
@@ -558,6 +558,96 @@ const subAdmin = {
 					response: RESPONSE_MESSAGES.STUDENT.UPDATE.INVALID_ID,
 					finalData: {},
 				};
+			}
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	addNewStudent: async (userDetails, studentDetails, imageDetails) => {
+		console.log('>>>>>>>>>>>>imageDetails', imageDetails);
+		try {
+			let query = {
+				$or: [
+					{
+						email: studentDetails.email,
+						mobileNumber: studentDetails.mobileNumber,
+					},
+				],
+			};
+			let projections = {};
+			let options = { lean: true };
+
+			let existingUser = await queries.findOne(
+				Schema.users,
+				query,
+				projections,
+				options
+			);
+
+			query = { studentId: studentDetails.studentId };
+
+			let existingStudent = await queries.findOne(
+				Schema.student,
+				query,
+				projections,
+				options
+			);
+
+			if (!existingUser && !existingStudent) {
+				let newUser = {
+					firstName: studentDetails.firstName,
+					lastName: studentDetails.lastName,
+					email: studentDetails.email,
+					password: factories.generateHashedPassword(studentDetails.password),
+					mobileNumber: studentDetails.mobileNumber,
+					subAdmin: userDetails._id,
+					userType: APP_DEFAULTS.ACCOUNT_TYPE.STUDENT,
+					status: APP_DEFAULTS.ACCOUNT_STATUS.ACTIVE,
+					image: userDetails.id,
+				};
+
+				let savedUser = await queries.create(Schema.users, newUser);
+
+				let newStudent = {
+					userId: savedUser._id,
+					fatherName: studentDetails.fatherName,
+					motherName: studentDetails.motherName,
+					dob: parseInt(studentDetails.dob, 10),
+					address: studentDetails.address,
+					studentId: studentDetails.studentId,
+					gender: studentDetails.gender,
+					state: studentDetails.state,
+					city: studentDetails.city,
+				};
+
+				await queries.create(Schema.student, newStudent);
+
+				return {
+					response: RESPONSE_MESSAGES.STUDENT.CREATE.SUCCESS,
+					finalData: {},
+				};
+			} else {
+				if (existingUser && existingUser.email === studentDetails.email) {
+					return {
+						response: RESPONSE_MESSAGES.STUDENT.CREATE.EXISTING_EMAIL,
+						finalData: {},
+					};
+				} else if (
+					existingUser &&
+					existingUser.mobileNumber === studentDetails.mobileNumber
+				) {
+					return {
+						response: RESPONSE_MESSAGES.STUDENT.CREATE.EXISTING_MOBILE_NUMBER,
+						finalData: {},
+					};
+				} else {
+					console.log('>>>>>>>>>>>exisiting student id');
+					return {
+						response: RESPONSE_MESSAGES.STUDENT.CREATE.EXISITING_STUDENT_ID,
+						finalData: {},
+					};
+				}
 			}
 		} catch (err) {
 			throw err;

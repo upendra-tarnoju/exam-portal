@@ -183,13 +183,21 @@ module.exports = {
 	},
 	STUDENT: {
 		CREATE: {
-			EXISITING_STUDENT: {
+			EXISITING_STUDENT_ID: {
 				STATUS_CODE: 409,
-				MSG: 'Student Id already exited',
+				MSG: 'Student Id already existed',
 			},
 			SUCCESS: {
 				STATUS_CODE: 200,
 				MSG: 'New student created successfully',
+			},
+			EXISTING_EMAIL: {
+				STATUS_CODE: 409,
+				MSG: 'Email ID already existed',
+			},
+			EXISTING_MOBILE_NUMBER: {
+				STATUS_CODE: 409,
+				MSG: 'Mobile number already existed',
 			},
 		},
 		INVALID_STUDENT_ID: {

@@ -1,24 +1,6 @@
 const { studentHandler, examHandler } = require('../handlers');
 
 const student = {
-	addNewStudent: async (req, res) => {
-		try {
-			let userDetails = req.user;
-			let imageDetails = req.file;
-			let studentDetails = req.body;
-
-			let response = await studentHandler.addNewStudent(
-				userDetails,
-				studentDetails,
-				imageDetails
-			);
-
-			res.status(response.status).send(response.data);
-		} catch (err) {
-			throw err;
-		}
-	},
-
 	getAllStudents: async (req, res) => {
 		let examinerId = req.user._id;
 		let pageQuery = req.query;

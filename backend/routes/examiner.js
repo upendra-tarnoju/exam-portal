@@ -143,14 +143,6 @@ module.exports = () => {
 		questionController.delete
 	);
 
-	router.post(
-		'/student',
-		passport.authenticate('jwt'),
-		validatorMiddleware(ExaminerValidator.CREATE_STUDENT),
-		multerMiddleware.upload.single('file'),
-		studentController.addNewStudent
-	);
-
 	router.get(
 		'/student',
 		passport.authenticate('jwt'),

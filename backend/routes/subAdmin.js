@@ -62,5 +62,12 @@ module.exports = () => {
 		subAdminController.updateStudent
 	);
 
+	router.post(
+		'/student',
+		passport.authenticate('jwt'),
+		multerMiddleware.upload.single('image'),
+		subAdminController.addNewStudent
+	);
+
 	return router;
 };

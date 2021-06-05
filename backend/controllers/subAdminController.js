@@ -114,6 +114,27 @@ const subAdmin = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+
+	addNewStudent: async (req, res) => {
+		try {
+			let userDetails = req.user;
+			let imageDetails = req.file;
+			let studentDetails = req.body;
+
+			let responseData = await subAdminHandler.addNewStudent(
+				userDetails,
+				studentDetails,
+				imageDetails
+			);
+			console.log('>>>>>>>>>response from controller', responseData);
+
+			responseManager.sendSuccessResponse(responseData, res);
+			// res.status(response.status).send(response.data);
+		} catch (err) {
+			// throw err;
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
 };
 
 module.exports = subAdmin;

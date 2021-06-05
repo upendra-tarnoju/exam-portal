@@ -21,18 +21,7 @@ const userTypeEnum = [
 const users = new Schema({
 	firstName: { type: String, required: true, lowercase: true },
 	lastName: { type: String, required: true, lowercase: true },
-	email: {
-		type: String,
-		required: [true, 'Email ID is required'],
-		validate: {
-			validator: (email) => {
-				return /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/.test(
-					email
-				);
-			},
-			message: 'Invalid Email ID',
-		},
-	},
+	email: { type: String, required: true },
 	password: { type: String, default: null },
 	mobileNumber: { type: String, required: true },
 	userType: { type: String, required: true, enum: userTypeEnum },
@@ -42,6 +31,7 @@ const users = new Schema({
 	modifiedDate: { type: Number, default: Date.now },
 	collegeId: { type: Schema.Types.ObjectId, default: null, ref: 'colleges' },
 	subAdmin: { type: Schema.Types.ObjectId, default: null },
+	image: { type: Schema.Types.ObjectId, default: null },
 });
 
 module.exports = mongoose.model('users', users);
