@@ -23,12 +23,6 @@ const responseManager = {
 			status: data.response.STATUS_CODE,
 			data: { msg: data.response.MSG, ...data.finalData },
 		};
-
-		console.log(
-			'>>>>>>>>>>>>>>>response.status',
-			data.response,
-			data.response.MSG
-		);
 		res.status(response.status).send(response.data);
 	},
 };

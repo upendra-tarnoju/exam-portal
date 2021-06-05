@@ -37,9 +37,7 @@ const question = {
 			.then((response) => {
 				res.status(200).send(response);
 			})
-			.catch((error) => {
-				console.log(error);
-			});
+			.catch((error) => {});
 	},
 
 	update: async (req, res) => {

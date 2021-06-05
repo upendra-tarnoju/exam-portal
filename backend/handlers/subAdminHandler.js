@@ -43,7 +43,6 @@ let validateStudent = async (student, index) => {
 	if (!('Mobile number' in student)) {
 		return { row: index + 2, error: 'Mobile number cannot be empty' };
 	} else if (mobileNumberRegex.test(student['Mobile number'])) {
-		console.log(student['Mobile number']);
 		return { row: index + 2, error: 'Invalid mobile number' };
 	}
 
@@ -481,7 +480,6 @@ const subAdmin = {
 				projections,
 				options
 			);
-			console.log(existingStudentDetails);
 
 			if (existingStudentDetails) {
 				return {
@@ -565,7 +563,6 @@ const subAdmin = {
 	},
 
 	addNewStudent: async (userDetails, studentDetails, imageDetails) => {
-		console.log('>>>>>>>>>>>>imageDetails', imageDetails);
 		try {
 			let query = {
 				$or: [
@@ -642,7 +639,6 @@ const subAdmin = {
 						finalData: {},
 					};
 				} else {
-					console.log('>>>>>>>>>>>exisiting student id');
 					return {
 						response: RESPONSE_MESSAGES.STUDENT.CREATE.EXISITING_STUDENT_ID,
 						finalData: {},
