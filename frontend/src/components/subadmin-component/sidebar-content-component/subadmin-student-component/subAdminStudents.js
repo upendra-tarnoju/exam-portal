@@ -141,6 +141,10 @@ class SubAdminStudents extends React.Component {
 		this.props.history.push(`/subAdmin/student/${studentId}`);
 	};
 
+	createNewStudent = () => {
+		this.props.history.push('/subAdmin/student/new');
+	};
+
 	render() {
 		let {
 			selectionModal,
@@ -236,6 +240,7 @@ class SubAdminStudents extends React.Component {
 					downloadSampleStudentFile={this.downloadSampleStudentFile}
 					uploadStudentFile={this.uploadStudentFile}
 					handleSnackBar={this.handleSnackBar}
+					createNewStudent={this.createNewStudent}
 				/>
 				<Snackbar
 					show={snackbar.show}

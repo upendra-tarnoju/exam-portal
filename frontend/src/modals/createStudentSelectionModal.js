@@ -62,7 +62,10 @@ const CreateStudentSelectionModal = (props) => {
 					<Typography variant='h6' className='text-center mb-3'>
 						Single
 					</Typography>
-					<div className='d-flex justify-content-between bg-secondary p-3 rounded cursor-pointer mb-2'>
+					<div
+						className='d-flex justify-content-between bg-secondary p-3 rounded cursor-pointer mb-2'
+						onClick={props.createNewStudent}
+					>
 						<i
 							className={`fa fa-plus-circle ${classes.icon} align-self-center`}
 						/>

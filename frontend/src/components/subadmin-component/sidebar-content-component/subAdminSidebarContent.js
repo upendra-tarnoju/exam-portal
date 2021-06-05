@@ -4,8 +4,9 @@ import { makeStyles } from '@material-ui/core';
 
 import ViewSubAdminExaminers from './subadmin-examiner-component/viewSubAdminExaminers';
 import SubAdminStudents from './subadmin-student-component/subAdminStudents';
-import CreateSubAdminStudent from './subadmin-student-component/create-student-component/createSubAdminStudent';
+// import CreateSubAdminStudent from './subadmin-student-component/create-student-component/createSubAdminStudent';
 import EditSubAdminStudent from './subadmin-student-component/edit-student-component/editSubAdminStudent';
+import CreateStudent from '../../examiner-component/sidebar-content-component/students-component/create-student-component/createStudent';
 
 const useStyles = makeStyles((theme) => ({
 	containerHeight: {
@@ -21,7 +22,7 @@ const SubAdminSidebarContent = (props) => {
 			<Switch>
 				<Route path='/subAdmin/examiners' component={ViewSubAdminExaminers} />
 				<Route path='/subAdmin/students' component={SubAdminStudents} />
-				<Route path='/subAdmin/student/new' component={CreateSubAdminStudent} />
+				<Route path='/subAdmin/student/new' component={CreateStudent} />
 				<Route
 					path='/subAdmin/student/:studentId'
 					component={EditSubAdminStudent}

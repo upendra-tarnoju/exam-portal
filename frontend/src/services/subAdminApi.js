@@ -124,6 +124,19 @@ class SubAdminService {
 			data: studentDetails,
 		});
 	};
+
+	createNewStudent = (data) => {
+		let token = this.userService.getToken();
+		return axios({
+			url: `${process.env.REACT_APP_BASE_URL}/api/subAdmin/student`,
+			method: 'post',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			data: data,
+		});
+	};
 }
 
 export default SubAdminService;

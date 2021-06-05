@@ -32,19 +32,6 @@ class ExaminerService {
 		});
 	};
 
-	saveNewStudent = (data) => {
-		let token = this.userService.getToken();
-		return axios({
-			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}/student`,
-			method: 'post',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`,
-			},
-			data: data,
-		});
-	};
-
 	deleteStudent = (studentId) => {
 		let token = this.userService.getToken();
 		return axios({

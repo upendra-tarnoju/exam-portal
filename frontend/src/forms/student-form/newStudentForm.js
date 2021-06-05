@@ -16,6 +16,8 @@ import moment from 'moment';
 import schema from '../../schema/student/newStudentSchema';
 
 const NewStudentForm = (props) => {
+	const inputFile = React.useRef(null);
+
 	return (
 		<Formik
 			initialValues={{
@@ -30,7 +32,7 @@ const NewStudentForm = (props) => {
 				state: '',
 				email: '',
 				password: '',
-				dob: null,
+				dob: '',
 				gender: '',
 			}}
 			validationSchema={schema}
@@ -40,6 +42,30 @@ const NewStudentForm = (props) => {
 				<form onSubmit={formikProps.handleSubmit}>
 					<div className='container'>
 						<Typography variant='h5'>Personal details</Typography>
+						<div className='d-flex justify-content-center'>
+							<img
+								id='studentImage'
+								alt='pic'
+								src={
+									props.image === null
+										? require('../../assets/user-image.png')
+										: props.image
+								}
+								width='100px'
+								height='100px'
+								onClick={() => inputFile.current.click()}
+								className='cursor-pointer'
+							/>
+							<input
+								accept='.png, .jpg, .jpeg'
+								className='d-none'
+								ref={inputFile}
+								id='studentImage'
+								onChange={props.handleImageChange}
+								type='file'
+								onClick={(event) => (event.target.value = null)}
+							/>
+						</div>
 						<div className='row pt-3'>
 							<div className='col-md-6'>
 								<Typography variant='body1' className='mb-1'>
@@ -242,7 +268,7 @@ const NewStudentForm = (props) => {
 										<MenuItem value='female'>Female</MenuItem>
 										<MenuItem value='other'>other</MenuItem>
 									</Select>
-									<FormHelperText>
+									<FormHelperText error>
 										{formikProps.touched.gender && formikProps.errors.gender}
 									</FormHelperText>
 								</FormControl>
