@@ -97,6 +97,33 @@ class SubAdminService {
 			},
 		});
 	};
+
+	viewStudent = (studentId) => {
+		let token = this.userService.getToken();
+
+		return axios({
+			method: 'get',
+			url: `${process.env.REACT_APP_BASE_URL}/api/subAdmin/student/${studentId}`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	};
+
+	updateStudent = (studentId, studentDetails) => {
+		let token = this.userService.getToken();
+
+		return axios({
+			method: 'patch',
+			url: `${process.env.REACT_APP_BASE_URL}/api/subAdmin/student/${studentId}`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			data: studentDetails,
+		});
+	};
 }
 
 export default SubAdminService;

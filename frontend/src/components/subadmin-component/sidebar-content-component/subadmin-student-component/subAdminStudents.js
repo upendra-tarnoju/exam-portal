@@ -137,6 +137,10 @@ class SubAdminStudents extends React.Component {
 		this.viewStudents();
 	}
 
+	editStudent = (studentId) => {
+		this.props.history.push(`/subAdmin/student/${studentId}`);
+	};
+
 	render() {
 		let {
 			selectionModal,
@@ -181,7 +185,7 @@ class SubAdminStudents extends React.Component {
 						</TableHead>
 						<TableBody>
 							{studentsList.map((data, index) => (
-								<StyledTableRow>
+								<StyledTableRow key={data._id}>
 									<StyledTableCell component='th' scope='row'>
 										{index + 1}
 									</StyledTableCell>
@@ -195,7 +199,10 @@ class SubAdminStudents extends React.Component {
 									<StyledTableCell>{data.mobileNumber}</StyledTableCell>
 									<StyledTableCell>
 										<BootstrapTooltip title='Edit student'>
-											<IconButton size='small'>
+											<IconButton
+												size='small'
+												onClick={() => this.editStudent(data._id)}
+											>
 												<Edit size='small' />
 											</IconButton>
 										</BootstrapTooltip>

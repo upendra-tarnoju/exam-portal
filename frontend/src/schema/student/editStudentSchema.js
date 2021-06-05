@@ -15,6 +15,8 @@ let schema = Yup.object({
 	mobileNumber: Yup.string()
 		.matches(/^[89][0-9]{9}/, 'Invalid mobile number')
 		.required('Mobile number is required'),
+	city: Yup.string().required('City is required'),
+	state: Yup.string().required('State is required'),
 });
 
 export default schema;

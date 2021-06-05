@@ -115,9 +115,8 @@ let capitalizeName = (name) => {
 let setOptionValidationSchema = (length) => {
 	let customSchema = {};
 	for (let i = 0; i < length; i++) {
-		customSchema[`option${i + 1}`] = Yup.string().required(
-			'Option is required'
-		);
+		customSchema[`option${i + 1}`] =
+			Yup.string().required('Option is required');
 	}
 	let mergedSchema = { ...customSchema, ...initialSchema };
 
