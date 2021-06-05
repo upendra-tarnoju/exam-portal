@@ -55,10 +55,10 @@ class CreateStudent extends React.Component {
 		this.subAdminService
 			.createNewStudent(formData)
 			.then((res) => {
-				// this.props.history.goBack();
+				this.props.history.goBack();
 			})
 			.catch((err) => {
-				// this.handleSnackBar(true, err.response.data.msg, 'error');
+				this.handleSnackBar(true, err.response.data.msg, 'error');
 			});
 	};
 
