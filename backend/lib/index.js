@@ -1,0 +1,1 @@
+exports.responseManager = require('./responseManager');

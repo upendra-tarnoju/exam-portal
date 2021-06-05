@@ -50,5 +50,17 @@ module.exports = () => {
 		subAdminController.removeStudent
 	);
 
+	router.get(
+		'/student/:studentId',
+		passport.authenticate('jwt'),
+		subAdminController.viewStudent
+	);
+
+	router.patch(
+		'/student/:studentId',
+		passport.authenticate('jwt'),
+		subAdminController.updateStudent
+	);
+
 	return router;
 };

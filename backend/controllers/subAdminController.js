@@ -1,5 +1,5 @@
-const { response } = require('express');
 const { subAdminHandler } = require('../handlers');
+const { responseManager } = require('../lib');
 
 const subAdmin = {
 	getSubAdminExaminers: async (req, res) => {
@@ -86,6 +86,32 @@ const subAdmin = {
 			res.status(response.status).send(response.data);
 		} catch (err) {
 			throw err;
+		}
+	},
+
+	viewStudent: async (req, res) => {
+		try {
+			let payload = req.params;
+			let responseData = await subAdminHandler.viewStudent(payload);
+
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
+
+	updateStudent: async (req, res) => {
+		try {
+			let params = req.params;
+			let studentDetails = req.body;
+			let responseData = await subAdminHandler.updateStudent(
+				params,
+				studentDetails
+			);
+
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
 		}
 	},
 };

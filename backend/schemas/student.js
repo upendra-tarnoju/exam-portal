@@ -19,6 +19,8 @@ const student = new Schema({
 	motherName: { type: String, lowercase: true, required: true },
 	dob: { type: Number, required: true },
 	address: { type: String, required: true },
+	city: { type: String, required: true },
+	state: { type: String, required: true },
 	studentId: { type: String, uppercase: true, required: true },
 	gender: { type: String, required: true, enum: genderEnum },
 	exam: [

@@ -298,6 +298,8 @@ const subAdmin = {
 								address: student['Address'],
 								studentId: student['Student ID'],
 								gender: student['Gender'],
+								state: student['State'],
+								city: student['City'],
 							};
 
 							await queries.create(Schema.student, studentObject);
@@ -407,6 +409,154 @@ const subAdmin = {
 				return {
 					status: RESPONSE_MESSAGES.STUDENT.DELETE.INVALID_ID.STATUS_CODE,
 					data: { msg: RESPONSE_MESSAGES.STUDENT.DELETE.INVALID_ID.MSG },
+				};
+			}
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	viewStudent: async (payload) => {
+		try {
+			let aggregateData = [
+				{
+					$match: { _id: mongoose.Types.ObjectId(payload.studentId) },
+				},
+				{
+					$lookup: {
+						from: 'students',
+						localField: '_id',
+						foreignField: 'userId',
+						as: 'otherData',
+					},
+				},
+				{ $unwind: '$otherData' },
+				{
+					$project: {
+						email: 1,
+						firstName: 1,
+						lastName: 1,
+						mobileNumber: 1,
+						'otherData.fatherName': 1,
+						'otherData.motherName': 1,
+						'otherData.dob': 1,
+						'otherData.address': 1,
+						'otherData.gender': 1,
+						'otherData.state': 1,
+						'otherData.city': 1,
+						'otherData.studentId': 1,
+					},
+				},
+			];
+
+			let studentDetails = await queries.aggregateData(
+				Schema.users,
+				aggregateData
+			);
+			studentDetails = studentDetails.length !== 0 ? studentDetails[0] : {};
+
+			return {
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { studentDetails },
+			};
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	updateStudent: async (payload, studentDetails) => {
+		try {
+			let query = {
+				$and: [
+					{ _id: { $ne: mongoose.Types.ObjectId(payload.studentId) } },
+					{ email: studentDetails.email },
+				],
+			};
+			let projections = {};
+			let options = { lean: true };
+
+			let existingStudentDetails = await queries.findOne(
+				Schema.users,
+				query,
+				projections,
+				options
+			);
+			console.log(existingStudentDetails);
+
+			if (existingStudentDetails) {
+				return {
+					response: RESPONSE_MESSAGES.STUDENT.UPDATE.EXISTING_EMAIL,
+					finalData: {},
+				};
+			}
+
+			query = {
+				$and: [
+					{ _id: { $ne: mongoose.Types.ObjectId(payload.studentId) } },
+					{ mobileNumber: studentDetails.mobileNumber },
+				],
+			};
+
+			existingStudentDetails = await queries.findOne(
+				Schema.users,
+				query,
+				projections,
+				options
+			);
+
+			if (existingStudentDetails) {
+				return {
+					response: RESPONSE_MESSAGES.STUDENT.UPDATE.EXISTING_MOBILE_NUMBER,
+					finalData: {},
+				};
+			}
+
+			query = {
+				$and: [
+					{ userId: { $ne: mongoose.Types.ObjectId(payload.studentId) } },
+					{ studentId: studentDetails.studentId },
+				],
+			};
+
+			existingStudentDetails = await queries.findOne(
+				Schema.student,
+				query,
+				projections,
+				options
+			);
+
+			if (existingStudentDetails) {
+				return {
+					response: RESPONSE_MESSAGES.STUDENT.UPDATE.EXISTING_STUDENT_ID,
+					finalData: {},
+				};
+			}
+
+			let condition = { _id: mongoose.Types.ObjectId(payload.studentId) };
+			options = { lean: true, new: true };
+			let updatedUserDetails = await queries.findAndUpdate(
+				Schema.users,
+				condition,
+				studentDetails,
+				options
+			);
+			if (updatedUserDetails) {
+				let condition = { userId: mongoose.Types.ObjectId(payload.studentId) };
+				let toUpdate = studentDetails;
+				await queries.findAndUpdate(
+					Schema.student,
+					condition,
+					toUpdate,
+					options
+				);
+				return {
+					response: RESPONSE_MESSAGES.STUDENT.UPDATE.SUCCESS,
+					finalData: {},
+				};
+			} else {
+				return {
+					response: RESPONSE_MESSAGES.STUDENT.UPDATE.INVALID_ID,
+					finalData: {},
 				};
 			}
 		} catch (err) {

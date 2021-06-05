@@ -212,6 +212,28 @@ module.exports = {
 				MSG: 'Invalid student id',
 			},
 		},
+		UPDATE: {
+			EXISTING_STUDENT_ID: {
+				STATUS_CODE: 400,
+				MSG: 'Student Id already existed',
+			},
+			SUCCESS: {
+				STATUS_CODE: 200,
+				MSG: 'Student has been updated successfully',
+			},
+			INVALID_ID: {
+				STATUS_CODE: 400,
+				MSG: 'Invalid student id',
+			},
+			EXISTING_EMAIL: {
+				STATUS_C0DE: 400,
+				MSG: 'Email ID already existed',
+			},
+			EXISTING_MOBILE_NUMBER: {
+				STATUS_C0DE: 400,
+				MSG: 'Mobile number already existed',
+			},
+		},
 	},
 	SUB_ADMIN: {
 		INVALID_ID: {
@@ -240,5 +262,13 @@ module.exports = {
 			STATUS_CODE: 400,
 			MSG: 'Missing headers in the file',
 		},
+	},
+	ERROR_IN_EXECUTION: {
+		STATUS_CODE: 500,
+		MSG: 'Something went wrong',
+	},
+	DB_ERROR: {
+		STATUS_CODE: 500,
+		MSG: 'Some error is caused in db',
 	},
 };
