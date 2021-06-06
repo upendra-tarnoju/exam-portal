@@ -4,10 +4,8 @@ import { makeStyles } from '@material-ui/core';
 
 import ViewSubAdminExaminers from './subadmin-examiner-component/viewSubAdminExaminers';
 import SubAdminStudents from './subadmin-student-component/subAdminStudents';
-// import CreateSubAdminStudent from './subadmin-student-component/create-student-component/createSubAdminStudent';
 import EditSubAdminStudent from './subadmin-student-component/edit-student-component/editSubAdminStudent';
-import CreateStudent from '../../examiner-component/sidebar-content-component/students-component/create-student-component/createStudent';
-
+import CreateStudent from './subadmin-student-component/create-student-component/createStudent';
 const useStyles = makeStyles((theme) => ({
 	containerHeight: {
 		height: 'calc(100% - 64px)',

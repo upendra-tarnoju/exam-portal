@@ -1,12 +1,57 @@
 import React from 'react';
-import Pagination from '@material-ui/lab/Pagination';
-import { Link } from 'react-router-dom';
-import { Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Moment from 'react-moment';
+import {
+	Card,
+	Paper,
+	TableCell,
+	TableContainer,
+	TableRow,
+	Typography,
+	withStyles,
+	Table,
+	TableHead,
+	TableBody,
+	makeStyles,
+	Tooltip,
+	IconButton,
+	TablePagination,
+} from '@material-ui/core';
+import { Add, ViewHeadline } from '@material-ui/icons';
 
-import styles from './students.module.css';
 import ExaminerService from '../../../../services/examinerApi';
 import CustomSnackBar from '../../../customSnackbar';
+
+const StyledTableCell = withStyles((theme) => ({
+	head: {
+		backgroundColor: theme.palette.common.black,
+		color: theme.palette.common.white,
+	},
+	body: {
+		fontSize: 14,
+	},
+}))(TableCell);
+
+const StyledTableRow = withStyles((theme) => ({
+	root: {
+		'&:nth-of-type(odd)': {
+			backgroundColor: theme.palette.action.hover,
+		},
+	},
+}))(TableRow);
+
+const useStylesBootstrap = makeStyles((theme) => ({
+	arrow: {
+		color: theme.palette.common.black,
+	},
+	tooltip: {
+		backgroundColor: theme.palette.common.black,
+	},
+}));
+
+const BootstrapTooltip = (props) => {
+	const classes = useStylesBootstrap();
+	return <Tooltip arrow classes={classes} {...props} />;
+};
 
 class Students extends React.Component {
 	constructor(props) {
@@ -15,6 +60,7 @@ class Students extends React.Component {
 			studentList: [],
 			pageSize: 5,
 			pageIndex: 0,
+			pageCount: 0,
 			totalExams: 0,
 			snackBar: {
 				status: false,
@@ -86,74 +132,85 @@ class Students extends React.Component {
 		});
 	};
 
+	handlePageChange = (event, value) => {
+		this.setState({ pageIndex: value }, () => this.viewExams());
+	};
+
+	handlePageSize = (event) => {
+		this.setState({ pageSize: parseInt(event.target.value, 10) }, () =>
+			this.viewExams()
+		);
+	};
+
 	render() {
-		let { pageIndex, pageSize } = this.state;
-		let allStudents = this.state.studentList.map((student, index) => {
-			return (
-				<tr key={student._id}>
-					<td>{pageIndex * pageSize + index + 1}</td>
-					<td>{student.subject}</td>
-					<td>{student.examCode}</td>
-					<td>
-						<Moment format='MMM Do, YYYY'>{student.examDate}</Moment>
-						<Moment format='(hh:mm A)' className='ml-1'>
-							{student.startTime}
-						</Moment>
-					</td>
-					<td className='text-right'>{student.totalStudents}</td>
-					<td className='d-flex justify-content-center'>
-						<OverlayTrigger
-							placement='bottom'
-							overlay={<Tooltip id='button-tooltip'>Add student</Tooltip>}
-						>
-							<i
-								onClick={() => this.addNewStudent(student)}
-								className='fa fa-plus cursor-pointer text-white mr-2 align-self-center'
-							></i>
-						</OverlayTrigger>
-						<OverlayTrigger
-							placement='bottom'
-							overlay={<Tooltip id='button-tooltip'>View students</Tooltip>}
-						>
-							<Link to={`/examiner/exam/${student._id}/students`}>
-								<i className='fa fa-eye cursor-pointer text-white mt-1 mr-2'></i>
-							</Link>
-						</OverlayTrigger>
-					</td>
-				</tr>
-			);
-		});
+		let { pageIndex, pageSize, studentList, pageCount } = this.state;
 		return (
-			<div className='p-4'>
-				<div className='mt-5 w-75 mx-auto'>
-					<p className={`${styles.heading} text-center`}>
-						List of all students
-					</p>
-					<Table striped bordered hover variant='dark' className='mb-0'>
-						<thead>
-							<tr>
-								<th>S.No</th>
-								<th>Subject</th>
-								<th>Exam code</th>
-								<th>Exam date</th>
-								<th className='text-right'>Total Students</th>
-								<th className='text-center'>Actions</th>
-							</tr>
-						</thead>
-						<tbody>{allStudents}</tbody>
-					</Table>
-					<div className='d-flex justify-content-center py-2 bg-white'>
-						<Pagination
-							count={this.state.pageCount}
-							variant='outlined'
-							color='secondary'
-							size='large'
-							onChange={this.handlePageChange}
-							showFirstButton
-							showLastButton
-						/>
+			<div className='container p-4'>
+				<Card className='p-3'>
+					<div className='d-xs-block d-md-flex justify-content-between'>
+						<div>
+							<Typography variant='h4'>Exams List</Typography>
+							<Typography variant='subtitle1'>
+								Add students in your exams
+							</Typography>
+						</div>
 					</div>
-				</div>
+				</Card>
+				<TableContainer component={Paper} className='mt-4'>
+					<Table>
+						<TableHead>
+							<TableRow>
+								<StyledTableCell>S.No</StyledTableCell>
+								<StyledTableCell>Subject</StyledTableCell>
+								<StyledTableCell>Exam code</StyledTableCell>
+								<StyledTableCell>Exam date</StyledTableCell>
+								<StyledTableCell>Total students</StyledTableCell>
+								<StyledTableCell>Actions</StyledTableCell>
+							</TableRow>
+						</TableHead>
+						<TableBody>
+							{studentList.map((student, index) => (
+								<StyledTableRow key={student._id}>
+									<StyledTableCell component='th' scope='row'>
+										{index + 1}
+									</StyledTableCell>
+									<StyledTableCell>{student.subject}</StyledTableCell>
+									<StyledTableCell>{student.examCode}</StyledTableCell>
+									<StyledTableCell>
+										<Moment format='MMM Do, YYYY'>{student.examDate}</Moment>
+										<Moment format='(hh:mm A)' className='ml-1'>
+											{student.startTime}
+										</Moment>
+									</StyledTableCell>
+									<StyledTableCell>{student.totalStudents}</StyledTableCell>
+									<StyledTableCell>
+										<BootstrapTooltip title='Add students'>
+											<IconButton size='small'>
+												<Add size='small' />
+											</IconButton>
+										</BootstrapTooltip>
+										<BootstrapTooltip title='View students'>
+											<IconButton size='small'>
+												<ViewHeadline size='small' />
+											</IconButton>
+										</BootstrapTooltip>
+									</StyledTableCell>
+								</StyledTableRow>
+							))}
+						</TableBody>
+					</Table>
+					<TablePagination
+						component='div'
+						rowsPerPageOptions={[5, 10, 25]}
+						colSpan={5}
+						count={pageCount}
+						rowsPerPage={pageSize}
+						page={pageIndex}
+						onChangePage={this.handlePageChange}
+						onChangeRowsPerPage={this.handlePageSize}
+					></TablePagination>
+				</TableContainer>
+
 				<CustomSnackBar
 					handleSnackBar={this.handleSnackBar}
 					show={this.state.snackBar.status}

@@ -8,7 +8,6 @@ import Questions from './questions-component/questions';
 import ViewQuestions from './questions-component/view-questions-component/viewQuestions';
 import Students from './students-component/students';
 import ViewStudents from './students-component/view-student-component/viewStudents';
-import CreateStudent from './students-component/create-student-component/createStudent';
 import Settings from './settings-component/settings';
 import CreateExam from './exam-component/create-exam-component/createExam';
 import EditQuestion from './questions-component/edit-question-component/editQuestion';
@@ -37,7 +36,6 @@ const SidebarContent = (props) => {
 			></Route>
 			<Route path='/examiner/setting' component={Settings} />
 			<Route path='/examiner/students' component={Students} />
-			<Route path='/examiner/student/new' component={CreateStudent} />
 			<Route
 				path='/examiner/exam-setup/student/:studentId'
 				component={AssignExam}
