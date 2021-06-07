@@ -12,6 +12,7 @@ import Settings from './settings-component/settings';
 import CreateExam from './exam-component/create-exam-component/createExam';
 import EditQuestion from './questions-component/edit-question-component/editQuestion';
 import AssignExam from './students-component/assign-exam-component/assignExam';
+import AssignStudent from './students-component/assign-student-component/assignStudent';
 
 const SidebarContent = (props) => {
 	return (
@@ -36,6 +37,10 @@ const SidebarContent = (props) => {
 			></Route>
 			<Route path='/examiner/setting' component={Settings} />
 			<Route path='/examiner/students' component={Students} />
+			<Route
+				path='/examiner/exam/:examId/addStudent'
+				component={AssignStudent}
+			/>
 			<Route
 				path='/examiner/exam-setup/student/:studentId'
 				component={AssignExam}

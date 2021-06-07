@@ -57,10 +57,10 @@ class ExaminerService {
 		});
 	};
 
-	getAllStudents = (pageIndex, pageSize) => {
+	getExamStudentsCount = (pageIndex, pageSize) => {
 		let token = this.userService.getToken();
 		return axios({
-			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}/student`,
+			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}/studentCount`,
 			method: 'get',
 			headers: {
 				'Content-Type': 'application/json',
@@ -70,6 +70,19 @@ class ExaminerService {
 				pageIndex: pageIndex,
 				pageSize: pageSize,
 			},
+		});
+	};
+
+	getStudentsList = (examId) => {
+		let token = this.userService.getToken();
+		return axios({
+			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}/students`,
+			method: 'get',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			params: { examId },
 		});
 	};
 

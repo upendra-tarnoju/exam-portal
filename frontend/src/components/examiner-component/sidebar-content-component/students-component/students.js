@@ -1,5 +1,6 @@
 import React from 'react';
 import Moment from 'react-moment';
+import moment from 'moment';
 import {
 	Card,
 	Paper,
@@ -57,7 +58,7 @@ class Students extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			studentList: [],
+			examList: [],
 			pageSize: 5,
 			pageIndex: 0,
 			pageCount: 0,
@@ -71,42 +72,50 @@ class Students extends React.Component {
 		this.examinerService = new ExaminerService();
 	}
 
-	addNewStudent = (student) => {
-		this.props.history.push(`/examiner/student/new`);
-		// let currentDate = new Date();
+	addNewStudent = (examId, examDate, startTime, endTime) => {
+		let fullDate = new Date();
+		examDate = moment(examDate).format('YYYY-MM-DD');
+		let currentDate = moment(fullDate).format('YYYY-MM-DD');
+		let verifyBeforeDate = moment(currentDate).isBefore(examDate);
+		let verifySameDate = moment(currentDate).isSame(examDate);
 
-		// let formattedExamDate = moment(student.examDate).format('YYYY-MM-DD');
-		// let formattedCurrentDate = moment(currentDate).format('YYYY-MM-DD');
+		if (verifyBeforeDate) {
+			this.props.history.push(`/examiner/exam/${examId}/addStudent`);
+		} else if (verifySameDate) {
+			let currentTime = moment(fullDate).format('h:mm:ssa');
+			startTime = moment(startTime).format('h:mm:ssa');
 
-		// if (formattedExamDate <= formattedCurrentDate) {
-		// 	let formattedExamEndTime = moment(student.endTime).format('HH:mm:ss a');
-		// 	let formattedCurrentTime = moment(currentDate).format('HH:mm:ss a');
-		// 	if (formattedExamEndTime < formattedCurrentTime) {
-		// 		this.handleSnackBar(true);
-		// 	} else {
-		// 	}
-		// }
+			let verifyTime = moment(currentTime).isBefore(startTime);
+			if (verifyTime) {
+				this.props.history.push(`/examiner/exam/${examId}/addStudent`);
+			} else {
+				let msg = 'You cannot add students to expired exam';
+				this.handleSnackBar(true, msg, 'error');
+			}
+		} else {
+			let msg = 'You cannot add students to expired exam';
+			this.handleSnackBar(true, msg, 'error');
+		}
 	};
 
 	handleSnackBar = (status) => {
 		this.setState((prevState) => ({
-			snackBar: {
-				...prevState.snackBar,
-				status: status,
-			},
+			snackBar: { ...prevState.snackBar, status: status },
 		}));
 	};
 
 	viewStudents() {
 		let { pageIndex, pageSize } = this.state;
-		this.examinerService.getAllStudents(pageIndex, pageSize).then((res) => {
-			let examsLength = res.data.totalExams;
-			this.setState({
-				studentList: res.data.studentData,
-				totalExams: examsLength,
-				pageCount: Math.ceil(examsLength / this.state.pageSize),
+		this.examinerService
+			.getExamStudentsCount(pageIndex, pageSize)
+			.then((res) => {
+				let examsLength = res.data.totalExams;
+				this.setState({
+					examList: res.data.studentData,
+					totalExams: examsLength,
+					pageCount: Math.ceil(examsLength / this.state.pageSize),
+				});
 			});
-		});
 	}
 
 	handlePageChange = (event, value) => {
@@ -116,21 +125,6 @@ class Students extends React.Component {
 	componentDidMount() {
 		this.viewStudents();
 	}
-
-	deleteStudent = () => {
-		let studentId = this.state.deleteModal.id;
-		this.examinerService.deleteStudent(studentId).then((response) => {
-			let updatedStudentList = this.state.studentList.filter(
-				(data) => data.studentId !== studentId
-			);
-			this.setState((prevState) => ({
-				...prevState,
-				studentList: updatedStudentList,
-				snackBar: { show: true, msg: response.data.msg },
-				deleteModal: { show: false, heading: '' },
-			}));
-		});
-	};
 
 	handlePageChange = (event, value) => {
 		this.setState({ pageIndex: value }, () => this.viewExams());
@@ -143,7 +137,7 @@ class Students extends React.Component {
 	};
 
 	render() {
-		let { pageIndex, pageSize, studentList, pageCount } = this.state;
+		let { pageIndex, pageSize, examList, pageCount } = this.state;
 		return (
 			<div className='container p-4'>
 				<Card className='p-3'>
@@ -169,23 +163,33 @@ class Students extends React.Component {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{studentList.map((student, index) => (
-								<StyledTableRow key={student._id}>
+							{examList.map((exam, index) => (
+								<StyledTableRow key={exam._id}>
 									<StyledTableCell component='th' scope='row'>
 										{index + 1}
 									</StyledTableCell>
-									<StyledTableCell>{student.subject}</StyledTableCell>
-									<StyledTableCell>{student.examCode}</StyledTableCell>
+									<StyledTableCell>{exam.subject}</StyledTableCell>
+									<StyledTableCell>{exam.examCode}</StyledTableCell>
 									<StyledTableCell>
-										<Moment format='MMM Do, YYYY'>{student.examDate}</Moment>
+										<Moment format='MMM Do, YYYY'>{exam.examDate}</Moment>
 										<Moment format='(hh:mm A)' className='ml-1'>
-											{student.startTime}
+											{exam.startTime}
 										</Moment>
 									</StyledTableCell>
-									<StyledTableCell>{student.totalStudents}</StyledTableCell>
+									<StyledTableCell>{exam.totalStudents}</StyledTableCell>
 									<StyledTableCell>
 										<BootstrapTooltip title='Add students'>
-											<IconButton size='small'>
+											<IconButton
+												size='small'
+												onClick={() =>
+													this.addNewStudent(
+														exam._id,
+														exam.examDate,
+														exam.startTime,
+														exam.endTime
+													)
+												}
+											>
 												<Add size='small' />
 											</IconButton>
 										</BootstrapTooltip>
