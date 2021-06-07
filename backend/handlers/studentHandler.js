@@ -84,7 +84,7 @@ const saveIncorrectAnswer = async (
 };
 
 const students = {
-	getAllStudents: async (examinerId, pageQuery) => {
+	getExamStudentsCount: async (examinerId, pageQuery) => {
 		let pageIndex = parseInt(pageQuery.pageIndex, 10);
 		let pageSize = parseInt(pageQuery.pageSize, 10);
 		pageIndex = pageIndex * pageSize;
@@ -269,6 +269,73 @@ const students = {
 
 	submitExam: async (examId, studentId) => {
 		let response = await student.updateExamStatus(examId, studentId);
+	},
+
+	getAllStudentsList: async (payload, userDetail) => {
+		try {
+			let query = { _id: mongoose.Types.ObjectId(userDetail._id) };
+			let projection = { subAdmin: 1 };
+			let options = { lean: true };
+			let examinerDetails = await queries.findOne(
+				Schema.users,
+				query,
+				projection,
+				options
+			);
+
+			let aggregateData = [
+				{
+					$match: {
+						$and: [
+							{ subAdmin: examinerDetails.subAdmin },
+							{ userType: APP_CONSTANTS.ACCOUNT_TYPE.STUDENT },
+							{ status: APP_CONSTANTS.ACCOUNT_STATUS.ACTIVE },
+						],
+					},
+				},
+				{
+					$lookup: {
+						from: 'students',
+						localField: '_id',
+						foreignField: 'userId',
+						as: 'studentData',
+					},
+				},
+				{ $unwind: '$studentData' },
+				{ $sort: { 'studentData.studentId': 1 } },
+				{
+					$project: {
+						firstName: 1,
+						lastName: 1,
+						image: 1,
+						'studentData.studentId': 1,
+						'studentData.dob': 1,
+					},
+				},
+			];
+
+			let studentsList = await queries.aggregateData(
+				Schema.users,
+				aggregateData,
+				options
+			);
+
+			query = { _id: mongoose.Types.ObjectId(payload.examId) };
+			projection = { examCode: 1, subject: 1 };
+			let examDetails = await queries.findOne(
+				Schema.exam,
+				queries,
+				projection,
+				options
+			);
+
+			return {
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { studentsList, examDetails },
+			};
+		} catch (err) {
+			throw err;
+		}
 	},
 };
 

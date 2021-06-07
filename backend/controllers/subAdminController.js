@@ -126,12 +126,9 @@ const subAdmin = {
 				studentDetails,
 				imageDetails
 			);
-			console.log('>>>>>>>>>response from controller', responseData);
 
 			responseManager.sendSuccessResponse(responseData, res);
-			// res.status(response.status).send(response.data);
 		} catch (err) {
-			// throw err;
 			responseManager.sendErrorResponse(err, res);
 		}
 	},

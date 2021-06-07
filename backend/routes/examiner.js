@@ -144,9 +144,15 @@ module.exports = () => {
 	);
 
 	router.get(
-		'/student',
+		'/studentCount',
 		passport.authenticate('jwt'),
-		studentController.getAllStudents
+		studentController.getExamStudentsCount
+	);
+
+	router.get(
+		'/students',
+		passport.authenticate('jwt'),
+		studentController.getAllStudentsList
 	);
 
 	router.delete(

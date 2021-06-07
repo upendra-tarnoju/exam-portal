@@ -1,10 +1,11 @@
 const { studentHandler, examHandler } = require('../handlers');
+const { responseManager } = require('../lib');
 
 const student = {
-	getAllStudents: async (req, res) => {
+	getExamStudentsCount: async (req, res) => {
 		let examinerId = req.user._id;
 		let pageQuery = req.query;
-		let studentData = await studentHandler.getAllStudents(
+		let studentData = await studentHandler.getExamStudentsCount(
 			examinerId,
 			pageQuery
 		);
@@ -79,6 +80,21 @@ const student = {
 		let studentId = req.user.id;
 		let response = await studentHandler.submitExam(examId, studentId);
 		res.status(200).send();
+	},
+
+	getAllStudentsList: async (req, res) => {
+		try {
+			let userDetail = req.user;
+			let payload = req.params;
+			let responseData = await studentHandler.getAllStudentsList(
+				payload,
+				userDetail
+			);
+
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
 	},
 };
 

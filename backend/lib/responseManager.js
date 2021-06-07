@@ -7,7 +7,8 @@ const responseManager = {
 		if (
 			err.name == 'CastError' ||
 			err.name == 'ValidationError' ||
-			err.name == 'RangeError'
+			err.name == 'RangeError' ||
+			err.name == 'MongoError'
 		) {
 			response = {
 				status: RESPONSE_MESSAGES.DB_ERROR.STATUS_CODE,
