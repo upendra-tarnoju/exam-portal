@@ -86,6 +86,19 @@ class ExaminerService {
 		});
 	};
 
+	assignSelectedStudents = (data) => {
+		let token = this.userService.getToken();
+		return axios({
+			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}/student/assign`,
+			method: 'post',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			data,
+		});
+	};
+
 	getParticularExamStudents = (examId) => {
 		let token = this.userService.getToken();
 		return axios({

@@ -11,6 +11,7 @@ import Moment from 'react-moment';
 
 import ExaminerService from '../../../../../services/examinerApi';
 import { Cake, Cancel, PermIdentity } from '@material-ui/icons';
+import CustomSnackBar from '../../../../customSnackbar';
 
 const styles = (theme) => ({
 	avatar: {
@@ -32,6 +33,7 @@ class AssignStudent extends React.Component {
 			studentsList: [],
 			examDetails: {},
 			selectedStudents: [],
+			snackbar: { show: false, msg: '', type: '' },
 		};
 		this.examinerService = new ExaminerService();
 	}
@@ -69,8 +71,28 @@ class AssignStudent extends React.Component {
 		this.setState({ studentsList });
 	};
 
+	handleSnackBar = (status, msg, type) => {
+		this.setState({ snackbar: { show: status, msg: msg, type: type } });
+	};
+
+	addSelectedStudents = () => {
+		let examId = this.props.match.params.examId;
+		let { selectedStudents } = this.state;
+
+		if (selectedStudents.length === 0) {
+			let msg = 'You must select atleast one student';
+			this.handleSnackBar(true, msg, 'error');
+		} else {
+			this.examinerService
+				.assignSelectedStudents({ examId, selectedStudents })
+				.then((res) => {
+					this.handleSnackBar(true, res.data.msg, 'success');
+				});
+		}
+	};
+
 	render() {
-		let { examDetails, studentsList } = this.state;
+		let { examDetails, studentsList, selectedStudents, snackbar } = this.state;
 		let { classes } = this.props;
 
 		let rows = [...Array(Math.ceil(studentsList.length / 2))];
@@ -154,12 +176,25 @@ class AssignStudent extends React.Component {
 						</div>
 					</div>
 				</Card>
-				<div className='d-flex justify-content-end'>
-					<Button variant='contained' className='text-white bg-dark mb-2'>
+				<div className='d-flex justify-content-between'>
+					<Typography className='mt-2 mr-2'>
+						Selected students - {selectedStudents.length}
+					</Typography>
+					<Button
+						variant='contained'
+						className='text-white bg-dark mb-2'
+						onClick={this.addSelectedStudents}
+					>
 						Add selected students
 					</Button>
 				</div>
 				{students}
+				<CustomSnackBar
+					show={snackbar.show}
+					snackBarType={snackbar.type}
+					handleSnackBar={this.handleSnackBar}
+					message={snackbar.msg}
+				/>
 			</div>
 		);
 	}
