@@ -84,16 +84,51 @@ const saveIncorrectAnswer = async (
 };
 
 const students = {
-	getExamStudentsCount: async (examinerId, pageQuery) => {
-		let pageIndex = parseInt(pageQuery.pageIndex, 10);
-		let pageSize = parseInt(pageQuery.pageSize, 10);
-		pageIndex = pageIndex * pageSize;
-		let examData = await exam
-			.findExamStudents(examinerId)
-			.skip(pageIndex)
-			.limit(pageSize);
+	getExamStudentsCount: async (userDetails, payload) => {
+		try {
+			let pageIndex = parseInt(payload.pageIndex, 10);
+			let pageSize = parseInt(payload.pageSize, 10);
+			pageIndex = pageIndex * pageSize;
 
-		return examData;
+			let aggregateArray = [
+				{ $match: { examinerId: mongoose.Types.ObjectId(userDetails._id) } },
+				{
+					$lookup: {
+						from: 'assignexams',
+						localField: '_id',
+						foreignField: 'examId',
+						as: 'studentDetails',
+					},
+				},
+				{
+					$project: {
+						count: { $size: '$studentDetails' },
+						examCode: 1,
+						subject: 1,
+						examDate: 1,
+						startTime: 1,
+					},
+				},
+			];
+			let options = { lean: true };
+
+			let examData = await queries.aggregateData(
+				Schema.exam,
+				aggregateArray,
+				options
+			);
+
+			let condition = { examinerId: mongoose.Types.ObjectId(userDetails._id) };
+
+			let examCount = await queries.countDocuments(Schema.exam, condition);
+
+			return {
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { examData, examCount },
+			};
+		} catch (err) {
+			throw err;
+		}
 	},
 
 	getStudentsLength: async (examinerId) => {

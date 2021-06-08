@@ -17,4 +17,4 @@ const assignExam = new Schema({
 	modifiedDate: { type: Number, default: Date.now },
 });
 
-module.exports = mongoose.model('assignExam', assignExam);
+module.exports = mongoose.model('assignexam', assignExam);

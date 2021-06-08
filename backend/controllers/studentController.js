@@ -3,15 +3,27 @@ const { responseManager } = require('../lib');
 
 const student = {
 	getExamStudentsCount: async (req, res) => {
-		let examinerId = req.user._id;
-		let pageQuery = req.query;
-		let studentData = await studentHandler.getExamStudentsCount(
-			examinerId,
-			pageQuery
-		);
-		let totalExams = await examHandler.getExamsLength(examinerId);
+		try {
+			let userDetails = req.user;
+			let payload = req.query;
+			let responseData = await studentHandler.getExamStudentsCount(
+				userDetails,
+				payload
+			);
 
-		res.status(200).send({ studentData, totalExams });
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+		// let examinerId = req.user._id;
+		// let pageQuery = req.query;
+		// let studentData = await studentHandler.getExamStudentsCount(
+		// 	examinerId,
+		// 	pageQuery
+		// );
+		// let totalExams = await examHandler.getExamsLength(examinerId);
+
+		// res.status(200).send({ studentData, totalExams });
 	},
 
 	deleteStudent: async (req, res) => {

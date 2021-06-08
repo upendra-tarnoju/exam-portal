@@ -62,7 +62,6 @@ class Students extends React.Component {
 			pageSize: 5,
 			pageIndex: 0,
 			pageCount: 0,
-			totalExams: 0,
 			snackBar: {
 				status: false,
 				msg: 'You cannot add students to expired exam',
@@ -109,11 +108,9 @@ class Students extends React.Component {
 		this.examinerService
 			.getExamStudentsCount(pageIndex, pageSize)
 			.then((res) => {
-				let examsLength = res.data.totalExams;
 				this.setState({
-					examList: res.data.studentData,
-					totalExams: examsLength,
-					pageCount: Math.ceil(examsLength / this.state.pageSize),
+					examList: res.data.examData,
+					pageCount: res.data.examCount,
 				});
 			});
 	}
@@ -176,7 +173,9 @@ class Students extends React.Component {
 											{exam.startTime}
 										</Moment>
 									</StyledTableCell>
-									<StyledTableCell>{exam.totalStudents}</StyledTableCell>
+									<StyledTableCell className='text-center	'>
+										{exam.count}
+									</StyledTableCell>
 									<StyledTableCell>
 										<BootstrapTooltip title='Add students'>
 											<IconButton

@@ -12,7 +12,7 @@ const exam = new Schema({
 	},
 	examCode: { type: String, required: true, index: true },
 	password: { type: String, required: true },
-	examinerId: { type: String, required: true },
+	examinerId: { type: Schema.Types.ObjectId, required: true },
 	createdDate: { type: Number, default: Date.now },
 	modifiedDate: { type: Number, default: Date.now },
 	totalMarks: { type: Number, required: true },
