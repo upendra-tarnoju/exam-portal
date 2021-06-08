@@ -279,4 +279,10 @@ module.exports = {
 		STATUS_CODE: 500,
 		MSG: 'Some error is caused in db',
 	},
+	ASSIGN_STUDENT: {
+		SUCCESS: {
+			STATUS_CODE: 200,
+			MSG: 'Students have been assigned to exam',
+		},
+	},
 };

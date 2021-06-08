@@ -23,13 +23,6 @@ const student = new Schema({
 	state: { type: String, required: true },
 	studentId: { type: String, uppercase: true, required: true },
 	gender: { type: String, required: true, enum: genderEnum },
-	exam: [
-		{
-			examId: { type: Schema.Types.ObjectId },
-			status: { type: String },
-			isSubmitted: { type: Boolean, default: false },
-		},
-	],
 	createdDate: { type: Number, default: Date.now },
 	modifiedDate: { type: Number, default: Date.now },
 });

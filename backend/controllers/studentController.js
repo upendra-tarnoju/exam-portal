@@ -96,6 +96,21 @@ const student = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+
+	assignStudents: async (req, res) => {
+		try {
+			let payload = req.body;
+			let userDetails = req.user;
+			let responseData = await studentHandler.assignStudents(
+				payload,
+				userDetails
+			);
+
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
 };
 
 module.exports = student;

@@ -337,6 +337,47 @@ const students = {
 			throw err;
 		}
 	},
+
+	assignStudents: async (payload, userDetails) => {
+		try {
+			let selectedStudents = payload.selectedStudents;
+			for (let studentId of selectedStudents) {
+				let query = {
+					$and: [
+						{ examinerId: mongoose.Types.ObjectId(userDetails._id) },
+						{ examId: mongoose.Types.ObjectId(payload.examId) },
+						{ studentId: mongoose.Types.ObjectId(studentId) },
+					],
+				};
+
+				let projections = { _id: 1 };
+				let options = { lean: true };
+
+				let assignedStudent = await queries.findOne(
+					Schema.assignExam,
+					query,
+					projections,
+					options
+				);
+
+				if (!assignedStudent) {
+					let data = {
+						examinerId: userDetails._id,
+						examId: payload.examId,
+						studentId,
+					};
+					await queries.create(Schema.assignExam, data);
+				}
+			}
+
+			return {
+				response: RESPONSE_MESSAGES.ASSIGN_STUDENT.SUCCESS,
+				finalData: {},
+			};
+		} catch (err) {
+			throw err;
+		}
+	},
 };
 
 module.exports = students;

@@ -155,6 +155,12 @@ module.exports = () => {
 		studentController.getAllStudentsList
 	);
 
+	router.post(
+		'/student/assign',
+		passport.authenticate('jwt'),
+		studentController.assignStudents
+	);
+
 	router.delete(
 		'/student/:studentId',
 		passport.authenticate('jwt'),
