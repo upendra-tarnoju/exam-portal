@@ -15,21 +15,17 @@ const student = {
 		} catch (err) {
 			responseManager.sendErrorResponse(err, res);
 		}
-		// let examinerId = req.user._id;
-		// let pageQuery = req.query;
-		// let studentData = await studentHandler.getExamStudentsCount(
-		// 	examinerId,
-		// 	pageQuery
-		// );
-		// let totalExams = await examHandler.getExamsLength(examinerId);
-
-		// res.status(200).send({ studentData, totalExams });
 	},
 
-	deleteStudent: async (req, res) => {
-		let studentId = req.params.studentId;
-		let response = await studentHandler.delete(studentId);
-		res.status(response.status).send({ msg: response.msg });
+	deallocateStudent: async (req, res) => {
+		try {
+			let payload = req.params;
+			let responseData = await studentHandler.deallocateStudent(payload);
+
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
 	},
 
 	updateStudent: async (req, res) => {
@@ -54,9 +50,15 @@ const student = {
 	},
 
 	getParticularExamStudents: async (req, res) => {
-		let examId = req.params.examId;
-		let studentData = await studentHandler.getParticularExamStudents(examId);
-		res.status(200).send(studentData);
+		try {
+			let payload = { ...req.params, ...req.query };
+			let responseData = await studentHandler.getParticularExamStudents(
+				payload
+			);
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
 	},
 
 	getParticularStudentExamDetails: async (req, res) => {

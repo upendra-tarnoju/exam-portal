@@ -50,6 +50,11 @@ const appDefaults = {
 		FEMALE: 'female',
 		OTHER: 'other',
 	},
+	ASSIGNED_EXAM_STATUS: {
+		BLOCKED: 'BLOCKED',
+		DELETED: 'DELETED',
+		ACTIVE: 'ACTIVE',
+	},
 };
 
 module.exports = appDefaults;

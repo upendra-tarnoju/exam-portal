@@ -4,8 +4,9 @@ const Schema = mongoose.Schema;
 const APP_CONSTANTS = require('../config/app-defaults');
 
 const statusEnum = [
-	APP_CONSTANTS.EXAM_STATUS.ACTIVE,
-	APP_CONSTANTS.EXAM_STATUS.BLOCKED,
+	APP_CONSTANTS.ASSIGNED_EXAM_STATUS.ACTIVE,
+	APP_CONSTANTS.ASSIGNED_EXAM_STATUS.BLOCKED,
+	APP_CONSTANTS.ASSIGNED_EXAM_STATUS.DELETED,
 ];
 
 const assignExam = new Schema({

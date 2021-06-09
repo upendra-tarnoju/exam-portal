@@ -164,7 +164,7 @@ module.exports = () => {
 	router.delete(
 		'/student/:studentId',
 		passport.authenticate('jwt'),
-		studentController.deleteStudent
+		studentController.deallocateStudent
 	);
 
 	router.patch(
@@ -174,7 +174,7 @@ module.exports = () => {
 	);
 
 	router.get(
-		'/exam/:examId/student',
+		'/exam/:examId/students',
 		passport.authenticate('jwt'),
 		studentController.getParticularExamStudents
 	);

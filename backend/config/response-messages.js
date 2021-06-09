@@ -284,5 +284,15 @@ module.exports = {
 			STATUS_CODE: 200,
 			MSG: 'Students have been assigned to exam',
 		},
+		DELETE: {
+			SUCCESS: {
+				STATUS_CODE: 200,
+				MSG: 'Student has been removed from exam',
+			},
+			INVALID_ID: {
+				STATUS_CODE: 400,
+				MSG: 'Invalid assigned student Id',
+			},
+		},
 	},
 };

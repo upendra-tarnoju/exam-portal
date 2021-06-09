@@ -136,10 +136,35 @@ const students = {
 		return studentData.length;
 	},
 
-	delete: async (studentId) => {
-		let data = await student.delete(studentId);
-		await users.deleteByUserDataId(data.userId);
-		return { status: 200, msg: 'Student deleted successfully' };
+	deallocateStudent: async (payload) => {
+		try {
+			let conditions = { _id: mongoose.Types.ObjectId(payload.studentId) };
+			let toUpdate = {
+				$set: { status: APP_CONSTANTS.ASSIGNED_EXAM_STATUS.DELETED },
+			};
+			let options = { lean: true };
+
+			let deallocatedStudent = await queries.findAndUpdate(
+				Schema.assignExam,
+				conditions,
+				toUpdate,
+				options
+			);
+
+			if (deallocatedStudent) {
+				return {
+					response: RESPONSE_MESSAGES.ASSIGN_STUDENT.DELETE.SUCCESS,
+					finalData: {},
+				};
+			} else {
+				return {
+					response: RESPONSE_MESSAGES.ASSIGN_STUDENT.DELETE.INVALID_ID,
+					finalData: {},
+				};
+			}
+		} catch (err) {
+			throw err;
+		}
 	},
 
 	updateStudentAccountStatus: async (studentId, data) => {
@@ -178,9 +203,82 @@ const students = {
 		}
 	},
 
-	getParticularExamStudents: async (examId) => {
-		let studentDetails = await student.findStudentsByExamId(examId);
-		return studentDetails;
+	getParticularExamStudents: async (payload) => {
+		try {
+			let pageIndex = parseInt(payload.pageIndex, 10);
+			let pageSize = parseInt(payload.pageSize, 10);
+			pageIndex = pageIndex * pageSize;
+
+			let aggregateArray = [
+				{
+					$match: {
+						$and: [
+							{ examId: mongoose.Types.ObjectId(payload.examId) },
+							{
+								status: { $nin: [APP_CONSTANTS.ASSIGNED_EXAM_STATUS.DELETED] },
+							},
+						],
+					},
+				},
+				{
+					$lookup: {
+						from: 'users',
+						localField: 'studentId',
+						foreignField: '_id',
+						as: 'userDetails',
+					},
+				},
+				{ $unwind: '$userDetails' },
+				{
+					$lookup: {
+						from: 'students',
+						localField: 'userDetails._id',
+						foreignField: 'userId',
+						as: 'studentDetails',
+					},
+				},
+				{ $unwind: '$studentDetails' },
+				{ $skip: pageIndex },
+				{ $limit: pageSize },
+
+				{
+					$project: {
+						status: 1,
+						'userDetails.firstName': 1,
+						'userDetails.lastName': 1,
+						'userDetails._id': 1,
+						'userDetails.email': 1,
+						'studentDetails.studentId': 1,
+						'studentDetails._id': 1,
+					},
+				},
+			];
+			let options = { lean: true };
+
+			let studentsList = await queries.aggregateData(
+				Schema.assignExam,
+				aggregateArray,
+				options
+			);
+
+			let conditions = {
+				$and: [
+					{ examId: mongoose.Types.ObjectId(payload.examId) },
+					{
+						status: { $nin: [APP_CONSTANTS.ASSIGNED_EXAM_STATUS.DELETED] },
+					},
+				],
+			};
+
+			let count = await queries.countDocuments(Schema.assignExam, conditions);
+
+			return {
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { studentsList, count },
+			};
+		} catch (err) {
+			throw err;
+		}
 	},
 
 	uploadStudentFile: async (filePath, examId, examinerId) => {
