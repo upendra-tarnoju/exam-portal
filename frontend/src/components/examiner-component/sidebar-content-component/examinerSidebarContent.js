@@ -41,11 +41,13 @@ const SidebarContent = (props) => {
 				path='/examiner/exam/:examId/addStudent'
 				component={AssignStudent}
 			/>
+			<Route path='/examiner/exam/:examId/students' component={ViewStudents} />
+
 			<Route
 				path='/examiner/exam-setup/student/:studentId'
 				component={AssignExam}
 			/>
-			<Route path='/examiner/exam/:examId/students' component={ViewStudents} />
+			
 		</Switch>
 	);
 };

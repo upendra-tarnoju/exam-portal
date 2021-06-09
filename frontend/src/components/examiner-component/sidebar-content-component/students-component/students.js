@@ -103,7 +103,7 @@ class Students extends React.Component {
 		}));
 	};
 
-	viewStudents() {
+	viewExams = () => {
 		let { pageIndex, pageSize } = this.state;
 		this.examinerService
 			.getExamStudentsCount(pageIndex, pageSize)
@@ -113,14 +113,18 @@ class Students extends React.Component {
 					pageCount: res.data.examCount,
 				});
 			});
-	}
+	};
+
+	viewStudents = (examId) => {
+		this.props.history.push(`/examiner/exam/${examId}/students`);
+	};
 
 	handlePageChange = (event, value) => {
-		this.setState({ pageIndex: value - 1 }, () => this.viewStudents());
+		this.setState({ pageIndex: value - 1 }, () => this.viewExams());
 	};
 
 	componentDidMount() {
-		this.viewStudents();
+		this.viewExams();
 	}
 
 	handlePageChange = (event, value) => {
@@ -193,7 +197,10 @@ class Students extends React.Component {
 											</IconButton>
 										</BootstrapTooltip>
 										<BootstrapTooltip title='View students'>
-											<IconButton size='small'>
+											<IconButton
+												size='small'
+												onClick={() => this.viewStudents(exam._id)}
+											>
 												<ViewHeadline size='small' />
 											</IconButton>
 										</BootstrapTooltip>

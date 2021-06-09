@@ -1,56 +1,86 @@
 import React from 'react';
 import {
-	Accordion,
-	AccordionSummary,
-	AccordionDetails,
-	AccordionActions,
 	Typography,
-	List,
-	ListItem,
-	ListItemText,
-	Avatar,
-	ListItemAvatar,
-	Divider,
-	Button,
-	Switch,
+	Card,
+	TableContainer,
+	Paper,
+	Table,
+	TableHead,
+	TableRow,
+	TableCell,
+	withStyles,
+	TableBody,
+	Tooltip,
+	makeStyles,
+	IconButton,
+	TablePagination,
 } from '@material-ui/core';
-import {
-	ExpandMore,
-	Person,
-	Email,
-	Call,
-	Wc,
-	House,
-	Cake,
-} from '@material-ui/icons';
-import moment from 'moment';
+import { Delete, Block } from '@material-ui/icons';
 
-import styles from '../students.module.css';
 import ExaminerService from '../../../../../services/examinerApi';
 import DeleteModal from '../../../../../modals/deleteModal';
 import EditStudentModal from '../edit-student-component/editStudent';
 import EditPasswordModal from '../edit-student-component/editPassword';
 import Snackbar from '../../../../customSnackbar';
 
+const StyledTableCell = withStyles((theme) => ({
+	head: {
+		backgroundColor: theme.palette.common.black,
+		color: theme.palette.common.white,
+	},
+	body: {
+		fontSize: 14,
+	},
+}))(TableCell);
+
+const StyledTableRow = withStyles((theme) => ({
+	root: {
+		'&:nth-of-type(odd)': {
+			backgroundColor: theme.palette.action.hover,
+		},
+	},
+}))(TableRow);
+
+const useStylesBootstrap = makeStyles((theme) => ({
+	arrow: {
+		color: theme.palette.common.black,
+	},
+	tooltip: {
+		backgroundColor: theme.palette.common.black,
+	},
+}));
+
+const BootstrapTooltip = (props) => {
+	const classes = useStylesBootstrap();
+	return <Tooltip arrow classes={classes} {...props} />;
+};
+
 class ViewStudents extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			studentData: [],
+			studentsList: [],
+			pageIndex: 0,
+			pageSize: 5,
+			pageCount: 0,
 			deleteModal: { show: false, id: '' },
 			snackBar: { show: false, msg: '', type: '' },
 			editModal: { show: false, data: {} },
-			passwordModal: { show: false, studentId: '' },
+			passwordModal: { show: true, studentId: '' },
 		};
 		this.examinerService = new ExaminerService();
 	}
 
 	viewStudents = () => {
 		let examId = this.props.match.params.examId;
+		let { pageIndex, pageSize } = this.state;
 		this.examinerService
-			.getParticularExamStudents(examId)
-			.then((response) => {
-				this.setState({ studentData: response.data });
+			.getParticularExamStudents(examId, { pageIndex, pageSize })
+			.then((res) => {
+				this.setState({
+					studentsList: res.data.studentsList,
+					pageCount: res.data.count,
+				});
 			});
 	};
 
@@ -84,7 +114,7 @@ class ViewStudents extends React.Component {
 		});
 	};
 
-	hideDeleteModal = (show, id) => {
+	handleDeleteModal = (show, id) => {
 		this.setState({ deleteModal: { show: show, id: id } });
 	};
 
@@ -96,222 +126,105 @@ class ViewStudents extends React.Component {
 		this.setState({ passwordModal: { show: show, studentId: studentId } });
 	};
 
-	deleteExam = () => {
-		let studentId = this.state.deleteModal.id;
-		this.examinerService.deleteStudent(studentId).then((response) => {
+	removeStudent = () => {
+		let { deleteModal } = this.state;
+
+		this.examinerService.deleteStudent(deleteModal.id).then((response) => {
 			this.viewStudents();
 			this.handleSnackBar(true, response.data.msg);
-			this.hideDeleteModal(false, '');
+			this.handleDeleteModal(false, '');
 		});
 	};
 
-	updateStudent = (personalData, otherData) => {
-		let studentData = this.state.studentData.map((student) => {
-			var tempStudent = Object.assign({}, student);
-			if (student._id === otherData._id) {
-				tempStudent.address = otherData.address;
-				tempStudent.dob = otherData.dob;
-				tempStudent.fatherName = otherData.fatherName;
-				tempStudent.motherName = otherData.motherName;
-				tempStudent.gender = otherData.gender;
-				tempStudent.studentId = otherData.studentId;
-				tempStudent.userData.mobileNumber = personalData.mobileNumber;
-				tempStudent.userData.email = personalData.email;
-				tempStudent.userData.firstName = personalData.firstName;
-				tempStudent.userData.lastName = personalData.lastName;
-				return tempStudent;
-			} else return student;
-		});
-		this.setState({
-			studentData: studentData,
-			editModal: { show: false, data: '' },
-		});
+	handlePageChange = (event, value) => {
+		this.setState({ pageIndex: value }, () => this.viewStudents());
+	};
+
+	handlePageSize = (event) => {
+		this.setState({ pageSize: parseInt(event.target.value, 10) }, () =>
+			this.viewStudents()
+		);
 	};
 
 	render() {
-		let { snackBar } = this.state;
-		let studentsData = this.state.studentData.map((value) => {
-			let examId = this.props.match.params.examId;
-			let checkedValue = value.exam.filter((data) => data.examId === examId);
-			return (
-				<Accordion key={value._id}>
-					<AccordionSummary
-						expandIcon={<ExpandMore className='text-white' />}
-						id={`header-${value._id}`}
-						aria-controls={`content-${value._id}`}
-						className='bg-dark'
-					>
-						<Typography
-							className={`${styles.accordionView} text-white`}
-						>{`${value.studentId}`}</Typography>
-						<Typography className='text-white'>
-							{this.capitalizeName(
-								`${value.userData.firstName} ${value.userData.lastName}`
-							)}
-						</Typography>
-					</AccordionSummary>
-					<AccordionDetails>
-						<div className='container'>
-							<div className='d-flex justify-content-end align-items-center'>
-								<span>Disabled</span>
-								<Switch
-									checked={
-										checkedValue[0].accountStatus === 'enabled'
-											? true
-											: false
-									}
-									name='accountStatus'
-									color='primary'
-									onChange={(event) =>
-										this.handleSwitchChange(event, value._id)
-									}
-								/>
-								<span>Enabled</span>
-							</div>
-							<div className='row'>
-								<div className='col-md-6'>
-									<List>
-										<ListItem>
-											<ListItemAvatar>
-												<Avatar className='bg-dark'>
-													<Person />
-												</Avatar>
-											</ListItemAvatar>
-											<ListItemText
-												primary='Father name'
-												secondary={this.capitalizeName(
-													value.fatherName
-												)}
-											/>
-										</ListItem>
-										<Divider variant='inset' component='li' />
-										<ListItem>
-											<ListItemAvatar>
-												<Avatar className='bg-dark'>
-													<Person />
-												</Avatar>
-											</ListItemAvatar>
-											<ListItemText
-												primary='Mother name'
-												secondary={this.capitalizeName(
-													value.motherName
-												)}
-											/>
-										</ListItem>
-										<Divider variant='inset' component='li' />
-										<ListItem>
-											<ListItemAvatar>
-												<Avatar className='bg-dark'>
-													<Email />
-												</Avatar>
-											</ListItemAvatar>
-											<ListItemText
-												primary='Email'
-												secondary={value.userData.email}
-											/>
-										</ListItem>
-										<Divider variant='inset' component='li' />
-										<ListItem>
-											<ListItemAvatar>
-												<Avatar className='bg-dark'>
-													<Cake />
-												</Avatar>
-											</ListItemAvatar>
-											<ListItemText
-												primary='Date of birth'
-												secondary={moment(
-													value.dob,
-													'YYYY-MM-DD'
-												).format('MMM Do, YYYY')}
-											/>
-										</ListItem>
-									</List>
-								</div>
-								<div className='col-md-6'>
-									<List>
-										<ListItem>
-											<ListItemAvatar>
-												<Avatar className='bg-dark'>
-													<Call />
-												</Avatar>
-											</ListItemAvatar>
-											<ListItemText
-												primary='Mobile number'
-												secondary={value.userData.mobileNumber}
-											/>
-										</ListItem>
-										<Divider variant='inset' component='li' />
-										<ListItem>
-											<ListItemAvatar>
-												<Avatar className='bg-dark'>
-													<Wc />
-												</Avatar>
-											</ListItemAvatar>
-											<ListItemText
-												primary='Gender'
-												secondary={this.capitalizeName(
-													value.gender
-												)}
-											/>
-										</ListItem>
-										<Divider variant='inset' component='li' />
-										<ListItem>
-											<ListItemAvatar>
-												<Avatar className='bg-dark'>
-													<House />
-												</Avatar>
-											</ListItemAvatar>
-											<ListItemText
-												primary='Home address'
-												secondary={value.address}
-											/>
-										</ListItem>
-										<Divider variant='inset' component='li' />
-									</List>
-								</div>
-							</div>
-						</div>
-					</AccordionDetails>
-					<Divider />
-					<AccordionActions className='bg-dark'>
-						<Button
-							size='small'
-							variant='contained'
-							color='primary'
-							onClick={() => this.handleEditModal(true, value)}
-						>
-							Edit Details
-						</Button>
-						<Button
-							size='small'
-							variant='contained'
-							className='bg-success text-white'
-							onClick={() => this.handlePasswordModal(true, value._id)}
-						>
-							Change password
-						</Button>
-						<Button
-							size='small'
-							variant='contained'
-							color='secondary'
-							onClick={() => this.hideDeleteModal(true, value.studentId)}
-						>
-							Delete
-						</Button>
-					</AccordionActions>
-					<Divider />
-				</Accordion>
-			);
-		});
+		let {
+			snackBar,
+			studentsList,
+			pageCount,
+			pageIndex,
+			pageSize,
+			deleteModal,
+		} = this.state;
 		return (
-			<div className='container w-75 mx-auto mt-4'>
-				<p className={`mb-0 text-center ${styles.heading}`}>Students</p>
-				{studentsData}
+			<div className='container p-5'>
+				<Card className='p-3'>
+					<div className='d-xs-block d-md-flex justify-content-between'>
+						<div>
+							<Typography variant='h4'>Exam</Typography>
+							<Typography variant='subtitle1'>Explore exam students</Typography>
+						</div>
+					</div>
+				</Card>
+				<TableContainer component={Paper} className='mt-4'>
+					<Table>
+						<TableHead>
+							<TableRow>
+								<StyledTableCell>S.No</StyledTableCell>
+								<StyledTableCell>Name</StyledTableCell>
+								<StyledTableCell>Email</StyledTableCell>
+								<StyledTableCell>Status</StyledTableCell>
+								<StyledTableCell>Actions</StyledTableCell>
+							</TableRow>
+						</TableHead>
+						<TableBody>
+							{studentsList.map((student, index) => (
+								<StyledTableRow key={student._id}>
+									<StyledTableCell component='th' scope='row'>
+										{index + 1}
+									</StyledTableCell>
+									<StyledTableCell>
+										{student.userDetails.firstName}{' '}
+										{student.userDetails.lastName}
+									</StyledTableCell>
+									<StyledTableCell>{student.userDetails.email}</StyledTableCell>
+									<StyledTableCell>{student.status}</StyledTableCell>
+									<StyledTableCell>
+										<BootstrapTooltip title='Block student'>
+											<IconButton size='small'>
+												<Block size='small' />
+											</IconButton>
+										</BootstrapTooltip>
+										<BootstrapTooltip title='Remove student'>
+											<IconButton
+												size='small'
+												onClick={() =>
+													this.handleDeleteModal(true, student._id)
+												}
+											>
+												<Delete size='small' />
+											</IconButton>
+										</BootstrapTooltip>
+									</StyledTableCell>
+								</StyledTableRow>
+							))}
+						</TableBody>
+					</Table>
+					<TablePagination
+						component='div'
+						rowsPerPageOptions={[5, 10, 25]}
+						colSpan={5}
+						count={pageCount}
+						rowsPerPage={pageSize}
+						page={pageIndex}
+						onChangePage={this.handlePageChange}
+						onChangeRowsPerPage={this.handlePageSize}
+					></TablePagination>
+				</TableContainer>
 				<DeleteModal
-					show={this.state.deleteModal.show}
+					show={deleteModal.show}
 					heading='student'
-					hideModal={this.hideDeleteModal}
-					deleteContent={this.deleteExam}
+					hideModal={this.handleDeleteModal}
+					deleteContent={this.removeStudent}
 				/>
 				<Snackbar
 					show={snackBar.show}
@@ -319,14 +232,12 @@ class ViewStudents extends React.Component {
 					snackBarType={snackBar.type}
 					handleSnackBar={this.handleSnackBar}
 				/>
-				{this.state.editModal.data !== '' ? (
-					<EditStudentModal
-						show={this.state.editModal.show}
-						hideModal={this.handleEditModal}
-						student={this.state.editModal.data}
-						updateStudent={this.updateStudent}
-					/>
-				) : null}
+				<EditStudentModal
+					show={this.state.editModal.show}
+					hideModal={this.handleEditModal}
+					student={this.state.editModal.data}
+					updateStudent={this.updateStudent}
+				/>
 				<EditPasswordModal
 					show={this.state.passwordModal.show}
 					hideModal={this.handlePasswordModal}

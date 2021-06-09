@@ -99,15 +99,16 @@ class ExaminerService {
 		});
 	};
 
-	getParticularExamStudents = (examId) => {
+	getParticularExamStudents = (examId, data) => {
 		let token = this.userService.getToken();
 		return axios({
-			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}/exam/${examId}/student`,
+			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}/exam/${examId}/students`,
 			method: 'get',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,
 			},
+			params: data,
 		});
 	};
 
