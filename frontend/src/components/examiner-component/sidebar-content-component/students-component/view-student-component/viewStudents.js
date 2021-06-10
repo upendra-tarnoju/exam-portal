@@ -15,12 +15,12 @@ import {
 	IconButton,
 	TablePagination,
 } from '@material-ui/core';
-import { Delete, Block } from '@material-ui/icons';
+import { Delete, Block, Lock } from '@material-ui/icons';
 
 import ExaminerService from '../../../../../services/examinerApi';
 import DeleteModal from '../../../../../modals/deleteModal';
 import EditStudentModal from '../edit-student-component/editStudent';
-import EditPasswordModal from '../edit-student-component/editPassword';
+import CreatePasswordModal from '../../../../../modals/createPasswordModal';
 import Snackbar from '../../../../customSnackbar';
 
 const StyledTableCell = withStyles((theme) => ({
@@ -66,7 +66,7 @@ class ViewStudents extends React.Component {
 			deleteModal: { show: false, id: '' },
 			snackBar: { show: false, msg: '', type: '' },
 			editModal: { show: false, data: {} },
-			passwordModal: { show: true, studentId: '' },
+			passwordModal: { show: false, studentId: '' },
 		};
 		this.examinerService = new ExaminerService();
 	}
@@ -146,6 +146,17 @@ class ViewStudents extends React.Component {
 		);
 	};
 
+	updatePassword = (values) => {
+		let { passwordModal } = this.state;
+		let examinerService = new ExaminerService();
+		examinerService
+			.updateStudent(passwordModal.studentId, values)
+			.then((res) => {
+				this.handleSnackBar(true, res.data.msg, 'success');
+				this.handlePasswordModal(false, '');
+			});
+	};
+
 	render() {
 		let {
 			snackBar,
@@ -154,6 +165,7 @@ class ViewStudents extends React.Component {
 			pageIndex,
 			pageSize,
 			deleteModal,
+			passwordModal,
 		} = this.state;
 		return (
 			<div className='container p-5'>
@@ -189,6 +201,19 @@ class ViewStudents extends React.Component {
 									<StyledTableCell>{student.userDetails.email}</StyledTableCell>
 									<StyledTableCell>{student.status}</StyledTableCell>
 									<StyledTableCell>
+										<BootstrapTooltip title='Change password'>
+											<IconButton
+												size='small'
+												onClick={() =>
+													this.handlePasswordModal(
+														true,
+														student.userDetails._id
+													)
+												}
+											>
+												<Lock size='small' />
+											</IconButton>
+										</BootstrapTooltip>
 										<BootstrapTooltip title='Block student'>
 											<IconButton size='small'>
 												<Block size='small' />
@@ -238,10 +263,11 @@ class ViewStudents extends React.Component {
 					student={this.state.editModal.data}
 					updateStudent={this.updateStudent}
 				/>
-				<EditPasswordModal
-					show={this.state.passwordModal.show}
+				<CreatePasswordModal
+					show={passwordModal.show}
 					hideModal={this.handlePasswordModal}
-					studentId={this.state.passwordModal.studentId}
+					studentId={passwordModal.studentId}
+					updatePassword={this.updatePassword}
 				/>
 			</div>
 		);
