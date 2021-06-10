@@ -15,13 +15,14 @@ import {
 	IconButton,
 	TablePagination,
 } from '@material-ui/core';
-import { Delete, Block, Lock } from '@material-ui/icons';
+import { Delete, Block, Lock, PersonAdd } from '@material-ui/icons';
 
 import ExaminerService from '../../../../../services/examinerApi';
 import DeleteModal from '../../../../../modals/deleteModal';
 import EditStudentModal from '../edit-student-component/editStudent';
 import CreatePasswordModal from '../../../../../modals/createPasswordModal';
 import Snackbar from '../../../../customSnackbar';
+import BlockUnblockStudentModal from '../../../../../modals/blockUnblockStudentModal';
 
 const StyledTableCell = withStyles((theme) => ({
 	head: {
@@ -66,6 +67,7 @@ class ViewStudents extends React.Component {
 			deleteModal: { show: false, id: '' },
 			snackBar: { show: false, msg: '', type: '' },
 			editModal: { show: false, data: {} },
+			blockUnblockModal: { show: false, heading: '', id: '' },
 			passwordModal: { show: false, studentId: '' },
 		};
 		this.examinerService = new ExaminerService();
@@ -126,6 +128,10 @@ class ViewStudents extends React.Component {
 		this.setState({ passwordModal: { show: show, studentId: studentId } });
 	};
 
+	handleBlockUnblockModal = (show, heading, id) => {
+		this.setState({ blockUnblockModal: { show, heading, id } });
+	};
+
 	removeStudent = () => {
 		let { deleteModal } = this.state;
 
@@ -148,12 +154,23 @@ class ViewStudents extends React.Component {
 
 	updatePassword = (values) => {
 		let { passwordModal } = this.state;
-		let examinerService = new ExaminerService();
-		examinerService
+		this.examinerService
 			.updateStudent(passwordModal.studentId, values)
 			.then((res) => {
 				this.handleSnackBar(true, res.data.msg, 'success');
 				this.handlePasswordModal(false, '');
+			});
+	};
+
+	blockUnblockStudent = () => {
+		let { blockUnblockModal } = this.state;
+		let data = { status: blockUnblockModal.heading };
+		this.examinerService
+			.blockUnblockStudent(blockUnblockModal.id, data)
+			.then((res) => {
+				this.handleSnackBar(true, res.data.msg, 'success');
+				this.viewStudents();
+				this.handleBlockUnblockModal(false, blockUnblockModal.heading, '');
 			});
 	};
 
@@ -166,6 +183,7 @@ class ViewStudents extends React.Component {
 			pageSize,
 			deleteModal,
 			passwordModal,
+			blockUnblockModal,
 		} = this.state;
 		return (
 			<div className='container p-5'>
@@ -214,11 +232,37 @@ class ViewStudents extends React.Component {
 												<Lock size='small' />
 											</IconButton>
 										</BootstrapTooltip>
-										<BootstrapTooltip title='Block student'>
-											<IconButton size='small'>
-												<Block size='small' />
-											</IconButton>
-										</BootstrapTooltip>
+										{student.status === 'ACTIVE' ? (
+											<BootstrapTooltip title='Block student'>
+												<IconButton
+													size='small'
+													onClick={() =>
+														this.handleBlockUnblockModal(
+															true,
+															'BLOCKED',
+															student.userDetails._id
+														)
+													}
+												>
+													<Block size='small' />
+												</IconButton>
+											</BootstrapTooltip>
+										) : (
+											<BootstrapTooltip title='Unblock student'>
+												<IconButton
+													size='small'
+													onClick={() =>
+														this.handleBlockUnblockModal(
+															true,
+															'ACTIVE',
+															student.userDetails._id
+														)
+													}
+												>
+													<PersonAdd size='small' />
+												</IconButton>
+											</BootstrapTooltip>
+										)}
 										<BootstrapTooltip title='Remove student'>
 											<IconButton
 												size='small'
@@ -268,6 +312,12 @@ class ViewStudents extends React.Component {
 					hideModal={this.handlePasswordModal}
 					studentId={passwordModal.studentId}
 					updatePassword={this.updatePassword}
+				/>
+				<BlockUnblockStudentModal
+					show={blockUnblockModal.show}
+					heading={blockUnblockModal.heading}
+					hideModal={this.handleBlockUnblockModal}
+					blockUnblockStudent={this.blockUnblockStudent}
 				/>
 			</div>
 		);
