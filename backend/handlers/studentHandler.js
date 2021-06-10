@@ -1,6 +1,5 @@
 let csv = require('csvtojson');
 const mongoose = require('mongoose');
-const moment = require('moment');
 
 let { student, users, exam, course, question, answer } = require('../models');
 const { queries } = require('../db');
@@ -164,42 +163,6 @@ const students = {
 			}
 		} catch (err) {
 			throw err;
-		}
-	},
-
-	updateStudentAccountStatus: async (studentId, data) => {
-		let updatedData = await student.updateStudentAccountStatus(studentId, data);
-		if (updatedData) {
-			return { status: 200, msg: 'Student account status updated' };
-		}
-	},
-
-	updateStudentDetails: async (studentId, data) => {
-		let updatedPersonalDetails = await users
-			.updateByUserDataId(
-				{
-					userDataId: studentId,
-				},
-				data
-			)
-			.select({ firstName: 1, lastName: 1, email: 1, mobileNumber: 1 });
-		let updatedOtherDetails = await student
-			.updateStudentDetails(studentId, data)
-			.select({ userId: 0, examinerId: 0, __v: 0 });
-		return {
-			status: 200,
-			data: {
-				personalDetails: updatedPersonalDetails,
-				otherDetails: updatedOtherDetails,
-				msg: 'Student is updated successfully',
-			},
-		};
-	},
-
-	updateStudentPassword: async (studentId, password) => {
-		let updatedData = await users.updateByUserDataId(studentId, { password });
-		if (updatedData) {
-			return { status: 200, msg: 'Password updated successsfully' };
 		}
 	},
 
@@ -507,6 +470,43 @@ const students = {
 				response: RESPONSE_MESSAGES.ASSIGN_STUDENT.SUCCESS,
 				finalData: {},
 			};
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	updateStudent: async (params, studentDetails) => {
+		try {
+			let condition = { _id: mongoose.Types.ObjectId(params.studentId) };
+			let projections = { password: 1 };
+			let options = { lean: true };
+
+			let existingUser = await queries.findOne(
+				Schema.users,
+				condition,
+				projections,
+				options
+			);
+
+			if (existingUser) {
+				let hashedPassword = factories.generateHashedPassword(
+					studentDetails.new
+				);
+
+				let toUpdate = { password: hashedPassword, modifiedDate: Date.now() };
+
+				await queries.findAndUpdate(Schema.users, condition, toUpdate, options);
+
+				return {
+					response: RESPONSE_MESSAGES.STUDENT.UPDATE.PASSWORD,
+					finalData: {},
+				};
+			} else {
+				return {
+					response: RESPONSE_MESSAGES.STUDENT.INVALID_STUDENT_ID,
+					finalData: {},
+				};
+			}
 		} catch (err) {
 			throw err;
 		}

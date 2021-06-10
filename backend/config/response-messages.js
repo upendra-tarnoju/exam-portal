@@ -234,12 +234,16 @@ module.exports = {
 				MSG: 'Invalid student id',
 			},
 			EXISTING_EMAIL: {
-				STATUS_C0DE: 400,
+				STATUS_CODE: 400,
 				MSG: 'Email ID already existed',
 			},
 			EXISTING_MOBILE_NUMBER: {
-				STATUS_C0DE: 400,
+				STATUS_CODE: 400,
 				MSG: 'Mobile number already existed',
+			},
+			PASSWORD: {
+				STATUS_CODE: 200,
+				MSG: 'Student password is updated successfully',
 			},
 		},
 	},

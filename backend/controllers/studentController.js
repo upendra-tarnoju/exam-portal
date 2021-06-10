@@ -1,4 +1,4 @@
-const { studentHandler, examHandler } = require('../handlers');
+const { studentHandler } = require('../handlers');
 const { responseManager } = require('../lib');
 
 const student = {
@@ -29,23 +29,17 @@ const student = {
 	},
 
 	updateStudent: async (req, res) => {
-		let studentId = req.params.studentId;
-		let data = req.body;
-		if ('accountStatus' in data) {
-			let response = await studentHandler.updateStudentAccountStatus(
-				studentId,
-				data
+		try {
+			let params = req.params;
+			let studentDetails = req.body;
+			let responseData = await studentHandler.updateStudent(
+				params,
+				studentDetails
 			);
-			res.status(response.status).send({ msg: response.msg });
-		} else if ('new' in data) {
-			let response = await studentHandler.updateStudentPassword(
-				studentId,
-				data.new
-			);
-			res.status(response.status).send(response.msg);
-		} else {
-			let response = await studentHandler.updateStudentDetails(studentId, data);
-			res.status(response.status).send(response.data);
+
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
 		}
 	},
 
