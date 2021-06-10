@@ -246,6 +246,16 @@ module.exports = {
 				MSG: 'Student password is updated successfully',
 			},
 		},
+		BLOCK_OR_UNBLOCK: {
+			BLOCK: {
+				STATUS_CODE: 200,
+				MSG: 'Student has been blocked from attempting exam',
+			},
+			UNBLOCK: {
+				STATUS_CODE: 200,
+				MSG: 'Student is allowed to attempt exam',
+			},
+		},
 	},
 	SUB_ADMIN: {
 		INVALID_ID: {

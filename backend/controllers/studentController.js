@@ -119,6 +119,22 @@ const student = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+
+	blockOrUnblockStudent: async (req, res) => {
+		try {
+			let params = req.params;
+			let payload = req.body;
+
+			let responseData = await studentHandler.blockOrUnblockStudent(
+				params,
+				payload
+			);
+
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
 };
 
 module.exports = student;

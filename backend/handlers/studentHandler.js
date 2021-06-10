@@ -511,6 +511,71 @@ const students = {
 			throw err;
 		}
 	},
+
+	blockOrUnblockStudent: async (params, payload) => {
+		try {
+			let query = {
+				$and: [
+					{ studentId: mongoose.Types.ObjectId(params.studentId) },
+					{ status: { $ne: APP_CONSTANTS.ASSIGNED_EXAM_STATUS.DELETED } },
+				],
+			};
+			let projections = { status: 1 };
+			let options = { lean: true };
+
+			let existingAssignedStudent = await queries.findOne(
+				Schema.assignExam,
+				query,
+				projections,
+				options
+			);
+
+			if (existingAssignedStudent) {
+				let toUpdate = {};
+
+				if (payload.status === APP_CONSTANTS.ASSIGNED_EXAM_STATUS.BLOCKED) {
+					toUpdate = {
+						$set: {
+							status: APP_CONSTANTS.ASSIGNED_EXAM_STATUS.BLOCKED,
+							modifiedDate: Date.now(),
+						},
+					};
+
+					await queries.findAndUpdate(
+						Schema.assignExam,
+						query,
+						toUpdate,
+						options
+					);
+
+					return {
+						response: RESPONSE_MESSAGES.STUDENT.BLOCK_OR_UNBLOCK.BLOCK,
+						finalData: {},
+					};
+				} else if (
+					payload.status === APP_CONSTANTS.ASSIGNED_EXAM_STATUS.ACTIVE
+				) {
+					toUpdate = {
+						$set: { status: APP_CONSTANTS.ASSIGNED_EXAM_STATUS.ACTIVE },
+					};
+
+					await queries.findAndUpdate(
+						Schema.assignExam,
+						query,
+						toUpdate,
+						options
+					);
+
+					return {
+						response: RESPONSE_MESSAGES.STUDENT.BLOCK_OR_UNBLOCK.UNBLOCK,
+						finalData: {},
+					};
+				}
+			}
+		} catch (err) {
+			throw err;
+		}
+	},
 };
 
 module.exports = students;

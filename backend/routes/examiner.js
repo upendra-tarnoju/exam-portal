@@ -180,6 +180,12 @@ module.exports = () => {
 	);
 
 	router.patch(
+		'/student/:studentId/blockUnblock',
+		passport.authenticate('jwt'),
+		studentController.blockOrUnblockStudent
+	);
+
+	router.patch(
 		'/profile',
 		passport.authenticate('jwt'),
 		examinerController.updateProfile
