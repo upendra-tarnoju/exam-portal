@@ -235,9 +235,19 @@ const students = {
 
 			let count = await queries.countDocuments(Schema.assignExam, conditions);
 
+			query = { _id: mongoose.Types.ObjectId(payload.examId) };
+			let projections = { examDate: 1, startTime: 1 };
+
+			let examDetails = await queries.findOne(
+				Schema.exam,
+				query,
+				projections,
+				options
+			);
+
 			return {
 				response: { STATUS_CODE: 200, MSG: '' },
-				finalData: { studentsList, count },
+				finalData: { studentsList, count, examDetails },
 			};
 		} catch (err) {
 			throw err;
