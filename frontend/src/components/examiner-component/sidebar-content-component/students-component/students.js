@@ -1,6 +1,5 @@
 import React from 'react';
 import Moment from 'react-moment';
-import moment from 'moment';
 import {
 	Card,
 	Paper,
@@ -21,6 +20,7 @@ import { Add, ViewHeadline } from '@material-ui/icons';
 
 import ExaminerService from '../../../../services/examinerApi';
 import CustomSnackBar from '../../../customSnackbar';
+import factories from '../../../../factories/factories';
 
 const StyledTableCell = withStyles((theme) => ({
 	head: {
@@ -71,26 +71,11 @@ class Students extends React.Component {
 		this.examinerService = new ExaminerService();
 	}
 
-	addNewStudent = (examId, examDate, startTime, endTime) => {
-		let fullDate = new Date();
-		examDate = moment(examDate).format('YYYY-MM-DD');
-		let currentDate = moment(fullDate).format('YYYY-MM-DD');
-		let verifyBeforeDate = moment(currentDate).isBefore(examDate);
-		let verifySameDate = moment(currentDate).isSame(examDate);
+	addNewStudent = (examId, examDate, startTime) => {
+		let verifiedExam = factories.verifyExamExpiry(examDate, startTime);
 
-		if (verifyBeforeDate) {
+		if (verifiedExam) {
 			this.props.history.push(`/examiner/exam/${examId}/addStudent`);
-		} else if (verifySameDate) {
-			let currentTime = moment(fullDate).format('h:mm:ssa');
-			startTime = moment(startTime).format('h:mm:ssa');
-
-			let verifyTime = moment(currentTime).isBefore(startTime);
-			if (verifyTime) {
-				this.props.history.push(`/examiner/exam/${examId}/addStudent`);
-			} else {
-				let msg = 'You cannot add students to expired exam';
-				this.handleSnackBar(true, msg, 'error');
-			}
 		} else {
 			let msg = 'You cannot add students to expired exam';
 			this.handleSnackBar(true, msg, 'error');
@@ -188,8 +173,7 @@ class Students extends React.Component {
 													this.addNewStudent(
 														exam._id,
 														exam.examDate,
-														exam.startTime,
-														exam.endTime
+														exam.startTime
 													)
 												}
 											>

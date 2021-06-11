@@ -73,10 +73,35 @@ let formatDuration = (startTime, endTime) => {
 	return `${duration} min`;
 };
 
+let verifyExamExpiry = (examDate, startTime) => {
+	let fullDate = new Date();
+	examDate = moment(examDate).format('YYYY-MM-DD');
+	let currentDate = moment(fullDate).format('YYYY-MM-DD');
+	let verifyBeforeDate = moment(currentDate).isBefore(examDate);
+	let verifySameDate = moment(currentDate).isSame(examDate);
+
+	if (verifyBeforeDate) {
+		return true;
+	} else if (verifySameDate) {
+		let currentTime = moment(fullDate).format('h:mm:ssa');
+		startTime = moment(startTime).format('h:mm:ssa');
+
+		let verifyTime = moment(currentTime).isBefore(startTime);
+		if (verifyTime) {
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+};
+
 export default {
 	formatDate,
 	capitalizeName,
 	monthMenu,
 	generateRandomGradient,
 	formatDuration,
+	verifyExamExpiry,
 };

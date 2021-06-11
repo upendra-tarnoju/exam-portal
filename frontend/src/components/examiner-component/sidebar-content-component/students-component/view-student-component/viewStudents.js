@@ -14,6 +14,7 @@ import {
 	makeStyles,
 	IconButton,
 	TablePagination,
+	Chip,
 } from '@material-ui/core';
 import { Delete, Block, Lock, PersonAdd } from '@material-ui/icons';
 
@@ -23,6 +24,7 @@ import EditStudentModal from '../edit-student-component/editStudent';
 import CreatePasswordModal from '../../../../../modals/createPasswordModal';
 import Snackbar from '../../../../customSnackbar';
 import BlockUnblockStudentModal from '../../../../../modals/blockUnblockStudentModal';
+import factories from '../../../../../factories/factories';
 
 const StyledTableCell = withStyles((theme) => ({
 	head: {
@@ -69,6 +71,8 @@ class ViewStudents extends React.Component {
 			editModal: { show: false, data: {} },
 			blockUnblockModal: { show: false, heading: '', id: '' },
 			passwordModal: { show: false, studentId: '' },
+			examDate: 0,
+			startTime: 0,
 		};
 		this.examinerService = new ExaminerService();
 	}
@@ -79,9 +83,12 @@ class ViewStudents extends React.Component {
 		this.examinerService
 			.getParticularExamStudents(examId, { pageIndex, pageSize })
 			.then((res) => {
+				let data = res.data;
 				this.setState({
-					studentsList: res.data.studentsList,
-					pageCount: res.data.count,
+					studentsList: data.studentsList,
+					pageCount: data.count,
+					examDate: data.examDetails.examDate,
+					startTime: data.examDetails.startTime,
 				});
 			});
 	};
@@ -111,13 +118,25 @@ class ViewStudents extends React.Component {
 	};
 
 	handleSnackBar = (show, msg, type) => {
+		let { snackBar } = this.state;
+		if (type === undefined) {
+			type = snackBar.type;
+		}
 		this.setState({
 			snackBar: { show: show, msg: msg, type },
 		});
 	};
 
 	handleDeleteModal = (show, id) => {
-		this.setState({ deleteModal: { show: show, id: id } });
+		let { examDate, startTime } = this.state;
+		let verifiedExam = factories.verifyExamExpiry(examDate, startTime);
+
+		if (verifiedExam) {
+			this.setState({ deleteModal: { show: show, id: id } });
+		} else {
+			let msg = 'You cannot delete student in expired exam';
+			this.handleSnackBar(true, msg, 'error');
+		}
 	};
 
 	handleEditModal = (show, data) => {
@@ -125,11 +144,29 @@ class ViewStudents extends React.Component {
 	};
 
 	handlePasswordModal = (show, studentId) => {
-		this.setState({ passwordModal: { show: show, studentId: studentId } });
+		let { examDate, startTime } = this.state;
+		let verifiedExam = factories.verifyExamExpiry(examDate, startTime);
+
+		if (verifiedExam) {
+			this.setState({ passwordModal: { show: show, studentId: studentId } });
+		} else {
+			let msg = 'You cannot change password in expired exam';
+			this.handleSnackBar(true, msg, 'error');
+		}
 	};
 
 	handleBlockUnblockModal = (show, heading, id) => {
-		this.setState({ blockUnblockModal: { show, heading, id } });
+		let { examDate, startTime } = this.state;
+		let verifiedExam = factories.verifyExamExpiry(examDate, startTime);
+
+		if (verifiedExam) {
+			this.setState({ blockUnblockModal: { show, heading, id } });
+		} else {
+			let msg = `You cannot ${
+				heading === 'BLOCKED' ? 'block' : 'unblock'
+			} students in expired exam`;
+			this.handleSnackBar(true, msg, 'error');
+		}
 	};
 
 	removeStudent = () => {
@@ -213,11 +250,21 @@ class ViewStudents extends React.Component {
 										{index + 1}
 									</StyledTableCell>
 									<StyledTableCell>
-										{student.userDetails.firstName}{' '}
-										{student.userDetails.lastName}
+										{factories.capitalizeName(student.userDetails.firstName)}{' '}
+										{factories.capitalizeName(student.userDetails.lastName)}
 									</StyledTableCell>
 									<StyledTableCell>{student.userDetails.email}</StyledTableCell>
-									<StyledTableCell>{student.status}</StyledTableCell>
+									<StyledTableCell>
+										{student.status === 'BLOCKED' ? (
+											<Chip
+												label='Blocked'
+												color='secondary'
+												variant='default'
+											/>
+										) : (
+											<Chip label='Active' color='primary' variant='default' />
+										)}
+									</StyledTableCell>
 									<StyledTableCell>
 										<BootstrapTooltip title='Change password'>
 											<IconButton
