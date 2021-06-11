@@ -20,7 +20,6 @@ import { Delete, Block, Lock, PersonAdd } from '@material-ui/icons';
 
 import ExaminerService from '../../../../../services/examinerApi';
 import DeleteModal from '../../../../../modals/deleteModal';
-import EditStudentModal from '../edit-student-component/editStudent';
 import CreatePasswordModal from '../../../../../modals/createPasswordModal';
 import Snackbar from '../../../../customSnackbar';
 import BlockUnblockStudentModal from '../../../../../modals/blockUnblockStudentModal';
@@ -347,12 +346,6 @@ class ViewStudents extends React.Component {
 					message={snackBar.msg}
 					snackBarType={snackBar.type}
 					handleSnackBar={this.handleSnackBar}
-				/>
-				<EditStudentModal
-					show={this.state.editModal.show}
-					hideModal={this.handleEditModal}
-					student={this.state.editModal.data}
-					updateStudent={this.updateStudent}
 				/>
 				<CreatePasswordModal
 					show={passwordModal.show}
