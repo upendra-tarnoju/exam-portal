@@ -51,7 +51,7 @@ class AdminDashboard extends React.Component {
 			totalExaminers: 0,
 			totalExams: 0,
 			totalStudents: 0,
-			totalEarning: 0,
+			totalSubAdmin: 0,
 			examChart: {
 				options: {
 					xaxis: { categories: [] },
@@ -159,7 +159,7 @@ class AdminDashboard extends React.Component {
 				totalExaminers: data.totalExaminers,
 				totalExams: data.totalExams,
 				totalStudents: data.totalStudents,
-				totalEarning: data.totalExaminers * 15,
+				totalSubAdmin: data.totalSubAdmin,
 			});
 		});
 
@@ -220,7 +220,7 @@ class AdminDashboard extends React.Component {
 			totalExaminers,
 			totalExams,
 			totalStudents,
-			totalEarning,
+			totalSubAdmin,
 			latestExaminers,
 		} = this.state;
 
@@ -322,12 +322,12 @@ class AdminDashboard extends React.Component {
 									<p
 										className={`mb-0 ${styles.examinerPaperValue} font-weight-bold`}
 									>
-										${totalEarning}
+										{totalSubAdmin}
 									</p>
 									<p
 										className={`mb-0 ${styles.examinerPaperText} text-secondary`}
 									>
-										EARNING
+										Sub admin
 									</p>
 								</div>
 							</div>

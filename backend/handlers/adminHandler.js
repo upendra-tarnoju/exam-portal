@@ -138,24 +138,33 @@ const admin = {
 
 	getDashboardCardDetails: async () => {
 		try {
-			let criteria = {};
-			criteria = { userType: APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER };
-			let totalExaminers = await users.countDocuments(criteria);
+			let aggregateArray = [
+				{ $match: { userType: { $ne: APP_DEFAULTS.ACCOUNT_TYPE.ADMIN } } },
+				{ $group: { _id: '$userType', count: { $sum: 1 } } },
+			];
 
-			criteria = {};
-			let totalExams = await exam.countExams(criteria);
-			let totalStudents = await student.countStudents(criteria);
+			let countDetails = await queries.aggregateData(
+				Schema.users,
+				aggregateArray,
+				{
+					lean: true,
+				}
+			);
+
+			condition = {};
+			let totalExams = await queries.countDocuments(Schema.exam, condition);
 
 			return {
-				status: 200,
-				data: {
-					totalExaminers,
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: {
+					totalExaminers: countDetails.length !== 0 ? countDetails[0].count : 0,
 					totalExams,
-					totalStudents,
+					totalStudents: countDetails.length !== 0 ? countDetails[1].count : 0,
+					totalSubAdmin: countDetails.length !== 0 ? countDetails[2].count : 0,
 				},
 			};
 		} catch (err) {
-			return { status: 400, data: { err } };
+			throw err;
 		}
 	},
 

@@ -1,6 +1,5 @@
 const { adminHandler } = require('../handlers');
-const APP_DEFAULTS = require('../config/app-defaults');
-const RESPONSE_MESSAGES = require('../config/response-messages');
+const { responseManager } = require('../lib');
 
 const admin = {
 	examinerStatusCount: async (req, res) => {
@@ -22,33 +21,6 @@ const admin = {
 			let response = await adminHandler.getExaminerDetails(pageIndex, pageSize);
 
 			res.status(response.status).send(response.data);
-
-			// if (type === APP_DEFAULTS.EXAMINER_QUERY_TYPE.LATEST_EXAMINER) {
-			// 	let response = await adminHandler.getLatestPendingExaminers(
-			// 		pageIndex,
-			// 		pageSize
-			// 	);
-			// 	res.status(response.status).send(response.data);
-			// } else {
-			// 	let response = await adminHandler.getExaminerDetails(
-			// 		type,
-			// 		pageIndex,
-			// 		pageSize
-			// 	);
-
-			// 	if (response.data.length === 0) {
-			// 		let response =
-			// 			type === APP_DEFAULTS.EXAMINER_QUERY_TYPE.DECLINED
-			// 				? RESPONSE_MESSAGES.EXAMINER_COUNT.DECLINED
-			// 				: RESPONSE_MESSAGES.EXAMINER_COUNT.PENDING;
-
-			// 		res
-			// 			.status(response.STATUS_CODE)
-			// 			.send({ msg: response.MSG, examiners: [] });
-			// 	} else {
-			// 		res.status(response.status).send({ examiners: response.data });
-			// 	}
-			// }
 		} catch (err) {
 			throw err;
 		}
@@ -67,10 +39,11 @@ const admin = {
 
 	getDashboardCardDetails: async (req, res) => {
 		try {
-			let response = await adminHandler.getDashboardCardDetails();
-			res.status(response.status).send(response.data);
+			let responseData = await adminHandler.getDashboardCardDetails();
+
+			responseManager.sendSuccessResponse(responseData, res);
 		} catch (err) {
-			res.status(400).send(err);
+			responseManager.sendErrorResponse(err, res);
 		}
 	},
 
