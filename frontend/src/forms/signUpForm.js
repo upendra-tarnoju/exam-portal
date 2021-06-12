@@ -46,11 +46,16 @@ let SignUpForm = (props) => {
 			onSubmit={(values, formikProps) => {
 				let userService = new UserService();
 
-				userService.saveNewUsers(values).then((res) => {
-					props.handleSnackBar(true, res.data.msg, 'success');
-					formikProps.resetForm();
-					formikProps.setFieldValue('college', '');
-				});
+				userService
+					.saveNewUsers(values)
+					.then((res) => {
+						props.handleSnackBar(true, res.data.msg, 'success');
+						formikProps.resetForm();
+						formikProps.setFieldValue('college', '');
+					})
+					.catch((err) => {
+						props.handleSnackBar(true, err.response.data.msg, 'error');
+					});
 			}}
 			initialValues={{
 				firstName: '',
