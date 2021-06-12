@@ -53,11 +53,11 @@ function hashPassword(password) {
 async function createAdmin() {
 	let firstName = faker.name.firstName();
 	let lastName = faker.name.lastName();
-	let hash = hashPassword('adminpanel');
+	let hash = hashPassword('123456');
 	await users.create({
 		firstName: firstName,
 		lastName: lastName,
-		email: 'admin@panel.com',
+		email: 'examinadmin@yopmail.com',
 		password: hash,
 		accountType: 'admin',
 		accountStatus: 'created',
