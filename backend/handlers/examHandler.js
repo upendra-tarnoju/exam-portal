@@ -304,31 +304,39 @@ const exams = {
 	},
 
 	getSpecificExamQuestionDetails: async (payload) => {
-		let aggregateArray = [
-			{ $match: { examId: mongoose.Types.ObjectId(payload.examId) } },
-			{ $group: { _id: null, examMarks: { $sum: '$questionMark' } } },
-		];
+		try {
+			let aggregateArray = [
+				{ $match: { examId: mongoose.Types.ObjectId(payload.examId) } },
+				{ $group: { _id: null, examMarks: { $sum: '$questionMark' } } },
+			];
 
-		let questionDetails = await queries.aggregateData(
-			Schema.question,
-			aggregateArray
-		);
+			let questionDetails = await queries.aggregateData(
+				Schema.question,
+				aggregateArray
+			);
 
-		let query = { _id: payload.examId };
-		let projections = { examCode: 1, subject: 1, totalMarks: 1 };
-		let options = { lean: true };
+			let query = { _id: payload.examId };
+			let projections = { examCode: 1, subject: 1, totalMarks: 1 };
+			let options = { lean: true };
 
-		let examDetails = await queries.findOne(
-			Schema.exam,
-			query,
-			projections,
-			options
-		);
+			let examDetails = await queries.findOne(
+				Schema.exam,
+				query,
+				projections,
+				options
+			);
 
-		return {
-			status: 200,
-			data: { examMarks: questionDetails[0].examMarks, examDetails },
-		};
+			return {
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: {
+					examMarks:
+						questionDetails.length !== 0 ? questionDetails[0].examMarks : 0,
+					examDetails,
+				},
+			};
+		} catch (err) {
+			throw err;
+		}
 	},
 
 	getExamList: async (payload, userDetails) => {

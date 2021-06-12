@@ -1,4 +1,5 @@
 const { examHandler } = require('../handlers');
+const responseManager = require('../lib/responseManager');
 
 const exam = {
 	saveExamDetails: async (req, res) => {
@@ -68,11 +69,16 @@ const exam = {
 	},
 
 	getSpecificExamQuestionDetails: async (req, res) => {
-		let params = req.params;
+		try {
+			let params = req.params;
+			let responseData = await examHandler.getSpecificExamQuestionDetails(
+				params
+			);
 
-		let response = await examHandler.getSpecificExamQuestionDetails(params);
-
-		res.status(response.status).send(response.data);
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
 	},
 
 	getExamList: async (req, res) => {
