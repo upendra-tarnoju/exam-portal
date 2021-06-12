@@ -28,7 +28,7 @@ const NewQuestionOptionModal = (props) => {
 		} else {
 			props.addNewQption(formikProps);
 		}
-		props.hideModal(false);
+		props.hideModal(false, '', props.formikProps);
 	};
 
 	return (
