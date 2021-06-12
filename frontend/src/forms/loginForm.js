@@ -11,8 +11,10 @@ import {
 
 import schema from '../schema/loginSchema';
 import UserService from '../services/userApi';
+import { Visibility, VisibilityOff } from '@material-ui/icons';
 
 let LoginForm = (props) => {
+	const [show, showPassword] = React.useState(false);
 	return (
 		<Formik
 			validationSchema={schema}
@@ -58,13 +60,26 @@ let LoginForm = (props) => {
 							name='password'
 							variant='outlined'
 							label='Password'
-							type='password'
+							type={show ? 'text' : 'password'}
 							value={formikProps.values.password}
 							onChange={formikProps.handleChange}
 							onBlur={formikProps.handleBlur}
 							helperText={
 								formikProps.touched.password ? formikProps.errors.password : ''
 							}
+							InputProps={{
+								endAdornment: !show ? (
+									<Visibility
+										className='cursor-pointer'
+										onClick={() => showPassword(true)}
+									/>
+								) : (
+									<VisibilityOff
+										className='cursor-pointer'
+										onClick={() => showPassword(false)}
+									/>
+								),
+							}}
 							error={
 								formikProps.touched.password &&
 								Boolean(formikProps.errors.password)
