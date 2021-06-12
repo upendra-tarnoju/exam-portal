@@ -143,8 +143,12 @@ let SignUpForm = (props) => {
 								{...params}
 								label='College'
 								variant='outlined'
-								error={!!formikProps.errors.college}
-								helperText={formikProps.errors.college}
+								error={
+									formikProps.touched.college && !!formikProps.errors.college
+								}
+								helperText={
+									formikProps.touched.college && formikProps.errors.college
+								}
 								onBlur={formikProps.handleBlur}
 								InputProps={{
 									...params.InputProps,
