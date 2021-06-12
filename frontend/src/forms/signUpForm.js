@@ -43,12 +43,13 @@ let SignUpForm = (props) => {
 	return (
 		<Formik
 			validationSchema={schema}
-			onSubmit={(values) => {
+			onSubmit={(values, formikProps) => {
 				let userService = new UserService();
-				console.log(values);
 
-				userService.saveNewUsers(values).then((response) => {
-					props.showModal(response.data.msg);
+				userService.saveNewUsers(values).then((res) => {
+					props.handleSnackBar(true, res.data.msg, 'success');
+					formikProps.resetForm();
+					formikProps.setFieldValue('college', '');
 				});
 			}}
 			initialValues={{
@@ -138,6 +139,7 @@ let SignUpForm = (props) => {
 						onChange={(e, college) => {
 							formikProps.setFieldValue('college', college);
 						}}
+						value={formikProps.values.college}
 						renderInput={(params) => (
 							<TextField
 								{...params}
@@ -149,6 +151,7 @@ let SignUpForm = (props) => {
 								helperText={
 									formikProps.touched.college && formikProps.errors.college
 								}
+								name='college'
 								onBlur={formikProps.handleBlur}
 								InputProps={{
 									...params.InputProps,

@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Card, withStyles } from '@material-ui/core';
 
-import ShowModal from './showModal';
+// import ShowModal from './showModal';
 import Navbar from '../header/navbar';
 import SignUpForm from '../../forms/signUpForm';
 import './signup.module.css';
+import CustomSnackBar from '../customSnackbar';
 
 const style = (theme) => ({
 	signUpBackground: {
@@ -50,8 +51,7 @@ class SignUp extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			modal: false,
-			message: '',
+			snackbar: { show: false, msg: '', type: '' },
 		};
 	}
 
@@ -59,18 +59,13 @@ class SignUp extends Component {
 		this.setState({ modal: true, message: message });
 	};
 
-	hideModal = () => {
-		this.setState({ modal: false }, () => this.props.history.push('/login'));
-	};
-
-	handleModal = (state) => {
-		this.setState({
-			modal: state,
-		});
+	handleSnackBar = (show, msg, type) => {
+		this.setState({ snackbar: { show, msg, type } });
 	};
 
 	render() {
 		const { classes } = this.props;
+		let { snackbar } = this.state;
 		return (
 			<div className='container-fluid p-0 h-100'>
 				<Navbar {...this.props} />
@@ -95,17 +90,21 @@ class SignUp extends Component {
 										Sign up as sub admin to continue
 									</p>
 									<div className='px-5'>
-										<SignUpForm showModal={this.showModal} />
+										<SignUpForm
+											showModal={this.showModal}
+											handleSnackBar={this.handleSnackBar}
+										/>
 									</div>
 								</Card>
 							</div>
 						</div>
 					</div>
 				</div>
-				<ShowModal
-					show={this.state.modal}
-					handleClose={this.hideModal}
-					message={this.state.message}
+				<CustomSnackBar
+					show={snackbar.show}
+					message={snackbar.msg}
+					snackBarType={snackbar.type}
+					handleSnackBar={this.handleSnackBar}
 				/>
 			</div>
 		);
