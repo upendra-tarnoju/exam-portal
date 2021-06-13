@@ -7,6 +7,7 @@ const statusEnum = [
 	APP_CONSTANTS.ASSIGNED_EXAM_STATUS.ACTIVE,
 	APP_CONSTANTS.ASSIGNED_EXAM_STATUS.BLOCKED,
 	APP_CONSTANTS.ASSIGNED_EXAM_STATUS.DELETED,
+	APP_CONSTANTS.ASSIGNED_EXAM_STATUS.SUBMITTED,
 ];
 
 const assignExam = new Schema({
@@ -16,6 +17,7 @@ const assignExam = new Schema({
 	status: { type: String, enum: statusEnum, default: statusEnum[0] },
 	createdDate: { type: Number, default: Date.now },
 	modifiedDate: { type: Number, default: Date.now },
+	marksObtained: { type: Number, default: 0 },
 });
 
 module.exports = mongoose.model('assignexam', assignExam);

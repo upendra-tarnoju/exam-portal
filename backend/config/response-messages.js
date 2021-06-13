@@ -136,6 +136,24 @@ module.exports = {
 				MSG: 'Wrong exam credentials',
 			},
 		},
+		EXAM_QUESTION: {
+			INVALID_EXAM_ID: {
+				STATUS_CODE: 400,
+				MSG: 'Invalid exam key',
+			},
+			BLOCKED_EXAM: {
+				STATUS_CODE: 200,
+				MSG: 'You are not allowed to give this exam',
+			},
+			SUCCESS: {
+				STATUS_CODE: 200,
+				MSG: 'Answer saved successfully',
+			},
+			SUBMITTED: {
+				STATUS_CODE: 200,
+				MSG: 'Exam have been submitted successfully',
+			},
+		},
 	},
 	QUESTION: {
 		CREATE: {

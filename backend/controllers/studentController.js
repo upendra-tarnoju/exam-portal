@@ -68,30 +68,45 @@ const student = {
 	},
 
 	getParticularExamQuestion: async (req, res) => {
-		let pageIndex = parseInt(req.query.pageIndex, 10);
-		let examId = req.params.examId;
-		let userId = req.user._id;
-		let response = await studentHandler.getExamQuestions(
-			pageIndex,
-			examId,
-			userId
-		);
-		res.status(response.status).send(response.data);
+		try {
+			let payload = { ...req.query, ...req.params };
+			let userDetails = req.user;
+
+			let responseData = await studentHandler.getExamQuestions(
+				payload,
+				userDetails
+			);
+
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
 	},
 
 	saveExamQuestionAnswer: async (req, res) => {
-		let questionDetails = req.body;
+		try {
+			let payload = req.body;
+			let userDetails = req.user;
+			let responseData = await studentHandler.saveExamQuestionAnswer(
+				payload,
+				userDetails
+			);
 
-		questionDetails['studentId'] = req.user._id;
-		let response = await studentHandler.saveExamQuestionAnswer(questionDetails);
-		res.status(200).send();
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
 	},
 
 	submitExam: async (req, res) => {
-		let examId = req.params.examId;
-		let studentId = req.user.id;
-		let response = await studentHandler.submitExam(examId, studentId);
-		res.status(200).send();
+		try {
+			let payload = req.params;
+			let userDetails = req.user;
+			let responseData = await studentHandler.submitExam(payload, userDetails);
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
 	},
 
 	getAllStudentsList: async (req, res) => {

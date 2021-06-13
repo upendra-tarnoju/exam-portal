@@ -31,7 +31,7 @@ module.exports = () => {
 	);
 
 	router.put(
-		'/exam/:examId',
+		'/exam/:examId/submit',
 		passport.authenticate('jwt'),
 		studentController.submitExam
 	);

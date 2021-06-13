@@ -54,6 +54,11 @@ const appDefaults = {
 		BLOCKED: 'BLOCKED',
 		DELETED: 'DELETED',
 		ACTIVE: 'ACTIVE',
+		SUBMITTED: 'SUBMITTED',
+	},
+	OPTION_TYPE: {
+		SINGLE: 'single',
+		MULTIPLE: 'multiple',
 	},
 };
 
