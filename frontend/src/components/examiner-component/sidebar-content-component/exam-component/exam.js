@@ -31,6 +31,7 @@ import ExamService from '../../../../services/examApi';
 import DeleteModal from '../../../../modals/deleteModal';
 import CustomSnackBar from '../../../customSnackbar';
 import SearchExamForm from '../../../../forms/exam-form/searchExamForm';
+import factories from '../../../../factories/factories';
 
 const StyledTableCell = withStyles((theme) => ({
 	head: {
@@ -119,17 +120,15 @@ class Exam extends Component {
 		});
 	};
 
-	addNewQuestion = (examId, examDate) => {
-		let currentDate = new Date();
-		currentDate = Date.parse(currentDate);
+	addNewQuestion = (examId, examDate, startTime) => {
+		let status = factories.verifyExamExpiry(examDate, startTime);
 
-		let boolStatus;
-		if (examDate >= currentDate) boolStatus = false;
-		else boolStatus = true;
-
-		if (!boolStatus) {
+		if (status) {
 			this.props.history.push(`/examiner/exam/${examId}/question/new`);
-		} else console.log('some error');
+		} else {
+			let msg = 'You cannot add question to expired exam';
+			this.handleSnackBar(true, msg, 'error');
+		}
 	};
 
 	viewQuestions = (examId) => {
@@ -144,11 +143,21 @@ class Exam extends Component {
 		this.setState({ deleteModal: { show: show, id: examId } });
 	};
 
-	updateExam = (examId) => {
-		this.props.history.push({ pathname: `/examiner/exam/${examId}` });
+	updateExam = (examId, examDate, startTime) => {
+		let status = factories.verifyExamExpiry(examDate, startTime);
+
+		if (status) {
+			this.props.history.push({ pathname: `/examiner/exam/${examId}` });
+		} else {
+			let msg = 'You cannot update expired exam';
+			this.handleSnackBar(true, msg, 'error');
+		}
 	};
 
 	handleSnackBar = (status, msg, type) => {
+		let { snackbar } = this.state;
+
+		if (type === undefined) type = snackbar.type;
 		this.setState({ snackbar: { show: status, msg: msg, type: type } });
 	};
 
@@ -238,7 +247,13 @@ class Exam extends Component {
 											<BootstrapTooltip title='Update exam'>
 												<IconButton
 													size='small'
-													onClick={() => this.updateExam(exam._id)}
+													onClick={() =>
+														this.updateExam(
+															exam._id,
+															exam.examDate,
+															exam.startTime
+														)
+													}
 												>
 													<Edit size='small' />
 												</IconButton>
@@ -247,7 +262,11 @@ class Exam extends Component {
 												<IconButton
 													size='small'
 													onClick={() =>
-														this.addNewQuestion(exam._id, exam.examDate)
+														this.addNewQuestion(
+															exam._id,
+															exam.examDate,
+															exam.startTime
+														)
 													}
 												>
 													<Add size='small' />
