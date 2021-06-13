@@ -11,8 +11,10 @@ const Schema = require('../schemas');
 const { factories } = require('../factories');
 
 const admin = {
-	getExaminerDetails: async (pageIndex, pageSize) => {
+	getExaminerDetails: async (payload) => {
 		try {
+			let pageIndex = parseInt(payload.pageIndex, 10);
+			let pageSize = parseInt(payload.pageSize, 10);
 			pageIndex = pageIndex * pageSize;
 
 			let options = { lean: true };
@@ -24,34 +26,8 @@ const admin = {
 				{ $limit: pageSize },
 				{
 					$project: {
-						firstName: {
-							$concat: [
-								{ $toUpper: { $substrCP: ['$firstName', 0, 1] } },
-								{
-									$substrCP: [
-										'$firstName',
-										1,
-										{
-											$subtract: [{ $strLenCP: '$firstName' }, 1],
-										},
-									],
-								},
-							],
-						},
-						lastName: {
-							$concat: [
-								{ $toUpper: { $substrCP: ['$lastName', 0, 1] } },
-								{
-									$substrCP: [
-										'$lastName',
-										1,
-										{
-											$subtract: [{ $strLenCP: '$lastName' }, 1],
-										},
-									],
-								},
-							],
-						},
+						firstName: 1,
+						lastName: 1,
 						email: 1,
 						status: 1,
 						createdDate: 1,
@@ -69,7 +45,10 @@ const admin = {
 
 			let count = await queries.countDocuments(Schema.users, conditions);
 
-			return { status: 200, data: { examinerDetails, count: count } };
+			return {
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { examinerDetails, count },
+			};
 		} catch (err) {
 			throw err;
 		}

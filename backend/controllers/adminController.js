@@ -13,16 +13,12 @@ const admin = {
 
 	getExaminerDetails: async (req, res) => {
 		try {
-			let { pageIndex, pageSize } = req.query;
-			pageIndex = parseInt(pageIndex);
-			pageSize = parseInt(pageSize);
-			pageIndex = pageIndex * pageSize;
+			let payload = req.query;
 
-			let response = await adminHandler.getExaminerDetails(pageIndex, pageSize);
-
-			res.status(response.status).send(response.data);
+			let responseData = await adminHandler.getExaminerDetails(payload);
+			responseManager.sendSuccessResponse(responseData, res);
 		} catch (err) {
-			throw err;
+			responseManager.sendErrorResponse(err, res);
 		}
 	},
 
@@ -31,7 +27,7 @@ const admin = {
 			let payload = req.body;
 
 			let response = await adminHandler.approveOrDeclineExaminer(payload);
-			res.status(response.status).send(response.data);
+			responseManager.sendSuccessResponse(responseData, res);
 		} catch (err) {
 			throw err;
 		}
