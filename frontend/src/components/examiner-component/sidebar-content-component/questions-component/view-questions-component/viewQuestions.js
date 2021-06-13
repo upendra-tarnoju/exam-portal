@@ -13,6 +13,7 @@ import styles from '../question.module.css';
 import DeleteModal from '../../../../../modals/deleteModal';
 import QuestionCard from './questionCard';
 import CustomSnackBar from '../../../../customSnackbar';
+import factories from '../../../../../factories/factories';
 
 class ViewQuestions extends React.Component {
 	constructor() {
@@ -22,6 +23,9 @@ class ViewQuestions extends React.Component {
 			questionList: [],
 			questionCount: 0,
 			totalMarks: 0,
+			examDate: '',
+			startTime: '',
+			status: false,
 			deleteModal: { show: false, id: '' },
 			snackbar: { show: false, msg: '', type: '' },
 		};
@@ -30,19 +34,36 @@ class ViewQuestions extends React.Component {
 	componentDidMount() {
 		let examId = this.props.match.params.examId;
 		this.questionService.getAll(examId).then((response) => {
+			let data = response.data;
+			let status = factories.verifyExamExpiry(
+				data.examDetails.examDate,
+				data.examDetails.startTime
+			);
+
 			this.setState({
-				questionList: response.data.questions,
-				questionCount: response.data.count,
-				totalMarks: response.data.examDetails.totalMarks,
+				questionList: data.questions,
+				questionCount: data.count,
+				totalMarks: data.examDetails.totalMarks,
+				status: status,
 			});
 		});
 	}
 
 	handleDeleteDialog = (show, id) => {
-		this.setState({ deleteModal: { show: show, id: id } });
+		let { examDate, startTime, status } = this.state;
+
+		if (status) {
+			this.setState({ deleteModal: { show: show, id: id } });
+		} else {
+			let msg = 'You cannot delete question from expired exam';
+			this.handleSnackBar(true, msg, 'error');
+		}
 	};
 
 	handleSnackBar = (status, msg, type) => {
+		let { snackbar } = this.state;
+
+		if (type === undefined) type = snackbar.type;
 		this.setState({ snackbar: { show: status, msg: msg, type: type } });
 	};
 
@@ -89,8 +110,18 @@ class ViewQuestions extends React.Component {
 	};
 
 	editQuestion = (questionId) => {
+		let { status } = this.state;
+
 		let examId = this.props.match.params.examId;
-		this.props.history.push(`/examiner/exam/${examId}/question/${questionId}`);
+
+		if (status) {
+			this.props.history.push(
+				`/examiner/exam/${examId}/question/${questionId}`
+			);
+		} else {
+			let msg = 'You cannot edit question from expired exam';
+			this.handleSnackBar(true, msg, 'error');
+		}
 	};
 
 	noQuestionsCard = () => (
@@ -116,7 +147,7 @@ class ViewQuestions extends React.Component {
 		</Card>
 	);
 	render() {
-		let { questionCount, totalMarks, snackbar } = this.state;
+		let { questionCount, totalMarks, snackbar, status } = this.state;
 		let questions = this.state.questionList.map((data, index) => {
 			return (
 				<QuestionCard
@@ -126,6 +157,7 @@ class ViewQuestions extends React.Component {
 					handleDeleteDialog={this.handleDeleteDialog}
 					handleQuestionStatus={this.handleQuestionStatus}
 					editQuestion={this.editQuestion}
+					status={status}
 				/>
 			);
 		});

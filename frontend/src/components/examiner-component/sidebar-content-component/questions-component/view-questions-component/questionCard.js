@@ -99,6 +99,7 @@ const QuestionCard = (props) => {
 								<Grid item>Inactive</Grid>
 								<Grid item>
 									<AntSwitch
+										disabled={!props.status}
 										checked={questionDetails.status === 'ACTIVE'}
 										name='checkedC'
 										onChange={(event) =>
