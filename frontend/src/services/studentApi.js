@@ -12,7 +12,7 @@ class StudentService {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'get',
-			url: `${process.env.REACT_APP_BASE_URL}/${this.STUDENT_URL}/exam`,
+			url: `${process.env.REACT_APP_BASE_URL}/${this.STUDENT_URL}/examList`,
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,

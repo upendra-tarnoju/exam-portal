@@ -61,15 +61,15 @@ const ExamCard = (props) => {
 				className='p-3'
 			>
 				<Avatar className={`${styles.avatar} mx-auto shadow ${classes.avatar}`}>
-					{props.exam.subject[0]}
+					{props.exam.examDetails.subject[0].toUpperCase()}
 				</Avatar>
 			</div>
 			<div className='p-3'>
 				<p className={`mb-0 text-center font-weight-bold ${styles.subject}`}>
-					{props.exam.subject}
+					{props.exam.examDetails.subject}
 				</p>
 				<p className={`mb-0 text-center ${styles.course}`}>
-					{props.exam.course}
+					{props.exam.examDetails.course.courseId.name}
 				</p>
 				<div className='row mt-2'>
 					<div className='col-md-6'>
@@ -80,7 +80,7 @@ const ExamCard = (props) => {
 								Total marks
 							</div>
 							<div className={`text-white ${styles.paperContent}`}>
-								{props.exam.totalMarks}
+								{props.exam.examDetails.totalMarks}
 							</div>
 						</Paper>
 					</div>
@@ -92,7 +92,9 @@ const ExamCard = (props) => {
 								Negative marks
 							</div>
 							<div className={`text-white ${styles.paperContent}`}>
-								{props.exam.negativeMarks ? props.exam.negativeMarks : 0}
+								{props.exam.examDetails.negativeMarks
+									? props.exam.examDetails.negativeMarks
+									: 0}
 							</div>
 						</Paper>
 					</div>
@@ -132,7 +134,7 @@ const ExamCard = (props) => {
 							/>
 						);
 				}}
-				date={props.exam.startTime}
+				date={props.exam.examDetails.startTime}
 			/>
 		</Card>
 	);

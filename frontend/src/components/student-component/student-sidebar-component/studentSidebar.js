@@ -1,12 +1,62 @@
-import React from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import {
+	Drawer,
+	List,
+	ListItem,
+	ListItemIcon,
+	ListItemText,
+	IconButton,
+} from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
+import { ChevronLeft, MenuBook } from '@material-ui/icons';
 
-class StudentSidebar extends React.Component {
+import UserService from '../../../services/userApi';
+import * as ActionType from '../../../action';
+
+const useStyles = (theme) => ({
+	drawer: {
+		width: '240px',
+		flexShrink: 0,
+		whiteSpace: 'nowrap',
+	},
+	drawerOpen: {
+		width: '240px',
+		transition: theme.transitions.create('width', {
+			easing: theme.transitions.easing.sharp,
+			duration: theme.transitions.duration.enteringScreen,
+		}),
+	},
+	drawerClose: {
+		transition: theme.transitions.create('width', {
+			easing: theme.transitions.easing.sharp,
+			duration: theme.transitions.duration.leavingScreen,
+		}),
+		overflowX: 'hidden',
+		width: theme.spacing(7) + 1,
+		[theme.breakpoints.up('sm')]: {
+			width: theme.spacing(9) + 1,
+		},
+	},
+	toolbar: {
+		...theme.mixins.toolbar,
+	},
+	closeButton: {
+		display: 'flex',
+		justifyContent: 'flex-end',
+		marginTop: '10px',
+	},
+});
+
+class StudentSidebar extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			selectedTab: '',
 		};
+		this.userService = new UserService();
 	}
 
 	componentDidMount() {
@@ -19,44 +69,75 @@ class StudentSidebar extends React.Component {
 	}
 
 	render() {
+		let { classes, toggle } = this.props;
+		let { selectedTab } = this.state;
+
 		return (
-			<div className='bg-dark' id='sidebar-wrapper'>
-				<div className='text-center pt-4'>
-					<img
-						alt='logo'
-						src={require('../../../assets/logo.png')}
-						className='logo'
-					/>
-					<h4 className='text-center text-light font-weight-normal'>
-						Examin
-					</h4>
+			<Drawer
+				variant='persistent'
+				anchor='left'
+				open={this.props.toggle}
+				className={clsx(classes.drawer, {
+					[classes.drawerOpen]: toggle,
+					[classes.drawerClose]: !toggle,
+				})}
+				classes={{
+					paper: clsx({
+						[classes.drawerOpen]: toggle,
+						[classes.drawerClose]: !toggle,
+					}),
+				}}
+			>
+				<div className={classes.toolbar}>
+					<div className={classes.closeButton}>
+						<IconButton
+							onClick={() => {
+								this.props.setSidebar(!toggle);
+							}}
+						>
+							<ChevronLeft />
+						</IconButton>
+					</div>
+					<List>
+						<ListItem
+							button
+							component='a'
+							href='/student/exam'
+							selected={selectedTab === 'exam'}
+						>
+							<ListItemIcon>
+								<MenuBook />
+							</ListItemIcon>
+							<ListItemText primary='Exam' />
+						</ListItem>
+					</List>
 				</div>
-				<div className='list-group list-group-flush'>
-					<Link
-						to='/student/exam'
-						className={`list-group-item list-group-item-action bg-dark adminIcon ${
-							this.state.selectedTab === 'exam'
-								? 'text-white'
-								: 'text-white-50'
-						}`}
-					>
-						<i className='fa fa-book'></i> Exam
-					</Link>
-					<a
-						href='/login'
-						onClick={() => {
-							this.userService.removeCookie();
-							this.props.setAuthenticatedUser(false);
-							this.props.history.push('/login');
-						}}
-						className='list-group-item cursor-pointer list-group-item-action bg-dark text-white-50'
-					>
-						<i className='fa fa-sign-out'></i> Sign Out
-					</a>
-				</div>
-			</div>
+			</Drawer>
 		);
 	}
 }
 
-export default withRouter(StudentSidebar);
+const mapStateToProps = (state) => {
+	return {
+		toggle: state.adminReducer.sidebarToggle,
+		name: state.adminReducer.name,
+	};
+};
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		setSidebar: (toggle) => {
+			dispatch({
+				type: ActionType.COLLAPSE_SIDEBAR,
+				toggle: toggle,
+			});
+		},
+	};
+};
+
+export default withRouter(
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)(withStyles(useStyles)(StudentSidebar))
+);
