@@ -19,6 +19,7 @@ import {
 import { CheckBox, DeleteOutline } from '@material-ui/icons';
 
 import AdminService from '../../../../services/adminApi';
+import factories from '../../../../factories/factories';
 import CustomSnackBar from '../../../customSnackbar';
 
 const StyledTableCell = withStyles((theme) => ({
@@ -140,7 +141,8 @@ class ViewSubAdmin extends React.Component {
 											{index + 1}
 										</StyledTableCell>
 										<StyledTableCell>
-											{subAdmin.firstName} {subAdmin.lastName}
+											{factories.capitalizeName(subAdmin.firstName)}{' '}
+											{factories.capitalizeName(subAdmin.lastName)}
 										</StyledTableCell>
 										<StyledTableCell>{subAdmin.email}</StyledTableCell>
 										<StyledTableCell>{subAdmin.mobileNumber}</StyledTableCell>

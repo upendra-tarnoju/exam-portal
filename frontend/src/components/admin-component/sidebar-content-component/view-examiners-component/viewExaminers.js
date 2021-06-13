@@ -22,6 +22,7 @@ import Moment from 'react-moment';
 import AdminService from '../../../../services/adminApi';
 import ApproveDeclineModal from '../../../../modals/approveDeclineModal';
 import Snackbar from '../../../customSnackbar';
+import factories from '../../../../factories/factories';
 
 const StyledTableCell = withStyles((theme) => ({
 	head: {
@@ -177,8 +178,12 @@ class ViewExaminer extends React.Component {
 									<StyledTableCell component='th' scope='row'>
 										{index + 1}
 									</StyledTableCell>
-									<StyledTableCell>{examiner.firstName}</StyledTableCell>
-									<StyledTableCell>{examiner.lastName}</StyledTableCell>
+									<StyledTableCell>
+										{factories.capitalizeName(examiner.firstName)}
+									</StyledTableCell>
+									<StyledTableCell>
+										{factories.capitalizeName(examiner.lastName)}
+									</StyledTableCell>
 									<StyledTableCell>{examiner.email}</StyledTableCell>
 									<StyledTableCell>
 										<Moment format='MMM Do, YYYY (hh:mm A)'>
