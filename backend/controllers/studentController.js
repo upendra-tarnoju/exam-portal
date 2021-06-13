@@ -56,11 +56,16 @@ const student = {
 	},
 
 	getParticularStudentExamDetails: async (req, res) => {
-		let studentId = req.user._id;
-		let response = await studentHandler.getParticularStudentExamDetails(
-			studentId
-		);
-		res.status(response.status).send(response.data);
+		try {
+			// let studentId = req.user._id;
+			let userDetails = req.user;
+			let responseData = await studentHandler.getParticularStudentExamDetails(
+				userDetails
+			);
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
 	},
 
 	getParticularExamQuestion: async (req, res) => {

@@ -1,7 +1,8 @@
 let csv = require('csvtojson');
 const mongoose = require('mongoose');
+const moment = require('moment');
 
-let { student, users, exam, course, question, answer } = require('../models');
+let { student, exam, question, answer } = require('../models');
 const { queries } = require('../db');
 const Schema = require('../schemas');
 const { factories } = require('../factories');
@@ -254,77 +255,89 @@ const students = {
 		}
 	},
 
-	uploadStudentFile: async (filePath, examId, examinerId) => {
-		let csvData = await csv().fromFile(filePath);
-		let existingStudent;
-		for (let i = 0; i < csvData.length; i++) {
-			let studentData = csvData[i];
-			studentData.accountType = 'student';
-			studentData.examinerId = examinerId;
-			let existingUser = await users.findByEmailAndMobileNumber(studentData);
-			studentData.password = factories.generateHashedPassword(
-				studentData.password
-			);
-			if (existingUser) {
-				existingStudent = await student.findByStudentId(
-					existingUser.userDataId,
-					studentData
-				);
-				if (!existingStudent) {
-					await student.updateExam(existingUser.userDataId, { examId });
-				}
-			} else {
-				let userData = await users.create(studentData);
-				studentData.userId = userData._id;
-				let newStudent = await student.create(studentData);
-				await users.update(userData._id, { userDataId: newStudent._id });
-				await student.updateExam(newStudent._id, {
-					examId,
-				});
-			}
-		}
-	},
+	getParticularStudentExamDetails: async (userDetails) => {
+		try {
+			let upcomingExams = [];
+			let todayExams = [];
+			let conductedExams = [];
 
-	getParticularStudentExamDetails: async (studentId) => {
-		let examList = [];
-		let upcomingExams = [];
-		let todayExams = [];
-		let conductedExams = [];
-		let userData = await users.findParticularUserExam(studentId);
-		let examData = userData[0].examData.exam;
-		for (let i = 0; i < examData.length; i++) {
-			let examId = examData[i].examId;
-			let examDetail = await exam.getByExamId(examId).select({
-				examCode: 1,
-				subject: 1,
-				course: 1,
-				totalMarks: 1,
-				negativeMarks: 1,
-				examDate: 1,
-				startTime: 1,
-			});
+			let startOfMonth = moment().startOf('month').valueOf();
+			let endOfMonth = moment().endOf('month').valueOf();
 
-			let comparedDate = factories.compareExamDate(
-				examDetail.examDate,
-				examDetail.startTime
+			let aggregateArray = [
+				{ $match: { studentId: userDetails._id } },
+				{
+					$lookup: {
+						from: 'exams',
+						let: { examId: '$examId' },
+						pipeline: [
+							{
+								$match: {
+									$expr: {
+										$and: [
+											{ $eq: ['$_id', '$$examId'] },
+											{ $gte: ['$examDate', startOfMonth] },
+											{ $lte: ['$examDate', endOfMonth] },
+										],
+									},
+								},
+							},
+						],
+						as: 'examDetails',
+					},
+				},
+				{ $unwind: '$examDetails' },
+				{
+					$project: {
+						status: 1,
+						'examDetails.examDate': 1,
+						'examDetails.course': 1,
+						'examDetails.subject': 1,
+						'examDetails.totalMarks': 1,
+						'examDetails.negativeMarks': 1,
+						'examDetails.startTime': 1,
+					},
+				},
+			];
+
+			let populateOptions = [
+				{
+					path: 'examDetails.course',
+					populate: {
+						path: 'courseId',
+						select: 'name',
+						model: 'defaultCourse',
+					},
+					select: '_id courseId',
+					model: 'examinerCourses',
+				},
+			];
+
+			let userExamDetails = await queries.aggregateDataWithPopulate(
+				Schema.assignExam,
+				aggregateArray,
+				populateOptions
 			);
-			let courseDetails = await course
-				.findById(examDetail.course)
-				.select({ name: 1 });
-			examDetail.course = courseDetails.name;
-			examList.push(examDetail);
-			if (comparedDate === 'after') {
-				upcomingExams.push(examDetail);
-			} else if (comparedDate === 'before') {
-				conductedExams.push(examDetail);
-			} else {
-				todayExams.push(examDetail);
+
+			let startOfDay = moment().startOf('day').valueOf();
+			let endOfDay = moment().endOf('day').valueOf();
+
+			for (let [index, details] of Object.entries(userExamDetails)) {
+				let examDate = details.examDetails.examDate;
+				if (examDate >= startOfDay && examDate <= endOfDay) {
+					todayExams.push(details);
+				} else if (examDate <= startOfDay) {
+					conductedExams.push(details);
+				} else upcomingExams.push(details);
 			}
+
+			return {
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { todayExams, conductedExams, upcomingExams },
+			};
+		} catch (err) {
+			throw err;
 		}
-		return {
-			status: 200,
-			data: { todayExams, conductedExams, upcomingExams },
-		};
 	},
 
 	getExamQuestions: async (pageIndex, examId, userId) => {

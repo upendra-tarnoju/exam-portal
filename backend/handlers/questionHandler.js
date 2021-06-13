@@ -33,73 +33,80 @@ const questions = {
 				options
 			);
 
-			if (
-				questionData[0].examMarks + parseInt(questionDetails.questionMark) >
-				examData.totalMarks
-			) {
-				return {
-					status:
-						RESPONSE_MESSAGES.QUESTION.CREATE.TOTAL_MARKS_LIMIT.STATUS_CODE,
-					data: {
-						msg: RESPONSE_MESSAGES.QUESTION.CREATE.TOTAL_MARKS_LIMIT.MSG,
-					},
-				};
-			} else {
-				options = JSON.parse(questionDetails.optionsList);
-				let optionList = [];
-				let answerList = [];
+			options = JSON.parse(questionDetails.optionsList);
+			let optionList = [];
+			let answerList = [];
 
-				for (let [key, obj] of Object.entries(options)) {
-					if (obj.answer) answerList.push(key);
-					optionList.push({ key: key, value: obj.value });
-				}
-
-				let questionObject = {
-					examId: questionDetails.examId,
-					question: questionDetails.question,
-					description: questionDetails.description
-						? questionDetails.description
-						: null,
-					questionMark: questionDetails.questionMark,
-					optionType: questionDetails.optionType,
-					image: imageDetails ? imageDetails.id : null,
-					examinerId: userDetails._id,
-					correctAnswer: answerList,
-					options: optionList,
-					status: APP_CONSTANTS.QUESTION_STATUS.ACTIVE,
-				};
-				await queries.create(Schema.question, questionObject);
-
-				let toUpdate;
-
-				if (
-					questionData[0].examMarks + parseInt(questionDetails.questionMark) ===
-					examData.totalMarks
-				) {
-					toUpdate = {
-						$set: {
-							status: APP_CONSTANTS.EXAM_STATUS.ACTIVE,
-							updatedDate: new Date(),
-						},
-					};
-				} else if (
-					questionData[0].examMarks + parseInt(questionDetails.questionMark) <
-					examData.totalMarks
-				) {
-					toUpdate = {
-						$set: {
-							status: APP_CONSTANTS.EXAM_STATUS.INCOMPLETE_QUESTIONS,
-							updatedDate: new Date(),
-						},
-					};
-				}
-
-				await queries.findAndUpdate(Schema.exam, conditions, toUpdate);
-				return {
-					status: RESPONSE_MESSAGES.QUESTION.CREATE.SUCCESS.STATUS_CODE,
-					data: { msg: RESPONSE_MESSAGES.QUESTION.CREATE.SUCCESS.MSG },
-				};
+			for (let [key, obj] of Object.entries(options)) {
+				if (obj.answer) answerList.push(key);
+				optionList.push({ key: key, value: obj.value });
 			}
+
+			let questionObject = {
+				examId: questionDetails.examId,
+				question: questionDetails.question,
+				description: questionDetails.description
+					? questionDetails.description
+					: null,
+				questionMark: questionDetails.questionMark,
+				optionType: questionDetails.optionType,
+				image: imageDetails ? imageDetails.id : null,
+				examinerId: userDetails._id,
+				correctAnswer: answerList,
+				options: optionList,
+				status: APP_CONSTANTS.QUESTION_STATUS.ACTIVE,
+			};
+
+			if (questionData.length !== 0) {
+				if (
+					questionData[0].examMarks + parseInt(questionDetails.questionMark) >
+					examData.totalMarks
+				) {
+					return {
+						status:
+							RESPONSE_MESSAGES.QUESTION.CREATE.TOTAL_MARKS_LIMIT.STATUS_CODE,
+						data: {
+							msg: RESPONSE_MESSAGES.QUESTION.CREATE.TOTAL_MARKS_LIMIT.MSG,
+						},
+					};
+				} else {
+					await queries.create(Schema.question, questionObject);
+
+					let toUpdate;
+
+					if (
+						questionData[0].examMarks +
+							parseInt(questionDetails.questionMark) ===
+						examData.totalMarks
+					) {
+						toUpdate = {
+							$set: {
+								status: APP_CONSTANTS.EXAM_STATUS.ACTIVE,
+								updatedDate: new Date(),
+							},
+						};
+					} else if (
+						questionData[0].examMarks + parseInt(questionDetails.questionMark) <
+						examData.totalMarks
+					) {
+						toUpdate = {
+							$set: {
+								status: APP_CONSTANTS.EXAM_STATUS.INCOMPLETE_QUESTIONS,
+								updatedDate: new Date(),
+							},
+						};
+					}
+
+					await queries.findAndUpdate(Schema.exam, conditions, toUpdate);
+				}
+			} else {
+				await queries.create(Schema.question, questionObject);
+			}
+
+			return {
+				status: RESPONSE_MESSAGES.QUESTION.CREATE.SUCCESS.STATUS_CODE,
+				data: { msg: RESPONSE_MESSAGES.QUESTION.CREATE.SUCCESS.MSG },
+			};
 		} catch (err) {
 			throw err;
 		}

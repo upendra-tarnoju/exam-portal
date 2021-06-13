@@ -1,5 +1,6 @@
 const express = require('express');
 const passport = require('passport');
+
 const { studentController, examController } = require('../controllers');
 
 module.exports = () => {
@@ -12,7 +13,7 @@ module.exports = () => {
 	);
 
 	router.get(
-		'/exam',
+		'/examList',
 		passport.authenticate('jwt'),
 		studentController.getParticularStudentExamDetails
 	);
