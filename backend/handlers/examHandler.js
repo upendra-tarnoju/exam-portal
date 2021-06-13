@@ -283,23 +283,53 @@ const exams = {
 		}
 	},
 
-	validateExamKey: async (examId, examKey) => {
-		let examDetails = await exam.getByExamId(examId).select({
-			course: 0,
-			examCode: 0,
-			examinerId: 0,
-			examDate: 0,
-			createdAt: 0,
-		});
-		let validatedPassword = factories.compareHashedPassword(
-			examKey,
-			examDetails.password
-		);
-		if (validatedPassword) {
-			delete examDetails['password'];
-			return { status: 200, examDetails };
-		} else {
-			return { status: 401, msg: 'Incorrect exam key' };
+	validateExamKey: async (payload) => {
+		try {
+			let query = { _id: mongoose.Types.ObjectId(payload.examId) };
+			let projections = {
+				password: 1,
+				totalMarks: 1,
+				negativeMarks: 1,
+				subject: 1,
+				duration: 1,
+				startTime: 1,
+				endTime: 1,
+			};
+			let options = { lean: true };
+
+			let examDetails = await queries.findOne(
+				Schema.exam,
+				query,
+				projections,
+				options
+			);
+
+			if (examDetails) {
+				let validatedPassword = factories.compareHashedPassword(
+					payload.password,
+					examDetails.password
+				);
+
+				if (validatedPassword) {
+					delete examDetails['password'];
+					return {
+						response: { STATUS_CODE: 200, MSG: '' },
+						finalData: { examDetails },
+					};
+				} else {
+					return {
+						response: RESPONSE_MESSAGES.EXAM.EXAM_PASSWORD.INVALID_PASSWORD,
+						finalData: {},
+					};
+				}
+			} else {
+				return {
+					response: RESPONSE_MESSAGES.EXAM.EXAM_PASSWORD.INVALID_EXAM_ID,
+					finalData: {},
+				};
+			}
+		} catch (err) {
+			throw err;
 		}
 	},
 

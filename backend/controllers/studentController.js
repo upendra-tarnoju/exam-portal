@@ -57,7 +57,6 @@ const student = {
 
 	getParticularStudentExamDetails: async (req, res) => {
 		try {
-			// let studentId = req.user._id;
 			let userDetails = req.user;
 			let responseData = await studentHandler.getParticularStudentExamDetails(
 				userDetails

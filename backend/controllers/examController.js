@@ -60,12 +60,14 @@ const exam = {
 	},
 
 	validateExamKey: async (req, res) => {
-		let examKey = req.query.key;
-		let examId = req.params.examId;
-		let response = await examHandler.validateExamKey(examId, examKey);
-		res
-			.status(response.status)
-			.send({ msg: response.msg, examDetails: response.examDetails });
+		try {
+			let payload = req.body;
+			let responseData = await examHandler.validateExamKey(payload);
+
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
 	},
 
 	getSpecificExamQuestionDetails: async (req, res) => {

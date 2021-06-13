@@ -6,8 +6,8 @@ const { studentController, examController } = require('../controllers');
 module.exports = () => {
 	const router = express.Router();
 
-	router.get(
-		'/exam/:examId',
+	router.post(
+		'/exam/validateKey',
 		passport.authenticate('jwt'),
 		examController.validateExamKey
 	);

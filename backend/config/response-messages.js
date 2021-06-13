@@ -126,6 +126,16 @@ module.exports = {
 				MSG: 'Incorrect current password',
 			},
 		},
+		EXAM_PASSWORD: {
+			INVALID_EXAM_ID: {
+				STATUS_CODE: 400,
+				MSG: 'Invalid exam id',
+			},
+			INVALID_PASSWORD: {
+				STATUS_CODE: 200,
+				MSG: 'Wrong exam credentials',
+			},
+		},
 	},
 	QUESTION: {
 		CREATE: {

@@ -290,6 +290,7 @@ const students = {
 				{
 					$project: {
 						status: 1,
+						'examDetails._id': 1,
 						'examDetails.examDate': 1,
 						'examDetails.course': 1,
 						'examDetails.subject': 1,
