@@ -20,12 +20,13 @@ class StudentService {
 		});
 	};
 
-	validateExamKey = (examId, examKey) => {
+	validateExamKey = (data) => {
 		let token = this.userService.getToken();
+
 		return axios({
-			method: 'get',
-			url: `${process.env.REACT_APP_BASE_URL}/${this.STUDENT_URL}/exam/${examId}`,
-			params: { key: examKey },
+			method: 'post',
+			url: `${process.env.REACT_APP_BASE_URL}/${this.STUDENT_URL}/exam/validateKey`,
+			data: data,
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,

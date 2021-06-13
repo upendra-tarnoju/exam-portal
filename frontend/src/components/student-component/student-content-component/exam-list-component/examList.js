@@ -1,9 +1,10 @@
 import React from 'react';
-import { Typography, Paper, Tabs, Tab, Box } from '@material-ui/core';
+import { Paper, Tabs, Tab, Box } from '@material-ui/core';
 
 import ExamCard from './examCard';
-import Examkey from './examKey';
 import StudentService from '../../../../services/studentApi';
+import ExamKeyModal from '../../../../modals/examKeyModal';
+import factories from '../../../../factories/factories';
 
 const TabPanel = (props) => {
 	const { children, value, index, ...other } = props;
@@ -16,11 +17,7 @@ const TabPanel = (props) => {
 			aria-labelledby={`simple-tab-${index}`}
 			{...other}
 		>
-			{value === index && (
-				<Box p={3}>
-					<Typography>{children}</Typography>
-				</Box>
-			)}
+			{value === index && <Box>{children}</Box>}
 		</div>
 	);
 };
@@ -42,7 +39,7 @@ class ExamList extends React.Component {
 			todayExamsList: [],
 			showModal: false,
 			selectedExam: '',
-			activeTab: 0,
+			activeTab: 1,
 		};
 		this.studentService = new StudentService();
 	}
@@ -70,6 +67,7 @@ class ExamList extends React.Component {
 	}
 
 	handleModal = (showModal, selectedExam) => {
+		console.log(showModal, selectedExam);
 		this.setState({ showModal, selectedExam });
 	};
 
@@ -77,12 +75,33 @@ class ExamList extends React.Component {
 		this.setState({ activeTab: value });
 	};
 
+	validateExamKey = (values) => {
+		let { selectedExam } = this.state;
+
+		this.studentService
+			.validateExamKey({ examId: selectedExam, password: values.password })
+			.then((res) => {
+				let data = res.data.examDetails;
+
+				this.props.history.push({
+					pathname: `/exam/${selectedExam}/guidelines`,
+					state: {
+						totalMarks: data.totalMarks,
+						negativeMarks: data.negativeMarks,
+						subject: data.subject,
+						duration: data.duration
+							? `${data.duration} min`
+							: factories.formatDuration(data.startTime, data.endTime),
+					},
+				});
+			});
+	};
+
 	render() {
 		let {
 			todayExamsList,
 			conductedExamsList,
 			upcomingExamsList,
-			selectedExam,
 			showModal,
 			activeTab,
 		} = this.state;
@@ -121,7 +140,9 @@ class ExamList extends React.Component {
 									<ExamCard
 										exam={exam}
 										type='today'
-										handleModal={this.handleModal}
+										handleModal={() =>
+											this.handleModal(true, exam.examDetails._id)
+										}
 									/>
 								</div>
 							))}
@@ -139,11 +160,10 @@ class ExamList extends React.Component {
 						</div>
 					))}
 				</TabPanel>
-				<Examkey
-					selectedExam={selectedExam}
-					open={showModal}
-					handleClose={this.handleModal}
-					{...this.props}
+				<ExamKeyModal
+					show={showModal}
+					hideModal={this.handleModal}
+					handleSubmit={this.validateExamKey}
 				/>
 			</div>
 		);
