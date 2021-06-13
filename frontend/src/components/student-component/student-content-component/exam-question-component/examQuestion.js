@@ -44,18 +44,18 @@ class ExamQuestion extends React.Component {
 
 	nextQuestion(pageIndex) {
 		let examId = this.props.match.params.examId;
+
 		this.studentService.getQuestionForExam(examId, pageIndex).then((res) => {
-			let questionData = res.data.questionDetails[0];
-			let totalQuestions = res.data.totalQuestions;
+			let questionData = res.data.questionDetails;
 			let multiOptValue = {};
 			questionData.options.forEach(
-				(option) => (multiOptValue[option.name] = false)
+				(option) => (multiOptValue[option.key] = false)
 			);
 			this.setState({
 				question: questionData.question,
 				options: questionData.options,
 				optionType: questionData.optionType,
-				totalQuestions,
+				totalQuestions: res.data.count,
 				pageIndex,
 				multiOptValue,
 				questionId: questionData._id,
@@ -81,6 +81,7 @@ class ExamQuestion extends React.Component {
 
 	handleOptionChange = (event) => {
 		if (this.state.optionType === 'single') {
+			console.log(event.target.value);
 			this.setState({ singleOptValue: event.target.value });
 		} else {
 			this.setState({
@@ -112,11 +113,13 @@ class ExamQuestion extends React.Component {
 
 	submitExam = () => {
 		let examId = this.props.match.params.examId;
-		this.studentService.submitExam(examId).then((res) => {});
+		this.studentService.submitExam(examId).then((res) => {
+			this.handleSubmitExamModal(true);
+		});
 	};
 
 	render() {
-		let { question, totalQuestions, pageIndex, singleOption } = this.state;
+		let { question, totalQuestions, pageIndex, singleOptValue } = this.state;
 		// const renderCountTime = ({ hours, minutes, seconds }) => {
 		// 	return (
 		// 		<span>
@@ -131,7 +134,7 @@ class ExamQuestion extends React.Component {
 					<div key={index} className='d-flex flex-row align-items-center'>
 						<p className='mr-2 mt-1 align-self-center'>{index + 1})</p>
 						<FormControlLabel
-							value={option.name}
+							value={option.key}
 							label={option.value}
 							control={<Radio />}
 						/>
@@ -225,7 +228,7 @@ class ExamQuestion extends React.Component {
 								{this.state.optionType === 'single' ? (
 									<RadioGroup
 										name='gender1'
-										value={singleOption}
+										value={singleOptValue}
 										onChange={this.handleOptionChange}
 									>
 										<SingleOption />
@@ -304,6 +307,7 @@ class ExamQuestion extends React.Component {
 						<SubmitExamModal
 							show={this.state.submitModal}
 							submitExam={this.submitExam}
+							handleModal={this.handleSubmitExamModal}
 						/>
 					</div>
 				</div>

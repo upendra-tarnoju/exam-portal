@@ -7,13 +7,15 @@ import ExamQuestion from '../student-component/student-content-component/exam-qu
 
 const Header = () => {
 	return (
-		<AppBar position='static'>
+		<AppBar position='static' className='bg-white'>
 			<Toolbar>
 				<Avatar alt='Examin logo' src={require('../../assets/logo.png')} />
-				<Typography variant='h6' className='pl-2 flex-grow-1'>
+				<Typography variant='h6' className='pl-2 flex-grow-1 text-dark'>
 					Examin
 				</Typography>
-				<Button color='inherit'>Signout</Button>
+				<Button color='inherit' className='text-dark'>
+					Signout
+				</Button>
 			</Toolbar>
 		</AppBar>
 	);
@@ -21,7 +23,7 @@ const Header = () => {
 
 const OnlineExam = (props) => {
 	return (
-		<div className='h-100'>
+		<div className='h-100 bgGrey'>
 			<Header />
 			<Switch>
 				<Route path='/exam/:examId/guidelines' component={ExamGuidelines} />

@@ -37,7 +37,7 @@ const ExamGuidelines = (props) => {
 		props.history.push(`/exam/${examId}/question`);
 	};
 	return (
-		<div className='container my-5'>
+		<div className='container py-5'>
 			<Card>
 				<CardContent>
 					<Typography variant='h5' className='text-center mb-2'>

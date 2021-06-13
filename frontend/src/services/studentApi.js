@@ -64,7 +64,7 @@ class StudentService {
 		let token = this.userService.getToken();
 		return axios({
 			method: 'put',
-			url: `${process.env.REACT_APP_BASE_URL}/${this.STUDENT_URL}/exam/${examId}`,
+			url: `${process.env.REACT_APP_BASE_URL}/${this.STUDENT_URL}/exam/${examId}/submit`,
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,
