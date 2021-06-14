@@ -43,8 +43,12 @@ let CourseForm = (props) => {
 	return (
 		<Formik
 			validationSchema={schema}
-			onSubmit={(values) => {
-				props.handleSubmit(values);
+			onSubmit={(values, formikProps) => {
+				if (values.name._id === '') {
+					formikProps.setFieldError('name', 'Course name is required');
+				} else {
+					props.handleSubmit(values);
+				}
 			}}
 			initialValues={{
 				name: props.course.name,
@@ -71,7 +75,6 @@ let CourseForm = (props) => {
 						}
 						loading={loading}
 						onChange={(e, course) => {
-							console.log(course);
 							formikProps.setFieldValue('name', course);
 						}}
 						value={formikProps.values.name || {}}
@@ -80,11 +83,11 @@ let CourseForm = (props) => {
 								{...params}
 								label='Name'
 								name='name'
-								helperText={formikProps.errors.name}
+								helperText={formikProps.touched.name && formikProps.errors.name}
 								placeholder='E.g. B.Tech, MBA'
 								variant='outlined'
 								autoComplete='new-password'
-								error={!!formikProps.errors.name}
+								error={formikProps.touched.name && !!formikProps.errors.name}
 								onBlur={formikProps.handleBlur}
 								inputProps={{
 									...params.inputProps,
@@ -102,8 +105,13 @@ let CourseForm = (props) => {
 						value={formikProps.values.description}
 						onChange={formikProps.handleChange}
 						onBlur={formikProps.handleBlur}
-						error={!!formikProps.errors.description}
-						helperText={formikProps.errors.description}
+						error={
+							formikProps.touched.description &&
+							!!formikProps.errors.description
+						}
+						helperText={
+							formikProps.touched.description && formikProps.errors.description
+						}
 					/>
 					<div className='d-flex justify-content-end'>
 						<Button type='submit' variant='contained' color='primary'>

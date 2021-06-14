@@ -22,7 +22,6 @@ const useStyles = (theme) => ({
 
 const CourseModal = (props) => {
 	const handleSubmit = (values) => {
-		console.log(values, props.course.name._id);
 		let courseService = new CourseService();
 
 		if (props.course.name._id === '') {
@@ -36,7 +35,10 @@ const CourseModal = (props) => {
 					props.handleSnackBar(true, res.data.msg, 'success');
 					props.viewCourses();
 				})
-				.catch((err) => {});
+				.catch((err) => {
+					props.closeModal(false, 'create');
+					props.handleSnackBar(true, err.response.data.msg, 'error');
+				});
 		} else {
 			courseService
 				.editCourse({
