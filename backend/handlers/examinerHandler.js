@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const { users, course, examiner } = require('../models');
 const { factories } = require('../factories');
 const Schemas = require('../schemas');
@@ -48,17 +50,20 @@ const examiners = {
 			let newCourse = {};
 			let query = {
 				$and: [
-					{ examinerId: userDetails.userId, courseId: courseDetails.courseId },
+					{ examinerId: mongoose.Types.ObjectId(userDetails._id) },
+					{ courseId: mongoose.Types.ObjectId(courseDetails.courseId) },
 				],
 			};
+			let projections = {};
 			let options = { lean: true };
 
 			let existingCourse = await queries.findOne(
 				Schemas.examinerCourses,
 				query,
-				{},
+				projections,
 				options
 			);
+
 			if (!existingCourse) {
 				newCourse.courseId = courseDetails.courseId;
 				newCourse.examinerId = userDetails._id.toString();
@@ -67,14 +72,13 @@ const examiners = {
 				await queries.create(Schemas.examinerCourses, courseDetails);
 
 				return {
-					status: RESPONSE_MESSAGES.COURSES.CREATE.SUCCESS.STATUS_CODE,
-					data: { msg: RESPONSE_MESSAGES.COURSES.CREATE.SUCCESS.MSG },
+					response: RESPONSE_MESSAGES.COURSES.CREATE.SUCCESS,
+					finalData: {},
 				};
 			} else {
 				return {
-					status:
-						RESPONSE_MESSAGES.COURSES.CREATE.DUPLICATE_RESOURCE.STATUS_CODE,
-					msg: RESPONSE_MESSAGES.COURSES.CREATE.DUPLICATE_RESOURCE.MSG,
+					response: RESPONSE_MESSAGES.COURSES.CREATE.DUPLICATE_RESOURCE,
+					finalData: {},
 				};
 			}
 		} catch (err) {

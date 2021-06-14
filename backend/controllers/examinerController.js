@@ -1,4 +1,5 @@
 const { examinerHandler } = require('../handlers');
+const { responseManager } = require('../lib');
 
 const examiner = {
 	updateExaminerDetails: async (req, res) => {
@@ -20,14 +21,14 @@ const examiner = {
 			let userDetails = req.user;
 			let courseDetails = req.body;
 
-			let response = await examinerHandler.createCourse(
+			let responseData = await examinerHandler.createCourse(
 				userDetails,
 				courseDetails
 			);
 
-			res.status(response.status).send(response.data);
+			responseManager.sendSuccessResponse(responseData, res);
 		} catch (err) {
-			throw err;
+			responseManager.sendErrorResponse(err, res);
 		}
 	},
 
