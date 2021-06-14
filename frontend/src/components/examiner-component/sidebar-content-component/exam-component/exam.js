@@ -7,15 +7,11 @@ import {
 	Paper,
 	Table,
 	TableBody,
-	TableCell,
 	TableContainer,
 	TableHead,
 	TableRow,
 	Typography,
 	Collapse,
-	withStyles,
-	Tooltip,
-	makeStyles,
 	TablePagination,
 } from '@material-ui/core';
 import {
@@ -29,41 +25,14 @@ import {
 
 import ExamService from '../../../../services/examApi';
 import DeleteModal from '../../../../modals/deleteModal';
-import CustomSnackBar from '../../../customSnackbar';
+import CustomSnackBar from '../../../../common/customSnackbar';
 import SearchExamForm from '../../../../forms/exam-form/searchExamForm';
 import factories from '../../../../factories/factories';
-
-const StyledTableCell = withStyles((theme) => ({
-	head: {
-		backgroundColor: theme.palette.common.black,
-		color: theme.palette.common.white,
-	},
-	body: {
-		fontSize: 14,
-	},
-}))(TableCell);
-
-const StyledTableRow = withStyles((theme) => ({
-	root: {
-		'&:nth-of-type(odd)': {
-			backgroundColor: theme.palette.action.hover,
-		},
-	},
-}))(TableRow);
-
-const useStylesBootstrap = makeStyles((theme) => ({
-	arrow: {
-		color: theme.palette.common.black,
-	},
-	tooltip: {
-		backgroundColor: theme.palette.common.black,
-	},
-}));
-
-const BootstrapTooltip = (props) => {
-	const classes = useStylesBootstrap();
-	return <Tooltip arrow classes={classes} {...props} />;
-};
+import {
+	StyledTableCell,
+	StyledTableRow,
+} from '../../../../common/customTable';
+import BootstrapTooltip from '../../../../common/customTooltip';
 
 class Exam extends Component {
 	constructor() {

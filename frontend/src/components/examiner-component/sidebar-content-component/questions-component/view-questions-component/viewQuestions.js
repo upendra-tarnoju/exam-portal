@@ -12,7 +12,7 @@ import QuestionService from '../../../../../services/questionApi';
 import styles from '../question.module.css';
 import DeleteModal from '../../../../../modals/deleteModal';
 import QuestionCard from './questionCard';
-import CustomSnackBar from '../../../../customSnackbar';
+import CustomSnackBar from '../../../../../common/customSnackbar';
 import factories from '../../../../../factories/factories';
 
 class ViewQuestions extends React.Component {

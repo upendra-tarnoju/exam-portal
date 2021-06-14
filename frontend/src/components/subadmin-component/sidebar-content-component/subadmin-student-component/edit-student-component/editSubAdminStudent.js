@@ -5,7 +5,7 @@ import moment from 'moment';
 import SubAdminService from '../../../../../services/subAdminApi';
 import factories from '../../../../../factories/factories';
 import EditSubAdminStudentForm from '../../../../../forms/subadmin-form/editSubAdminStudentForm';
-import CustomSnackBar from '../../../../customSnackbar';
+import CustomSnackBar from '../../../../../common/customSnackbar';
 
 class EditSubAdminStudent extends React.Component {
 	constructor() {

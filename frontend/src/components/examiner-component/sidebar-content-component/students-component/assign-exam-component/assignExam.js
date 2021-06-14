@@ -12,7 +12,7 @@ import {
 import { withStyles } from '@material-ui/core/styles';
 
 import ExamService from '../../../../../services/examApi';
-import CustomSnackBar from '../../../../customSnackbar';
+import CustomSnackBar from '../../../../../common/customSnackbar';
 
 const useStyles = (theme) => ({
 	avatarSize: {

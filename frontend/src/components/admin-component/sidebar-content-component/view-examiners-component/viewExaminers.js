@@ -1,9 +1,7 @@
 import React from 'react';
 import {
 	Card,
-	withStyles,
 	TableRow,
-	TableCell,
 	TableContainer,
 	Paper,
 	Table,
@@ -12,8 +10,6 @@ import {
 	IconButton,
 	Typography,
 	Chip,
-	Tooltip,
-	makeStyles,
 	TablePagination,
 } from '@material-ui/core';
 import { DeleteOutline, CheckBox } from '@material-ui/icons';
@@ -21,40 +17,13 @@ import Moment from 'react-moment';
 
 import AdminService from '../../../../services/adminApi';
 import ApproveDeclineModal from '../../../../modals/approveDeclineModal';
-import Snackbar from '../../../customSnackbar';
+import Snackbar from '../../../../common/customSnackbar';
 import factories from '../../../../factories/factories';
-
-const StyledTableCell = withStyles((theme) => ({
-	head: {
-		backgroundColor: theme.palette.common.black,
-		color: theme.palette.common.white,
-	},
-	body: {
-		fontSize: 14,
-	},
-}))(TableCell);
-
-const StyledTableRow = withStyles((theme) => ({
-	root: {
-		'&:nth-of-type(odd)': {
-			backgroundColor: theme.palette.action.hover,
-		},
-	},
-}))(TableRow);
-
-const useStylesBootstrap = makeStyles((theme) => ({
-	arrow: {
-		color: theme.palette.common.black,
-	},
-	tooltip: {
-		backgroundColor: theme.palette.common.black,
-	},
-}));
-
-const BootstrapTooltip = (props) => {
-	const classes = useStylesBootstrap();
-	return <Tooltip arrow classes={classes} {...props} />;
-};
+import {
+	StyledTableRow,
+	StyledTableCell,
+} from '../../../../common/customTable';
+import BootstrapTooltip from '../../../../common/customTooltip';
 
 class ViewExaminer extends React.Component {
 	constructor(props) {

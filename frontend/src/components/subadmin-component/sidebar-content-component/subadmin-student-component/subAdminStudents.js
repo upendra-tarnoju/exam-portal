@@ -20,7 +20,7 @@ import { Add, Delete, Edit } from '@material-ui/icons';
 
 import CreateStudentSelectionModal from '../../../../modals/createStudentSelectionModal';
 import SubAdminService from '../../../../services/subAdminApi';
-import Snackbar from '../../../customSnackbar';
+import Snackbar from '../../../../common/customSnackbar';
 import DeleteModal from '../../../../modals/deleteModal';
 
 const StyledTableCell = withStyles((theme) => ({

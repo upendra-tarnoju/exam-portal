@@ -14,7 +14,7 @@ import ExamDetailsForm from '../../../../../forms/exam-form/edit-exam-form/examD
 import ExamMarksForm from '../../../../../forms/exam-form/edit-exam-form/examMarksForm';
 import ExamTimeForm from '../../../../../forms/exam-form/edit-exam-form/examTimeForm';
 import ExamPasswordForm from '../../../../../forms/exam-form/edit-exam-form/examPasswordForm';
-import CustomSnackBar from '../../../../customSnackbar';
+import CustomSnackBar from '../../../../../common/customSnackbar';
 
 class EditExam extends React.Component {
 	constructor() {

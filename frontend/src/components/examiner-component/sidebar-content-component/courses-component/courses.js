@@ -8,7 +8,6 @@ import {
 	TableHead,
 	TableRow,
 	Typography,
-	withStyles,
 	TableCell,
 	TableBody,
 	IconButton,
@@ -23,26 +22,12 @@ import * as ActionTypes from '../../../../action';
 import CourseModal from '../../../../modals/courseModal';
 import CourseService from '../../../../services/courseApi';
 import DeleteModal from '../../../../modals/deleteModal';
-import Snackbar from '../../../customSnackbar';
+import Snackbar from '../../../../common/customSnackbar';
 import SearchCourseForm from '../../../../forms/course-form/searchCourseForm';
-
-const StyledTableCell = withStyles((theme) => ({
-	head: {
-		backgroundColor: theme.palette.common.black,
-		color: theme.palette.common.white,
-	},
-	body: {
-		fontSize: 14,
-	},
-}))(TableCell);
-
-const StyledTableRow = withStyles((theme) => ({
-	root: {
-		'&:nth-of-type(odd)': {
-			backgroundColor: theme.palette.action.hover,
-		},
-	},
-}))(TableRow);
+import {
+	StyledTableRow,
+	StyledTableCell,
+} from '../../../../common/customTable';
 
 class Courses extends Component {
 	constructor(props) {

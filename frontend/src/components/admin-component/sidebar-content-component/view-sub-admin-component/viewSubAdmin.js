@@ -2,57 +2,26 @@ import React from 'react';
 import {
 	Typography,
 	Card,
-	TableCell,
 	TableRow,
-	withStyles,
 	TableContainer,
 	Paper,
 	Table,
 	TableHead,
 	TableBody,
-	makeStyles,
 	Chip,
 	IconButton,
-	Tooltip,
 	TablePagination,
 } from '@material-ui/core';
 import { CheckBox, DeleteOutline } from '@material-ui/icons';
 
 import AdminService from '../../../../services/adminApi';
 import factories from '../../../../factories/factories';
-import CustomSnackBar from '../../../customSnackbar';
-
-const StyledTableCell = withStyles((theme) => ({
-	head: {
-		backgroundColor: theme.palette.common.black,
-		color: theme.palette.common.white,
-	},
-	body: {
-		fontSize: 14,
-	},
-}))(TableCell);
-
-const StyledTableRow = withStyles((theme) => ({
-	root: {
-		'&:nth-of-type(odd)': {
-			backgroundColor: theme.palette.action.hover,
-		},
-	},
-}))(TableRow);
-
-const useStylesBootstrap = makeStyles((theme) => ({
-	arrow: {
-		color: theme.palette.common.black,
-	},
-	tooltip: {
-		backgroundColor: theme.palette.common.black,
-	},
-}));
-
-const BootstrapTooltip = (props) => {
-	const classes = useStylesBootstrap();
-	return <Tooltip arrow classes={classes} {...props} />;
-};
+import CustomSnackBar from '../../../../common/customSnackbar';
+import {
+	StyledTableCell,
+	StyledTableRow,
+} from '../../../../common/customTable';
+import BootstrapTooltip from '../../../../common/customTooltip';
 
 class ViewSubAdmin extends React.Component {
 	constructor() {

@@ -4,7 +4,7 @@ import { Delete } from '@material-ui/icons';
 
 import EditQuestionForm from '../../../../../forms/question-form/editQuestionForm';
 import QuestionService from '../../../../../services/questionApi';
-import CustomSnackBar from '../../../../customSnackbar';
+import CustomSnackBar from '../../../../../common/customSnackbar';
 
 class EditQuestion extends React.Component {
 	constructor() {

@@ -5,7 +5,7 @@ import { Button } from '@material-ui/core';
 
 import schema from '../schema/profileSchema';
 import ExaminerService from '../services/examinerApi';
-import SnackBar from '../components/customSnackbar';
+import SnackBar from '../common/customSnackbar';
 
 const ProfileForm = () => {
 	let [snackBar, setSnackBar] = React.useState({

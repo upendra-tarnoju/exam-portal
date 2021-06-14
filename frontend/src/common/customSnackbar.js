@@ -2,7 +2,7 @@ import React from 'react';
 import { Snackbar } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 
-const customSnackBar = (props) => (
+const CustomSnackBar = (props) => (
 	<Snackbar
 		open={props.show}
 		autoHideDuration={6000}
@@ -19,4 +19,4 @@ const customSnackBar = (props) => (
 	</Snackbar>
 );
 
-export default customSnackBar;
+export default CustomSnackBar;

@@ -5,7 +5,7 @@ import { Card, withStyles } from '@material-ui/core';
 import Navbar from '../header/navbar';
 import SignUpForm from '../../forms/signUpForm';
 import './signup.module.css';
-import CustomSnackBar from '../customSnackbar';
+import CustomSnackBar from '../../common/customSnackbar';
 
 const style = (theme) => ({
 	signUpBackground: {

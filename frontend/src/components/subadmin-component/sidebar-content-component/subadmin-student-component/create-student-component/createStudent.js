@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import * as ActionTypes from '../../../../../action';
 import ExaminerService from '../../../../../services/examinerApi';
-import Snackbar from '../../../../customSnackbar';
+import Snackbar from '../../../../../common/customSnackbar';
 import NewStudentForm from '../../../../../forms/student-form/newStudentForm';
 import StudentService from '../../../../../services/studentApi';
 import SubAdminService from '../../../../../services/subAdminApi';

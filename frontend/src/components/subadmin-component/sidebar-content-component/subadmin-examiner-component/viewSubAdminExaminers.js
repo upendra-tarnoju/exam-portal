@@ -22,7 +22,7 @@ import Moment from 'react-moment';
 
 import CreateExaminerModal from '../../../../modals/createExaminerModal';
 import SubAdminService from '../../../../services/subAdminApi';
-import Snackbar from '../../../customSnackbar';
+import Snackbar from '../../../../common/customSnackbar';
 import DeleteModal from '../../../../modals/deleteModal';
 
 const StyledTableCell = withStyles((theme) => ({
