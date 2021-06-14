@@ -104,20 +104,19 @@ class Courses extends Component {
 		});
 	};
 
-	handleFilter = (filterData) => {
-		let query = {};
-		if (filterData.startDate !== '') {
-			query.startDate = moment(filterData.startDate, 'YYYY-MM-DD').valueOf();
+	handleFilter = (filteredValues) => {
+		let { pageIndex, pageSize } = this.state;
+
+		for (let [key, value] of Object.entries(filteredValues)) {
+			if (value === '') {
+				delete filteredValues[key];
+			} else filteredValues[key] = value.toString();
 		}
 
-		if (filterData.endDate !== '') {
-			query.endDate = moment(filterData.endDate, 'YYYY-MM-DD').valueOf();
-		}
-
-		query = {
-			...query,
-			pageIndex: this.state.pageIndex,
-			pageSize: this.state.pageSize,
+		let query = {
+			...filteredValues,
+			pageIndex: pageIndex,
+			pageSize: pageSize,
 		};
 
 		this.courseService.viewCourses(query).then((res) => {
@@ -202,7 +201,10 @@ class Courses extends Component {
 				</Card>
 
 				<Card className='mt-4 p-3'>
-					<SearchCourseForm handleFilter={this.handleFilter} />
+					<SearchCourseForm
+						handleFilter={this.handleFilter}
+						viewCourses={this.viewCourses}
+					/>
 				</Card>
 				<TableContainer component={Paper} className='mt-4'>
 					<Table>

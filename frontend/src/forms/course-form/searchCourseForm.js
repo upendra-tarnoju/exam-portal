@@ -1,6 +1,6 @@
 import { Formik } from 'formik';
 import React from 'react';
-import { Search } from '@material-ui/icons';
+import { Backspace, Search } from '@material-ui/icons';
 import { TextField, Button } from '@material-ui/core';
 import { Form } from 'react-bootstrap';
 
@@ -20,6 +20,7 @@ const SearchCourseForm = (props) => {
 							<TextField
 								variant='outlined'
 								className='w-100'
+								name='name'
 								label='Course name'
 								placeholder='Course name'
 								onChange={formikProps.handleChange}
@@ -39,6 +40,7 @@ const SearchCourseForm = (props) => {
 								}
 								value={formikProps.values.startDate}
 								InputLabelProps={{ shrink: true }}
+								name='startDate'
 							/>
 						</div>
 						<div className='col-md-3'>
@@ -52,16 +54,29 @@ const SearchCourseForm = (props) => {
 								}
 								value={formikProps.values.endDate}
 								InputLabelProps={{ shrink: true }}
+								name='endDate'
 							/>
 						</div>
 						<div className='col-md-3'>
 							<Button
 								variant='contained'
-								className='w-100 bg-dark text-white'
+								className=' bg-dark text-white'
 								startIcon={<Search />}
 								type='submit'
 							>
 								Search
+							</Button>
+							<Button
+								variant='contained'
+								className='bg-danger text-white ml-2'
+								startIcon={<Backspace />}
+								type='submit'
+								onClick={() => {
+									formikProps.resetForm();
+									props.viewCourses();
+								}}
+							>
+								Cancel
 							</Button>
 						</div>
 					</div>
