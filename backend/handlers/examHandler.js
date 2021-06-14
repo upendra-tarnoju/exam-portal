@@ -60,9 +60,11 @@ const exams = {
 				});
 			}
 
-			if (payload.startDate) date.$gte = moment(payload.startDate).valueOf();
+			if (payload.startDate)
+				date.$gte = moment(payload.startDate).startOf('day').valueOf();
 
-			if (payload.endDate) date.$lte = moment(payload.endDate).valueOf();
+			if (payload.endDate)
+				date.$lte = moment(payload.endDate).endOf('day').valueOf();
 
 			if (Object.keys(date).length !== 0) query.$and.push({ examDate: date });
 
