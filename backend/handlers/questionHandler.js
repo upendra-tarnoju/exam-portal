@@ -138,7 +138,7 @@ const questions = {
 			let countDocuments = await queries.countDocuments(Schema.question, query);
 
 			query = { _id: mongoose.Types.ObjectId(params.examId) };
-			projections = { totalMarks: 1 };
+			projections = { totalMarks: 1, examDate: 1, startTime: 1 };
 
 			let examDetails = await queries.findOne(
 				Schema.exam,

@@ -230,6 +230,16 @@ class Exam extends Component {
 							</TableRow>
 						</TableHead>
 						<TableBody>
+							{examsList.length === 0 ? (
+								<StyledTableRow component='th' scope='row'>
+									<StyledTableCell
+										colSpan={6}
+										className='text-center font-weight-bold'
+									>
+										No exam available
+									</StyledTableCell>
+								</StyledTableRow>
+							) : null}
 							{examsList.map((exam, index) => (
 								<React.Fragment key={exam._id}>
 									<StyledTableRow key={exam._id}>

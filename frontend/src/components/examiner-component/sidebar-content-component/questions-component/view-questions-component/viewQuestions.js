@@ -50,7 +50,7 @@ class ViewQuestions extends React.Component {
 	}
 
 	handleDeleteDialog = (show, id) => {
-		let { examDate, startTime, status } = this.state;
+		let { status } = this.state;
 
 		if (status) {
 			this.setState({ deleteModal: { show: show, id: id } });
