@@ -99,10 +99,21 @@ const exams = {
 
 			let examCount = await queries.countDocuments(Schema.exam, query);
 
+			query = {
+				$and: [
+					{ examinerId: userData._id },
+					{ status: APP_CONSTANTS.COURSE_STATUS_ENUM.ACTIVE },
+				],
+			};
+
+			let courseCount = await queries.countDocuments(
+				Schema.examinerCourses,
+				query
+			);
+
 			return {
-				status: 200,
-				// data: { examsList: [], count: 0 },
-				data: { examsList: examDetails, count: examCount },
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { examsList: examDetails, examCount, courseCount },
 			};
 		} catch (err) {
 			throw err;

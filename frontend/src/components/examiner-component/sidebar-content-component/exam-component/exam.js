@@ -42,6 +42,7 @@ class Exam extends Component {
 			pageSize: 5,
 			examsList: [],
 			pageCount: 0,
+			courseCount: 0,
 			detailView: {},
 			deleteModal: { show: false, id: '' },
 			snackbar: { show: false, msg: '', type: '' },
@@ -59,8 +60,9 @@ class Exam extends Component {
 			})
 			.then((res) => {
 				this.setState({
-					pageCount: res.data.count,
+					pageCount: res.data.examCount,
 					examsList: res.data.examsList,
+					courseCount: res.data.courseCount,
 				});
 			});
 	};
@@ -105,7 +107,14 @@ class Exam extends Component {
 	};
 
 	createNewExam = () => {
-		this.props.history.push({ pathname: '/examiner/exam/new' });
+		let { courseCount } = this.state;
+
+		if (courseCount === 0) {
+			let msg = 'You cannot create new exam before adding new courses';
+			this.handleSnackBar(true, msg, 'error');
+		} else {
+			this.props.history.push({ pathname: '/examiner/exam/new' });
+		}
 	};
 
 	handleDeleteDialog = (show, examId) => {

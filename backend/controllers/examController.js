@@ -17,12 +17,12 @@ const exam = {
 	getExamDetails: async (req, res) => {
 		try {
 			let query = req.query;
-			let userData = req.user;
+			let userDetails = req.user;
+			let responseData = await examHandler.getAllExams(query, userDetails);
 
-			let response = await examHandler.getAllExams(query, userData);
-			res.status(response.status).send(response.data);
+			responseManager.sendSuccessResponse(responseData, res);
 		} catch (err) {
-			throw err;
+			responseManager.sendErrorResponse(err, res);
 		}
 	},
 
