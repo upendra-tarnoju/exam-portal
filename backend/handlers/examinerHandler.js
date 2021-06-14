@@ -132,7 +132,7 @@ const examiners = {
 
 			aggregateOptions.push(
 				{ $project: { createdDate: 1, description: 1, courseId: 1 } },
-				{ $sort: { createdDate: -1 } },
+				{ $sort: { modifiedDate: -1 } },
 				{ $skip: pageIndex },
 				{ $limit: pageSize }
 			);
@@ -144,8 +144,8 @@ const examiners = {
 			);
 
 			return {
-				status: 200,
-				data: { courseDetails, totalCourses: totalCourses },
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { courseDetails, totalCourses },
 			};
 		} catch (err) {
 			throw err;

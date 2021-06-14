@@ -46,14 +46,14 @@ const examiner = {
 			let userData = req.user;
 			let payload = req.query;
 
-			let response = await examinerHandler.getExaminerCourses(
+			let responseData = await examinerHandler.getExaminerCourses(
 				payload,
 				userData
 			);
 
-			res.status(response.status).send(response.data);
+			responseManager.sendSuccessResponse(responseData, res);
 		} catch (err) {
-			throw err;
+			responseManager.sendErrorResponse(err, res);
 		}
 	},
 
