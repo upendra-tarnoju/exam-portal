@@ -109,29 +109,48 @@ class EditExam extends React.Component {
 						<div className='row'>
 							<div className='col-md-4'>
 								<List component='nav'>
-									<ListItem button onClick={() => this.handleTabChange(0)}>
+									<ListItem
+										selected={activeTab === 0}
+										button
+										onClick={() => this.handleTabChange(0)}
+									>
 										<ListItemIcon>
 											<Details />
 										</ListItemIcon>
 										<ListItemText primary='Exam details' />
 									</ListItem>
-									<ListItem button onClick={() => this.handleTabChange(1)}>
+									<ListItem
+										selected={activeTab === 1}
+										button
+										onClick={() => this.handleTabChange(1)}
+									>
 										<ListItemIcon>
 											<Phone />
 										</ListItemIcon>
 										<ListItemText primary='Marks' />
 									</ListItem>
-									<ListItem button onClick={() => this.handleTabChange(2)}>
+									<ListItem
+										selected={activeTab === 2}
+										button
+										onClick={() => this.handleTabChange(2)}
+									>
 										<ListItemIcon>
 											<Timer />
 										</ListItemIcon>
 										<ListItemText primary='Time period' />
 									</ListItem>
-									<ListItem button onClick={() => this.handleTabChange(3)}>
+									<ListItem
+										selected={activeTab === 3}
+										button
+										onClick={() => this.handleTabChange(3)}
+									>
 										<ListItemIcon>
 											<Lock />
 										</ListItemIcon>
-										<ListItemText primary='Password' />
+										<ListItemText
+											selected={activeTab === 4}
+											primary='Password'
+										/>
 									</ListItem>
 								</List>
 							</div>
