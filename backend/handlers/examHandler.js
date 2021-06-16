@@ -216,29 +216,9 @@ const exams = {
 			}
 
 			if (payload.currentPassword) {
-				let projections = {};
-				let examDetails = await queries.findOne(
-					Schema.exam,
-					conditions,
-					projections,
-					options
+				toUpdate.password = factories.generateHashedPassword(
+					payload.newPassword
 				);
-
-				let passwordStatus = factories.compareHashedPassword(
-					payload.currentPassword,
-					examDetails.password
-				);
-
-				if (passwordStatus) {
-					toUpdate.password = factories.generateHashedPassword(
-						payload.newPassword
-					);
-				} else {
-					return {
-						status: RESPONSE_MESSAGES.EXAM.UPDATE.INVALID_PASSWORD.STATUS_CODE,
-						data: { msg: RESPONSE_MESSAGES.EXAM.UPDATE.INVALID_PASSWORD.MSG },
-					};
-				}
 			}
 
 			let updatedExam = await queries.findAndUpdate(
@@ -250,16 +230,13 @@ const exams = {
 
 			if (updatedExam) {
 				return {
-					status: RESPONSE_MESSAGES.EXAM.UPDATE.SUCCESS.STATUS_CODE,
-					data: {
-						examDetails: updatedExam,
-						msg: RESPONSE_MESSAGES.EXAM.UPDATE.SUCCESS.MSG,
-					},
+					response: RESPONSE_MESSAGES.EXAM.UPDATE.SUCCESS,
+					finalData: { examDetails: updatedExam },
 				};
 			} else {
 				return {
-					status: RESPONSE_MESSAGES.EXAM.UPDATE.INVALID_ID.STATUS_CODE,
-					data: { msg: RESPONSE_MESSAGES.EXAM.UPDATE.INVALID_ID.MSG },
+					response: RESPONSE_MESSAGES.EXAM.UPDATE.INVALID_ID,
+					finalData: {},
 				};
 			}
 		} catch (err) {

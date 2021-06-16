@@ -1,7 +1,6 @@
 import * as Yup from 'yup';
 
 const schema = Yup.object({
-	currentPassword: Yup.string().required('Current password is required'),
 	newPassword: Yup.string()
 		.required('New password is required')
 		.min(6, 'Minimum password length should be 6'),

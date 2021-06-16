@@ -30,10 +30,11 @@ const exam = {
 		try {
 			let examDetails = req.body;
 			examDetails.examId = req.params.examId;
-			let updatedExam = await examHandler.updateExam(examDetails);
-			res.status(updatedExam.status).send(updatedExam.data);
+			let responseData = await examHandler.updateExam(examDetails);
+
+			responseManager.sendSuccessResponse(responseData, res);
 		} catch (err) {
-			throw err;
+			responseManager.sendErrorResponse(err, res);
 		}
 	},
 
