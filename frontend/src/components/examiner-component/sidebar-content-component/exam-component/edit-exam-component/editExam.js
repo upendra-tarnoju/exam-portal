@@ -60,6 +60,15 @@ class EditExam extends React.Component {
 
 	updateExamDetails = (data) => {
 		let examId = this.props.match.params.examId;
+
+		if (data.startTime && data.endTime) {
+			if (data.startTime === data.endTime) {
+				let msg = 'Start time cannot be equal to end time';
+				this.handleSnackBar(true, msg, 'error');
+				return;
+			}
+		}
+
 		this.examService
 			.updateExam(examId, data)
 			.then((response) => {
