@@ -4,12 +4,14 @@ import { withRouter } from 'react-router-dom';
 import UserService from '../../services/userApi';
 import LoginForm from '../../forms/loginForm';
 import styles from './login.module.css';
+import Snackbar from '../../common/customSnackbar';
 
 class LoginCard extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			error: '',
+			snackbar: { show: false, msg: '', type: '' },
 		};
 		this.userService = new UserService();
 	}
@@ -30,11 +32,19 @@ class LoginCard extends Component {
 
 	handleError = (error) => {
 		if (error.response) {
-			this.setState({ error: error.response.data.msg });
+			this.handleSnackBar(true, error.response.data.msg, 'error');
 		}
 	};
 
+	handleSnackBar = (show, msg, type) => {
+		if (type == undefined) {
+			type = 'error';
+		}
+		this.setState({ snackbar: { show, msg, type } });
+	};
+
 	render() {
+		let { snackbar } = this.state;
 		return (
 			<div className='container py-3'>
 				<h2 className={`bg-white text-center ${styles.loginHeading}`}>Login</h2>
@@ -48,6 +58,12 @@ class LoginCard extends Component {
 				<LoginForm
 					handleLogin={this.handleLogin}
 					handleError={this.handleError}
+				/>
+				<Snackbar
+					handleSnackBar={this.handleSnackBar}
+					snackBarType={snackbar.type}
+					message={snackbar.msg}
+					show={snackbar.show}
 				/>
 			</div>
 		);
