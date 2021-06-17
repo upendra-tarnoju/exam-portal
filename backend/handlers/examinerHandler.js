@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require('moment');
 
 const { users, course, examiner } = require('../models');
 const { factories } = require('../factories');
@@ -114,11 +115,11 @@ const examiners = {
 			let createdDate = {};
 
 			if (payload.startDate) {
-				createdDate.$gte = parseInt(payload.startDate, 10);
+				createdDate.$gte = moment(payload.startDate).startOf('day').valueOf();
 			}
 
 			if (payload.endDate) {
-				createdDate.$lte = parseInt(payload.endDate, 10);
+				createdDate.$lte = moment(payload.endDate).endOf('day').valueOf();
 			}
 
 			if (Object.keys(createdDate).length !== 0) {
