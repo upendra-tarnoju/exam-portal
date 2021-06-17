@@ -22,6 +22,7 @@ import {
 	StyledTableRow,
 } from '../../../../common/customTable';
 import BootstrapTooltip from '../../../../common/customTooltip';
+import SubAdminStatusModal from '../../../../modals/subAdminStatusModal';
 
 class ViewSubAdmin extends React.Component {
 	constructor() {
@@ -32,6 +33,7 @@ class ViewSubAdmin extends React.Component {
 			pageCount: 0,
 			subAdminList: [],
 			snackbar: { show: false, msg: '', type: '' },
+			approveOrDecline: { show: false, type: '', id: '' },
 		};
 		this.adminService = new AdminService();
 	}
@@ -54,10 +56,17 @@ class ViewSubAdmin extends React.Component {
 		this.props.history.push('/admin/subAdmin/new');
 	};
 
-	updateSubAdminStatus = (subAdminId, status) => {
-		let data = { subAdminId, status };
+	updateSubAdminStatus = () => {
+		let { approveOrDecline } = this.state;
+
+		let data = {
+			subAdminId: approveOrDecline.id,
+			status: approveOrDecline.type,
+		};
+
 		this.adminService.changeSubAdminStatus(data).then((res) => {
 			this.handleSnackBar(true, res.data.msg, 'success');
+			this.handleApproveDeclineModal(false);
 			this.viewSubAdmin();
 		});
 	};
@@ -73,12 +82,24 @@ class ViewSubAdmin extends React.Component {
 	};
 
 	handleSnackBar = (status, msg, type) => {
+		let { snackbar } = this.state;
+		if (type === undefined) type = snackbar.type;
 		this.setState({ snackbar: { show: status, msg: msg, type: type } });
 	};
 
+	handleApproveDeclineModal = (show, type, id) => {
+		this.setState({ approveOrDecline: { show, type, id } });
+	};
+
 	render() {
-		const { subAdminList, pageCount, pageIndex, pageSize, snackbar } =
-			this.state;
+		const {
+			subAdminList,
+			pageCount,
+			pageIndex,
+			pageSize,
+			snackbar,
+			approveOrDecline,
+		} = this.state;
 		return (
 			<div className='container py-5'>
 				<Card className='p-3'>
@@ -143,9 +164,10 @@ class ViewSubAdmin extends React.Component {
 													<IconButton
 														size='small'
 														onClick={() =>
-															this.updateSubAdminStatus(
-																subAdmin._id,
-																'declined'
+															this.handleApproveDeclineModal(
+																true,
+																'declined',
+																subAdmin._id
 															)
 														}
 													>
@@ -158,9 +180,10 @@ class ViewSubAdmin extends React.Component {
 													<IconButton
 														size='small'
 														onClick={() =>
-															this.updateSubAdminStatus(
-																subAdmin._id,
-																'approved'
+															this.handleApproveDeclineModal(
+																true,
+																'approved',
+																subAdmin._id
 															)
 														}
 													>
@@ -189,6 +212,12 @@ class ViewSubAdmin extends React.Component {
 						handleSnackBar={this.handleSnackBar}
 						snackBarType={snackbar.type}
 						message={snackbar.msg}
+					/>
+					<SubAdminStatusModal
+						show={approveOrDecline.show}
+						type={approveOrDecline.type}
+						closeModal={this.handleApproveDeclineModal}
+						updateSubAdminStatus={this.updateSubAdminStatus}
 					/>
 				</Card>
 			</div>
