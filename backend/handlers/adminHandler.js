@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const moment = require('moment');
 const generatorPassword = require('generate-password');
 
-const { users, student, exam } = require('../models');
+const { users, exam } = require('../models');
 const { sender, transporter } = require('../config/mail');
 const APP_DEFAULTS = require('../config/app-defaults');
 const RESPONSE_MESSAGES = require('../config/response-messages');
@@ -206,7 +206,7 @@ const admin = {
 		}
 	},
 
-	updateSubAdminStatus: async (payload) => {
+	updateSubAdminStatus: async (payload, userDetails) => {
 		try {
 			let conditions = { _id: mongoose.Types.ObjectId(payload.subAdminId) };
 			let options = { lean: true, new: true };
@@ -233,22 +233,39 @@ const admin = {
 
 			if (updatedSubAdmin) {
 				if (updatedSubAdmin.status === APP_DEFAULTS.ACCOUNT_STATUS.APPROVED) {
+					let mailOptions = {
+						to: updatedSubAdmin.email,
+						from: sender,
+						subject: 'Sub admin confirmation mail',
+						text: `Your email id ${updatedSubAdmin.email} has been approved`,
+					};
+
+					transporter.sendMail(mailOptions);
+
 					return {
-						status: RESPONSE_MESSAGES.SUB_ADMIN.STATUS_APPROVED.STATUS_CODE,
-						data: { msg: RESPONSE_MESSAGES.SUB_ADMIN.STATUS_APPROVED.MSG },
+						response: RESPONSE_MESSAGES.SUB_ADMIN.STATUS_APPROVED,
+						finalData: {},
 					};
 				} else if (
 					updatedSubAdmin.status === APP_DEFAULTS.ACCOUNT_STATUS.DECLINED
 				) {
+					let mailOptions = {
+						to: updatedSubAdmin.email,
+						from: sender,
+						subject: 'Sub admin confirmation mail',
+						text: `Your email id ${updatedSubAdmin.email} has been declined`,
+					};
+
+					transporter.sendMail(mailOptions);
 					return {
-						status: RESPONSE_MESSAGES.SUB_ADMIN.STATUS_DECLINED.STATUS_CODE,
-						data: { msg: RESPONSE_MESSAGES.SUB_ADMIN.STATUS_DECLINED.MSG },
+						response: RESPONSE_MESSAGES.SUB_ADMIN.STATUS_DECLINED,
+						finalData: {},
 					};
 				}
 			} else
 				return {
-					status: RESPONSE_MESSAGES.SUB_ADMIN.INVALID_ID.STATUS_CODE,
-					data: { msg: RESPONSE_MESSAGES.SUB_ADMIN.INVALID_ID.MSG },
+					response: RESPONSE_MESSAGES.SUB_ADMIN.INVALID_ID,
+					finalData: {},
 				};
 		} catch (err) {
 			throw err;

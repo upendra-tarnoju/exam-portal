@@ -14,8 +14,12 @@ const admin = {
 	getExaminerDetails: async (req, res) => {
 		try {
 			let payload = req.query;
+			let userDetails = req.user;
 
-			let responseData = await adminHandler.getExaminerDetails(payload);
+			let responseData = await adminHandler.getExaminerDetails(
+				payload,
+				userDetails
+			);
 			responseManager.sendSuccessResponse(responseData, res);
 		} catch (err) {
 			responseManager.sendErrorResponse(err, res);
@@ -63,10 +67,11 @@ const admin = {
 	updateSubAdminStatus: async (req, res) => {
 		try {
 			let payload = req.body;
-			let response = await adminHandler.updateSubAdminStatus(payload);
-			res.status(response.status).send(response.data);
+
+			let responseData = await adminHandler.updateSubAdminStatus(payload);
+			responseManager.sendSuccessResponse(responseData, res);
 		} catch (err) {
-			throw err;
+			responseManager.sendErrorResponse(err, res);
 		}
 	},
 };
