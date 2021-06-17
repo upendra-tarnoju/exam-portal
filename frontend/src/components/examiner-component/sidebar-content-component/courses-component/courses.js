@@ -15,7 +15,6 @@ import {
 } from '@material-ui/core';
 import { Button } from '@material-ui/core';
 import Moment from 'react-moment';
-import moment from 'moment';
 import { Add, Edit, Delete } from '@material-ui/icons';
 
 import * as ActionTypes from '../../../../action';

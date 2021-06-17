@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import UserService from '../../services/userApi';
 import * as ActionType from '../../action';
 import { withRouter } from 'react-router';
+import LogOutModal from '../../modals/logOutModal';
 
 const useStyles = makeStyles((theme) => ({
 	buttonBar: {
@@ -19,6 +20,15 @@ const useStyles = makeStyles((theme) => ({
 
 const AppbarCollapse = (props) => {
 	let { active } = props;
+	let [show, setModal] = React.useState(false);
+
+	let logOutUser = () => {
+		let userService = new UserService();
+		userService.removeCookie();
+		props.setAuthenticatedUser(false);
+		setModal(false);
+		props.history.push('/login');
+	};
 
 	const classes = useStyles();
 	return (
@@ -30,10 +40,7 @@ const AppbarCollapse = (props) => {
 					</Typography>
 					<Typography
 						onClick={() => {
-							let userService = new UserService();
-							userService.removeCookie();
-							props.setAuthenticatedUser(false);
-							props.history.push('/login');
+							setModal(true);
 						}}
 						variant='body1'
 						className={`mx-2 ${styles.navbarItem} cursor-pointer text-dark`}
@@ -89,6 +96,7 @@ const AppbarCollapse = (props) => {
 				anchorEl={props.anchorEl}
 				handleMenuClick={props.handleMenuClick}
 			/>
+			<LogOutModal show={show} closeModal={setModal} logOutUser={logOutUser} />
 		</div>
 	);
 };
