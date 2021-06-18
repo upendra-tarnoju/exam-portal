@@ -117,8 +117,15 @@ class Exam extends Component {
 		}
 	};
 
-	handleDeleteDialog = (show, examId) => {
-		this.setState({ deleteModal: { show: show, id: examId } });
+	handleDeleteDialog = (show, examId, examDate, startTime) => {
+		let status = factories.verifyExamExpiry(examDate, startTime);
+
+		if (status) {
+			this.setState({ deleteModal: { show: show, id: examId } });
+		} else {
+			let msg = 'You cannot delete expired exam';
+			this.handleSnackBar(true, msg, 'error');
+		}
 	};
 
 	updateExam = (examId, examDate, startTime) => {
@@ -272,7 +279,12 @@ class Exam extends Component {
 												<IconButton
 													size='small'
 													onClick={() =>
-														this.handleDeleteDialog(true, exam._id)
+														this.handleDeleteDialog(
+															true,
+															exam._id,
+															exam.examDate,
+															exam.startTime
+														)
 													}
 												>
 													<Delete size='small' />
