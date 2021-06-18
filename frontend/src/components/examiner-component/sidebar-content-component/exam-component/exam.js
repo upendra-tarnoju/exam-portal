@@ -13,6 +13,7 @@ import {
 	Typography,
 	Collapse,
 	TablePagination,
+	Chip,
 } from '@material-ui/core';
 import {
 	Add,
@@ -351,9 +352,21 @@ class Exam extends Component {
 																{exam.duration ? exam.duration : 'None'}
 															</StyledTableCell>
 															<StyledTableCell>
-																{exam.status === 'CREATED'
-																	? 'NO QUESTION ADDED'
-																	: exam.status}
+																{exam.status === 'ACTIVE' ? (
+																	<Chip
+																		label='Active'
+																		variant='primary'
+																		className='bg-primary text-white'
+																	/>
+																) : exam.status === 'CREATED' ? (
+																	<Chip
+																		label='No Question added'
+																		color='secondary'
+																		variant='default'
+																	/>
+																) : (
+																	exam.status
+																)}
 															</StyledTableCell>
 														</StyledTableRow>
 													</TableBody>
