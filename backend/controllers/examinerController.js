@@ -62,10 +62,14 @@ const examiner = {
 			let courseData = req.body;
 			let userData = req.user;
 
-			let response = await examinerHandler.updateCourse(courseData, userData);
-			res.status(response.status).send(response.data);
+			let responseData = await examinerHandler.updateCourse(
+				courseData,
+				userData
+			);
+
+			responseManager.sendSuccessResponse(responseData, res);
 		} catch (err) {
-			throw err;
+			responseManager.sendErrorResponse(err, res);
 		}
 	},
 

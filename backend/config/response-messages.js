@@ -93,6 +93,10 @@ module.exports = {
 				STATUS_CODE: 400,
 				MSG: 'Invalid course id',
 			},
+			DUPLICATE_RESOURCE: {
+				STATUS_CODE: 409,
+				MSG: 'Course already existed',
+			},
 		},
 	},
 	EXAM: {

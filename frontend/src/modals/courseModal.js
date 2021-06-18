@@ -50,6 +50,12 @@ const CourseModal = (props) => {
 					props.closeModal();
 					props.handleSnackBar(true, res.data.msg, 'success');
 					props.viewCourses();
+				})
+				.catch((err) => {
+					if (err.response.status === 409) {
+						props.closeModal();
+						props.handleSnackBar(true, err.response.data.msg, 'error');
+					}
 				});
 		}
 	};

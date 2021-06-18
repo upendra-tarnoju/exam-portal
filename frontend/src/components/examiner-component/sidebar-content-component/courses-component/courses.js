@@ -61,13 +61,10 @@ class Courses extends Component {
 	};
 
 	handleSnackBar = (status, msg, type) => {
-		this.setState({
-			snackbar: {
-				show: status,
-				msg: msg,
-				type: type,
-			},
-		});
+		let { snackbar } = this.state;
+		if (type === undefined) type = snackbar.type;
+
+		this.setState({ snackbar: { show: status, msg: msg, type: type } });
 	};
 
 	editCourse = async (course) => {

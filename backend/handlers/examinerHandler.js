@@ -166,35 +166,57 @@ const examiners = {
 	},
 
 	updateCourse: async (courseData, userData) => {
-		let conditions = {
-			courseId: courseData.previousCourseId,
-			examinerId: userData._id,
-		};
-
-		let toUpdate = {
-			courseId: courseData.newCourseId,
-			description: courseData.description,
-			modifiedDate: new Date(),
+		let query = {
+			$and: [
+				{ courseId: mongoose.Types.ObjectId(courseData.newCourseId) },
+				{ examinerId: mongoose.Types.ObjectId(userData._id) },
+			],
 		};
 		let options = { new: true };
+		let projections = {};
 
-		let updatedCourse = await queries.findAndUpdate(
+		let existedCourse = await queries.findOne(
 			Schemas.examinerCourses,
-			conditions,
-			toUpdate,
+			query,
+			projections,
 			options
 		);
 
-		if (updatedCourse) {
+		if (existedCourse) {
 			return {
-				status: RESPONSE_MESSAGES.COURSES.UPDATE.SUCCESS.STATUS_CODE,
-				data: { msg: RESPONSE_MESSAGES.COURSES.UPDATE.SUCCESS.MSG },
+				response: RESPONSE_MESSAGES.COURSES.UPDATE.DUPLICATE_RESOURCE,
+				finalData: {},
 			};
 		} else {
-			return {
-				status: RESPONSE_MESSAGES.COURSES.UPDATE.INVALID_ID.STATUS_CODE,
-				data: { msg: RESPONSE_MESSAGES.COURSES.UPDATE.INVALID_ID.MSG },
+			let conditions = {
+				courseId: courseData.previousCourseId,
+				examinerId: userData._id,
 			};
+
+			let toUpdate = {
+				courseId: courseData.newCourseId,
+				description: courseData.description,
+				modifiedDate: new Date(),
+			};
+
+			let updatedCourse = await queries.findAndUpdate(
+				Schemas.examinerCourses,
+				conditions,
+				toUpdate,
+				options
+			);
+
+			if (updatedCourse) {
+				return {
+					response: RESPONSE_MESSAGES.COURSES.UPDATE.SUCCESS,
+					finalData: {},
+				};
+			} else {
+				return {
+					response: RESPONSE_MESSAGES.COURSES.UPDATE.INVALID_ID,
+					finalData: {},
+				};
+			}
 		}
 	},
 

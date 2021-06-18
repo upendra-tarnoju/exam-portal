@@ -37,7 +37,7 @@ class LoginCard extends Component {
 	};
 
 	handleSnackBar = (show, msg, type) => {
-		if (type == undefined) {
+		if (type === undefined) {
 			type = 'error';
 		}
 		this.setState({ snackbar: { show, msg, type } });

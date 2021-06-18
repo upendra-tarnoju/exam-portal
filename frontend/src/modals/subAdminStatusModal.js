@@ -2,8 +2,6 @@ import React from 'react';
 import { Modal, Paper, Typography, Button } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
-import { ErrorOutline } from '@material-ui/icons';
-
 const useStyles = (theme) => ({
 	modal: {
 		display: 'flex',
