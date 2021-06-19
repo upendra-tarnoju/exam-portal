@@ -127,7 +127,9 @@ const exams = {
 
 	getParticularExam: async (payload, userDetails) => {
 		try {
-			let query = { _id: payload.examId };
+			let query = {
+				_id: payload.examId,
+			};
 			let projections = { password: 0, createdAt: 0 };
 			let collectionOptions = [
 				{
@@ -151,7 +153,12 @@ const exams = {
 				collectionOptions
 			);
 
-			query = { examinerId: userDetails._id };
+			query = {
+				$and: [
+					{ examinerId: userDetails._id },
+					{ status: APP_CONSTANTS.COURSE_STATUS_ENUM.ACTIVE },
+				],
+			};
 			projections = {};
 			options = { lean: true };
 
