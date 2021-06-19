@@ -20,7 +20,33 @@ const admin = {
 			let options = { lean: true };
 
 			let aggregateArray = [
-				{ $match: { userType: APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER } },
+				{
+					$match: { $and: [{ userType: APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER }] },
+				},
+			];
+
+			if (payload.name) {
+				let name = new RegExp(payload.name, 'i');
+				aggregateArray[0].$match.$and.push({
+					$or: [{ firstName: name }, { lastName: name }],
+				});
+			}
+
+			if (payload.status) {
+				aggregateArray[0].$match.$and.push({ status: payload.status });
+			}
+
+			if (payload.email) {
+				let email = new RegExp(payload.email, 'i');
+				aggregateArray[0].$match.$and.push({ email: email });
+			}
+
+			let count = await queries.countDocuments(
+				Schema.users,
+				aggregateArray[0].$match
+			);
+
+			aggregateArray.push(
 				{ $sort: { modifiedDate: -1 } },
 				{ $skip: pageIndex },
 				{ $limit: pageSize },
@@ -32,18 +58,14 @@ const admin = {
 						status: 1,
 						createdDate: 1,
 					},
-				},
-			];
+				}
+			);
 
 			let examinerDetails = await queries.aggregateData(
 				Schema.users,
 				aggregateArray,
 				options
 			);
-
-			let conditions = { userType: APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER };
-
-			let count = await queries.countDocuments(Schema.users, conditions);
 
 			return {
 				response: { STATUS_CODE: 200, MSG: '' },

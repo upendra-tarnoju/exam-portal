@@ -24,6 +24,7 @@ import {
 	StyledTableCell,
 } from '../../../../common/customTable';
 import BootstrapTooltip from '../../../../common/customTooltip';
+import SearchExaminerForm from '../../../../forms/examiner-form/searchExaminerForm';
 
 class ViewExaminer extends React.Component {
 	constructor(props) {
@@ -56,12 +57,7 @@ class ViewExaminer extends React.Component {
 	}
 
 	handleModal = (status) => {
-		this.setState({
-			approveDeclineModal: {
-				show: status,
-				data: '',
-			},
-		});
+		this.setState({ approveDeclineModal: { show: status, data: '' } });
 	};
 
 	handleSnackBar = (status, msg, type) => {
@@ -98,6 +94,29 @@ class ViewExaminer extends React.Component {
 			});
 	};
 
+	handleFilter = (filteredValues) => {
+		let { pageIndex, pageSize } = this.state;
+
+		for (let [key, value] of Object.entries(filteredValues)) {
+			if (value === '') {
+				delete filteredValues[key];
+			} else filteredValues[key] = value.toString();
+		}
+
+		let query = {
+			...filteredValues,
+			pageIndex: pageIndex,
+			pageSize: pageSize,
+		};
+
+		this.adminService.getAllExaminers(query).then((res) => {
+			this.setState({
+				examinerData: res.data.examinerDetails,
+				totalExaminers: res.data.count,
+			});
+		});
+	};
+
 	render() {
 		let {
 			examinerData,
@@ -117,6 +136,12 @@ class ViewExaminer extends React.Component {
 							<Typography variant='subtitle1'>Handle your examiners</Typography>
 						</div>
 					</div>
+				</Card>
+				<Card className='my-4 p-3'>
+					<SearchExaminerForm
+						handleFilter={this.handleFilter}
+						viewExaminers={this.viewExaminers}
+					/>
 				</Card>
 				<TableContainer component={Paper} className='mt-4'>
 					<Table>
