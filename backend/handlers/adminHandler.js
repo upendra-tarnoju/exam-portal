@@ -175,32 +175,53 @@ const admin = {
 			let pageIndex = parseInt(payload.pageIndex, 10);
 			let pageSize = parseInt(payload.pageSize, 10);
 			pageIndex = pageIndex * pageSize;
-			let query = { userType: APP_DEFAULTS.ACCOUNT_TYPE.SUB_ADMIN };
-			let options = { lean: true, skip: pageIndex, limit: pageSize };
-			let projections = {
-				firstName: 1,
-				lastName: 1,
-				mobileNumber: 1,
-				collegeId: 1,
-				email: 1,
-				status: 1,
-			};
+
 			let populateOptions = {
 				path: 'collegeId',
 				select: 'name',
 			};
 
-			let subAdminList = await queries.populateData(
+			let aggregateArray = [
+				{
+					$match: { $and: [{ userType: APP_DEFAULTS.ACCOUNT_TYPE.SUB_ADMIN }] },
+				},
+			];
+
+			if (payload.name) {
+				let name = new RegExp(payload.name, 'i');
+				aggregateArray[0].$match.$and.push({
+					$or: [{ firstName: name }, { lastName: name }],
+				});
+			}
+
+			if (payload.email) {
+				let email = new RegExp(payload.email, 'i');
+				aggregateArray[0].$match.$and.push({ email: email });
+			}
+
+			if (payload.status) {
+				aggregateArray[0].$match.$and.push({ status: payload.status });
+			}
+
+			let count = await queries.countDocuments(
 				Schema.users,
-				query,
-				projections,
-				options,
+				aggregateArray[0].$match
+			);
+
+			aggregateArray.push({ $skip: pageIndex }, { $limit: pageSize });
+
+			console.log(JSON.stringify(aggregateArray));
+
+			let subAdminList = await queries.aggregateDataWithPopulate(
+				Schema.users,
+				aggregateArray,
 				populateOptions
 			);
 
-			let count = await queries.countDocuments(Schema.users, query);
-
-			return { status: 200, data: { subAdminList, count } };
+			return {
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { subAdminList, count },
+			};
 		} catch (err) {
 			throw err;
 		}

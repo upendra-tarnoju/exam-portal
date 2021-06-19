@@ -19,8 +19,8 @@ const userTypeEnum = [
 ];
 
 const users = new Schema({
-	firstName: { type: String, required: true, lowercase: true },
-	lastName: { type: String, required: true, lowercase: true },
+	firstName: { type: String, required: true, lowercase: true, index: true },
+	lastName: { type: String, required: true, lowercase: true, index: true },
 	email: { type: String, required: true },
 	password: { type: String, default: null },
 	mobileNumber: { type: String, required: true },

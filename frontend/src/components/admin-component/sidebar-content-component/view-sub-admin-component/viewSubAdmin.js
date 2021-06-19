@@ -23,6 +23,7 @@ import {
 } from '../../../../common/customTable';
 import BootstrapTooltip from '../../../../common/customTooltip';
 import SubAdminStatusModal from '../../../../modals/subAdminStatusModal';
+import SearchSubAdminForm from '../../../../forms/subadmin-form/searchSubAdminForm';
 
 class ViewSubAdmin extends React.Component {
 	constructor() {
@@ -42,7 +43,7 @@ class ViewSubAdmin extends React.Component {
 		this.viewSubAdmin();
 	}
 
-	viewSubAdmin() {
+	viewSubAdmin = () => {
 		let { pageIndex, pageSize } = this.state;
 		this.adminService.getSubAdminList({ pageIndex, pageSize }).then((res) => {
 			this.setState({
@@ -50,7 +51,7 @@ class ViewSubAdmin extends React.Component {
 				pageCount: res.data.count,
 			});
 		});
-	}
+	};
 
 	createNewSubAdmin = () => {
 		this.props.history.push('/admin/subAdmin/new');
@@ -91,6 +92,29 @@ class ViewSubAdmin extends React.Component {
 		this.setState({ approveOrDecline: { show, type, id } });
 	};
 
+	handleFilter = (filteredValues) => {
+		let { pageIndex, pageSize } = this.state;
+
+		for (let [key, value] of Object.entries(filteredValues)) {
+			if (value === '') {
+				delete filteredValues[key];
+			} else filteredValues[key] = value.toString();
+		}
+
+		let query = {
+			...filteredValues,
+			pageIndex: pageIndex,
+			pageSize: pageSize,
+		};
+
+		this.adminService.getSubAdminList(query).then((res) => {
+			this.setState({
+				subAdminList: res.data.subAdminList,
+				pageCount: res.data.count,
+			});
+		});
+	};
+
 	render() {
 		const {
 			subAdminList,
@@ -110,116 +134,130 @@ class ViewSubAdmin extends React.Component {
 						</div>
 					</div>
 				</Card>
-				<Card className='mt-3'>
-					<TableContainer component={Paper}>
-						<Table>
-							<TableHead>
-								<TableRow>
-									<StyledTableCell>S.no</StyledTableCell>
-									<StyledTableCell>Name</StyledTableCell>
-									<StyledTableCell>Email</StyledTableCell>
-									<StyledTableCell>Mobile number</StyledTableCell>
-									<StyledTableCell>College</StyledTableCell>
-									<StyledTableCell>Status</StyledTableCell>
-									<StyledTableCell>Actions</StyledTableCell>
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{subAdminList.map((subAdmin, index) => (
-									<StyledTableRow key={subAdmin._id}>
-										<StyledTableCell component='th' scope='row'>
-											{index + 1}
-										</StyledTableCell>
-										<StyledTableCell>
-											{factories.capitalizeName(subAdmin.firstName)}{' '}
-											{factories.capitalizeName(subAdmin.lastName)}
-										</StyledTableCell>
-										<StyledTableCell>{subAdmin.email}</StyledTableCell>
-										<StyledTableCell>{subAdmin.mobileNumber}</StyledTableCell>
-										<StyledTableCell>{subAdmin.collegeId.name}</StyledTableCell>
-										<StyledTableCell>
-											{subAdmin.status === 'pending' ? (
-												<Chip
-													label='Pending'
-													className='bg-dark text-white'
-													variant='default'
-												/>
-											) : subAdmin.status === 'approved' ? (
-												<Chip
-													label='Approved'
-													color='primary'
-													variant='default'
-												/>
-											) : (
-												<Chip
-													label='Declined'
-													color='secondary'
-													variant='default'
-												/>
-											)}
-										</StyledTableCell>
-										<StyledTableCell>
-											{subAdmin.status !== 'declined' ? (
-												<BootstrapTooltip title='Decline'>
-													<IconButton
-														size='small'
-														onClick={() =>
-															this.handleApproveDeclineModal(
-																true,
-																'declined',
-																subAdmin._id
-															)
-														}
-													>
-														<DeleteOutline size='small' />
-													</IconButton>
-												</BootstrapTooltip>
-											) : null}
-											{subAdmin.status !== 'approved' ? (
-												<BootstrapTooltip title='Approve'>
-													<IconButton
-														size='small'
-														onClick={() =>
-															this.handleApproveDeclineModal(
-																true,
-																'approved',
-																subAdmin._id
-															)
-														}
-													>
-														<CheckBox size='small' />
-													</IconButton>
-												</BootstrapTooltip>
-											) : null}
-										</StyledTableCell>
-									</StyledTableRow>
-								))}
-							</TableBody>
-						</Table>
-						<TablePagination
-							component='div'
-							rowsPerPageOptions={[5, 10, 25]}
-							colSpan={5}
-							count={pageCount}
-							rowsPerPage={pageSize}
-							page={pageIndex}
-							onChangePage={this.handlePageChange}
-							onChangeRowsPerPage={this.handlePageSize}
-						></TablePagination>
-					</TableContainer>
-					<CustomSnackBar
-						show={snackbar.show}
-						handleSnackBar={this.handleSnackBar}
-						snackBarType={snackbar.type}
-						message={snackbar.msg}
-					/>
-					<SubAdminStatusModal
-						show={approveOrDecline.show}
-						type={approveOrDecline.type}
-						closeModal={this.handleApproveDeclineModal}
-						updateSubAdminStatus={this.updateSubAdminStatus}
+				<Card className='my-4 p-3'>
+					<SearchSubAdminForm
+						handleFilter={this.handleFilter}
+						viewSubAdmin={this.viewSubAdmin}
 					/>
 				</Card>
+				<TableContainer component={Paper}>
+					<Table>
+						<TableHead>
+							<TableRow>
+								<StyledTableCell>S.no</StyledTableCell>
+								<StyledTableCell>Name</StyledTableCell>
+								<StyledTableCell>Email</StyledTableCell>
+								<StyledTableCell>Mobile number</StyledTableCell>
+								<StyledTableCell>College</StyledTableCell>
+								<StyledTableCell>Status</StyledTableCell>
+								<StyledTableCell>Actions</StyledTableCell>
+							</TableRow>
+						</TableHead>
+						<TableBody>
+							{subAdminList.length === 0 ? (
+								<StyledTableRow component='th' scope='row'>
+									<StyledTableCell
+										colSpan={7}
+										className='text-center font-weight-bold'
+									>
+										No sub Admin available
+									</StyledTableCell>
+								</StyledTableRow>
+							) : null}
+							{subAdminList.map((subAdmin, index) => (
+								<StyledTableRow key={subAdmin._id}>
+									<StyledTableCell component='th' scope='row'>
+										{index + 1}
+									</StyledTableCell>
+									<StyledTableCell>
+										{factories.capitalizeName(subAdmin.firstName)}{' '}
+										{factories.capitalizeName(subAdmin.lastName)}
+									</StyledTableCell>
+									<StyledTableCell>{subAdmin.email}</StyledTableCell>
+									<StyledTableCell>{subAdmin.mobileNumber}</StyledTableCell>
+									<StyledTableCell>{subAdmin.collegeId.name}</StyledTableCell>
+									<StyledTableCell>
+										{subAdmin.status === 'pending' ? (
+											<Chip
+												label='Pending'
+												className='bg-dark text-white'
+												variant='default'
+											/>
+										) : subAdmin.status === 'approved' ? (
+											<Chip
+												label='Approved'
+												color='primary'
+												variant='default'
+											/>
+										) : (
+											<Chip
+												label='Declined'
+												color='secondary'
+												variant='default'
+											/>
+										)}
+									</StyledTableCell>
+									<StyledTableCell>
+										{subAdmin.status !== 'declined' ? (
+											<BootstrapTooltip title='Decline'>
+												<IconButton
+													size='small'
+													onClick={() =>
+														this.handleApproveDeclineModal(
+															true,
+															'declined',
+															subAdmin._id
+														)
+													}
+												>
+													<DeleteOutline size='small' />
+												</IconButton>
+											</BootstrapTooltip>
+										) : null}
+										{subAdmin.status !== 'approved' ? (
+											<BootstrapTooltip title='Approve'>
+												<IconButton
+													size='small'
+													onClick={() =>
+														this.handleApproveDeclineModal(
+															true,
+															'approved',
+															subAdmin._id
+														)
+													}
+												>
+													<CheckBox size='small' />
+												</IconButton>
+											</BootstrapTooltip>
+										) : null}
+									</StyledTableCell>
+								</StyledTableRow>
+							))}
+						</TableBody>
+					</Table>
+					<TablePagination
+						component='div'
+						rowsPerPageOptions={[5, 10, 25]}
+						colSpan={5}
+						count={pageCount}
+						rowsPerPage={pageSize}
+						page={pageIndex}
+						onChangePage={this.handlePageChange}
+						onChangeRowsPerPage={this.handlePageSize}
+					></TablePagination>
+				</TableContainer>
+				<CustomSnackBar
+					show={snackbar.show}
+					handleSnackBar={this.handleSnackBar}
+					snackBarType={snackbar.type}
+					message={snackbar.msg}
+				/>
+				<SubAdminStatusModal
+					show={approveOrDecline.show}
+					type={approveOrDecline.type}
+					closeModal={this.handleApproveDeclineModal}
+					updateSubAdminStatus={this.updateSubAdminStatus}
+				/>
 			</div>
 		);
 	}

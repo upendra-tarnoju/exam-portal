@@ -57,10 +57,11 @@ const admin = {
 	getSubAdminList: async (req, res) => {
 		try {
 			let payload = req.query;
-			let response = await adminHandler.getSubAdminList(payload);
-			res.status(response.status).send(response.data);
+			let responseData = await adminHandler.getSubAdminList(payload);
+
+			responseManager.sendSuccessResponse(responseData, res);
 		} catch (err) {
-			throw err;
+			responseManager.sendErrorResponse(err, res);
 		}
 	},
 
