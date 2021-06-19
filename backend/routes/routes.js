@@ -2,18 +2,22 @@ const express = require('express');
 
 const { userController, questionController } = require('../controllers');
 const { UserValidator } = require('../validator');
-const { validatorMiddleware } = require('../middleware');
+const { requestMiddleware } = require('../middleware');
 
 module.exports = () => {
 	const router = express.Router();
 
 	router.post(
 		'/signup',
-		validatorMiddleware(UserValidator.SIGNUP),
+		requestMiddleware(UserValidator.SIGNUP_USER),
 		userController.saveUserDetails
 	);
 
-	router.post('/login', userController.loginUser);
+	router.post(
+		'/login',
+		requestMiddleware(UserValidator.LOGIN_USER),
+		userController.loginUser
+	);
 
 	router.get('/collegeList', userController.getCollegeList);
 

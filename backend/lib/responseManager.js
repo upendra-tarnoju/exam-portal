@@ -26,6 +26,15 @@ const responseManager = {
 		};
 		res.status(response.status).send(response.data);
 	},
+
+	sendJOIResponse: (msg, res) => {
+		let response = {
+			status: 500,
+			data: { msg, type: 'JOI error' },
+		};
+
+		res.status(response.status).send(response.data);
+	},
 };
 
 module.exports = responseManager;

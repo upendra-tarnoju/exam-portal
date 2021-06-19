@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 
 const { adminController } = require('../controllers');
-const { validatorMiddleware } = require('../middleware');
+const { validatorMiddleware, requestMiddleware } = require('../middleware');
 const { AdminValidator } = require('../validator');
 
 module.exports = () => {

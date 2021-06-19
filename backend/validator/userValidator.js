@@ -1,39 +1,26 @@
-const { body } = require('express-validator');
+const Joi = require('joi');
 
-module.exports = {
-	SIGNUP: [
-		body('firstName').not().isEmpty().withMessage('Required first name'),
-		body('lastName').not().isEmpty().withMessage('Required last name'),
-		body('email')
-			.not()
-			.isEmpty()
-			.withMessage('Required Email')
-			.isEmail()
-			.withMessage('Invalid email'),
-		body('password').not().isEmpty().withMessage('Required password'),
-		body('mobileNumber')
-			.not()
-			.isEmpty()
-			.withMessage('Required mobile number')
-			.isLength(10)
-			.withMessage('Invalid mobile number'),
-		body('college._id').not().isEmpty().withMessage('College id is required'),
-		body('college.name')
-			.not()
-			.isEmpty()
-			.withMessage('College name is required'),
-		body()
-			.custom((body) => {
-				const keys = [
-					'firstName',
-					'lastName',
-					'email',
-					'password',
-					'mobileNumber',
-					'college',
-				];
-				return Object.keys(body).every((key) => keys.includes(key));
-			})
-			.withMessage('Some extra parameters are sent'),
-	],
+const userValidator = {
+	LOGIN_USER: {
+		body: Joi.object({
+			username: Joi.string().required(),
+			password: Joi.string().required(),
+		}),
+	},
+
+	SIGNUP_USER: {
+		body: Joi.object({
+			firstName: Joi.string().required(),
+			lastName: Joi.string().required(),
+			email: Joi.string().email().required(),
+			password: Joi.string().required(),
+			mobileNumber: Joi.string().required().trim(),
+			college: Joi.object({
+				_id: Joi.string().required(),
+				name: Joi.string().required(),
+			}),
+		}),
+	},
 };
+
+module.exports = userValidator;
