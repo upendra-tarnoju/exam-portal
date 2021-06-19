@@ -49,7 +49,7 @@ let NewExamForm = (props) => {
 				password: '',
 				totalMarks: '',
 				passingMarks: '',
-				negativeMarks: '',
+				negativeMarks: 0,
 				examDate: null,
 				startTime: null,
 				endTime: null,
@@ -218,34 +218,29 @@ let NewExamForm = (props) => {
 								/>
 							</div>
 							<div className='col-md-4'>
-								<TextField
-									variant='outlined'
-									className='w-100'
-									name='negativeMarks'
-									label='Negative marks'
-									value={formikProps.values.negativeMarks}
-									onChange={(event) => {
-										let regex = /^[0-9\b]+$/;
-										if (
-											regex.test(event.target.value) ||
-											event.target.value === ''
-										) {
-											formikProps.setFieldValue(
-												'negativeMarks',
-												event.target.value
-											);
+								<FormControl variant='outlined' className='w-100'>
+									<InputLabel id='exam-negative-marks'>
+										Negative marks
+									</InputLabel>
+									<Select
+										labelId='exam-negative-marks'
+										id='demo-simple-select-outlined'
+										onChange={formikProps.handleChange}
+										onBlur={formikProps.handleBlur}
+										value={formikProps.values.negativeMarks}
+										label='Negative marks'
+										name='negativeMarks'
+										error={
+											formikProps.touched.negativeMarks &&
+											!!formikProps.errors.negativeMarks
 										}
-									}}
-									onBlur={formikProps.handleBlur}
-									error={
-										formikProps.touched.negativeMarks &&
-										!!formikProps.errors.negativeMarks
-									}
-									helperText={
-										formikProps.touched.negativeMarks &&
-										formikProps.errors.negativeMarks
-									}
-								/>
+									>
+										<MenuItem value={0}>0</MenuItem>
+										<MenuItem value={1}>1</MenuItem>
+										<MenuItem value={2}>2</MenuItem>
+										<MenuItem value={3}>3</MenuItem>
+									</Select>
+								</FormControl>
 							</div>
 						</div>
 					</div>
@@ -367,18 +362,6 @@ let NewExamForm = (props) => {
 										label='Duration'
 										value={formikProps.values.duration}
 										onChange={formikProps.handleChange}
-										// onChange={(event) => {
-										// 	let regex = /^[0-9\b]+$/;
-										// 	if (
-										// 		regex.test(event.target.value) ||
-										// 		event.target.value == ''
-										// 	) {
-										// 		formikProps.setFieldValue(
-										// 			'duration',
-										// 			event.target.value
-										// 		);
-										// 	}
-										// }}
 										onBlur={formikProps.handleBlur}
 										error={
 											formikProps.touched.duration &&
