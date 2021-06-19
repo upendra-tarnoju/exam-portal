@@ -2,7 +2,11 @@ const express = require('express');
 const passport = require('passport');
 
 const { adminController } = require('../controllers');
-const { validatorMiddleware, requestMiddleware } = require('../middleware');
+const {
+	validatorMiddleware,
+	requestMiddleware,
+	authMiddleware,
+} = require('../middleware');
 const { AdminValidator } = require('../validator');
 
 module.exports = () => {
@@ -24,13 +28,13 @@ module.exports = () => {
 
 	router.get(
 		'/dashboard',
-		passport.authenticate('jwt'),
+		authMiddleware,
 		adminController.getDashboardCardDetails
 	);
 
 	router.get(
 		'/dashboard/exam',
-		passport.authenticate('jwt'),
+		authMiddleware,
 		adminController.getUnexpiredExamDetails
 	);
 

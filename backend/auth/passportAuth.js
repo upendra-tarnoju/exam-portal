@@ -84,7 +84,7 @@ module.exports = (passport) => {
 	);
 
 	passport.serializeUser((user, done) => {
-		done(null, user.id);
+		done(null, user._id);
 	});
 
 	passport.deserializeUser((id, done) => {
@@ -97,18 +97,25 @@ module.exports = (passport) => {
 		new JwtStrategy(
 			{
 				jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken('Authorization'),
-				secretOrKey: 'gRG9lIiwiaWF0IjoxNTE2MjM5',
+				secretOrKey: process.env.JWT_SECRET,
 			},
-			function (jwtPayload, cb) {
-				return users
-					.findById(jwtPayload.userId)
-					.select({ username: 1 })
-					.then((user) => {
-						return cb(null, user);
-					})
-					.catch((err) => {
-						return cb(err);
-					});
+			async (jwtPayload, cb) => {
+				let query = { _id: mongoose.Types.ObjectId(jwtPayload.userId) };
+				let projections = { userType: 1 };
+				let options = { lean: true };
+
+				let user = await queries.findOne(
+					Schema.users,
+					query,
+					projections,
+					options
+				);
+
+				if (user && user.userType === jwtPayload.role) {
+					return cb(null, user);
+				} else {
+					return cb(null);
+				}
 			}
 		)
 	);
