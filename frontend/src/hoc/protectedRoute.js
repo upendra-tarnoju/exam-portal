@@ -13,7 +13,7 @@ export default function (WrappedComponent, accountType) {
 				let decodedToken = JwtDecode(cookieData.token);
 				if (
 					Date.now() >= decodedToken.exp * 1000 ||
-					decodedToken.type !== accountType
+					decodedToken.role !== accountType
 				) {
 					this.props.history.push('/login');
 					this.props.setAuthenticatedUser(false, '', '');

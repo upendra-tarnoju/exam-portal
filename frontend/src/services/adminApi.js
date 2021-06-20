@@ -10,19 +10,6 @@ class AdminService {
 		this.userService = new UserService();
 	}
 
-	getAllExaminerCount = (params) => {
-		let token = this.userService.getToken();
-		return axios({
-			method: 'get',
-			url: `${process.env.REACT_APP_BASE_URL}/${this.dashboardUrl}/examinerCount`,
-			params: params,
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`,
-			},
-		});
-	};
-
 	getAllExaminers = (params) => {
 		let token = this.userService.getToken();
 		return axios({
@@ -100,6 +87,20 @@ class AdminService {
 				Authorization: `Bearer ${token}`,
 			},
 			data: data,
+		});
+	};
+
+	viewLatestPendingExaminer = (params) => {
+		let token = this.userService.getToken();
+
+		return axios({
+			method: 'get',
+			url: `${process.env.REACT_APP_BASE_URL}/${this.dashboardUrl}/latestExaminers`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			params,
 		});
 	};
 }

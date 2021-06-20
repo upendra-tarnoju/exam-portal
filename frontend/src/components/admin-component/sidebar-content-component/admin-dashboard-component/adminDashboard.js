@@ -76,18 +76,15 @@ class AdminDashboard extends React.Component {
 
 	viewExamMonthData = (minDate, maxDate) => {
 		this.adminService.getExamChartDetails(minDate, maxDate).then((response) => {
-			let examData = response.data;
+			let examData = response.data.examDetails;
 			this.setState((prevState) => ({
 				...prevState,
 				examChart: {
 					options: {
 						chart: { id: 'basic-bar', toolbar: { show: false } },
 						xaxis: {
-							categories: examData.map(
-								(data) =>
-									`${data.examDate}-${moment(minDate.getMonth(), 'M').format(
-										'MMM'
-									)}`
+							categories: examData.map((data) =>
+								moment(data.examDate).format('DD MMM YYYY')
 							),
 						},
 					},
@@ -103,19 +100,19 @@ class AdminDashboard extends React.Component {
 	};
 
 	viewLatestExaminer(pageIndex, pageSize) {
-		// this.adminService
-		// 	.viewLatestPendingExaminer('latestExaminer', pageIndex, pageSize)
-		// 	.then((response) => {
-		// 		this.setState((prevState) => ({
-		// 			latestExaminers: response.data.examiners,
-		// 			latestExaminersPage: {
-		// 				...prevState.latestExaminersPage,
-		// 				pageCount: Math.ceil(
-		// 					response.data.count / this.state.latestExaminersPage.pageSize
-		// 				),
-		// 			},
-		// 		}));
-		// 	});
+		this.adminService
+			.viewLatestPendingExaminer({ pageIndex, pageSize })
+			.then((response) => {
+				this.setState((prevState) => ({
+					latestExaminers: response.data.examiners,
+					latestExaminersPage: {
+						...prevState.latestExaminersPage,
+						pageCount: Math.ceil(
+							response.data.count / this.state.latestExaminersPage.pageSize
+						),
+					},
+				}));
+			});
 	}
 
 	handlePageChange = (event, value) => {
@@ -160,31 +157,26 @@ class AdminDashboard extends React.Component {
 				totalExams: data.totalExams,
 				totalStudents: data.totalStudents,
 				totalSubAdmin: data.totalSubAdmin,
-			});
-		});
-
-		let minDate = new Date();
-		minDate.setDate(1);
-		let maxDate = new Date(minDate.getFullYear(), minDate.getMonth() + 1, 0);
-		this.viewExamMonthData(minDate, maxDate);
-
-		this.adminService.getAllExaminerCount().then((res) => {
-			this.setState({
 				examinerPieChart: {
-					series: res.data.map((value) => {
-						return value.count;
-					}),
+					series: Object.keys(data.examiners).map(
+						(value) => data.examiners[value]
+					),
 					options: {
-						labels: res.data.map((value) => {
-							return (
-								value._id.slice(0, 1).toUpperCase() +
-								value._id.slice(1, value._id.length)
-							);
-						}),
+						labels: Object.keys(data.examiners).map((value) =>
+							factories.capitalizeName(value)
+						),
 					},
 				},
 			});
 		});
+
+		let minDate = moment().startOf('month');
+		let maxDate = moment().endOf('month');
+
+		// let minDate = new Date();
+		// minDate.setDate(1);
+		// let maxDate = new Date(minDate.getFullYear(), minDate.getMonth() + 1, 0);
+		this.viewExamMonthData(minDate.valueOf(), maxDate.valueOf());
 
 		this.viewLatestExaminer(
 			latestExaminersPage.pageIndex,
