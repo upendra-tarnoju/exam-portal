@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const moment = require('moment');
 const generatorPassword = require('generate-password');
 
-const { users, exam } = require('../models');
 const { sender, transporter } = require('../config/mail');
 const APP_DEFAULTS = require('../config/app-defaults');
 const RESPONSE_MESSAGES = require('../config/response-messages');
@@ -76,17 +75,6 @@ const admin = {
 		}
 	},
 
-	getExaminerCount: async () => {
-		try {
-			let examinerData = await users.findByUserType(
-				APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER
-			);
-			return { status: 200, data: examinerData };
-		} catch (err) {
-			throw err;
-		}
-	},
-
 	approveOrDeclineExaminer: async (payload) => {
 		let query = { _id: mongoose.Types.ObjectId(payload.examinerId) };
 
@@ -132,8 +120,8 @@ const admin = {
 		}
 
 		return {
-			status: response.STATUS_CODE,
-			data: { msg: response.MSG },
+			response: response,
+			finalData: {},
 		};
 	},
 
@@ -143,17 +131,28 @@ const admin = {
 				{ $match: { userType: { $ne: APP_DEFAULTS.ACCOUNT_TYPE.ADMIN } } },
 				{ $group: { _id: '$userType', count: { $sum: 1 } } },
 			];
+			let options = { lean: true };
 
 			let countDetails = await queries.aggregateData(
 				Schema.users,
 				aggregateArray,
-				{
-					lean: true,
-				}
+				options
 			);
 
 			condition = {};
 			let totalExams = await queries.countDocuments(Schema.exam, condition);
+
+			aggregateArray = [
+				{ $match: { userType: APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER } },
+				{ $group: { _id: '$status', count: { $sum: 1 } } },
+				{ $sort: { _id: 1 } },
+			];
+
+			let examinerDetails = await queries.aggregateData(
+				Schema.users,
+				aggregateArray,
+				options
+			);
 
 			return {
 				response: { STATUS_CODE: 200, MSG: '' },
@@ -162,6 +161,10 @@ const admin = {
 					totalExams,
 					totalStudents: countDetails.length !== 0 ? countDetails[1].count : 0,
 					totalSubAdmin: countDetails.length !== 0 ? countDetails[2].count : 0,
+					examiners: {
+						approved: examinerDetails[0].count,
+						pending: examinerDetails[1].count,
+					},
 				},
 			};
 		} catch (err) {
@@ -169,23 +172,81 @@ const admin = {
 		}
 	},
 
-	getUnexpiredExamDetails: async (minDate, maxDate) => {
-		let data = await exam.findByExamMonth(minDate, maxDate);
-		return data;
+	getUnexpiredExamDetails: async (payload) => {
+		let minDate = parseInt(payload.minDate, 10);
+		let maxDate = parseInt(payload.maxDate, 10);
+		try {
+			let aggregateArray = [
+				{
+					$match: {
+						examDate: { $gte: minDate, $lt: maxDate },
+					},
+				},
+				{
+					$group: {
+						_id: '$examDate',
+						count: { $sum: 1 },
+					},
+				},
+				{ $project: { _id: 0, examDate: '$_id', count: 1 } },
+				{ $sort: { examDate: 1 } },
+			];
+			let options = {};
+
+			let examDetails = await queries.aggregateData(
+				Schema.exam,
+				aggregateArray,
+				options
+			);
+
+			return {
+				response: { STATUS_CODE: 200, msg: '' },
+				finalData: { examDetails },
+			};
+		} catch (err) {
+			throw err;
+		}
 	},
 
-	getLatestPendingExaminers: async (pageIndex, pageSize) => {
+	getLatestPendingExaminers: async (payload) => {
 		try {
-			pageIndex = pageIndex * pageSize;
-			let pendingExaminers = await users
-				.findLatest24HoursExaminers()
-				.skip(pageIndex)
-				.limit(pageSize);
+			let pageIndex = parseInt(payload.pageIndex, 10);
+			let pageSize = parseInt(payload.pageSize, 10);
 
-			let allExaminers = await users.findLatest24HoursExaminers();
+			pageIndex = pageIndex * pageSize;
+
+			let createdDate = moment().startOf('day').valueOf();
+
+			let aggregateArray = [
+				{
+					$match: {
+						$and: [
+							{ userType: APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER },
+							{ createdDate: { $gte: createdDate } },
+							{ status: APP_DEFAULTS.ACCOUNT_STATUS.PENDING },
+						],
+					},
+				},
+				{ $project: { firstName: 1, lastName: 1 } },
+				{ $skip: pageIndex },
+				{ $limit: pageSize },
+			];
+			let options = { lean: true };
+
+			let examinerDetails = await queries.aggregateData(
+				Schema.users,
+				aggregateArray,
+				options
+			);
+
+			let count = await queries.countDocuments(
+				Schema.users,
+				aggregateArray[0].$match
+			);
+
 			return {
-				status: 200,
-				data: { count: allExaminers.length, examiners: pendingExaminers },
+				response: { STATUS_CODE: 200, msg: '' },
+				finalData: { count: count, examiners: examinerDetails },
 			};
 		} catch (err) {
 			throw err;

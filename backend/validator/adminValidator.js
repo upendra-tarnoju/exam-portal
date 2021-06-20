@@ -1,39 +1,58 @@
-const { query, body } = require('express-validator');
+const Joi = require('joi');
+
 const APP_DEFAULTS = require('../config/app-defaults');
 
-module.exports = {
-	ADMIN_EXAMINER_DETAILS: [
-		query('pageIndex').not().isEmpty().withMessage('Required page index'),
-		query('pageSize').not().isEmpty().withMessage('Required page size'),
-		// query('type')
-		// 	.not()
-		// 	.isEmpty()
-		// 	.withMessage('Required type')
-		// 	.isIn([
-		// 		APP_DEFAULTS.EXAMINER_QUERY_TYPE.LATEST_EXAMINER,
-		// 		APP_DEFAULTS.EXAMINER_QUERY_TYPE.PENDING,
-		// 		APP_DEFAULTS.EXAMINER_QUERY_TYPE.DECLINED,
-		// 		APP_DEFAULTS.EXAMINER_QUERY_TYPE.APPROVED,
-		// 	])
-		// 	.withMessage('Invalid value for type'),
-	],
-	APPROVE_DECLINE_EXAMINER: [
-		body('examinerId').not().isEmpty().withMessage('Required examiner id'),
-		body('status').not().isEmpty().withMessage('Required status'),
-	],
-
-	APPROVE_DECLINE_SUBADMIN: [
-		body('subAdminId')
-			.not()
-			.isEmpty()
-			.withMessage('Required sub admin id')
-			.isLength({ min: 24, max: 24 })
-			.withMessage('Invalid sub admin id'),
-		body('status').not().isEmpty().withMessage('Required status'),
-		// .isIn([
-		// 	APP_DEFAULTS.ACCOUNT_STATUS.DECLINED,
-		// 	APP_DEFAULTS.ACCOUNT_STATUS.APPROVED,
-		// ])
-		// .withMessage('Invalid value for status'),
-	],
+const adminValidator = {
+	EXAM_DETAILS: {
+		query: Joi.object({
+			minDate: Joi.number().required(),
+			maxDate: Joi.number().required(),
+		}),
+	},
+	EXAMINER_DETAILS: {
+		query: Joi.object({
+			pageIndex: Joi.number().required(),
+			pageSize: Joi.number().required(),
+			email: Joi.string(),
+			name: Joi.string(),
+			status: Joi.string().valid(
+				APP_DEFAULTS.ACCOUNT_STATUS.APPROVED,
+				APP_DEFAULTS.ACCOUNT_STATUS.PENDING,
+				APP_DEFAULTS.ACCOUNT_STATUS.DECLINED
+			),
+		}),
+	},
+	APPROVE_DECLINE_EXAMINER: {
+		body: Joi.object({
+			examinerId: Joi.string().required().length(24),
+			status: Joi.string().valid(
+				APP_DEFAULTS.ACCOUNT_STATUS.APPROVED,
+				APP_DEFAULTS.ACCOUNT_STATUS.DECLINED
+			),
+		}),
+	},
+	APPROVE_DECLINE_SUBADMIN: {
+		body: Joi.object({
+			subAdminId: Joi.string().required().length(24),
+			status: Joi.string().valid(
+				APP_DEFAULTS.ACCOUNT_STATUS.APPROVED,
+				APP_DEFAULTS.ACCOUNT_STATUS.DECLINED
+			),
+		}),
+	},
+	SUB_ADMIN_DETAILS: {
+		query: Joi.object({
+			pageIndex: Joi.number().required(),
+			pageSize: Joi.number().required(),
+			email: Joi.string(),
+			name: Joi.string(),
+			status: Joi.string().valid(
+				APP_DEFAULTS.ACCOUNT_STATUS.APPROVED,
+				APP_DEFAULTS.ACCOUNT_STATUS.PENDING,
+				APP_DEFAULTS.ACCOUNT_STATUS.DECLINED
+			),
+		}),
+	},
 };
+
+module.exports = adminValidator;

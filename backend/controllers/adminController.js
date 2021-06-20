@@ -2,15 +2,6 @@ const { adminHandler } = require('../handlers');
 const { responseManager } = require('../lib');
 
 const admin = {
-	examinerStatusCount: async (req, res) => {
-		try {
-			let response = await adminHandler.getExaminerCount();
-			res.status(response.status).send(response.data);
-		} catch (err) {
-			throw err;
-		}
-	},
-
 	getExaminerDetails: async (req, res) => {
 		try {
 			let payload = req.query;
@@ -30,7 +21,7 @@ const admin = {
 		try {
 			let payload = req.body;
 
-			let response = await adminHandler.approveOrDeclineExaminer(payload);
+			let responseData = await adminHandler.approveOrDeclineExaminer(payload);
 			responseManager.sendSuccessResponse(responseData, res);
 		} catch (err) {
 			throw err;
@@ -48,10 +39,25 @@ const admin = {
 	},
 
 	getUnexpiredExamDetails: async (req, res) => {
-		let { minDate, maxDate } = req.query;
+		try {
+			let query = req.query;
+			let responseData = await adminHandler.getUnexpiredExamDetails(query);
 
-		let data = await adminHandler.getUnexpiredExamDetails(minDate, maxDate);
-		res.status(200).send(data);
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
+
+	getLatestPendingExaminers: async (req, res) => {
+		try {
+			let query = req.query;
+			let responseData = await adminHandler.getLatestPendingExaminers(query);
+
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
 	},
 
 	getSubAdminList: async (req, res) => {

@@ -1,12 +1,7 @@
 const express = require('express');
-const passport = require('passport');
 
 const { adminController } = require('../controllers');
-const {
-	validatorMiddleware,
-	requestMiddleware,
-	authMiddleware,
-} = require('../middleware');
+const { requestMiddleware, authMiddleware } = require('../middleware');
 const { AdminValidator } = require('../validator');
 
 module.exports = () => {
@@ -14,15 +9,15 @@ module.exports = () => {
 
 	router.get(
 		'/examiner',
-		passport.authenticate('jwt'),
-		validatorMiddleware(AdminValidator.ADMIN_EXAMINER_DETAILS),
+		authMiddleware,
+		requestMiddleware(AdminValidator.EXAMINER_DETAILS),
 		adminController.getExaminerDetails
 	);
 
 	router.patch(
 		'/examiner',
-		passport.authenticate('jwt'),
-		validatorMiddleware(AdminValidator.APPROVE_DECLINE_EXAMINER),
+		authMiddleware,
+		requestMiddleware(AdminValidator.APPROVE_DECLINE_EXAMINER),
 		adminController.approveOrDeclineExaminer
 	);
 
@@ -35,25 +30,27 @@ module.exports = () => {
 	router.get(
 		'/dashboard/exam',
 		authMiddleware,
+		requestMiddleware(AdminValidator.EXAM_DETAILS),
 		adminController.getUnexpiredExamDetails
 	);
 
 	router.get(
-		'/dashboard/examinerCount',
-		passport.authenticate('jwt'),
-		adminController.examinerStatusCount
+		'/dashboard/latestExaminers',
+		authMiddleware,
+		adminController.getLatestPendingExaminers
 	);
 
 	router.get(
 		'/subAdmin',
-		passport.authenticate('jwt'),
+		authMiddleware,
+		requestMiddleware(AdminValidator.SUB_ADMIN_DETAILS),
 		adminController.getSubAdminList
 	);
 
 	router.patch(
 		'/subAdmin/status',
-		passport.authenticate('jwt'),
-		validatorMiddleware(AdminValidator.APPROVE_DECLINE_SUBADMIN),
+		authMiddleware,
+		requestMiddleware(AdminValidator.APPROVE_DECLINE_SUBADMIN),
 		adminController.updateSubAdminStatus
 	);
 
