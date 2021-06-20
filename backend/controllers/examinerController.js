@@ -34,10 +34,10 @@ const examiner = {
 
 	getDefaultCourses: async (req, res) => {
 		try {
-			response = await examinerHandler.getDefaultCourses();
-			res.status(response.status).send(response.data);
+			let responseData = await examinerHandler.getDefaultCourses();
+			responseManager.sendSuccessResponse(responseData, res);
 		} catch (err) {
-			throw err;
+			responseManager.sendErrorResponse(err, res);
 		}
 	},
 
@@ -85,10 +85,18 @@ const examiner = {
 	},
 
 	updateProfile: async (req, res) => {
-		let examinerId = req.user._id;
-		let profileData = req.body;
-		let response = await examinerHandler.updateProfile(examinerId, profileData);
-		res.status(response.status).send({ msg: response.msg });
+		try {
+			let userDetails = req.user;
+			let payload = req.body;
+
+			let responseData = await examinerHandler.updateProfile(
+				payload,
+				userDetails
+			);
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
 	},
 };
 

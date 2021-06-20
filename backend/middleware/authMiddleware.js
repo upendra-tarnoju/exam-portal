@@ -10,7 +10,10 @@ router.all('*', (req, res, next) => {
 			res.status(401).send({ msg: 'Missing authentication' });
 		} else if (err || !user) {
 			res.status(401).send({ msg: 'Invalid token' });
-		} else next();
+		} else {
+			req.user = user;
+			next();
+		}
 	})(req, res, next);
 });
 

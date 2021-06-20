@@ -156,10 +156,26 @@ const questions = {
 		}
 	},
 
-	getParticularQuestion: async (questionId) => {
-		return question
-			.findById(questionId)
-			.select({ modifiedAt: 0, createdAt: 0, __v: 0, _id: 0 });
+	getParticularQuestion: async (payload) => {
+		try {
+			let query = { _id: mongoose.Types.ObjectId(payload.questionId) };
+			let projections = { modifiedAt: 0, createdAt: 0, __v: 0 };
+			let options = {};
+
+			let questionDetails = await queries.findOne(
+				Schema.question,
+				query,
+				projections,
+				options
+			);
+
+			return {
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { questionDetails },
+			};
+		} catch (err) {
+			throw err;
+		}
 	},
 
 	update: async (params, payload, imageDetails) => {

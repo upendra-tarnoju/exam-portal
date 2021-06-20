@@ -39,8 +39,10 @@ const examiners = {
 				projections,
 				options
 			);
-
-			return { status: 200, data: courseDetails };
+			return {
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { courseDetails },
+			};
 		} catch (err) {
 			throw err;
 		}
@@ -264,7 +266,7 @@ const examiners = {
 		return searchCourse;
 	},
 
-	updateProfile: async (examinerId, profileData) => {
+	updateProfile: async (payload, userDetails) => {
 		let user = await users.findById(examinerId).select({
 			password: 1,
 		});

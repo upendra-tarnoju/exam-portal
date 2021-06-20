@@ -1,5 +1,4 @@
 const express = require('express');
-const passport = require('passport');
 
 const {
 	examinerController,
@@ -7,130 +6,133 @@ const {
 	questionController,
 	studentController,
 } = require('../controllers');
-const { multerMiddleware, validatorMiddleware } = require('../middleware');
+const {
+	multerMiddleware,
+	validatorMiddleware,
+	authMiddleware,
+	requestMiddleware,
+} = require('../middleware');
 const { ExaminerValidator } = require('../validator');
 
 module.exports = () => {
 	const router = express.Router();
 
-	router.patch(
-		'/',
-		passport.authenticate('jwt'),
-		examinerController.updateExaminerDetails
-	);
+	router.patch('/', authMiddleware, examinerController.updateExaminerDetails);
 
 	router.post(
 		'/course',
-		passport.authenticate('jwt'),
-		validatorMiddleware(ExaminerValidator.SAVE_COURSE),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.SAVE_COURSE),
 		examinerController.createCourse
 	);
 
 	router.get(
 		'/course/default',
-		passport.authenticate('jwt'),
+		authMiddleware,
 		examinerController.getDefaultCourses
 	);
 
 	router.get(
 		'/course',
-		passport.authenticate('jwt'),
-		validatorMiddleware(ExaminerValidator.GET_COURSES),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.GET_COURSES),
 		examinerController.getExaminerCourses
 	);
 
 	router.patch(
 		'/course',
-		passport.authenticate('jwt'),
-		validatorMiddleware(ExaminerValidator.UPDATE_COURSE),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.UPDATE_COURSE),
 		examinerController.updateCourse
 	);
 
 	router.delete(
 		'/course',
-		passport.authenticate('jwt'),
-		validatorMiddleware(ExaminerValidator.DELETE_COURSE),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.DELETE_COURSE),
 		examinerController.deleteCourse
 	);
 
 	router.post(
 		'/exam',
-		passport.authenticate('jwt'),
-		validatorMiddleware(ExaminerValidator.SAVE_EXAM),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.SAVE_EXAM),
 		examController.saveExamDetails
 	);
 
 	router.get(
 		'/exam',
-		passport.authenticate('jwt'),
-		validatorMiddleware(ExaminerValidator.GET_EXAMS),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.GET_EXAMS),
 		examController.getExamDetails
 	);
 
 	router.get(
 		'/exam/:examId/questionDetails',
-		passport.authenticate('jwt'),
-		validatorMiddleware(ExaminerValidator.GET_EXAM_DETAILS),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.GET_EXAM_DETAILS),
 		examController.getSpecificExamQuestionDetails
 	);
 
 	router.get(
 		'/exam/examDetails',
-		passport.authenticate('jwt'),
-		validatorMiddleware(ExaminerValidator.GET_EXAM_LIST),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.GET_EXAM_LIST),
 		examController.getExamList
 	);
 
 	router.get(
 		'/exam/:examId',
-		passport.authenticate('jwt'),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.GET_EXAM_DETAILS),
 		examController.getParticularExam
 	);
 
 	router.patch(
 		'/exam/:examId',
-		passport.authenticate('jwt'),
-		validatorMiddleware(ExaminerValidator.UPDATE_EXAM),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.UPDATE_EXAM),
 		examController.updateExamDetails
 	);
 
 	router.delete(
 		'/exam',
-		passport.authenticate('jwt'),
-		validatorMiddleware(ExaminerValidator.DELETE_EXAM),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.DELETE_EXAM),
 		examController.deleteExam
 	);
 
 	router.post(
 		'/question',
-		passport.authenticate('jwt'),
+		authMiddleware,
 		multerMiddleware.upload.single('image'),
 		questionController.addNewQuestion
 	);
 
 	router.get(
 		'/exam/:examId/questions',
-		passport.authenticate('jwt'),
-		validatorMiddleware(ExaminerValidator.GET_EXAM_QUESTIONS),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.GET_EXAM_QUESTIONS),
 		questionController.getAllQuestions
 	);
 
 	router.get(
 		'/question/:questionId',
-		passport.authenticate('jwt'),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.PARTICULAR_QUESTION),
 		questionController.getParticularQuestion
 	);
 
 	router.patch(
 		'/question/:questionId/status',
-		passport.authenticate('jwt'),
-		validatorMiddleware(ExaminerValidator.QUESTION_STATUS),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.QUESTION_STATUS),
 		questionController.updateQuestionStatus
 	);
 
 	router.patch(
 		'/question/:questionId',
-		passport.authenticate('jwt'),
+		authMiddleware,
 		multerMiddleware.upload.single('image'),
 		// validatorMiddleware(ExaminerValidator.UPDATE_QUESTION),
 		questionController.update
@@ -138,56 +140,64 @@ module.exports = () => {
 
 	router.delete(
 		'/question/:questionId',
-		passport.authenticate('jwt'),
-		validatorMiddleware(ExaminerValidator.DELETE_QUESTION),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.DELETE_QUESTION),
 		questionController.delete
 	);
 
 	router.get(
 		'/studentCount',
-		passport.authenticate('jwt'),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.EXAM_QUESTION_COUNT),
 		studentController.getExamStudentsCount
 	);
 
 	router.get(
 		'/students',
-		passport.authenticate('jwt'),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.STUDENTS_LIST),
 		studentController.getAllStudentsList
 	);
 
 	router.post(
 		'/student/assign',
-		passport.authenticate('jwt'),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.ASSIGN_STUDENTS),
 		studentController.assignStudents
 	);
 
 	router.delete(
 		'/student/:studentId',
-		passport.authenticate('jwt'),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.DEALLOCATE_STUDENT),
 		studentController.deallocateStudent
 	);
 
 	router.patch(
 		'/student/:studentId',
-		passport.authenticate('jwt'),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.UPDATE_STUDENT),
 		studentController.updateStudent
 	);
 
 	router.get(
 		'/exam/:examId/students',
-		passport.authenticate('jwt'),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.PARTICULAR_EXAM_STUDENTS),
 		studentController.getParticularExamStudents
 	);
 
 	router.patch(
 		'/student/:studentId/blockUnblock',
-		passport.authenticate('jwt'),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.BLOCK_UNBLOCK_STUDENT),
 		studentController.blockOrUnblockStudent
 	);
 
 	router.patch(
 		'/profile',
-		passport.authenticate('jwt'),
+		authMiddleware,
+		requestMiddleware(ExaminerValidator.UPDATE_PROFILE),
 		examinerController.updateProfile
 	);
 

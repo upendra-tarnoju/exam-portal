@@ -1,7 +1,5 @@
-const path = require('path');
-const fs = require('fs');
-
 const { questionHandler } = require('../handlers');
+const responseManager = require('../lib/responseManager');
 
 const question = {
 	addNewQuestion: async (req, res) => {
@@ -31,13 +29,14 @@ const question = {
 	},
 
 	getParticularQuestion: async (req, res) => {
-		let questionId = req.params.questionId;
-		questionHandler
-			.getParticularQuestion(questionId)
-			.then((response) => {
-				res.status(200).send(response);
-			})
-			.catch((error) => {});
+		try {
+			let params = req.params;
+			let responseData = await questionHandler.getParticularQuestion(params);
+
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
 	},
 
 	update: async (req, res) => {
