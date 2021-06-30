@@ -23,7 +23,7 @@ let CourseForm = (props) => {
 			let courseService = new CourseService();
 			const response = await courseService.viewDefaultCourses();
 
-			const courses = response.data;
+			const courses = response.data.courseDetails;
 			if (active) {
 				setOptions(courses);
 			}

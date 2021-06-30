@@ -8,7 +8,6 @@ const {
 } = require('../controllers');
 const {
 	multerMiddleware,
-	validatorMiddleware,
 	authMiddleware,
 	requestMiddleware,
 } = require('../middleware');

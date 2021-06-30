@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 
 const { subAdminController } = require('../controllers');
-const { multerMiddleware } = require('../middleware');
+const { multerMiddleware, authMiddleware } = require('../middleware');
 
 module.exports = () => {
 	const router = express.Router();
@@ -15,7 +15,7 @@ module.exports = () => {
 
 	router.post(
 		'/requestExaminer',
-		passport.authenticate('jwt'),
+		authMiddleware,
 		subAdminController.requestNewExaminer
 	);
 

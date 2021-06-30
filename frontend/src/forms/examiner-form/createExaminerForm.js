@@ -98,9 +98,16 @@ const CreateExaminerForm = (props) => {
 							<Button
 								type='submit'
 								variant='contained'
-								className='bg-dark text-white'
+								className='bg-dark text-white mr-2'
 							>
 								Request
+							</Button>
+							<Button
+								variant='contained'
+								onClick={() => props.hideModal(false)}
+								className='bg-white text-dark'
+							>
+								Cancel
 							</Button>
 						</div>
 					</div>

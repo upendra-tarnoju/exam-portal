@@ -138,7 +138,8 @@ const subAdmin = {
 			let query = {
 				$and: [
 					{ email: examinerDetails.email },
-					{ userType: APP_DEFAULTS.ACCOUNT_TYPE.SUB_ADMIN },
+					{ userType: APP_DEFAULTS.ACCOUNT_TYPE.EXAMINER },
+					{ subAdmin: mongoose.Types.ObjectId(userDetails._id) },
 					{ status: { $ne: APP_DEFAULTS.ACCOUNT_STATUS.DELETED } },
 				],
 			};

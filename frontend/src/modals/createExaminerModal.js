@@ -41,7 +41,10 @@ const CreateExaminerModal = (props) => {
 					<Typography variant='h5' component='p'>
 						Request new examiner
 					</Typography>
-					<CreateExaminerForm handleSubmit={props.handleSubmit} />
+					<CreateExaminerForm
+						handleSubmit={props.handleSubmit}
+						hideModal={props.hideModal}
+					/>
 				</Paper>
 			</Fade>
 		</Modal>

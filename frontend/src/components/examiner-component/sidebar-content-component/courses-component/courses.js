@@ -8,7 +8,6 @@ import {
 	TableHead,
 	TableRow,
 	Typography,
-	TableCell,
 	TableBody,
 	IconButton,
 	TablePagination,
@@ -172,9 +171,6 @@ class Courses extends Component {
 
 		let { courses } = this.props;
 
-		const emptyRows =
-			pageSize - Math.min(pageSize, courses.length - pageIndex * pageSize);
-
 		return (
 			<div className='container py-5'>
 				<Card className='p-3'>
@@ -229,7 +225,9 @@ class Courses extends Component {
 									<StyledTableCell component='th' scope='row'>
 										{index + 1}
 									</StyledTableCell>
-									<StyledTableCell>{course.courseId.name}</StyledTableCell>
+									<StyledTableCell>
+										{course.defaultCourses.name}
+									</StyledTableCell>
 									<StyledTableCell>{course.description}</StyledTableCell>
 									<StyledTableCell>
 										<Moment format='MMM Do, YYYY (hh:mm A)'>
@@ -252,11 +250,6 @@ class Courses extends Component {
 									</StyledTableCell>
 								</StyledTableRow>
 							))}
-							{courses.length !== 0 && emptyRows > 0 && (
-								<TableRow style={{ height: 23 * emptyRows }}>
-									<TableCell colSpan={5} />
-								</TableRow>
-							)}
 						</TableBody>
 					</Table>
 					<TablePagination

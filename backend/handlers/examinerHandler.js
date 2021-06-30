@@ -92,29 +92,29 @@ const examiners = {
 	getExaminerCourses: async (payload, userData) => {
 		try {
 			let pageSize = parseInt(payload.pageSize, 10);
-			let pageIndex = parseInt(payload.pageIndex, 10) * pageSize;
+			let pageIndex = parseInt(payload.pageIndex, 10);
 
 			let aggregateOptions = [];
 
 			aggregateOptions.push({
 				$match: {
 					$and: [
-						{ examinerId: userData._id },
+						{ examinerId: mongoose.Types.ObjectId(userData._id) },
 						{ status: APP_DEFAULTS.COURSE_STATUS_ENUM.ACTIVE },
 					],
 				},
 			});
 
-			let populateOptions = {
-				path: 'courseId',
-				select: 'name description',
-			};
-
-			if (payload.name) {
-				aggregateOptions[0].$match.$and.push({ name: `/${payload.name}/i` });
-			}
-
-			let createdDate = {};
+			aggregateOptions.push({
+				$lookup: {
+					from: 'defaultcourses',
+					let: { courseId: '$courseId' },
+					pipeline: [
+						{ $match: { $and: [{ $expr: { $eq: ['$$courseId', '$_id'] } }] } },
+					],
+					as: 'defaultCourses',
+				},
+			});
 
 			if (payload.startDate) {
 				createdDate.$gte = moment(payload.startDate).startOf('day').valueOf();
@@ -128,27 +128,39 @@ const examiners = {
 				aggregateOptions[0].$match.$and.push({ createdDate });
 			}
 
-			let totalCourses = await queries.countDocuments(
-				Schemas.examinerCourses,
-				aggregateOptions[0]['$match']
-			);
+			if (payload.name) {
+				let name = new RegExp(payload.name, 'i');
+				aggregateOptions[1].$lookup.pipeline[0].$match.$and.push({
+					name: name,
+				});
+			}
 
 			aggregateOptions.push(
-				{ $project: { createdDate: 1, description: 1, courseId: 1 } },
+				{ $unwind: '$defaultCourses' },
+				{ $project: { name: 1, description: 1, 'defaultCourses.name': 1 } },
 				{ $sort: { modifiedDate: -1 } },
 				{ $skip: pageIndex },
 				{ $limit: pageSize }
 			);
 
-			let courseDetails = await queries.aggregateDataWithPopulate(
+			let courseDetails = await queries.aggregateData(
 				Schemas.examinerCourses,
-				aggregateOptions,
-				populateOptions
+				aggregateOptions
 			);
+
+			let newCourseDetails = [];
+
+			for (let i = 0; i < courseDetails.length; i++) {
+				if (Object.keys(courseDetails[i].defaultCourses).length !== 0) {
+					newCourseDetails.push(courseDetails[i]);
+				}
+			}
+
+			let totalCourses = newCourseDetails.length;
 
 			return {
 				response: { STATUS_CODE: 200, MSG: '' },
-				finalData: { courseDetails, totalCourses },
+				finalData: { courseDetails: newCourseDetails, totalCourses },
 			};
 		} catch (err) {
 			throw err;

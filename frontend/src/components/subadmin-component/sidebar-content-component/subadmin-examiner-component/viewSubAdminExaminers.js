@@ -77,6 +77,9 @@ class ViewSubAdminExaminers extends React.Component {
 	};
 
 	handleSnackBar = (status, msg, type) => {
+		let { snackbar } = this.state;
+		if (type === undefined) type = snackbar.type;
+
 		this.setState({ snackbar: { show: status, msg: msg, type: type } });
 	};
 
@@ -98,10 +101,12 @@ class ViewSubAdminExaminers extends React.Component {
 		this.subAdminService
 			.getExaminerList({ pageSize, pageIndex })
 			.then((res) => {
+				console.log();
 				this.setState({
 					examinerList: res.data.examinerList,
 					totalExaminers: res.data.count,
 					deleteModal: { id: '', show: false },
+					createExaminer: false,
 				});
 			});
 	}
@@ -178,7 +183,7 @@ class ViewSubAdminExaminers extends React.Component {
 							{examinerList.length === 0 ? (
 								<StyledTableRow component='th' scope='row'>
 									<StyledTableCell
-										colSpan={5}
+										colSpan={6}
 										className='text-center font-weight-bold'
 									>
 										No examiner available

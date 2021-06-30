@@ -291,9 +291,11 @@ const admin = {
 				aggregateArray[0].$match
 			);
 
-			aggregateArray.push({ $skip: pageIndex }, { $limit: pageSize });
-
-			console.log(JSON.stringify(aggregateArray));
+			aggregateArray.push(
+				{ $sort: { createdDate: -1 } },
+				{ $skip: pageIndex },
+				{ $limit: pageSize }
+			);
 
 			let subAdminList = await queries.aggregateDataWithPopulate(
 				Schema.users,
