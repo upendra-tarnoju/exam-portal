@@ -136,7 +136,7 @@ module.exports = {
 				MSG: 'Invalid exam id',
 			},
 			INVALID_PASSWORD: {
-				STATUS_CODE: 200,
+				STATUS_CODE: 400,
 				MSG: 'Wrong exam credentials',
 			},
 		},

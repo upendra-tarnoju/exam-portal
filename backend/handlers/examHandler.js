@@ -306,6 +306,7 @@ const exams = {
 					payload.password,
 					examDetails.password
 				);
+				console.log(validatedPassword);
 
 				if (validatedPassword) {
 					delete examDetails['password'];

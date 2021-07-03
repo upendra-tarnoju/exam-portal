@@ -163,7 +163,12 @@ module.exports = {
 		}),
 	},
 
-	PARTICULAR_EXAM_STUDENTS: {},
+	PARTICULAR_EXAM_STUDENTS: {
+		query: Joi.object({
+			pageIndex: Joi.number().required(),
+			pageSize: Joi.number().required(),
+		})
+	},
 
 	BLOCK_UNBLOCK_STUDENT: {
 		body: Joi.object({

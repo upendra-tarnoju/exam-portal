@@ -1,14 +1,17 @@
 const express = require('express');
 const passport = require('passport');
 
+const { authMiddleware, requestMiddleware } = require('../middleware');
 const { studentController, examController } = require('../controllers');
+const { StudentValidator } = require('../validator');
 
 module.exports = () => {
 	const router = express.Router();
 
 	router.post(
 		'/exam/validateKey',
-		passport.authenticate('jwt'),
+		authMiddleware,
+		requestMiddleware(StudentValidator.VALIDATE_EXAM_KEY),
 		examController.validateExamKey
 	);
 

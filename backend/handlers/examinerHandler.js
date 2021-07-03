@@ -95,6 +95,7 @@ const examiners = {
 			let pageIndex = parseInt(payload.pageIndex, 10);
 
 			let aggregateOptions = [];
+			let createdDate = {}
 
 			aggregateOptions.push({
 				$match: {
