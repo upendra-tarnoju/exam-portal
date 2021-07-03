@@ -16,6 +16,9 @@ const useStyles = makeStyles((theme) => ({
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
+	modalContainer: {
+		width: '35%',
+	},
 }));
 
 const ExamKeyModal = (props) => {
@@ -32,9 +35,9 @@ const ExamKeyModal = (props) => {
 			}}
 		>
 			<Fade in={props.show}>
-				<Paper className='w-25 p-4'>
-					<Typography variant='h6' className='mb-3' component='p'>
-						Exam password
+				<Paper className={`p-4 ${classes.modalContainer}`}>
+					<Typography variant='h5' className='mb-3 text-center' component='p'>
+						EXAM PASSWORD
 					</Typography>
 
 					<ExamKeyForm

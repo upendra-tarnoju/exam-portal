@@ -14,14 +14,13 @@ const ExamKeyForm = (props) => {
 			validationSchema={schema}
 		>
 			{(formikProps) => (
-				<div>
+				<form onSubmit={formikProps.handleSubmit} className='px-3'>
 					<TextField
 						label='Password'
 						name='password'
 						type='password'
-						fullWidth
 						variant='outlined'
-						size='medium'
+						className='w-100 my-3'
 						onChange={formikProps.handleChange}
 						onBlur={formikProps.handleBlur}
 						value={formikProps.values.password}
@@ -45,12 +44,11 @@ const ExamKeyForm = (props) => {
 							variant='contained'
 							className='text-white bg-dark'
 							type='submit'
-							onClick={formikProps.handleSubmit}
 						>
 							Take test
 						</Button>
 					</div>
-				</div>
+				</form>
 			)}
 		</Formik>
 	);
