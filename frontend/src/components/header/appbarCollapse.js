@@ -1,5 +1,14 @@
 import React from 'react';
-import { Typography, Link, makeStyles } from '@material-ui/core';
+import {
+	Typography,
+	Link,
+	makeStyles,
+	Menu,
+	MenuItem,
+	MenuList,
+	ListItemIcon,
+} from '@material-ui/core';
+import { Settings, ExitToApp } from '@material-ui/icons';
 
 import styles from '../home.module.css';
 import CollapseMenu from './collapseMenu';
@@ -16,11 +25,69 @@ const useStyles = makeStyles((theme) => ({
 		},
 		background: 'transparent',
 	},
+	menuList: {
+		padding: 0,
+	},
+	userButton: {
+		color: 'black',
+		paddingTop: 5,
+		paddingBottom: 5,
+		paddingLeft: 10,
+		paddingRight: 10,
+		'&:hover': {
+			borderRadius: 10,
+			backgroundColor: '#585F63',
+			color: 'white',
+		},
+	},
 }));
+
+const TypographyMenu = (props) => {
+	const classes = useStyles();
+	return (
+		<Menu
+			open={Boolean(props.anchorEl)}
+			keepMounted
+			getContentAnchorEl={null}
+			disableAutoFocusItem
+			id='user-menu'
+			onClose={props.handleClose}
+			anchorOrigin={{
+				vertical: 'top',
+				horizontal: 'right',
+			}}
+			transformOrigin={{
+				vertical: 'bottom',
+				horizontal: 'right',
+			}}
+		>
+			<MenuList className={classes.menuList}>
+				<MenuItem>
+					<ListItemIcon>
+						<Settings fontSize='small' />
+					</ListItemIcon>
+					<Typography variant='inherit'>Settings</Typography>
+				</MenuItem>
+				<MenuItem
+					onClick={() => {
+						props.handleClose();
+						props.setLogoutModal(true);
+					}}
+				>
+					<ListItemIcon>
+						<ExitToApp fontSize='small' />
+					</ListItemIcon>
+					<Typography variant='inherit'>Logout</Typography>
+				</MenuItem>
+			</MenuList>
+		</Menu>
+	);
+};
 
 const AppbarCollapse = (props) => {
 	let { active } = props;
 	let [show, setModal] = React.useState(false);
+	const [userMenu, setUserMenu] = React.useState(null);
 
 	let logOutUser = () => {
 		let userService = new UserService();
@@ -30,23 +97,38 @@ const AppbarCollapse = (props) => {
 		props.history.push('/login');
 	};
 
+	const handleClick = (event) => {
+		setUserMenu(event.currentTarget);
+	};
+
+	const handleClose = () => {
+		setUserMenu(null);
+	};
+
 	const classes = useStyles();
 	return (
 		<div className={`ml-auto ${classes.buttonBar}`} id='appbar-collapse'>
 			{props.authenticated ? (
 				<div className='d-flex'>
-					<Typography variant='body1' className='text-info'>
-						{`Hie ${props.name}`}
-					</Typography>
 					<Typography
-						onClick={() => {
-							setModal(true);
-						}}
 						variant='body1'
-						className={`mx-2 ${styles.navbarItem} cursor-pointer text-dark`}
+						className={` text-white align-self-center mr-2 ${styles.navbarItem} cursor-pointer ${styles.activeTab}`}
 					>
-						Logout
+						My exams
 					</Typography>
+					<div
+						aria-controls='user-menu'
+						aria-haspopup='true'
+						onClick={handleClick}
+						className={`${classes.userButton} cursor-pointer`}
+					>
+						{`${props.name.split(' ')[0]}`}
+					</div>
+					<TypographyMenu
+						anchorEl={userMenu}
+						handleClose={handleClose}
+						setLogoutModal={setModal}
+					/>
 				</div>
 			) : (
 				<div className='d-flex'>
