@@ -1,33 +1,30 @@
 import React from 'react';
-import { Paper, Tabs, Tab, Box } from '@material-ui/core';
+import { Paper, Typography, withStyles } from '@material-ui/core';
 
 import ExamCard from './examCard';
 import StudentService from '../../../../services/studentApi';
 import ExamKeyModal from '../../../../modals/examKeyModal';
 import factories from '../../../../factories/factories';
 
-const TabPanel = (props) => {
-	const { children, value, index, ...other } = props;
-
-	return (
-		<div
-			role='tabpanel'
-			hidden={value !== index}
-			id={`simple-tabpanel-${index}`}
-			aria-labelledby={`simple-tab-${index}`}
-			{...other}
-		>
-			{value === index && <Box>{children}</Box>}
-		</div>
-	);
-};
-
-const a11yProps = (index) => {
-	return {
-		id: `simple-tab-${index}`,
-		'aria-controls': `simple-tabpanel-${index}`,
-	};
-};
+const useStyles = (theme) => ({
+	tabs: {
+		paddingLeft: 10,
+		paddingRight: 10,
+		paddingTop: 5,
+		paddingBottom: 5,
+		cursor: 'pointer',
+		borderRadius: 8,
+		'&:hover': {
+			backgroundColor: '#585F63',
+			color: 'white',
+		},
+		marginLeft: 6,
+	},
+	activeTab: {
+		backgroundColor: 'black',
+		color: 'white',
+	},
+});
 
 class ExamList extends React.Component {
 	constructor() {
@@ -71,7 +68,7 @@ class ExamList extends React.Component {
 		this.setState({ showModal, selectedExam });
 	};
 
-	handleTabChange = (event, value) => {
+	handleTabChange = (value) => {
 		this.setState({ activeTab: value });
 	};
 
@@ -105,61 +102,85 @@ class ExamList extends React.Component {
 			showModal,
 			activeTab,
 		} = this.state;
+		let { classes } = this.props;
 
 		return (
-			<div className='container p-5'>
-				<Paper>
-					<Tabs
-						value={activeTab}
-						onChange={this.handleTabChange}
-						indicatorColor='primary'
-						textColor='primary'
-						centered
+			<div className='pt-4 px-3'>
+				<Paper className='d-flex p-3'>
+					<Typography
+						className={`${classes.tabs} ${
+							activeTab === 1 ? classes.activeTab : ''
+						}`}
+						onClick={() => this.handleTabChange(1)}
 					>
-						<Tab label='Conducted' {...a11yProps(0)} />
-						<Tab label='Today' {...a11yProps(1)} />
-						<Tab label='Upcoming' {...a11yProps(2)} />
-					</Tabs>
+						Conducted
+					</Typography>
+					<Typography
+						className={`${classes.tabs} ${
+							activeTab === 2 ? classes.activeTab : ''
+						}`}
+						onClick={() => this.handleTabChange(2)}
+					>
+						Today
+					</Typography>
+					<Typography
+						className={`${classes.tabs} ${
+							activeTab === 3 ? classes.activeTab : ''
+						}`}
+						onClick={() => this.handleTabChange(3)}
+					>
+						Upcoming
+					</Typography>
+					<Typography
+						className={`${classes.tabs} ${
+							activeTab === 4 ? classes.activeTab : ''
+						}`}
+						onClick={() => this.handleTabChange(4)}
+					>
+						Missed
+					</Typography>
 				</Paper>
-				<TabPanel value={activeTab} index={0}>
-					{conductedExamsList.map((data, index) => (
-						<div className='row my-4' key={index}>
-							{data.map((exam) => (
-								<div className='col-md-4' key={exam._id}>
-									<ExamCard exam={exam} type='conducted' />
+				<div className='px-4'>
+					{activeTab === 1
+						? conductedExamsList.map((data, index) => (
+								<div className='row my-4' key={index}>
+									{data.map((exam) => (
+										<div className='col-md-4' key={exam._id}>
+											<ExamCard exam={exam} type='conducted' />
+										</div>
+									))}
 								</div>
-							))}
-						</div>
-					))}
-				</TabPanel>
-				<TabPanel value={activeTab} index={1}>
-					{todayExamsList.map((data, index) => (
-						<div className='row my-4' key={index}>
-							{data.map((exam) => (
-								<div className='col-md-4' key={exam._id}>
-									<ExamCard
-										exam={exam}
-										type='today'
-										handleModal={() =>
-											this.handleModal(true, exam.examDetails._id)
-										}
-									/>
+						  ))
+						: null}
+					{activeTab === 2
+						? todayExamsList.map((data, index) => (
+								<div className='row my-4' key={index}>
+									{data.map((exam) => (
+										<div className='col-md-4' key={exam._id}>
+											<ExamCard
+												exam={exam}
+												type='today'
+												handleModal={() =>
+													this.handleModal(true, exam.examDetails._id)
+												}
+											/>
+										</div>
+									))}
 								</div>
-							))}
-						</div>
-					))}
-				</TabPanel>
-				<TabPanel value={activeTab} index={2}>
-					{upcomingExamsList.map((data, index) => (
-						<div className='row my-4' key={index}>
-							{data.map((exam) => (
-								<div className='col-md-4' key={exam._id}>
-									<ExamCard exam={exam} type='upcoming' />
+						  ))
+						: null}
+					{activeTab === 3
+						? upcomingExamsList.map((data, index) => (
+								<div className='row my-4' key={index}>
+									{data.map((exam) => (
+										<div className='col-md-4' key={exam._id}>
+											<ExamCard exam={exam} type='upcoming' />
+										</div>
+									))}
 								</div>
-							))}
-						</div>
-					))}
-				</TabPanel>
+						  ))
+						: null}
+				</div>
 				<ExamKeyModal
 					show={showModal}
 					hideModal={this.handleModal}
@@ -170,4 +191,4 @@ class ExamList extends React.Component {
 	}
 }
 
-export default ExamList;
+export default withStyles(useStyles)(ExamList);

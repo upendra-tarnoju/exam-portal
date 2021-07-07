@@ -14,24 +14,26 @@ const ExamKeyForm = (props) => {
 			validationSchema={schema}
 		>
 			{(formikProps) => (
-				<form onSubmit={formikProps.handleSubmit} className='px-3'>
-					<TextField
-						label='Password'
-						name='password'
-						type='password'
-						variant='outlined'
-						className='w-100 my-3'
-						onChange={formikProps.handleChange}
-						onBlur={formikProps.handleBlur}
-						value={formikProps.values.password}
-						error={
-							formikProps.touched.password && !!formikProps.errors.password
-						}
-						helperText={
-							formikProps.touched.password && formikProps.errors.password
-						}
-					/>
-					<div className='d-flex justify-content-end mt-3'>
+				<form onSubmit={formikProps.handleSubmit}>
+					<div className='p-3 mb-3'>
+						<TextField
+							label='Password'
+							name='password'
+							type='password'
+							variant='outlined'
+							className='w-100'
+							onChange={formikProps.handleChange}
+							onBlur={formikProps.handleBlur}
+							value={formikProps.values.password}
+							error={
+								formikProps.touched.password && !!formikProps.errors.password
+							}
+							helperText={
+								formikProps.touched.password && formikProps.errors.password
+							}
+						/>
+					</div>
+					<div className='d-flex justify-content-end py-3 bg-dark'>
 						<Button
 							onClick={() => props.hideModal()}
 							variant='contained'
@@ -42,7 +44,7 @@ const ExamKeyForm = (props) => {
 						</Button>
 						<Button
 							variant='contained'
-							className='text-white bg-dark'
+							className='text-white bg-secondary mr-2'
 							type='submit'
 						>
 							Take test

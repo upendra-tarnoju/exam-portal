@@ -100,7 +100,7 @@ let NewExamForm = (props) => {
 										{props.coursesList.map((course) => {
 											return (
 												<MenuItem key={course._id} value={course._id}>
-													{`${course.courseId.name} - ${course.courseId.description}`}
+													{`${course.defaultCourses.name} - ${course.description}`}
 												</MenuItem>
 											);
 										})}

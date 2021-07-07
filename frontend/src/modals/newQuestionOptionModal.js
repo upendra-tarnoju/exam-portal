@@ -42,36 +42,38 @@ const NewQuestionOptionModal = (props) => {
 		>
 			<Fade in={props.show}>
 				<Paper className='w-25 p-4'>
-					<Typography variant='h6' component='p'>
-						{props.submitType === 'updateOption'
-							? 'Update Option'
-							: 'Create new option'}
-					</Typography>
-					<TextField
-						variant='outlined'
-						className='w-100 my-3'
-						name='option'
-						onChange={(event) =>
-							formikProps.setFieldValue('option', event.target.value)
-						}
-						value={formikProps.values.option}
-					/>
-					<div className='d-flex justify-content-end'>
-						<Button
-							variant='contained'
-							className='bg-white mr-2'
-							onClick={() => props.hideModal(false, '', props.formikProps)}
-						>
-							Cancel
-						</Button>
-						<Button
-							variant='contained'
-							className='bg-dark text-white'
-							onClick={() => handleSubmit(formikProps)}
-						>
-							{props.submitType === 'updateOption' ? 'Update' : 'Create'}
-						</Button>
-					</div>
+					<form onSubmit={() => handleSubmit(formikProps)}>
+						<Typography variant='h6' component='p'>
+							{props.submitType === 'updateOption'
+								? 'Update Option'
+								: 'Create new option'}
+						</Typography>
+						<TextField
+							variant='outlined'
+							className='w-100 my-3'
+							name='option'
+							onChange={(event) =>
+								formikProps.setFieldValue('option', event.target.value)
+							}
+							value={formikProps.values.option}
+						/>
+						<div className='d-flex justify-content-end'>
+							<Button
+								variant='contained'
+								className='bg-white mr-2'
+								onClick={() => props.hideModal(false, '', formikProps)}
+							>
+								Cancel
+							</Button>
+							<Button
+								variant='contained'
+								className='bg-dark text-white'
+								type='submit'
+							>
+								{props.submitType === 'updateOption' ? 'Update' : 'Create'}
+							</Button>
+						</div>
+					</form>
 				</Paper>
 			</Fade>
 		</Modal>

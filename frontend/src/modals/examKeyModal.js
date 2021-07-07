@@ -1,7 +1,7 @@
 import React from 'react';
 import {
 	Modal,
-	Paper,
+	Card,
 	makeStyles,
 	Typography,
 	Backdrop,
@@ -35,16 +35,20 @@ const ExamKeyModal = (props) => {
 			}}
 		>
 			<Fade in={props.show}>
-				<Paper className={`p-4 ${classes.modalContainer}`}>
-					<Typography variant='h5' className='mb-3 text-center' component='p'>
-						EXAM PASSWORD
+				<Card className={`${classes.modalContainer}`}>
+					<Typography
+						variant='h6'
+						className='mb-3 p-3 text-white bg-dark'
+						component='p'
+					>
+						Exam password
 					</Typography>
 
 					<ExamKeyForm
 						hideModal={props.hideModal}
 						handleSubmit={props.handleSubmit}
 					/>
-				</Paper>
+				</Card>
 			</Fade>
 		</Modal>
 	);

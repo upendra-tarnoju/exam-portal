@@ -1,14 +1,21 @@
 import React from 'react';
-import { Avatar, Button, Card, makeStyles, Paper } from '@material-ui/core';
+import {
+	Avatar,
+	Button,
+	Card,
+	makeStyles,
+	Paper,
+	Typography,
+} from '@material-ui/core';
 import { grey } from '@material-ui/core/colors';
 import CountDown from 'react-countdown';
 
 import styles from '../../student.module.css';
-import factories from '../../../../factories/factories';
+import Moment from 'react-moment';
 
 const ExamTimer = (props) => {
 	return (
-		<div className='d-flex justify-content-around  pb-2 text-center'>
+		<div className='d-flex justify-content-around pb-2 text-center'>
 			<Paper className='bg-dark px-3 py-2'>
 				<div className={styles.timerContent}>{props.days}</div>
 				<div className={`${styles.timerHeading} font-weight-bold text-white`}>
@@ -42,82 +49,125 @@ const ExamTimer = (props) => {
 const ExamCard = (props) => {
 	let materialUIStyles = makeStyles((theme) => ({
 		avatar: {
-			backgroundColor: grey[50],
+			backgroundColor: '#EDF3F6',
 			color: grey[900],
-			width: theme.spacing(12),
-			height: theme.spacing(12),
+			width: theme.spacing(6),
+			height: theme.spacing(6),
 			fontFamily: 'Raleway',
-			fontSize: 40,
+		},
+		examCodeHeading: {
+			marginRight: 4,
+			fontSize: 15,
+			textAlign: 'left',
+			fontWeight: 'bold',
+		},
+		examCode: {
+			color: 'blue',
+			fontSize: 14,
+			marginLeft: 7,
+		},
+		subjectHeading: {
+			fontSize: 15,
+			textAlign: 'right',
+			fontWeight: 'bold',
+		},
+		subject: {
+			fontSize: 14,
+			marginLeft: 7,
+			marginBottom: 1,
+		},
+		examDateIcon: {
+			width: 55,
+			height: 55,
+		},
+		heading: {
+			fontSize: 15,
+			fontWeight: 'bold',
+		},
+		details: {
+			fontSize: 13,
 		},
 	}));
 	let classes = materialUIStyles();
 
 	return (
-		<Card className='shadow-lg'>
-			<div
-				style={{
-					background: factories.generateRandomGradient(),
-				}}
-				className='p-3'
-			>
-				<Avatar className={`${styles.avatar} mx-auto shadow ${classes.avatar}`}>
-					{props.exam.examDetails.subject[0].toUpperCase()}
-				</Avatar>
-			</div>
-			<div className='p-3'>
-				<p className={`mb-0 text-center font-weight-bold ${styles.subject}`}>
-					{props.exam.examDetails.subject}
-				</p>
-				<p className={`mb-0 text-center ${styles.course}`}>
-					{props.exam.examDetails.course.courseId.name}
-				</p>
-				<div className='row mt-2'>
-					<div className='col-md-6'>
-						<Paper className='text-center py-2 bg-primary' elevation={5}>
-							<div
-								className={`font-weight-bold text-white ${styles.paperHeading}`}
-							>
-								Total marks
-							</div>
-							<div className={`text-white ${styles.paperContent}`}>
-								{props.exam.examDetails.totalMarks}
-							</div>
-						</Paper>
-					</div>
-					<div className='col-md-6'>
-						<Paper className='text-center py-2 bg-success' elevation={5}>
-							<div
-								className={`font-weight-bold text-white ${styles.paperHeading}`}
-							>
-								Negative marks
-							</div>
-							<div className={`text-white ${styles.paperContent}`}>
-								{props.exam.examDetails.negativeMarks
-									? props.exam.examDetails.negativeMarks
-									: 0}
-							</div>
-						</Paper>
-					</div>
+		<Card className='shadow-lg p-3'>
+			<div className='row'>
+				<div className='col-md-6'>
+					<Typography component='p' className={classes.examCodeHeading}>
+						EXAM CODE -
+						<Typography component='span' className={classes.examCode}>
+							{props.exam.examDetails.examCode}
+						</Typography>
+					</Typography>
+				</div>
+				<div className='col-md-6'>
+					<Typography component='p' className={classes.subjectHeading}>
+						SUBJECT -
+						<Typography component='span' className={classes.subject}>
+							{props.exam.examDetails.subject}
+						</Typography>
+					</Typography>
 				</div>
 			</div>
+			<div className='d-flex mt-2'>
+				<Avatar className={classes.avatar}>
+					{props.exam.examDetails.course.courseId.name[0]}
+				</Avatar>
+				<Typography className='align-self-center ml-2'>
+					{props.exam.examDetails.course.courseId.name.toUpperCase()}
+				</Typography>
+			</div>
+			<hr />
+			<div className='d-flex mt-2'>
+				<Typography className={`${classes.heading} mr-2`}>
+					Exam Date -
+				</Typography>
+				<Moment
+					format='MMM Do, YYYY'
+					className={`align-self-center ${classes.details}`}
+				>
+					{props.exam.examDetails.examDate}
+				</Moment>
+			</div>
+			<div className='d-flex mt-2'>
+				<Typography className={`${classes.heading} mr-2`}>
+					Total marks -
+				</Typography>
+				<Typography className={`align-self-center ${classes.details}`}>
+					{props.exam.examDetails.totalMarks}
+				</Typography>
+			</div>
+			<div className='d-flex mt-2'>
+				<Typography className={`${classes.heading} mr-2`}>
+					Negative marks -
+				</Typography>
+				<Typography className={`align-self-center ${classes.details}`}>
+					{props.exam.examDetails.negativeMarks}
+				</Typography>
+			</div>
+			{props.type === 'upcoming' ? (
+				<Typography className='text-center mb-2' variant='h6'>
+					Exam starts in
+				</Typography>
+			) : null}
 			<CountDown
 				renderer={({ days, hours, minutes, seconds, completed }) => {
 					if (completed) {
 						if (props.type === 'conducted') {
 							return (
-								<div className='px-5 pb-3'>
-									<Button variant='contained' className='w-100' color='primary'>
+								<div className='d-flex justify-content-end py-2'>
+									<Button variant='contained' className='bg-dark text-white'>
 										View Score
 									</Button>
 								</div>
 							);
 						}
 						return (
-							<div className='px-5 pb-3'>
+							<div className='d-flex justify-content-end'>
 								<Button
 									variant='contained'
-									className='w-100'
-									color='primary'
+									className='bg-dark text-white'
 									onClick={() => props.handleModal(true, props.exam._id)}
 								>
 									Take Exam
