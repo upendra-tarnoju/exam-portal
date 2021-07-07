@@ -1,7 +1,6 @@
 const moment = require('moment');
 const mongoose = require('mongoose');
 
-let { exam } = require('../models');
 let { factories } = require('../factories');
 let APP_CONSTANTS = require('../config/app-defaults');
 let RESPONSE_MESSAGES = require('../config/response-messages');
@@ -118,11 +117,6 @@ const exams = {
 		} catch (err) {
 			throw err;
 		}
-	},
-
-	getExamsLength: async (userId) => {
-		let totalExams = await exam.get({ examinerId: userId });
-		return totalExams.length;
 	},
 
 	getParticularExam: async (payload, userDetails) => {

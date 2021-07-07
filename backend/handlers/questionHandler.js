@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Grid = require('gridfs-stream');
 
-let { question } = require('../models');
 let APP_CONSTANTS = require('../config/app-defaults');
 let RESPONSE_MESSAGES = require('../config/response-messages');
 let { queries } = require('../db');

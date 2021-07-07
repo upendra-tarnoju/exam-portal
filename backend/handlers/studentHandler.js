@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
 
-let { student } = require('../models');
 const { queries } = require('../db');
 const Schema = require('../schemas');
 const { factories } = require('../factories');
@@ -218,11 +217,6 @@ const students = {
 		} catch (err) {
 			throw err;
 		}
-	},
-
-	getStudentsLength: async (examinerId) => {
-		let studentData = await student.findByExaminerId(examinerId);
-		return studentData.length;
 	},
 
 	deallocateStudent: async (payload) => {

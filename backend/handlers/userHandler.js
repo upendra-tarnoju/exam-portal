@@ -1,6 +1,5 @@
 const passport = require('passport');
 
-const { users } = require('../models');
 const auth = require('../auth');
 const { factories } = require('../factories');
 const APP_DEFAULTS = require('../config/app-defaults');
