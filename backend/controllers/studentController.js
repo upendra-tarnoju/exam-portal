@@ -112,7 +112,7 @@ const student = {
 	getAllStudentsList: async (req, res) => {
 		try {
 			let userDetail = req.user;
-			let payload = req.params;
+			let payload = req.query;
 			let responseData = await studentHandler.getAllStudentsList(
 				payload,
 				userDetail

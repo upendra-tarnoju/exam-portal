@@ -386,6 +386,7 @@ const students = {
 						'examDetails.totalMarks': 1,
 						'examDetails.negativeMarks': 1,
 						'examDetails.startTime': 1,
+						'examDetails.examCode': 1,
 					},
 				},
 			];

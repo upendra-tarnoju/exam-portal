@@ -17,7 +17,7 @@ module.exports = () => {
 
 	router.get(
 		'/examList',
-		passport.authenticate('jwt'),
+		authMiddleware,
 		studentController.getParticularStudentExamDetails
 	);
 

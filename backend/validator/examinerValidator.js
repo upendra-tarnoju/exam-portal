@@ -53,7 +53,7 @@ module.exports = {
 			startTime: Joi.string().required(),
 			endTime: Joi.string().required(),
 			hideDuration: Joi.boolean().required(),
-			duration: Joi.number().optional(),
+			duration: Joi.number().optional().allow(''),
 		}),
 	},
 
@@ -124,7 +124,7 @@ module.exports = {
 	},
 
 	STUDENTS_LIST: {
-		params: Joi.object({
+		query: Joi.object({
 			examId: Joi.string().required().length(24),
 		}),
 	},
@@ -167,7 +167,7 @@ module.exports = {
 		query: Joi.object({
 			pageIndex: Joi.number().required(),
 			pageSize: Joi.number().required(),
-		})
+		}),
 	},
 
 	BLOCK_UNBLOCK_STUDENT: {
