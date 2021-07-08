@@ -17,6 +17,7 @@ import { Modal } from 'react-bootstrap';
 import StudentService from '../../../../services/studentApi';
 import styles from './examQuestion.module.css';
 import SubmitExamModal from '../../../../modals/submitExamModal';
+import CustomSnackBar from '../../../../common/customSnackbar';
 
 class ExamQuestion extends React.Component {
 	constructor() {
@@ -30,9 +31,10 @@ class ExamQuestion extends React.Component {
 			singleOptValue: '',
 			multiOptValue: {},
 			questionId: '',
-			fullScreenModal: true,
+			fullScreenModal: false,
 			fullScreenError: false,
 			submitModal: false,
+			snackbar: { show: false, msg: '', type: '' },
 		};
 		this.studentService = new StudentService();
 	}
@@ -46,7 +48,15 @@ class ExamQuestion extends React.Component {
 		let examId = this.props.match.params.examId;
 
 		this.studentService.getQuestionForExam(examId, pageIndex).then((res) => {
+			let singleOptValue = '';
 			let questionData = res.data.questionDetails;
+			let existingAnswer = res.data.existingAnswer;
+
+			if (existingAnswer) {
+				if (questionData.optionType === 'single') {
+					singleOptValue = existingAnswer.answer;
+				}
+			}
 			let multiOptValue = {};
 			questionData.options.forEach(
 				(option) => (multiOptValue[option.key] = false)
@@ -56,6 +66,7 @@ class ExamQuestion extends React.Component {
 				options: questionData.options,
 				optionType: questionData.optionType,
 				totalQuestions: res.data.count,
+				singleOptValue,
 				pageIndex,
 				multiOptValue,
 				questionId: questionData._id,
@@ -63,30 +74,47 @@ class ExamQuestion extends React.Component {
 		});
 	}
 
-	saveQuestion = () => {
+	saveAnswer = () => {
 		let examId = this.props.match.params.examId;
-		let { questionId, singleOptValue, multiOptValue } = this.state;
-		let multiOptAnswer = Object.values(multiOptValue).every((item) => item);
+		let { questionId, singleOptValue, multiOptValue, optionType, pageIndex } =
+			this.state;
 
-		if (!multiOptAnswer && singleOptValue !== '') {
+		let joinedMultiValue = '';
+
+		Object.keys(multiOptValue).forEach((key) => {
+			if (multiOptValue[key]) {
+				joinedMultiValue = joinedMultiValue + key + ',';
+			}
+		});
+
+		if (!Object.values(multiOptValue).includes(true) && singleOptValue === '') {
+			let msg = 'Attempt question before saving the answer';
+			this.handleSnackBar(true, msg, 'error');
+		} else {
 			this.studentService
 				.saveExamAnswer({
 					questionId,
 					examId,
-					answer: singleOptValue === '' ? multiOptValue : singleOptValue,
+					answer:
+						optionType === 'single'
+							? singleOptValue
+							: joinedMultiValue.slice(0, -1),
+					status: 'ATTEMPTED',
 				})
-				.then((res) => {});
+				.then((res) => {
+					this.nextQuestion(pageIndex + 1);
+				});
 		}
 	};
 
 	handleOptionChange = (event) => {
-		if (this.state.optionType === 'single') {
-			console.log(event.target.value);
+		let { optionType, multiOptValue } = this.state;
+		if (optionType === 'single') {
 			this.setState({ singleOptValue: event.target.value });
 		} else {
 			this.setState({
 				multiOptValue: {
-					...this.state.multiOptValue,
+					...multiOptValue,
 					[event.target.name]: event.target.checked,
 				},
 			});
@@ -118,8 +146,63 @@ class ExamQuestion extends React.Component {
 		});
 	};
 
+	clearAnswer = () => {
+		let examId = this.props.match.params.examId;
+		let { questionId, pageIndex } = this.state;
+
+		this.studentService
+			.saveExamAnswer({
+				questionId,
+				examId,
+				answer: '',
+				status: 'CLEARED',
+			})
+			.then((res) => {
+				this.nextQuestion(pageIndex + 1);
+			});
+	};
+
+	reviewAnswer = () => {
+		let examId = this.props.match.params.examId;
+		let { questionId, singleOptValue, multiOptValue, optionType } = this.state;
+
+		let joinedMultiValue = '';
+
+		Object.keys(multiOptValue).forEach((key) => {
+			if (multiOptValue[key]) {
+				joinedMultiValue = joinedMultiValue + key + ',';
+			}
+		});
+
+		if (!Object.values(multiOptValue).includes(true) && singleOptValue === '') {
+			let msg = 'Attempt question before marking as review';
+			this.handleSnackBar(true, msg, 'error');
+		} else {
+			this.studentService
+				.saveExamAnswer({
+					questionId,
+					examId,
+					answer:
+						optionType === 'single'
+							? singleOptValue
+							: joinedMultiValue.slice(0, -1),
+					status: 'REVIEW',
+				})
+				.then((res) => {});
+		}
+	};
+
+	handleSnackBar = (status, msg, type) => {
+		let { snackbar } = this.state;
+
+		if (type === undefined) type = snackbar.type;
+		this.setState({ snackbar: { show: status, msg: msg, type: type } });
+	};
+	s;
+
 	render() {
-		let { question, totalQuestions, pageIndex, singleOptValue } = this.state;
+		let { question, totalQuestions, pageIndex, singleOptValue, snackbar } =
+			this.state;
 		// const renderCountTime = ({ hours, minutes, seconds }) => {
 		// 	return (
 		// 		<span>
@@ -150,8 +233,8 @@ class ExamQuestion extends React.Component {
 						<FormControlLabel
 							control={
 								<Checkbox
-									checked={this.state.multiOptValue[option.name]}
-									name={option.name}
+									checked={this.state.multiOptValue[option.key]}
+									name={option.key}
 									onChange={this.handleOptionChange}
 								/>
 							}
@@ -255,6 +338,7 @@ class ExamQuestion extends React.Component {
 								variant='contained'
 								className='bg-danger text-white mr-2'
 								size='medium'
+								onClick={this.clearAnswer}
 							>
 								Clear
 							</Button>
@@ -262,7 +346,7 @@ class ExamQuestion extends React.Component {
 								variant='contained'
 								className='bg-info text-white mr-2'
 								size='medium'
-								onClick={this.saveQuestion}
+								onClick={this.saveAnswer}
 							>
 								Save
 							</Button>
@@ -270,6 +354,7 @@ class ExamQuestion extends React.Component {
 								variant='contained'
 								className='bg-info text-white mr-2'
 								size='medium'
+								onClick={this.reviewAnswer}
 							>
 								Review
 							</Button>
@@ -308,6 +393,12 @@ class ExamQuestion extends React.Component {
 							show={this.state.submitModal}
 							submitExam={this.submitExam}
 							handleModal={this.handleSubmitExamModal}
+						/>
+						<CustomSnackBar
+							show={snackbar.show}
+							snackBarType={snackbar.type}
+							handleSnackBar={this.handleSnackBar}
+							message={snackbar.msg}
 						/>
 					</div>
 				</div>

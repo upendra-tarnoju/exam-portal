@@ -35,7 +35,7 @@ const ExamKeyForm = (props) => {
 					</div>
 					<div className='d-flex justify-content-end py-3 bg-dark'>
 						<Button
-							onClick={() => props.hideModal()}
+							onClick={() => props.hideModal(false, '')}
 							variant='contained'
 							className='text-dark bg-white mr-2'
 							type='button'

@@ -22,7 +22,7 @@ import styles from './guidelines.module.css';
 
 let guidelinesList = [
 	'Click start test on the bottom of your screen to begin the test.',
-	'Each student just need to click on the Right Choice / Correct option from the multiple choices /options given with each question.For multiple choice questions, each question has four options, andthe candidate has to click the appropriate option.',
+	'Each student just need to click on the Right Choice / Correct option from the multiple choices /options given with each question. For multiple choice questions, each question has four options, andthe candidate has to click the appropriate option.',
 	'Candidate can change their response of attempted answer anytime during examination slot time.',
 	'All the answered questions will be counted for calculating the final score.',
 	'Do not click final SUBMIT unless you have completed the exam.',

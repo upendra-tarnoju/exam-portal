@@ -64,8 +64,9 @@ class ExamList extends React.Component {
 	}
 
 	handleModal = (showModal, selectedExam) => {
-		console.log(showModal, selectedExam);
-		this.setState({ showModal, selectedExam });
+		if (showModal !== undefined || selectedExam !== undefined) {
+			this.setState({ showModal, selectedExam });
+		}
 	};
 
 	handleTabChange = (value) => {
