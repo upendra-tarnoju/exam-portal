@@ -671,6 +671,95 @@ const students = {
 
 	submitExam: async (payload, userDetails) => {
 		try {
+			let aggregateArray = [
+				{
+					$match: {
+						$and: [
+							{ examId: mongoose.Types.ObjectId(payload.examId) },
+							{ userId: mongoose.Types.ObjectId(userDetails._id) },
+						],
+					},
+				},
+				{
+					$lookup: {
+						from: 'questions',
+						localField: 'questionId',
+						foreignField: '_id',
+						as: 'question',
+					},
+				},
+				{ $unwind: '$question' },
+				{
+					$lookup: {
+						from: 'exams',
+						localField: 'examId',
+						foreignField: '_id',
+						as: 'exam',
+					},
+				},
+				{ $unwind: '$exam' },
+				{
+					$project: {
+						status: 1,
+						answer: 1,
+						'question.correctAnswer': 1,
+						'question.questionMark': 1,
+						'question.optionType': 1,
+						'exam.negativeMarks': 1,
+					},
+				},
+			];
+			let options = { lean: true };
+
+			let examAnswers = await queries.aggregateData(
+				Schema.answers,
+				aggregateArray,
+				options
+			);
+
+			let marksObtained = 0;
+			let correctAnswerCount = 0;
+			let attemptedQuestionsCount = 0;
+
+			for (let i = 0; i < examAnswers.length; i++) {
+				let multiOptAnswer = '';
+
+				if (
+					examAnswers[i].status ===
+					APP_CONSTANTS.STUDENT_ANSWER_STATUS.ATTEMPTED
+				) {
+					attemptedQuestionsCount = attemptedQuestionsCount + 1;
+				}
+				if (
+					examAnswers[i].question.optionType ===
+					APP_CONSTANTS.OPTION_TYPE.MULTIPLE
+				) {
+					multiOptAnswer = examAnswers[i].question.correctAnswer
+						.join(',')
+						.slice(0, -1);
+
+					if (multiOptAnswer === examAnswers[i].answer) {
+						correctAnswerCount = correctAnswerCount + 1;
+						marksObtained = marksObtained + examAnswers[i].questionMark;
+					} else {
+						marksObtained = marksObtained - examAnswers[i].exam.negativeMarks;
+					}
+				} else if (
+					examAnswers[i].question.optionType ===
+					APP_CONSTANTS.OPTION_TYPE.SINGLE
+				) {
+					if (
+						examAnswers[i].answer === examAnswers[i].question.correctAnswer[0]
+					) {
+						correctAnswerCount = correctAnswerCount + 1;
+						marksObtained =
+							marksObtained + examAnswers[i].question.questionMark;
+					} else {
+						marksObtained = marksObtained - examAnswers[i].exam.negativeMarks;
+					}
+				}
+			}
+
 			let conditions = {
 				$and: [
 					{ examId: mongoose.Types.ObjectId(payload.examId) },
@@ -680,10 +769,11 @@ const students = {
 
 			let toUpdate = {
 				status: APP_CONSTANTS.ASSIGNED_EXAM_STATUS.SUBMITTED,
+				marksObtained: marksObtained,
+				correctAnswerCount: correctAnswerCount,
+				attemptedQuestionsCount: attemptedQuestionsCount,
 				modifiedDate: Date.now(),
 			};
-
-			let options = { lean: true };
 
 			let updatedExamDetail = await queries.findAndUpdate(
 				Schema.assignExam,
