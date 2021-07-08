@@ -143,7 +143,7 @@ module.exports = {
 		EXAM_QUESTION: {
 			INVALID_EXAM_ID: {
 				STATUS_CODE: 400,
-				MSG: 'Invalid exam key',
+				MSG: 'Invalid exam Id',
 			},
 			BLOCKED_EXAM: {
 				STATUS_CODE: 200,
@@ -156,6 +156,10 @@ module.exports = {
 			SUBMITTED: {
 				STATUS_CODE: 200,
 				MSG: 'Exam have been submitted successfully',
+			},
+			INVALID_QUESTION_ID: {
+				STATUS_CODE: 400,
+				MSG: 'Invalid question Id',
 			},
 		},
 	},

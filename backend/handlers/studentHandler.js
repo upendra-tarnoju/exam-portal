@@ -481,9 +481,27 @@ const students = {
 
 					let count = await queries.countDocuments(Schema.question, query);
 
+					let existingAnswerQuery = {
+						$and: [
+							{ questionId: mongoose.Types.ObjectId(questionDetails._id) },
+							{ examId: mongoose.Types.ObjectId(payload.examId) },
+							{ userId: mongoose.Types.ObjectId(userDetails._id) },
+						],
+					};
+
+					let existingAnswerProjections = { answer: 1 };
+					options = { lean: true };
+
+					let existingAnswer = await queries.findOne(
+						Schema.answers,
+						existingAnswerQuery,
+						existingAnswerProjections,
+						options
+					);
+
 					return {
 						response: { STATUS_CODE: 200, MSG: '' },
-						finalData: { questionDetails, count },
+						finalData: { questionDetails, count, existingAnswer },
 					};
 				}
 			} else {
@@ -500,14 +518,8 @@ const students = {
 	saveExamQuestionAnswer: async (payload, userDetails) => {
 		try {
 			let query = { _id: mongoose.Types.ObjectId(payload.questionId) };
-			let projections = {
-				correctAnswer: 1,
-				questionMark: 1,
-				optionType: 1,
-				negativeMarks: 1,
-			};
+			let projections = { _id: 1 };
 			let options = { lean: true };
-
 			let questionDetails = await queries.findOne(
 				Schema.question,
 				query,
@@ -516,8 +528,7 @@ const students = {
 			);
 
 			query = { _id: mongoose.Types.ObjectId(payload.examId) };
-			projections = { negativeMarks: 1 };
-
+			// projections = { negativeMarks: 1 };
 			let examDetails = await queries.findOne(
 				Schema.exam,
 				query,
@@ -526,90 +537,133 @@ const students = {
 			);
 
 			if (questionDetails) {
-				query = {
-					$and: [
-						{ studentId: mongoose.Types.ObjectId(userDetails._id) },
-						{ examId: mongoose.Types.ObjectId(payload.examId) },
-					],
-				};
-				projections = { marksObtained: 1 };
-
-				let assignedExamDetails = await queries.findOne(
-					Schema.assignExam,
-					query,
-					projections,
-					options
-				);
-				let correctAnswer;
-
-				if (questionDetails.correctAnswer.length === 1) {
-					correctAnswer = questionDetails.correctAnswer[0];
-				}
-
-				if (assignedExamDetails.marksObtained === 0) {
-					let toUpdate;
-
-					let conditions = {
+				if (examDetails) {
+					query = {
 						$and: [
-							{ examId: mongoose.Types.ObjectId(payload.examId) },
-							{ studentId: mongoose.Types.ObjectId(userDetails._id) },
+							{ userId: userDetails._id },
+							{ examId: payload.examId },
+							{ questionId: payload.questionId },
 						],
 					};
-
-					if (payload.answer === correctAnswer) {
-						await saveCorrectAnswer(
-							payload,
-							userDetails,
-							examDetails,
-							questionDetails
-						);
-
-						toUpdate = {
-							$set: { marksObtained: questionDetails.questionMark },
-						};
-					} else {
-						await saveIncorrectAnswer(
-							payload,
-							userDetails,
-							examDetails,
-							questionDetails
-						);
-
-						toUpdate = {
-							$set: { marksObtained: 0 - examDetails.negativeMarks },
-						};
-					}
-
-					await queries.findAndUpdate(
-						Schema.assignExam,
-						conditions,
-						toUpdate,
+					let existingAnswer = await queries.findOne(
+						Schema.answers,
+						query,
+						projections,
 						options
 					);
-				} else {
-					if (payload.answer === correctAnswer) {
-						await saveCorrectAnswer(
-							payload,
-							userDetails,
-							examDetails,
-							questionDetails
+
+					if (existingAnswer) {
+						let condition = {
+							_id: mongoose.Types.ObjectId(existingAnswer._id),
+						};
+						let toUpdate = { answer: payload.answer, status: payload.status };
+						await queries.findAndUpdate(
+							Schema.answers,
+							condition,
+							toUpdate,
+							options
 						);
 					} else {
-						await saveIncorrectAnswer(
-							payload,
-							userDetails,
-							examDetails,
-							questionDetails
-						);
+						let newAnswer = {
+							userId: userDetails._id,
+							examId: payload.examId,
+							questionId: payload.questionId,
+							answer: payload.answer,
+							status: payload.status,
+						};
+
+						await queries.create(Schema.answers, newAnswer);
 					}
+
+					return { response: { STATUS_CODE: 200, MSG: '' }, finalData: {} };
+				} else {
+					return {
+						response: RESPONSE_MESSAGES.EXAM.EXAM_QUESTION.INVALID_EXAM_ID,
+						finalData: {},
+					};
 				}
-				return { response: { STATUS_CODE: 200, MSG: '' }, finalData: {} };
+				// 	query = {
+				// 		$and: [
+				// 			{ studentId: mongoose.Types.ObjectId(userDetails._id) },
+				// 			{ examId: mongoose.Types.ObjectId(payload.examId) },
+				// 		],
+				// 	};
+				// 	projections = { marksObtained: 1 };
+				// 	let assignedExamDetails = await queries.findOne(
+				// 		Schema.assignExam,
+				// 		query,
+				// 		projections,
+				// 		options
+				// 	);
+				// 	let correctAnswer;
+				// 	if (questionDetails.correctAnswer.length === 1) {
+				// 		correctAnswer = questionDetails.correctAnswer[0];
+				// 	}
+				// 	if (assignedExamDetails.marksObtained === 0) {
+				// 		let toUpdate;
+				// 		let conditions = {
+				// 			$and: [
+				// 				{ examId: mongoose.Types.ObjectId(payload.examId) },
+				// 				{ studentId: mongoose.Types.ObjectId(userDetails._id) },
+				// 			],
+				// 		};
+				// 		if (payload.answer === correctAnswer) {
+				// 			await saveCorrectAnswer(
+				// 				payload,
+				// 				userDetails,
+				// 				examDetails,
+				// 				questionDetails
+				// 			);
+				// 			toUpdate = {
+				// 				$set: { marksObtained: questionDetails.questionMark },
+				// 			};
+				// 		} else {
+				// 			await saveIncorrectAnswer(
+				// 				payload,
+				// 				userDetails,
+				// 				examDetails,
+				// 				questionDetails
+				// 			);
+				// 			toUpdate = {
+				// 				$set: { marksObtained: 0 - examDetails.negativeMarks },
+				// 			};
+				// 		}
+				// 		await queries.findAndUpdate(
+				// 			Schema.assignExam,
+				// 			conditions,
+				// 			toUpdate,
+				// 			options
+				// 		);
+				// 	} else {
+				// 		if (payload.answer === correctAnswer) {
+				// 			await saveCorrectAnswer(
+				// 				payload,
+				// 				userDetails,
+				// 				examDetails,
+				// 				questionDetails
+				// 			);
+				// 		} else {
+				// 			await saveIncorrectAnswer(
+				// 				payload,
+				// 				userDetails,
+				// 				examDetails,
+				// 				questionDetails
+				// 			);
+				// 		}
+				// 	}
+				// 	return { response: { STATUS_CODE: 200, MSG: '' }, finalData: {} };
 			} else {
 				return {
-					response: RESPONSE_MESSAGES.EXAM.EXAM_QUESTION.INVALID_EXAM_ID,
+					response: RESPONSE_MESSAGES.EXAM.EXAM_QUESTION.INVALID_QUESTION_ID,
 					finalData: {},
 				};
 			}
+			// else {
+			// 	return {
+			// 		response: RESPONSE_MESSAGES.EXAM.EXAM_QUESTION.INVALID_EXAM_ID,
+			// 		finalData: {},
+			// 	};
+			// }
 		} catch (err) {
 			throw err;
 		}

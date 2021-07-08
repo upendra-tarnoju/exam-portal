@@ -23,13 +23,15 @@ module.exports = () => {
 
 	router.get(
 		'/exam/:examId/question',
-		passport.authenticate('jwt'),
+		authMiddleware,
+		requestMiddleware(StudentValidator.PARTICULAR_EXAM_QUESTION),
 		studentController.getParticularExamQuestion
 	);
 
 	router.post(
 		'/exam/:examId/question',
-		passport.authenticate('jwt'),
+		authMiddleware,
+		requestMiddleware(StudentValidator.SAVE_QUESTION_ANSWER),
 		studentController.saveExamQuestionAnswer
 	);
 

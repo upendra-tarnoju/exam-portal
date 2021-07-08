@@ -60,6 +60,11 @@ const appDefaults = {
 		SINGLE: 'single',
 		MULTIPLE: 'multiple',
 	},
+	STUDENT_ANSWER_STATUS: {
+		ATTEMPTED: 'ATTEMPTED',
+		CLEARED: 'CLEARED',
+		REVIEW: 'REVIEW',
+	},
 };
 
 module.exports = appDefaults;
