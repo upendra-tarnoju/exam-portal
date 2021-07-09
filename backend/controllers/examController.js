@@ -63,7 +63,11 @@ const exam = {
 	validateExamKey: async (req, res) => {
 		try {
 			let payload = req.body;
-			let responseData = await examHandler.validateExamKey(payload);
+			let userDetails = req.user;
+			let responseData = await examHandler.validateExamKey(
+				payload,
+				userDetails
+			);
 
 			responseManager.sendSuccessResponse(responseData, res);
 		} catch (err) {

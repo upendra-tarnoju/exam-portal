@@ -139,6 +139,10 @@ module.exports = {
 				STATUS_CODE: 400,
 				MSG: 'Wrong exam credentials',
 			},
+			SUBMITTED_EXAM: {
+				STATUS_CODE: 400,
+				MSG: 'You cannot give exam more than once',
+			},
 		},
 		EXAM_QUESTION: {
 			INVALID_EXAM_ID: {

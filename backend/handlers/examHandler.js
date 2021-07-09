@@ -274,7 +274,7 @@ const exams = {
 		}
 	},
 
-	validateExamKey: async (payload) => {
+	validateExamKey: async (payload, userDetails) => {
 		try {
 			let query = { _id: mongoose.Types.ObjectId(payload.examId) };
 			let projections = {
@@ -300,10 +300,32 @@ const exams = {
 					payload.password,
 					examDetails.password
 				);
-				console.log(validatedPassword);
 
 				if (validatedPassword) {
 					delete examDetails['password'];
+
+					let assignedExamQuery = {
+						$and: [{ examId: payload.examId }, { studentId: userDetails._id }],
+					};
+
+					let assignedExamProjections = { status: 1 };
+
+					let assignedExamDetails = await queries.findOne(
+						Schema.assignExam,
+						assignedExamQuery,
+						assignedExamProjections,
+						options
+					);
+
+					if (
+						assignedExamDetails.status ===
+						APP_CONSTANTS.ASSIGNED_EXAM_STATUS.SUBMITTED
+					) {
+						return {
+							response: RESPONSE_MESSAGES.EXAM.EXAM_PASSWORD.SUBMITTED_EXAM,
+							finalData: {},
+						};
+					}
 					return {
 						response: { STATUS_CODE: 200, MSG: '' },
 						finalData: { examDetails },

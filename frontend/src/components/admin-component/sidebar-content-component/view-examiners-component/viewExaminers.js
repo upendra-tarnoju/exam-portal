@@ -36,7 +36,7 @@ class ViewExaminer extends React.Component {
 			totalExaminers: 0,
 			examinerData: [],
 			approveDeclineModal: { show: false, id: '', type: '' },
-			snackbar: { show: false, msg: '' },
+			snackbar: { show: false, msg: '', type: '' },
 		};
 		this.adminService = new AdminService();
 	}
@@ -61,6 +61,8 @@ class ViewExaminer extends React.Component {
 	};
 
 	handleSnackBar = (status, msg, type) => {
+		let { snackbar } = this.state;
+		if (type === undefined) type = snackbar.type;
 		this.setState({ snackbar: { show: status, msg: msg, type: type } });
 	};
 

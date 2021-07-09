@@ -5,6 +5,7 @@ import ExamCard from './examCard';
 import StudentService from '../../../../services/studentApi';
 import ExamKeyModal from '../../../../modals/examKeyModal';
 import factories from '../../../../factories/factories';
+import Snackbar from '../../../../common/customSnackbar';
 
 const useStyles = (theme) => ({
 	tabs: {
@@ -37,9 +38,17 @@ class ExamList extends React.Component {
 			showModal: false,
 			selectedExam: '',
 			activeTab: 1,
+			snackbar: { show: false, msg: '', type: '' },
 		};
 		this.studentService = new StudentService();
 	}
+
+	handleSnackBar = (status, msg, type) => {
+		let { snackbar } = this.state;
+		if (type === undefined) type = snackbar.type;
+		this.setState({ snackbar: { show: status, msg: msg, type: type } });
+	};
+
 	componentDidMount() {
 		this.studentService.getParticularStudentExamDetails().then((res) => {
 			let examData = res.data;
@@ -92,6 +101,11 @@ class ExamList extends React.Component {
 							: factories.formatDuration(data.startTime, data.endTime),
 					},
 				});
+			})
+			.catch((err) => {
+				let msg = err.response.data.msg;
+				this.handleSnackBar(true, msg, 'error');
+				this.handleModal(false, '');
 			});
 	};
 
@@ -102,6 +116,7 @@ class ExamList extends React.Component {
 			upcomingExamsList,
 			showModal,
 			activeTab,
+			snackbar,
 		} = this.state;
 		let { classes } = this.props;
 
@@ -186,6 +201,12 @@ class ExamList extends React.Component {
 					show={showModal}
 					hideModal={this.handleModal}
 					handleSubmit={this.validateExamKey}
+				/>
+				<Snackbar
+					show={snackbar.show}
+					message={snackbar.msg}
+					snackBarType={snackbar.type}
+					handleSnackBar={this.handleSnackBar}
 				/>
 			</div>
 		);
