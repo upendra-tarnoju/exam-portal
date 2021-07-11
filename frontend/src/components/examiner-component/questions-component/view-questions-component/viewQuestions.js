@@ -8,12 +8,12 @@ import {
 	Paper,
 } from '@material-ui/core';
 
-import QuestionService from '../../../../../services/questionApi';
+import QuestionService from '../../../../services/questionApi';
 import styles from '../question.module.css';
-import DeleteModal from '../../../../../modals/deleteModal';
+import DeleteModal from '../../../../modals/deleteModal';
 import QuestionCard from './questionCard';
-import CustomSnackBar from '../../../../../common/customSnackbar';
-import factories from '../../../../../factories/factories';
+import CustomSnackBar from '../../../../common/customSnackbar';
+import factories from '../../../../factories/factories';
 
 class ViewQuestions extends React.Component {
 	constructor() {

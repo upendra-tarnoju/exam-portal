@@ -33,7 +33,6 @@ const ProfileForm = () => {
 						resetForm();
 					})
 					.catch((error) => {
-						console.log(error.response.data.msg);
 						setSnackBar({
 							msg: error.response.data.msg,
 							type: 'error',

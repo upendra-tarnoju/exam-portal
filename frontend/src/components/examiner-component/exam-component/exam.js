@@ -24,16 +24,13 @@ import {
 	ViewHeadline,
 } from '@material-ui/icons';
 
-import ExamService from '../../../../services/examApi';
-import DeleteModal from '../../../../modals/deleteModal';
-import CustomSnackBar from '../../../../common/customSnackbar';
-import SearchExamForm from '../../../../forms/exam-form/searchExamForm';
-import factories from '../../../../factories/factories';
-import {
-	StyledTableCell,
-	StyledTableRow,
-} from '../../../../common/customTable';
-import BootstrapTooltip from '../../../../common/customTooltip';
+import ExamService from '../../../services/examApi';
+import DeleteModal from '../../../modals/deleteModal';
+import CustomSnackBar from '../../../common/customSnackbar';
+import SearchExamForm from '../../../forms/exam-form/searchExamForm';
+import factories from '../../../factories/factories';
+import { StyledTableCell, StyledTableRow } from '../../../common/customTable';
+import BootstrapTooltip from '../../../common/customTooltip';
 
 class Exam extends Component {
 	constructor() {

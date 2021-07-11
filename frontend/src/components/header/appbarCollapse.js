@@ -9,13 +9,13 @@ import {
 	ListItemIcon,
 } from '@material-ui/core';
 import { Settings, ExitToApp } from '@material-ui/icons';
+import { withRouter } from 'react-router';
 
 import styles from '../home.module.css';
 import CollapseMenu from './collapseMenu';
 import { connect } from 'react-redux';
 import UserService from '../../services/userApi';
 import * as ActionType from '../../action';
-import { withRouter } from 'react-router';
 import LogOutModal from '../../modals/logOutModal';
 
 const useStyles = makeStyles((theme) => ({
@@ -28,6 +28,15 @@ const useStyles = makeStyles((theme) => ({
 	menuList: {
 		padding: 0,
 	},
+	activeUserButton: {
+		backgroundColor: 'black',
+		color: 'white !important',
+		paddingTop: 5,
+		paddingBottom: 5,
+		paddingLeft: 10,
+		paddingRight: 10,
+		borderRadius: 10,
+	},
 	userButton: {
 		color: 'black',
 		paddingTop: 5,
@@ -39,6 +48,10 @@ const useStyles = makeStyles((theme) => ({
 			backgroundColor: '#585F63',
 			color: 'white',
 		},
+	},
+	navbarItem: {
+		fontFamily: 'Raleway',
+		fontSize: 15,
 	},
 }));
 
@@ -87,6 +100,7 @@ const TypographyMenu = (props) => {
 const AppbarCollapse = (props) => {
 	let { active } = props;
 	let [show, setModal] = React.useState(false);
+	let [activeTab, setActiveTab] = React.useState(0);
 	const [userMenu, setUserMenu] = React.useState(null);
 
 	let logOutUser = () => {
@@ -105,17 +119,64 @@ const AppbarCollapse = (props) => {
 		setUserMenu(null);
 	};
 
+	const handleTabChange = (index) => {
+		setActiveTab(index);
+		if (index === 0) props.history.push('/examiner/exam');
+		else if (index === 1) props.history.push('/examiner/course');
+		else if (index === 2) props.history.push('/examiner/students');
+		else if (index === 3) props.history.push('/examiner/settings');
+	};
+
 	const classes = useStyles();
 	return (
 		<div className={`ml-auto ${classes.buttonBar}`} id='appbar-collapse'>
 			{props.authenticated ? (
 				<div className='d-flex'>
-					<Typography
-						variant='body1'
-						className={` text-white align-self-center mr-2 ${styles.navbarItem} cursor-pointer ${styles.activeTab}`}
+					{props.role === 'student' ? (
+						<div
+						onClick={() => handleTabChange(4)}
+						className={`${classes.userButton} cursor-pointer mr-2 ${
+							activeTab === 0 ? classes.activeUserButton : ''
+						}`}
 					>
-						My exams
-					</Typography>
+						My Exams
+					</div>
+					) : props.role === 'examiner' ? (
+						<div className='d-flex'>
+							<div
+								onClick={() => handleTabChange(0)}
+								className={`${classes.userButton} cursor-pointer mr-2 ${
+									activeTab === 0 ? classes.activeUserButton : ''
+								}`}
+							>
+								Exams
+							</div>
+							<div
+								onClick={() => handleTabChange(1)}
+								className={`${classes.userButton} cursor-pointer mr-2 ${
+									activeTab === 1 ? classes.activeUserButton : ''
+								}`}
+							>
+								Courses
+							</div>
+							<div
+								onClick={() => handleTabChange(2)}
+								className={`${classes.userButton} cursor-pointer mr-2 ${
+									activeTab === 2 ? classes.activeUserButton : ''
+								}`}
+							>
+								Students
+							</div>
+							<div
+								onClick={() => handleTabChange(3)}
+								className={`${classes.userButton} cursor-pointer mr-2 ${
+									activeTab === 3 ? classes.activeUserButton : ''
+								}`}
+							>
+								Settings
+							</div>
+						</div>
+					) : null}
 					<div
 						aria-controls='user-menu'
 						aria-haspopup='true'
@@ -198,6 +259,7 @@ const mapStateToProps = (state) => {
 	return {
 		authenticated: state.adminReducer.authenticated,
 		name: state.adminReducer.name,
+		role: state.adminReducer.role,
 	};
 };
 

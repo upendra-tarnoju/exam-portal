@@ -9,9 +9,9 @@ import {
 } from '@material-ui/core';
 import Moment from 'react-moment';
 
-import ExaminerService from '../../../../../services/examinerApi';
+import ExaminerService from '../../../../services/examinerApi';
 import { Cake, Cancel, PermIdentity } from '@material-ui/icons';
-import CustomSnackBar from '../../../../../common/customSnackbar';
+import CustomSnackBar from '../../../../common/customSnackbar';
 
 const styles = (theme) => ({
 	avatar: {

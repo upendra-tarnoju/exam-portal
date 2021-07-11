@@ -14,14 +14,11 @@ import {
 } from '@material-ui/core';
 import { Add, ViewHeadline } from '@material-ui/icons';
 
-import ExaminerService from '../../../../services/examinerApi';
-import CustomSnackBar from '../../../../common/customSnackbar';
-import factories from '../../../../factories/factories';
-import {
-	StyledTableCell,
-	StyledTableRow,
-} from '../../../../common/customTable';
-import BootstrapTooltip from '../../../../common/customTooltip';
+import ExaminerService from '../../../services/examinerApi';
+import CustomSnackBar from '../../../common/customSnackbar';
+import factories from '../../../factories/factories';
+import { StyledTableCell, StyledTableRow } from '../../../common/customTable';
+import BootstrapTooltip from '../../../common/customTooltip';
 
 class Students extends React.Component {
 	constructor(props) {

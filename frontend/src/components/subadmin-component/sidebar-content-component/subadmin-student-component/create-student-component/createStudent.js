@@ -31,7 +31,6 @@ class CreateStudent extends React.Component {
 	};
 
 	handleImageChange = (event) => {
-		console.log('changed');
 		let file = event.target.files[0];
 		let fileType = file.name.split('.')[1];
 		if (fileType === 'png' || fileType === 'jpg' || fileType === 'jpeg') {

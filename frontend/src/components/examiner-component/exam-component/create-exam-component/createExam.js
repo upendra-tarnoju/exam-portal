@@ -1,9 +1,9 @@
 import React from 'react';
 import { Card, Divider, Typography } from '@material-ui/core';
 
-import NewExamForm from '../../../../../forms/exam-form/newExamForm';
-import CourseService from '../../../../../services/courseApi';
-import ExamService from '../../../../../services/examApi';
+import NewExamForm from '../../../../forms/exam-form/newExamForm';
+import CourseService from '../../../../services/courseApi';
+import ExamService from '../../../../services/examApi';
 
 class CreateExam extends React.Component {
 	constructor() {

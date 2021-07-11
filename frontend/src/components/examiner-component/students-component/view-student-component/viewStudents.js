@@ -14,17 +14,17 @@ import {
 } from '@material-ui/core';
 import { Delete, Block, Lock, PersonAdd } from '@material-ui/icons';
 
-import ExaminerService from '../../../../../services/examinerApi';
-import DeleteModal from '../../../../../modals/deleteModal';
-import CreatePasswordModal from '../../../../../modals/createPasswordModal';
-import Snackbar from '../../../../../common/customSnackbar';
-import BlockUnblockStudentModal from '../../../../../modals/blockUnblockStudentModal';
-import factories from '../../../../../factories/factories';
+import ExaminerService from '../../../../services/examinerApi';
+import DeleteModal from '../../../../modals/deleteModal';
+import CreatePasswordModal from '../../../../modals/createPasswordModal';
+import Snackbar from '../../../../common/customSnackbar';
+import BlockUnblockStudentModal from '../../../../modals/blockUnblockStudentModal';
+import factories from '../../../../factories/factories';
 import {
 	StyledTableRow,
 	StyledTableCell,
-} from '../../../../../common/customTable';
-import BootstrapTooltip from '../../../../../common/customTooltip';
+} from '../../../../common/customTable';
+import BootstrapTooltip from '../../../../common/customTooltip';
 
 class ViewStudents extends React.Component {
 	constructor(props) {

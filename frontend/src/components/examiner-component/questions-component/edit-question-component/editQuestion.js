@@ -2,9 +2,9 @@ import React from 'react';
 import { Card, Fab, Typography } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 
-import EditQuestionForm from '../../../../../forms/question-form/editQuestionForm';
-import QuestionService from '../../../../../services/questionApi';
-import CustomSnackBar from '../../../../../common/customSnackbar';
+import EditQuestionForm from '../../../../forms/question-form/editQuestionForm';
+import QuestionService from '../../../../services/questionApi';
+import CustomSnackBar from '../../../../common/customSnackbar';
 
 class EditQuestion extends React.Component {
 	constructor() {

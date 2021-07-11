@@ -6,8 +6,8 @@ import {
 	Typography,
 } from '@material-ui/core';
 
-import QuestionService from '../../../../../services/questionApi';
-import AddQuestionForm from '../../../../../forms/question-form/addQuestionForm';
+import QuestionService from '../../../../services/questionApi';
+import AddQuestionForm from '../../../../forms/question-form/addQuestionForm';
 
 class AddQuestions extends React.Component {
 	constructor() {

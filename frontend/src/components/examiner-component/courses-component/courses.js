@@ -16,16 +16,13 @@ import { Button } from '@material-ui/core';
 import Moment from 'react-moment';
 import { Add, Edit, Delete } from '@material-ui/icons';
 
-import * as ActionTypes from '../../../../action';
-import CourseModal from '../../../../modals/courseModal';
-import CourseService from '../../../../services/courseApi';
-import DeleteModal from '../../../../modals/deleteModal';
-import Snackbar from '../../../../common/customSnackbar';
-import SearchCourseForm from '../../../../forms/course-form/searchCourseForm';
-import {
-	StyledTableRow,
-	StyledTableCell,
-} from '../../../../common/customTable';
+import * as ActionTypes from '../../../action';
+import CourseModal from '../../../modals/courseModal';
+import CourseService from '../../../services/courseApi';
+import DeleteModal from '../../../modals/deleteModal';
+import Snackbar from '../../../common/customSnackbar';
+import SearchCourseForm from '../../../forms/course-form/searchCourseForm';
+import { StyledTableRow, StyledTableCell } from '../../../common/customTable';
 
 class Courses extends Component {
 	constructor(props) {

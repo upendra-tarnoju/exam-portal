@@ -17,9 +17,7 @@ class LoginCard extends Component {
 	}
 
 	handleLogin = (data) => {
-		console.log(data);
 		this.userService.setCookie(data.token, data.userType);
-		console.log(data.userType);
 		if (data.userType === 'admin') {
 			this.props.history.push('/admin');
 		} else if (data.userType === 'examiner') {

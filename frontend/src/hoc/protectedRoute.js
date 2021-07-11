@@ -47,6 +47,7 @@ export default function (WrappedComponent, accountType) {
 					authenticated: authenticatedState,
 					firstName: data.firstName,
 					lastName: data.lastName,
+					role: data.role,
 				});
 			},
 		};

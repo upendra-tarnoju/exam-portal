@@ -21,9 +21,20 @@
 }
 
 .pallete {
-	background-color: red;
 	border-radius: 8px;
 	padding: 12px 0px;
+	overflow: hidden;
+}
+
+.pallete::after {
+	content: '';
+	position: absolute;
+	top: 0px;
+	right: 15px;
+	width: 10px;
+	height: 10px;
+	border-top-right-radius: 8px;
+	background-color: #fb1a5a;
 }
 
 .palletesContents {

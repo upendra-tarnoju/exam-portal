@@ -26,7 +26,7 @@ import { Formik } from 'formik';
 import { Form } from 'react-bootstrap';
 import { Editor } from '@tinymce/tinymce-react';
 
-import styles from '../../components/examiner-component/sidebar-content-component/questions-component/question.module.css';
+import styles from '../../components/examiner-component/questions-component/question.module.css';
 import schema from '../../schema/questionSchema';
 import NewQuestionOptionModal from '../../modals/newQuestionOptionModal';
 

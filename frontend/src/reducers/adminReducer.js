@@ -1,5 +1,6 @@
 const initialState = {
 	authenticated: false,
+	role: '',
 	name: '',
 	examinerCount: {
 		approved: 0,
@@ -25,6 +26,7 @@ const adminReducers = (state = initialState, action) => {
 			...state,
 			authenticated: action.authenticated,
 			name: name,
+			role: action.role,
 		};
 	} else if (action.type === 'collapse_sidebar') {
 		return {

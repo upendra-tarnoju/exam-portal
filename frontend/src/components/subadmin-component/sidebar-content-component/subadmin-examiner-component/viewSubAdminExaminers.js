@@ -101,7 +101,6 @@ class ViewSubAdminExaminers extends React.Component {
 		this.subAdminService
 			.getExaminerList({ pageSize, pageIndex })
 			.then((res) => {
-				console.log();
 				this.setState({
 					examinerList: res.data.examinerList,
 					totalExaminers: res.data.count,
