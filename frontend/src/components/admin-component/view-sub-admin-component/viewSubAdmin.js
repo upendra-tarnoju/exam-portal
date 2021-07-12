@@ -14,16 +14,13 @@ import {
 } from '@material-ui/core';
 import { CheckBox, DeleteOutline } from '@material-ui/icons';
 
-import AdminService from '../../../../services/adminApi';
-import factories from '../../../../factories/factories';
-import CustomSnackBar from '../../../../common/customSnackbar';
-import {
-	StyledTableCell,
-	StyledTableRow,
-} from '../../../../common/customTable';
-import BootstrapTooltip from '../../../../common/customTooltip';
-import SubAdminStatusModal from '../../../../modals/subAdminStatusModal';
-import SearchSubAdminForm from '../../../../forms/subadmin-form/searchSubAdminForm';
+import AdminService from '../../../services/adminApi';
+import factories from '../../../factories/factories';
+import CustomSnackBar from '../../../common/customSnackbar';
+import { StyledTableCell, StyledTableRow } from '../../../common/customTable';
+import BootstrapTooltip from '../../../common/customTooltip';
+import SubAdminStatusModal from '../../../modals/subAdminStatusModal';
+import SearchSubAdminForm from '../../../forms/subadmin-form/searchSubAdminForm';
 
 class ViewSubAdmin extends React.Component {
 	constructor() {

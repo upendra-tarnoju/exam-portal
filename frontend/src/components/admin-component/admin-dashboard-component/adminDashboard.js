@@ -21,11 +21,11 @@ import moment from 'moment';
 import { AddCircleOutlineOutlined, DeleteOutline } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 
-import AdminService from '../../../../services/adminApi';
+import AdminService from '../../../services/adminApi';
 import styles from './adminDashboard.module.css';
 import { Pagination } from '@material-ui/lab';
-import factories from '../../../../factories/factories';
-import ApproveDeclineModal from '../../../../modals/approveDeclineModal';
+import factories from '../../../factories/factories';
+import ApproveDeclineModal from '../../../modals/approveDeclineModal';
 
 const useStyles = (theme) => ({
 	informationCard: {

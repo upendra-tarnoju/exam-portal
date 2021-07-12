@@ -121,10 +121,21 @@ const AppbarCollapse = (props) => {
 
 	const handleTabChange = (index) => {
 		setActiveTab(index);
+		// let pathName = this.props.location.pathname.split('/')[2];
+		// this.setState({ selectedTab: pathName });
+		// this.props.history.listen((location, action) => {
+		// 	let pathName = location.pathname.split('/')[2];
+		// 	this.setState({ selectedTab: pathName });
+		// });
+
 		if (index === 0) props.history.push('/examiner/exam');
 		else if (index === 1) props.history.push('/examiner/course');
 		else if (index === 2) props.history.push('/examiner/students');
 		else if (index === 3) props.history.push('/examiner/settings');
+		else if (index === 4) return null;
+		else if (index === 5) props.history.push('/admin');
+		else if (index === 6) props.history.push('/admin/examiner');
+		else if (index === 7) props.history.push('/admin/subadmin/details');
 	};
 
 	const classes = useStyles();
@@ -134,13 +145,13 @@ const AppbarCollapse = (props) => {
 				<div className='d-flex'>
 					{props.role === 'student' ? (
 						<div
-						onClick={() => handleTabChange(4)}
-						className={`${classes.userButton} cursor-pointer mr-2 ${
-							activeTab === 0 ? classes.activeUserButton : ''
-						}`}
-					>
-						My Exams
-					</div>
+							onClick={() => handleTabChange(4)}
+							className={`${classes.userButton} cursor-pointer mr-2 ${
+								activeTab === 0 ? classes.activeUserButton : ''
+							}`}
+						>
+							My Exams
+						</div>
 					) : props.role === 'examiner' ? (
 						<div className='d-flex'>
 							<div
@@ -171,6 +182,41 @@ const AppbarCollapse = (props) => {
 								onClick={() => handleTabChange(3)}
 								className={`${classes.userButton} cursor-pointer mr-2 ${
 									activeTab === 3 ? classes.activeUserButton : ''
+								}`}
+							>
+								Settings
+							</div>
+						</div>
+					) : props.role === 'admin' ? (
+						<div className='d-flex'>
+							<div
+								onClick={() => handleTabChange(5)}
+								className={`${classes.userButton} cursor-pointer mr-2 ${
+									activeTab === 5 ? classes.activeUserButton : ''
+								}`}
+							>
+								Dashboard
+							</div>
+							<div
+								onClick={() => handleTabChange(6)}
+								className={`${classes.userButton} cursor-pointer mr-2 ${
+									activeTab === 6 ? classes.activeUserButton : ''
+								}`}
+							>
+								Examiners
+							</div>
+							<div
+								onClick={() => handleTabChange(7)}
+								className={`${classes.userButton} cursor-pointer mr-2 ${
+									activeTab === 7 ? classes.activeUserButton : ''
+								}`}
+							>
+								Sub admin
+							</div>
+							<div
+								onClick={() => handleTabChange(8)}
+								className={`${classes.userButton} cursor-pointer mr-2 ${
+									activeTab === 8 ? classes.activeUserButton : ''
 								}`}
 							>
 								Settings

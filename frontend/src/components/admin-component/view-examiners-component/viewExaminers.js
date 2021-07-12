@@ -15,16 +15,13 @@ import {
 import { DeleteOutline, CheckBox } from '@material-ui/icons';
 import Moment from 'react-moment';
 
-import AdminService from '../../../../services/adminApi';
-import ApproveDeclineModal from '../../../../modals/approveDeclineModal';
-import Snackbar from '../../../../common/customSnackbar';
-import factories from '../../../../factories/factories';
-import {
-	StyledTableRow,
-	StyledTableCell,
-} from '../../../../common/customTable';
-import BootstrapTooltip from '../../../../common/customTooltip';
-import SearchExaminerForm from '../../../../forms/examiner-form/searchExaminerForm';
+import AdminService from '../../../services/adminApi';
+import ApproveDeclineModal from '../../../modals/approveDeclineModal';
+import Snackbar from '../../../common/customSnackbar';
+import factories from '../../../factories/factories';
+import { StyledTableRow, StyledTableCell } from '../../../common/customTable';
+import BootstrapTooltip from '../../../common/customTooltip';
+import SearchExaminerForm from '../../../forms/examiner-form/searchExaminerForm';
 
 class ViewExaminer extends React.Component {
 	constructor(props) {
