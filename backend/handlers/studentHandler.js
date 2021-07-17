@@ -197,6 +197,8 @@ const students = {
 						startTime: 1,
 					},
 				},
+				{ $skip: pageIndex },
+				{ $limit: pageSize },
 			];
 			let options = { lean: true };
 

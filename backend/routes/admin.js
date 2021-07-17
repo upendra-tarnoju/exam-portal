@@ -54,5 +54,16 @@ module.exports = () => {
 		adminController.updateSubAdminStatus
 	);
 
+	router.get('/getSettings', authMiddleware, adminController.getAdminSettings);
+
+	router.post('/sendMail', authMiddleware, adminController.sendEmail);
+
+	router.post(
+		'/updateSettings',
+		authMiddleware,
+		requestMiddleware(AdminValidator.UPDATE_SETTINGS),
+		adminController.updateSettings
+	);
+
 	return router;
 };

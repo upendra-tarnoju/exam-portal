@@ -122,7 +122,7 @@ class ViewSubAdmin extends React.Component {
 			approveOrDecline,
 		} = this.state;
 		return (
-			<div className='container py-5'>
+			<div className='p-5'>
 				<Card className='p-3'>
 					<div className='d-xs-block d-md-flex justify-content-between'>
 						<div>

@@ -9,3 +9,5 @@ exports.defaultCourses = require('./defaultCourses');
 exports.examinerCourses = require('./examinerCourses');
 exports.college = require('./college');
 exports.assignExam = require('./assignExam');
+exports.setting = require('./setting');
+exports.mail = require('./mail');

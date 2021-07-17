@@ -53,6 +53,15 @@ const adminValidator = {
 			),
 		}),
 	},
+	UPDATE_SETTINGS: {
+		body: Joi.object({
+			smtpCredentials: Joi.object({
+				smtpSenderEmail: Joi.string().required(),
+				smtpAPIKey: Joi.string().required(),
+				smtpServiceName: Joi.string().required(),
+			}).optional(),
+		}),
+	},
 };
 
 module.exports = adminValidator;

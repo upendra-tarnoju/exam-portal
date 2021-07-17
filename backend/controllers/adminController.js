@@ -81,6 +81,44 @@ const admin = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+
+	getAdminSettings: async (req, res) => {
+		try {
+			let userDetails = req.user;
+
+			let responseData = await adminHandler.getAdminSettings(userDetails);
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
+
+	sendEmail: async (req, res) => {
+		try {
+			let payload = req.body;
+			let userDetails = req.user;
+
+			let responseData = await adminHandler.sendEmail(payload, userDetails);
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
+
+	updateSettings: async (req, res) => {
+		try {
+			let payload = req.body;
+			let userDetails = req.user;
+
+			let responseData = await adminHandler.updateSettings(
+				payload,
+				userDetails
+			);
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
 };
 
 module.exports = admin;

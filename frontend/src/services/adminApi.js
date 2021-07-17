@@ -103,6 +103,60 @@ class AdminService {
 			params,
 		});
 	};
+
+	getAdminSettings = () => {
+		let token = this.userService.getToken();
+
+		return axios({
+			method: 'get',
+			url: `${process.env.REACT_APP_BASE_URL}/api/admin/getSettings`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	};
+
+	sendEmail = () => {
+		let token = this.userService.getToken();
+
+		return axios({
+			method: 'post',
+			url: `${process.env.REACT_APP_BASE_URL}/api/admin/sendEmail`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	};
+
+	updateSettings = (values) => {
+		let token = this.userService.getToken();
+
+		return axios({
+			method: 'post',
+			url: `${process.env.REACT_APP_BASE_URL}/api/admin/updateSettings`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			data: values,
+		});
+	};
+
+	sendEmail = (values) => {
+		let token = this.userService.getToken();
+
+		return axios({
+			method: 'post',
+			url: `${process.env.REACT_APP_BASE_URL}/api/admin/sendMail`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			data: values,
+		});
+	};
 }
 
 export default AdminService;

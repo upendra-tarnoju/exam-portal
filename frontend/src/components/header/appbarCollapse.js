@@ -136,6 +136,7 @@ const AppbarCollapse = (props) => {
 		else if (index === 5) props.history.push('/admin');
 		else if (index === 6) props.history.push('/admin/examiner');
 		else if (index === 7) props.history.push('/admin/subadmin/details');
+		else if (index === 8) props.history.push('/admin/settings');
 	};
 
 	const classes = useStyles();

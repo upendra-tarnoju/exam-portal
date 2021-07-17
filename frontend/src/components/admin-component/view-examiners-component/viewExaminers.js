@@ -127,7 +127,7 @@ class ViewExaminer extends React.Component {
 		} = this.state;
 
 		return (
-			<div className='container pt-4'>
+			<div className='p-5'>
 				<Card className='p-3'>
 					<div className='d-xs-block d-md-flex justify-content-between'>
 						<div>

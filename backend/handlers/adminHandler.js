@@ -8,6 +8,7 @@ const RESPONSE_MESSAGES = require('../config/response-messages');
 const { queries } = require('../db');
 const Schema = require('../schemas');
 const { factories } = require('../factories');
+const { emailManager } = require('../lib');
 
 const admin = {
 	getExaminerDetails: async (payload) => {
@@ -373,6 +374,151 @@ const admin = {
 					response: RESPONSE_MESSAGES.SUB_ADMIN.INVALID_ID,
 					finalData: {},
 				};
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	getAdminSettings: async (userDetails) => {
+		try {
+			let aggregateArray = [
+				{
+					$match: {
+						userType: {
+							$nin: [
+								APP_DEFAULTS.ACCOUNT_TYPE.STUDENT,
+								APP_DEFAULTS.ACCOUNT_TYPE.ADMIN,
+							],
+						},
+					},
+				},
+				{ $sort: { email: 1 } },
+				{ $project: { email: 1, userType: 1 } },
+			];
+			let options = { lean: true };
+
+			let emailAddressDetails = await queries.aggregateData(
+				Schema.users,
+				aggregateArray,
+				options
+			);
+
+			let adminSettingsQuery = {
+				userId: mongoose.Types.ObjectId(userDetails._id),
+			};
+
+			let projections = { key: 1, value: 1 };
+
+			let settingDetails = await queries.getData(
+				Schema.setting,
+				adminSettingsQuery,
+				projections,
+				options
+			);
+
+			let finalSettings = {};
+
+			for (let i = 0; i < settingDetails.length; i++) {
+				finalSettings[settingDetails[i].key] = settingDetails[i].value;
+			}
+
+			return {
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { emailAddressDetails, settings: finalSettings },
+			};
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	sendEmail: async (payload, userDetails) => {
+		try {
+			let emailList = [];
+
+			let smtpCredentialsQuery = {
+				$and: [{ userId: userDetails._id }, { key: 'smtpCredentials' }],
+			};
+			let projections = { key: 1, value: 1 };
+			let options = { lean: true };
+
+			let smtpCredentials = await queries.findOne(
+				Schema.setting,
+				smtpCredentialsQuery,
+				projections,
+				options
+			);
+
+			for (let i = 0; i < payload.emailAddress.length; i++) {
+				emailList.push(payload.emailAddress[i].email);
+			}
+			let newMail = {
+				sender: userDetails._id,
+				receiver: payload.emailAddress.map((data) => {
+					return data._id;
+				}),
+				subject: payload.subject,
+				body: payload.emailBody,
+			};
+
+			await queries.create(Schema.mail, newMail);
+
+			newMail.receiver = emailList;
+
+			await emailManager.sendEmail(smtpCredentials.value, newMail);
+
+			return {
+				response: RESPONSE_MESSAGES.SEND_EMAIL.SUCCESS,
+				finalData: {},
+			};
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	updateSettings: async (payload, userDetails) => {
+		try {
+			if (payload.smtpCredentials) {
+				let findSettingQuery = {
+					$and: [
+						{ userId: mongoose.Types.ObjectId(userDetails._id) },
+						{ key: 'smtpCredentials' },
+					],
+				};
+				let projections = { _id: 1 };
+				let options = { lean: true };
+
+				let existingSMTPCredentials = await queries.findOne(
+					Schema.setting,
+					findSettingQuery,
+					projections,
+					options
+				);
+
+				if (existingSMTPCredentials) {
+					let toUpdate = {
+						value: payload.smtpCredentials,
+						modifiedDate: Date.now(),
+					};
+
+					await queries.findAndUpdate(
+						Schema.setting,
+						findSettingQuery,
+						toUpdate,
+						options
+					);
+				} else {
+					let newCredentials = {
+						key: 'smtpCredentials',
+						value: payload.smtpCredentials,
+						userId: userDetails._id,
+					};
+					await queries.create(Schema.setting, newCredentials);
+				}
+			}
+			return {
+				response: RESPONSE_MESSAGES.UPDATE_ADMIN_SETTING.SUCCESS,
+				finalData: {},
+			};
 		} catch (err) {
 			throw err;
 		}

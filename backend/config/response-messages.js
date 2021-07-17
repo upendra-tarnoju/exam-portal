@@ -349,4 +349,16 @@ module.exports = {
 			},
 		},
 	},
+	UPDATE_ADMIN_SETTING: {
+		SUCCESS: {
+			STATUS_CODE: 200,
+			MSG: 'Settings updated successfully',
+		},
+	},
+	SEND_EMAIL: {
+		SUCCESS: {
+			STATUS_CODE: 200,
+			MSG: 'Email has been sent successfully',
+		},
+	},
 };
