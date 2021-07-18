@@ -62,6 +62,11 @@ const adminValidator = {
 			}).optional(),
 		}),
 	},
+	RESET_PASSWORD: {
+		body: Joi.object({
+			newPassword: Joi.string().required(),
+		}),
+	},
 };
 
 module.exports = adminValidator;

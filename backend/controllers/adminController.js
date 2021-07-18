@@ -119,6 +119,18 @@ const admin = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+
+	resetPassword: async (req, res) => {
+		try {
+			let payload = req.body;
+			let userDetails = req.user;
+
+			let responseData = await adminHandler.resetPassword(payload, userDetails);
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
 };
 
 module.exports = admin;

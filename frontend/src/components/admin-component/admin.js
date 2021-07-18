@@ -9,7 +9,7 @@ import Settings from './settings-component/settings';
 
 const Admin = (props) => {
 	return (
-		<div className='h-100 bgGrey'>
+		<div className='bgGrey' style={{ height: 'initial' }}>
 			<Navbar {...props} />
 			<Switch>
 				<Route exact path='/admin' component={AdminDashboard} />

@@ -11,6 +11,8 @@ import {
 import EmailForm from '../../../forms/settings-form/emailForm';
 import AdminService from '../../../services/adminApi';
 import STMPForm from '../../../forms/settings-form/smtpForm';
+import CustomSnackBar from '../../../common/customSnackbar';
+import ResetPasswordForm from '../../../forms/settings-form/resetPasswordForm';
 
 const tabProps = (index) => {
 	return {
@@ -54,6 +56,7 @@ class Settings extends React.Component {
 			activeTab: 0,
 			emailAddressList: [],
 			adminSettings: {},
+			snackbar: { show: false, msg: '', type: '' },
 		};
 		this.adminService = new AdminService();
 	}
@@ -72,18 +75,39 @@ class Settings extends React.Component {
 	};
 
 	sendEmail = (values) => {
-		this.adminService.sendEmail(values).then((res) => {});
+		this.adminService.sendEmail(values).then((res) => {
+			let msg = res.data.msg;
+			this.handleSnackBar(true, msg, 'success');
+		});
 	};
 
 	updateSettings = (values) => {
 		this.adminService
 			.updateSettings({ smtpCredentials: values })
-			.then((res) => {});
+			.then((res) => {
+				let msg = res.data.msg;
+				this.handleSnackBar(true, msg, 'success');
+			});
+	};
+
+	handleSnackBar = (status, msg, type) => {
+		let { snackbar } = this.state;
+		if (type === undefined) type = snackbar.type;
+		this.setState({ snackbar: { show: status, msg, type } });
+	};
+
+	resetPassword = (values) => {
+		this.adminService
+			.resetPassword({ newPassword: values.newPassword })
+			.then((res) => {
+				let msg = res.data.msg;
+				this.handleSnackBar(true, msg, 'success');
+			});
 	};
 
 	render() {
 		const { classes } = this.props;
-		const { activeTab, emailAddressList, adminSettings } = this.state;
+		const { activeTab, emailAddressList, adminSettings, snackbar } = this.state;
 		return (
 			<div className='p-5'>
 				<Card className='p-3'>
@@ -113,11 +137,12 @@ class Settings extends React.Component {
 							<EmailForm
 								emailAddressList={emailAddressList}
 								sendEmail={this.sendEmail}
+								handleSnackBar={this.handleSnackBar}
 							/>
 						</div>
 					</TabPanel>
 					<TabPanel value={activeTab} index={1}>
-						Item two
+						<ResetPasswordForm resetPassword={this.resetPassword} />
 					</TabPanel>
 					<TabPanel value={activeTab} index={2}>
 						<STMPForm
@@ -126,6 +151,12 @@ class Settings extends React.Component {
 						/>
 					</TabPanel>
 				</Card>
+				<CustomSnackBar
+					show={snackbar.show}
+					handleSnackBar={this.handleSnackBar}
+					snackBarType={snackbar.type}
+					message={snackbar.msg}
+				/>
 			</div>
 		);
 	}

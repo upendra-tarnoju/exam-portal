@@ -361,4 +361,10 @@ module.exports = {
 			MSG: 'Email has been sent successfully',
 		},
 	},
+	RESET_PASSWORD: {
+		SUCCESS: {
+			STATUS_CODE: 200,
+			MSG: 'Password has been changed successfully',
+		},
+	},
 };

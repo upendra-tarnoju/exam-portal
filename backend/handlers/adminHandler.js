@@ -523,6 +523,27 @@ const admin = {
 			throw err;
 		}
 	},
+
+	resetPassword: async (payload, userDetails) => {
+		try {
+			let hashedPassword = factories.generateHashedPassword(
+				payload.newPassword
+			);
+
+			let condition = { _id: mongoose.Types.ObjectId(userDetails._id) };
+			let toUpdate = { password: hashedPassword, modifiedDate: Date.now() };
+			let options = { lean: true };
+
+			await queries.findAndUpdate(Schema.users, condition, toUpdate, options);
+
+			return {
+				response: RESPONSE_MESSAGES.RESET_PASSWORD.SUCCESS,
+				finalData: {},
+			};
+		} catch (err) {
+			throw err;
+		}
+	},
 };
 
 module.exports = admin;

@@ -65,5 +65,12 @@ module.exports = () => {
 		adminController.updateSettings
 	);
 
+	router.patch(
+		'/resetPassword',
+		authMiddleware,
+		requestMiddleware(AdminValidator.RESET_PASSWORD),
+		adminController.resetPassword
+	);
+
 	return router;
 };

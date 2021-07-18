@@ -27,7 +27,20 @@ const EmailForm = (props) => {
 	return (
 		<Formik
 			initialValues={{ emailAddress: [], emailBody: '', subject: '' }}
-			onSubmit={(values) => props.sendEmail(values)}
+			onSubmit={(values) => {
+				if (values.emailAddress.length === 0) {
+					let msg = 'Select atleast one receiver';
+					props.handleSnackBar(true, msg, 'error');
+				} else if (values.subject === '') {
+					let msg = 'You cannot email without subject';
+					props.handleSnackBar(true, msg, 'error');
+				} else if (values.emailBody === '') {
+					let msg = 'You cannot email without body';
+					props.handleSnackBar(true, msg, 'error');
+				} else {
+					props.sendEmail(values);
+				}
+			}}
 		>
 			{(formikProps) => (
 				<form onSubmit={formikProps.handleSubmit}>

@@ -157,6 +157,20 @@ class AdminService {
 			data: values,
 		});
 	};
+
+	resetPassword = (values) => {
+		let token = this.userService.getToken();
+
+		return axios({
+			method: 'patch',
+			url: `${process.env.REACT_APP_BASE_URL}/api/admin/resetPassword`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			data: values,
+		});
+	};
 }
 
 export default AdminService;
