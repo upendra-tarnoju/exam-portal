@@ -51,7 +51,7 @@ const ExamGuidelines = (props) => {
 							>
 								<img
 									alt='Exam icon'
-									src={require('../../../../assets/icons/exam.png')}
+									src={require('../../../assets/icons/exam.png')}
 									className='align-self-center'
 								/>
 								<h3 className='align-self-center font-weight-bold text-white mt-2'>
@@ -65,7 +65,7 @@ const ExamGuidelines = (props) => {
 							>
 								<img
 									alt='Total time icon'
-									src={require('../../../../assets/icons/totalTime.png')}
+									src={require('../../../assets/icons/totalTime.png')}
 									className='align-self-center'
 								/>
 								<h3 className='align-self-center font-weight-bold text-white mt-2'>
@@ -80,7 +80,7 @@ const ExamGuidelines = (props) => {
 							>
 								<img
 									alt='Negative marks icon'
-									src={require('../../../../assets/icons/negativeMarks.png')}
+									src={require('../../../assets/icons/negativeMarks.png')}
 									className='align-self-center'
 								/>
 								<h3 className='align-self-center font-weight-bold text-white mt-2'>
@@ -93,7 +93,7 @@ const ExamGuidelines = (props) => {
 							>
 								<img
 									alt='Total marks icon'
-									src={require('../../../../assets/icons/totalMarks.png')}
+									src={require('../../../assets/icons/totalMarks.png')}
 									className='align-self-center'
 								/>
 								<h3 className='align-self-center font-weight-bold text-white mt-2'>

@@ -10,7 +10,7 @@ import {
 import { grey } from '@material-ui/core/colors';
 import CountDown from 'react-countdown';
 
-import styles from '../../student.module.css';
+import styles from '../student.module.css';
 import Moment from 'react-moment';
 
 const ExamTimer = (props) => {

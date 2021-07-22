@@ -2,8 +2,8 @@ import React from 'react';
 import { AppBar, Avatar, Toolbar, Typography, Button } from '@material-ui/core';
 import { Route, Switch } from 'react-router-dom';
 
-import ExamGuidelines from '../student-component/student-content-component/exam-guidelines-component/examGuidelines';
-import ExamQuestion from '../student-component/student-content-component/exam-question-component/examQuestion';
+import ExamGuidelines from '../student-component/exam-guidelines-component/examGuidelines';
+import ExamQuestion from '../student-component/exam-question-component/examQuestion';
 
 const Header = () => {
 	return (

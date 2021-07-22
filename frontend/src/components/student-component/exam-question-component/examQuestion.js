@@ -10,14 +10,14 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 // import CountDown, { zeroPad } from 'react-countdown';
-import FullScreenModal from '../../../../modals/fullScreenModal';
+import FullScreenModal from '../../../modals/fullScreenModal';
 import screenfull from 'screenfull';
 import { Modal } from 'react-bootstrap';
 
-import StudentService from '../../../../services/studentApi';
+import StudentService from '../../../services/studentApi';
 import styles from './examQuestion.module.css';
-import SubmitExamModal from '../../../../modals/submitExamModal';
-import CustomSnackBar from '../../../../common/customSnackbar';
+import SubmitExamModal from '../../../modals/submitExamModal';
+import CustomSnackBar from '../../../common/customSnackbar';
 
 class ExamQuestion extends React.Component {
 	constructor() {

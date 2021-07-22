@@ -2,10 +2,10 @@ import React from 'react';
 import { Paper, Typography, withStyles } from '@material-ui/core';
 
 import ExamCard from './examCard';
-import StudentService from '../../../../services/studentApi';
-import ExamKeyModal from '../../../../modals/examKeyModal';
-import factories from '../../../../factories/factories';
-import Snackbar from '../../../../common/customSnackbar';
+import StudentService from '../../../services/studentApi';
+import ExamKeyModal from '../../../modals/examKeyModal';
+import factories from '../../../factories/factories';
+import Snackbar from '../../../common/customSnackbar';
 
 const useStyles = (theme) => ({
 	tabs: {
