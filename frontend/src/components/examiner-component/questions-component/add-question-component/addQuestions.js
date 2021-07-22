@@ -39,6 +39,7 @@ class AddQuestions extends React.Component {
 
 	submitQuestion = (values, optionsList) => {
 		let { image } = this.state;
+		console.log('submitting question');
 		let answerList = optionsList.filter((option) => option.answer);
 
 		if (answerList.length === 0) {

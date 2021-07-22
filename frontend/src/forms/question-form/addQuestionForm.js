@@ -74,9 +74,11 @@ class AddQuestionForm extends React.Component {
 
 	handleOptionModal = (show, optionType, formikProps) => {
 		if (show) {
-			if (optionType !== '') this.setState({ optionModal: { show } });
-			else
+			if (optionType === '') {
 				this.props.handleSnackBar(true, 'Option type is not selected', 'error');
+			} else {
+				this.setState({ optionModal: { show } });
+			}
 		} else {
 			formikProps.setFieldValue('option', '');
 			this.setState({ optionModal: { show } });
