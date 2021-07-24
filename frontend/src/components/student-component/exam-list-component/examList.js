@@ -91,7 +91,7 @@ class ExamList extends React.Component {
 				let data = res.data.examDetails;
 
 				this.props.history.push({
-					pathname: `/exam/${selectedExam}/guidelines`,
+					pathname: `/student/exam/${selectedExam}/guidelines`,
 					state: {
 						totalMarks: data.totalMarks,
 						negativeMarks: data.negativeMarks,

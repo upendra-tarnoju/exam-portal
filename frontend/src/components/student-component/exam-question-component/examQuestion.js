@@ -149,7 +149,8 @@ class ExamQuestion extends React.Component {
 	submitExam = () => {
 		let examId = this.props.match.params.examId;
 		this.studentService.submitExam(examId).then((res) => {
-			this.handleSubmitExamModal(true);
+			this.handleSubmitExamModal(false);
+			this.props.history.replace('/student/exam');
 		});
 	};
 

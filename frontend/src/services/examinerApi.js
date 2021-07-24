@@ -7,19 +7,6 @@ class ExaminerService {
 		this.EXAMINER_URL = 'api/examiner';
 	}
 
-	saveExaminerDetails = (state) => {
-		let token = this.userService.getToken();
-		return axios({
-			method: 'patch',
-			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}`,
-			data: state,
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`,
-			},
-		});
-	};
-
 	getExaminerDetails = () => {
 		let token = this.userService.getToken();
 		return axios({

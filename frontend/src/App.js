@@ -9,7 +9,6 @@ import Admin from './components/admin-component/admin';
 import Examiner from './components/examiner-component/examiner';
 import ProtectedRoute from './hoc/protectedRoute';
 import Student from './components/student-component/student';
-import OnlineExam from './components/online-exam-component/onlineExam';
 import SubAdmin from './components/subadmin-component/subAdmin';
 
 function App() {
@@ -29,7 +28,6 @@ function App() {
 					component={ProtectedRoute(Examiner, 'examiner')}
 				></Route>
 				<Route path='/student' component={ProtectedRoute(Student, 'student')} />
-				<Route path='/exam' component={ProtectedRoute(OnlineExam, 'student')} />
 			</Switch>
 		</BrowserRouter>
 	);

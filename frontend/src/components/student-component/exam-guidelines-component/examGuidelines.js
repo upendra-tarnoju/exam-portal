@@ -34,7 +34,7 @@ const ExamGuidelines = (props) => {
 
 	let redirectToQuestion = () => {
 		let examId = props.match.params.examId;
-		props.history.push(`/exam/${examId}/question`);
+		props.history.push(`/student/exam/${examId}/question`);
 	};
 	return (
 		<div className='container py-5'>
