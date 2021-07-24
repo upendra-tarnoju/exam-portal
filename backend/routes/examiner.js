@@ -16,8 +16,6 @@ const { ExaminerValidator } = require('../validator');
 module.exports = () => {
 	const router = express.Router();
 
-	router.patch('/', authMiddleware, examinerController.updateExaminerDetails);
-
 	router.post(
 		'/course',
 		authMiddleware,

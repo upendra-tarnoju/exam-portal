@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
 
-const { users, course, examiner } = require('../models');
 const { factories } = require('../factories');
 const Schemas = require('../schemas');
 const { queries } = require('../db');
@@ -17,16 +16,6 @@ let trimObject = (data) => {
 };
 
 const examiners = {
-	updateExaminerDetails: async (details, userId) => {
-		let userData = await users
-			.update(userId, {
-				lastLogin: Date.now(),
-				institution: details.collegeName,
-			})
-			.select({ userDataId: 1 });
-		return examiner.update(userData.userDataId, details);
-	},
-
 	getDefaultCourses: async () => {
 		try {
 			let query = {};
@@ -95,7 +84,7 @@ const examiners = {
 			let pageIndex = parseInt(payload.pageIndex, 10);
 
 			let aggregateOptions = [];
-			let createdDate = {}
+			let createdDate = {};
 
 			aggregateOptions.push({
 				$match: {
@@ -166,18 +155,6 @@ const examiners = {
 		} catch (err) {
 			throw err;
 		}
-	},
-
-	getAllCourses: async (userId) => {
-		let courses = await course
-			.findByExaminerId(userId)
-			.select({ name: 1, description: 1 });
-		return courses;
-	},
-
-	getCoursesLength: async (userId) => {
-		let courses = await course.findByExaminerId(userId);
-		return courses.length;
 	},
 
 	updateCourse: async (courseData, userData) => {
@@ -268,15 +245,6 @@ const examiners = {
 		} catch (err) {
 			throw err;
 		}
-	},
-
-	searchCourse: async (name, description, pageIndex, pageSize) => {
-		let searchCourse = await course
-			.search(name, description)
-			.skip(pageIndex)
-			.limit(pageSize)
-			.select({ name: 1, description: 1 });
-		return searchCourse;
 	},
 
 	updateProfile: async (payload, userDetails) => {

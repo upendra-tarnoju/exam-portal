@@ -4,7 +4,6 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const mongoose = require('mongoose');
 const moment = require('moment');
 
-const { users } = require('../models');
 const { factories } = require('../factories');
 const APP_DEFAULTS = require('../config/app-defaults');
 const RESPONSE_MESSAGES = require('../config/response-messages');
@@ -85,12 +84,6 @@ module.exports = (passport) => {
 
 	passport.serializeUser((user, done) => {
 		done(null, user._id);
-	});
-
-	passport.deserializeUser((id, done) => {
-		users.findById(id, (err, user) => {
-			done(err, user);
-		});
 	});
 
 	passport.use(
