@@ -214,7 +214,7 @@ class Exam extends Component {
 						</TableHead>
 						<TableBody>
 							{examsList.length === 0 ? (
-								<StyledTableRow component='th' scope='row'>
+								<StyledTableRow>
 									<StyledTableCell
 										colSpan={6}
 										className='text-center font-weight-bold'

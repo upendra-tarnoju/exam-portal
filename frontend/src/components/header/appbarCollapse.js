@@ -100,7 +100,7 @@ const TypographyMenu = (props) => {
 const AppbarCollapse = (props) => {
 	let { active } = props;
 	let [show, setModal] = React.useState(false);
-	let [activeTab, setActiveTab] = React.useState(0);
+	// let [activeTab, setActiveTab] = React.useState(0);
 	const [userMenu, setUserMenu] = React.useState(null);
 
 	let logOutUser = () => {
@@ -120,13 +120,7 @@ const AppbarCollapse = (props) => {
 	};
 
 	const handleTabChange = (index) => {
-		setActiveTab(index);
-		// let pathName = this.props.location.pathname.split('/')[2];
-		// this.setState({ selectedTab: pathName });
-		// this.props.history.listen((location, action) => {
-		// 	let pathName = location.pathname.split('/')[2];
-		// 	this.setState({ selectedTab: pathName });
-		// });
+		props.setActiveTab(index);
 
 		if (index === 0) props.history.push('/examiner/exam');
 		else if (index === 1) props.history.push('/examiner/course');
@@ -140,13 +134,14 @@ const AppbarCollapse = (props) => {
 	};
 
 	const classes = useStyles();
+	const { activeTab } = props;
 	return (
 		<div className={`ml-auto ${classes.buttonBar}`} id='appbar-collapse'>
 			{props.authenticated ? (
 				<div className='d-flex'>
 					{props.role === 'student' ? (
 						<div
-							onClick={() => handleTabChange(4)}
+							onClick={() => props.setActiveTab(4)}
 							className={`${classes.userButton} cursor-pointer mr-2 ${
 								activeTab === 0 ? classes.activeUserButton : ''
 							}`}

@@ -1,18 +1,9 @@
 import React from 'react';
 import { useLocation } from 'react-router';
-import {
-	AppBar,
-	Toolbar,
-	Typography,
-	makeStyles,
-	IconButton,
-} from '@material-ui/core';
-import { MoreVert, Menu, ChevronLeft } from '@material-ui/icons';
-import { connect } from 'react-redux';
+import { AppBar, Toolbar, Typography, makeStyles } from '@material-ui/core';
+import clsx from 'clsx';
 
 import AppbarCollapse from './appbarCollapse';
-import * as ActionType from '../../action';
-import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
 	buttonBar: {
@@ -34,60 +25,28 @@ const useStyles = makeStyles((theme) => ({
 			duration: theme.transitions.duration.leavingScreen,
 		}),
 	},
-
-	navbarShift: {
-		// width: 'calc(100% - 240px)',
-		transition: theme.transitions.create(['width', 'margin'], {
-			easing: theme.transitions.easing.sharp,
-			duration: theme.transitions.duration.enteringScreen,
-		}),
-	},
 }));
 
 const Navbar = (props) => {
 	const classes = useStyles();
 	const location = useLocation();
-	const [active, setActive] = React.useState('');
-
-	const [anchorEl, setAnchorEl] = React.useState(null);
-
-	const handleMenuClick = (event) => {
-		setAnchorEl(event.currentTarget);
-	};
-
-	const handleClose = () => {
-		setAnchorEl(null);
-	};
+	const [active, setActive] = React.useState(0);
 
 	React.useEffect(() => {
-		setActive(location.pathname.split('/')[1]);
+		let pathname = location.pathname;
+		if (pathname === '/examiner/exam') setActive(0);
+		else if (pathname === '/examiner/course') setActive(1);
+		else if (pathname === '/examiner/students') setActive(2);
+		else if (pathname === '/examiner/settings') setActive(3);
+		else if (pathname === '/admin') setActive(5);
+		else if (pathname === '/admin/examiner') setActive(6);
+		else if (pathname === '/admin/subadmin/details') setActive(7);
+		else if (pathname === '/admin/settings') setActive(8);
 	}, [location]);
 
-	let handleSidebar = () => {
-		let toggle = props.toggle;
-		props.setSidebar(!toggle);
-	};
-
 	return (
-		<AppBar
-			position='static'
-			className={clsx(classes.navbar, {
-				[classes.navbarShift]: props.toggle,
-			})}
-		>
+		<AppBar position='static' className={clsx(classes.navbar)}>
 			<Toolbar>
-				{props.authenticated ? (
-					!props.toggle ? (
-						<IconButton color='primary' onClick={handleSidebar}>
-							<Menu />
-						</IconButton>
-					) : (
-						<IconButton onClick={handleSidebar}>
-							<ChevronLeft />
-						</IconButton>
-					)
-				) : null}
-
 				<img
 					src={require('../../assets/logo.png')}
 					width='40'
@@ -98,38 +57,10 @@ const Navbar = (props) => {
 				<Typography variant='h6' className='text-dark'>
 					Examin
 				</Typography>
-				<AppbarCollapse
-					active={active}
-					anchorEl={anchorEl}
-					handleMenuClick={handleClose}
-				/>
-
-				<div className={`ml-auto ${classes.verticalButton}`}>
-					<IconButton onClick={handleMenuClick}>
-						<MoreVert />
-					</IconButton>
-				</div>
+				<AppbarCollapse activeTab={active} setActiveTab={setActive} />
 			</Toolbar>
 		</AppBar>
 	);
 };
 
-const mapDispatchToProps = (dispatch) => {
-	return {
-		setSidebar: (toggle) => {
-			dispatch({
-				type: ActionType.COLLAPSE_SIDEBAR,
-				toggle: toggle,
-			});
-		},
-	};
-};
-
-const mapStateToProps = (state) => {
-	return {
-		toggle: state.adminReducer.sidebarToggle,
-		authenticated: state.adminReducer.authenticated,
-	};
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Navbar);
+export default Navbar;

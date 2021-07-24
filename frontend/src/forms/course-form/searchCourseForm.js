@@ -16,7 +16,7 @@ const SearchCourseForm = (props) => {
 			{(formikProps) => (
 				<Form onSubmit={formikProps.handleSubmit}>
 					<div className='row d-flex align-items-center'>
-						<div className='col-md-3'>
+						<div className='col-md-4'>
 							<TextField
 								variant='outlined'
 								className='w-100'
@@ -29,7 +29,7 @@ const SearchCourseForm = (props) => {
 								InputLabelProps={{ shrink: true }}
 							/>
 						</div>
-						<div className='col-md-3'>
+						<div className='col-md-4'>
 							<TextField
 								variant='outlined'
 								className='w-100'
@@ -43,7 +43,7 @@ const SearchCourseForm = (props) => {
 								name='startDate'
 							/>
 						</div>
-						<div className='col-md-3'>
+						<div className='col-md-4'>
 							<TextField
 								variant='outlined'
 								className='w-100'
@@ -57,28 +57,28 @@ const SearchCourseForm = (props) => {
 								name='endDate'
 							/>
 						</div>
-						<div className='col-md-3'>
-							<Button
-								variant='contained'
-								className=' bg-dark text-white'
-								startIcon={<Search />}
-								type='submit'
-							>
-								Search
-							</Button>
-							<Button
-								variant='contained'
-								className='bg-danger text-white ml-2'
-								startIcon={<Backspace />}
-								type='submit'
-								onClick={() => {
-									formikProps.resetForm();
-									props.viewCourses();
-								}}
-							>
-								Cancel
-							</Button>
-						</div>
+					</div>
+					<div className='mt-3 d-flex justify-content-end'>
+						<Button
+							variant='contained'
+							className=' bg-dark text-white'
+							startIcon={<Search />}
+							type='submit'
+						>
+							Search
+						</Button>
+						<Button
+							variant='contained'
+							className='bg-danger text-white ml-2'
+							startIcon={<Backspace />}
+							type='submit'
+							onClick={() => {
+								formikProps.resetForm();
+								props.viewCourses();
+							}}
+						>
+							Cancel
+						</Button>
 					</div>
 				</Form>
 			)}

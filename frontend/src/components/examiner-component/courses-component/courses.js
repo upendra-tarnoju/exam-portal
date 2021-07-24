@@ -208,7 +208,7 @@ class Courses extends Component {
 						</TableHead>
 						<TableBody>
 							{courses.length === 0 ? (
-								<StyledTableRow component='th' scope='row'>
+								<StyledTableRow>
 									<StyledTableCell
 										colSpan={5}
 										className='text-center font-weight-bold'
