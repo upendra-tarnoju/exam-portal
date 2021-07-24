@@ -28,6 +28,7 @@ class ExamQuestion extends React.Component {
 			options: [],
 			optionType: '',
 			totalQuestions: 0,
+			questionMarkings: [],
 			singleOptValue: '',
 			multiOptValue: {},
 			questionId: '',
@@ -52,25 +53,31 @@ class ExamQuestion extends React.Component {
 			let questionData = res.data.questionDetails;
 			let existingAnswer = res.data.existingAnswer;
 
-			if (existingAnswer) {
-				if (questionData.optionType === 'single') {
-					singleOptValue = existingAnswer.answer;
+			if (pageIndex === res.data.allQuestionsMarkings.length) {
+				this.setState({
+					questionMarkings: res.data.allQuestionsMarkings,
+				});
+			} else {
+				if (existingAnswer) {
+					if (questionData.optionType === 'single') {
+						singleOptValue = existingAnswer.answer;
+					}
 				}
+				let multiOptValue = {};
+				questionData.options.forEach(
+					(option) => (multiOptValue[option.key] = false)
+				);
+				this.setState({
+					question: questionData.question,
+					options: questionData.options,
+					optionType: questionData.optionType,
+					questionMarkings: res.data.allQuestionsMarkings,
+					singleOptValue,
+					pageIndex,
+					multiOptValue,
+					questionId: questionData._id,
+				});
 			}
-			let multiOptValue = {};
-			questionData.options.forEach(
-				(option) => (multiOptValue[option.key] = false)
-			);
-			this.setState({
-				question: questionData.question,
-				options: questionData.options,
-				optionType: questionData.optionType,
-				totalQuestions: res.data.count,
-				singleOptValue,
-				pageIndex,
-				multiOptValue,
-				questionId: questionData._id,
-			});
 		});
 	}
 
@@ -164,7 +171,9 @@ class ExamQuestion extends React.Component {
 
 	reviewAnswer = () => {
 		let examId = this.props.match.params.examId;
-		let { questionId, singleOptValue, multiOptValue, optionType } = this.state;
+		let answer;
+		let { questionId, singleOptValue, multiOptValue, optionType, pageIndex } =
+			this.state;
 
 		let joinedMultiValue = '';
 
@@ -175,21 +184,23 @@ class ExamQuestion extends React.Component {
 		});
 
 		if (!Object.values(multiOptValue).includes(true) && singleOptValue === '') {
-			let msg = 'Attempt question before marking as review';
-			this.handleSnackBar(true, msg, 'error');
+			answer = '';
 		} else {
-			this.studentService
-				.saveExamAnswer({
-					questionId,
-					examId,
-					answer:
-						optionType === 'single'
-							? singleOptValue
-							: joinedMultiValue.slice(0, -1),
-					status: 'REVIEW',
-				})
-				.then((res) => {});
+			answer =
+				optionType === 'single'
+					? singleOptValue
+					: joinedMultiValue.slice(0, -1);
 		}
+		this.studentService
+			.saveExamAnswer({
+				questionId,
+				examId,
+				answer,
+				status: 'REVIEW',
+			})
+			.then((res) => {
+				this.nextQuestion(pageIndex + 1);
+			});
 	};
 
 	handleSnackBar = (status, msg, type) => {
@@ -201,7 +212,7 @@ class ExamQuestion extends React.Component {
 	s;
 
 	render() {
-		let { question, totalQuestions, pageIndex, singleOptValue, snackbar } =
+		let { question, questionMarkings, pageIndex, singleOptValue, snackbar } =
 			this.state;
 		// const renderCountTime = ({ hours, minutes, seconds }) => {
 		// 	return (
@@ -264,16 +275,28 @@ class ExamQuestion extends React.Component {
 		};
 
 		const RenderQuestionPallete = () => {
-			let { totalQuestions } = this.state;
-			let palletes = new Array(totalQuestions).fill('');
+			let { questionMarkings } = this.state;
+			let palletes = questionMarkings;
 
 			let palletesContent = [];
 			const contents = palletes.reduce((accumulator, currentValue, index) => {
 				palletesContent.push(
 					<div key={index} className='col col-md-3'>
 						<div
-							className={`mb-0 text-center bg-secondary text-white cursor-pointer ${styles.pallete}`}
-							onClick={() => this.nextQuestion(index)}
+							className={`mb-0 text-center bg-secondary text-white cursor-pointer ${
+								currentValue.status === 'NOT_VISITED'
+									? styles.notVisitedPalletes
+									: currentValue.status === 'NOT_ATTEMPTED'
+									? styles.notAttemptedPalletes
+									: currentValue.status === 'ATTEMPTED'
+									? styles.attemptedPalletes
+									: currentValue.status === 'ATTEMPTED_AND_MARKED_FOR_REVIEW'
+									? styles.attemptedReviewPalletes
+									: currentValue.status ===
+									  'NOT_ATTEMPTED_AND_MARKED_FOR_REVIEW'
+									? styles.notAttemptedReviewPalletes
+									: null
+							}`}
 						>
 							{index + 1}
 						</div>
@@ -363,7 +386,7 @@ class ExamQuestion extends React.Component {
 								color='primary'
 								className='mr-2'
 								size='medium'
-								disabled={pageIndex + 1 === totalQuestions}
+								disabled={pageIndex + 1 === questionMarkings.length}
 								onClick={() => this.nextQuestion(pageIndex + 1)}
 							>
 								Next

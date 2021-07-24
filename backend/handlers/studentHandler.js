@@ -7,170 +7,6 @@ const { factories } = require('../factories');
 const RESPONSE_MESSAGES = require('../config/response-messages');
 const APP_CONSTANTS = require('../config/app-defaults');
 
-const saveCorrectAnswer = async (
-	payload,
-	userDetails,
-	examDetails,
-	questionDetails
-) => {
-	let answerQuery = {
-		$and: [
-			{ examId: mongoose.Types.ObjectId(payload.examId) },
-			{ questionId: mongoose.Types.ObjectId(payload.questionId) },
-			{ userId: mongoose.Types.ObjectId(userDetails._id) },
-		],
-	};
-	let projections = { correct: 1 };
-	let options = { lean: true };
-
-	let existingAnswer = await queries.findOne(
-		Schema.answers,
-		answerQuery,
-		projections,
-		options
-	);
-
-	if (existingAnswer) {
-		if (!existingAnswer.correct) {
-			let query = {
-				$and: [
-					{ studentId: mongoose.Types.ObjectId(userDetails._id) },
-					{ examId: mongoose.Types.ObjectId(payload.examId) },
-				],
-			};
-			projections = { marksObtained: 1 };
-
-			let assignedExamDetails = await queries.findOne(
-				Schema.assignExam,
-				query,
-				projections,
-				options
-			);
-
-			let newMarksObtained =
-				assignedExamDetails.marksObtained +
-				questionDetails.questionMark +
-				examDetails.negativeMarks;
-
-			let toUpdate = {
-				$set: { marksObtained: newMarksObtained, modifiedDate: Date.now() },
-			};
-			await queries.findAndUpdate(Schema.assignExam, query, toUpdate, options);
-
-			toUpdate = { $set: { correct: true, modifiedDate: Date.now() } };
-			await queries.findAndUpdate(
-				Schema.answers,
-				answerQuery,
-				toUpdate,
-				options
-			);
-		}
-	} else {
-		let answerData = {
-			userId: userDetails._id,
-			examId: payload.examId,
-			questionId: payload.questionId,
-			answer: payload.answer,
-			correct: true,
-		};
-		await queries.create(Schema.answers, answerData);
-	}
-};
-
-const saveIncorrectAnswer = async (
-	payload,
-	userDetails,
-	examDetails,
-	questionDetails
-) => {
-	let answerQuery = {
-		$and: [
-			{ examId: mongoose.Types.ObjectId(payload.examId) },
-			{ questionId: mongoose.Types.ObjectId(payload.questionId) },
-			{ userId: mongoose.Types.ObjectId(userDetails._id) },
-		],
-	};
-	let projections = { correct: 1 };
-	let options = { lean: true };
-
-	let existingAnswer = await queries.findOne(
-		Schema.answers,
-		answerQuery,
-		projections,
-		options
-	);
-
-	if (existingAnswer) {
-		if (existingAnswer.correct) {
-			let query = {
-				$and: [
-					{ studentId: mongoose.Types.ObjectId(userDetails._id) },
-					{ examId: mongoose.Types.ObjectId(payload.examId) },
-				],
-			};
-			projections = { marksObtained: 1 };
-
-			let assignedExamDetails = await queries.findOne(
-				Schema.assignExam,
-				query,
-				projections,
-				options
-			);
-
-			let newMarksObtained =
-				assignedExamDetails.marksObtained -
-				questionDetails.questionMark -
-				examDetails.negativeMarks;
-
-			let toUpdate = {
-				marksObtained: newMarksObtained,
-				modifiedDate: Date.now(),
-			};
-
-			await queries.findAndUpdate(Schema.assignExam, query, toUpdate, options);
-
-			toUpdate = { $set: { correct: false, modifiedDate: Date.now() } };
-			await queries.findAndUpdate(
-				Schema.answers,
-				answerQuery,
-				toUpdate,
-				options
-			);
-		}
-	} else {
-		let answerData = {
-			userId: userDetails._id,
-			examId: payload.examId,
-			questionId: payload.questionId,
-			answer: payload.answer,
-			correct: false,
-		};
-		await queries.create(Schema.answers, answerData);
-
-		let query = {
-			$and: [
-				{ studentId: mongoose.Types.ObjectId(userDetails._id) },
-				{ examId: mongoose.Types.ObjectId(payload.examId) },
-			],
-		};
-		projections = { marksObtained: 1 };
-
-		let assignedExamDetails = await queries.findOne(
-			Schema.assignExam,
-			query,
-			projections,
-			options
-		);
-
-		let newMarksObtained =
-			assignedExamDetails.marksObtained - examDetails.negativeMarks;
-
-		let toUpdate = { marksObtained: newMarksObtained };
-
-		await queries.findAndUpdate(Schema.assignExam, query, toUpdate, options);
-	}
-};
-
 const students = {
 	getExamStudentsCount: async (userDetails, payload) => {
 		try {
@@ -429,17 +265,17 @@ const students = {
 
 	getExamQuestions: async (payload, userDetails) => {
 		try {
+			let conditions, toUpdate, existingAnswer, allQuestionsMarkings;
 			let pageIndex = parseInt(payload.pageIndex, 10);
+
 			let query = {
 				$and: [
 					{ studentId: mongoose.Types.ObjectId(userDetails._id) },
 					{ examId: mongoose.Types.ObjectId(payload.examId) },
 				],
 			};
-
-			let projections = { status: 1 };
+			let projections = { status: 1, answerMarkings: 1 };
 			let options = { lean: true };
-
 			let assignedExamDetails = await queries.findOne(
 				Schema.assignExam,
 				query,
@@ -459,7 +295,7 @@ const students = {
 						finalData: {},
 					};
 				} else {
-					let query = {
+					let questionDetailQuery = {
 						$and: [
 							{ examId: payload.examId },
 							{ status: APP_CONSTANTS.QUESTION_STATUS.ACTIVE },
@@ -472,38 +308,123 @@ const students = {
 						createdDate: 0,
 						modifiedDate: 0,
 					};
-					let options = { skip: pageIndex, limit: 1, lean: true };
-
 					let questionDetails = await queries.findOne(
 						Schema.question,
-						query,
+						questionDetailQuery,
 						projections,
-						options
+						{ skip: pageIndex, limit: 1, lean: true }
 					);
 
-					let count = await queries.countDocuments(Schema.question, query);
+					if (questionDetails) {
+						if (assignedExamDetails.answerMarkings.length === 0) {
+							let allQuestionQuery = {
+								examId: mongoose.Types.ObjectId(payload.examId),
+							};
+							let projections = { _id: 1 };
+							let allQuestions = await queries.getData(
+								Schema.question,
+								allQuestionQuery,
+								projections,
+								{ lean: true }
+							);
+							let questionMarkings = [];
+							for (let i = 0; i < allQuestions.length; i++) {
+								questionMarkings.push({
+									questionId: allQuestions[i]._id,
+									status:
+										questionDetails._id.toString() ===
+										allQuestions[i]._id.toString()
+											? APP_CONSTANTS.EXAM_QUESTION_MARKINGS.NOT_ATTEMPTED
+											: APP_CONSTANTS.EXAM_QUESTION_MARKINGS.NOT_VISITED,
+								});
+							}
+							conditions = {
+								$and: [
+									{ studentId: mongoose.Types.ObjectId(userDetails._id) },
+									{ examId: mongoose.Types.ObjectId(payload.examId) },
+								],
+							};
+							toUpdate = { answerMarkings: questionMarkings };
+							let markingOptions = { lean: true, new: true };
+							await queries.findAndUpdate(
+								Schema.assignExam,
+								conditions,
+								toUpdate,
+								markingOptions
+							);
+						} else {
+							conditions = {
+								$and: [
+									{ studentId: mongoose.Types.ObjectId(userDetails._id) },
+									{ examId: mongoose.Types.ObjectId(payload.examId) },
+									{
+										'answerMarkings.questionId': mongoose.Types.ObjectId(
+											questionDetails._id
+										),
+										'answerMarkings.status': {
+											$nin: [
+												APP_CONSTANTS.EXAM_QUESTION_MARKINGS.ATTEMPTED,
+												APP_CONSTANTS.EXAM_QUESTION_MARKINGS
+													.NOT_ATTEMPTED_AND_MARKED_FOR_REVIEW,
+												APP_CONSTANTS.EXAM_QUESTION_MARKINGS
+													.ATTEMPTED_AND_MARKED_FOR_REVIEW,
+											],
+										},
+									},
+								],
+							};
+							toUpdate = {
+								$set: {
+									'answerMarkings.$.status':
+										APP_CONSTANTS.EXAM_QUESTION_MARKINGS.NOT_ATTEMPTED,
+								},
+							};
+							let markingOptions = { lean: true, new: true };
+							await queries.findAndUpdate(
+								Schema.assignExam,
+								conditions,
+								toUpdate,
+								markingOptions
+							);
+						}
 
-					let existingAnswerQuery = {
+						let existingAnswerQuery = {
+							$and: [
+								{ questionId: mongoose.Types.ObjectId(questionDetails._id) },
+								{ examId: mongoose.Types.ObjectId(payload.examId) },
+								{ userId: mongoose.Types.ObjectId(userDetails._id) },
+							],
+						};
+						let existingAnswerProjections = { answer: 1 };
+						existingAnswer = await queries.findOne(
+							Schema.answers,
+							existingAnswerQuery,
+							existingAnswerProjections,
+							{ lean: true }
+						);
+					}
+
+					let answerMarkingProjections = { answerMarkings: 1 };
+					let answerMarkingQuery = {
 						$and: [
-							{ questionId: mongoose.Types.ObjectId(questionDetails._id) },
+							{ studentId: mongoose.Types.ObjectId(userDetails._id) },
 							{ examId: mongoose.Types.ObjectId(payload.examId) },
-							{ userId: mongoose.Types.ObjectId(userDetails._id) },
 						],
 					};
-
-					let existingAnswerProjections = { answer: 1 };
-					options = { lean: true };
-
-					let existingAnswer = await queries.findOne(
-						Schema.answers,
-						existingAnswerQuery,
-						existingAnswerProjections,
-						options
+					allQuestionsMarkings = await queries.findOne(
+						Schema.assignExam,
+						answerMarkingQuery,
+						answerMarkingProjections,
+						{ lean: true }
 					);
 
 					return {
 						response: { STATUS_CODE: 200, MSG: '' },
-						finalData: { questionDetails, count, existingAnswer },
+						finalData: {
+							questionDetails,
+							existingAnswer,
+							allQuestionsMarkings: allQuestionsMarkings.answerMarkings,
+						},
 					};
 				}
 			} else {
@@ -530,7 +451,6 @@ const students = {
 			);
 
 			query = { _id: mongoose.Types.ObjectId(payload.examId) };
-			// projections = { negativeMarks: 1 };
 			let examDetails = await queries.findOne(
 				Schema.exam,
 				query,
@@ -577,6 +497,43 @@ const students = {
 						await queries.create(Schema.answers, newAnswer);
 					}
 
+					let conditions = {
+						$and: [
+							{ studentId: mongoose.Types.ObjectId(userDetails._id) },
+							{ examId: mongoose.Types.ObjectId(payload.examId) },
+							{
+								'answerMarkings.questionId': mongoose.Types.ObjectId(
+									payload.questionId
+								),
+							},
+						],
+					};
+
+					let toUpdate = {
+						$set: {
+							'answerMarkings.$.status':
+								payload.answer === '' &&
+								payload.status === APP_CONSTANTS.STUDENT_ANSWER_STATUS.REVIEW
+									? APP_CONSTANTS.EXAM_QUESTION_MARKINGS
+											.NOT_ATTEMPTED_AND_MARKED_FOR_REVIEW
+									: payload.status ===
+											APP_CONSTANTS.STUDENT_ANSWER_STATUS.REVIEW &&
+									  payload.answer !== ''
+									? APP_CONSTANTS.EXAM_QUESTION_MARKINGS
+											.ATTEMPTED_AND_MARKED_FOR_REVIEW
+									: APP_CONSTANTS.EXAM_QUESTION_MARKINGS.ATTEMPTED,
+						},
+					};
+
+					let markingOptions = { lean: true, new: true };
+
+					await queries.findAndUpdate(
+						Schema.assignExam,
+						conditions,
+						toUpdate,
+						markingOptions
+					);
+
 					return { response: { STATUS_CODE: 200, MSG: '' }, finalData: {} };
 				} else {
 					return {
@@ -584,88 +541,12 @@ const students = {
 						finalData: {},
 					};
 				}
-				// 	query = {
-				// 		$and: [
-				// 			{ studentId: mongoose.Types.ObjectId(userDetails._id) },
-				// 			{ examId: mongoose.Types.ObjectId(payload.examId) },
-				// 		],
-				// 	};
-				// 	projections = { marksObtained: 1 };
-				// 	let assignedExamDetails = await queries.findOne(
-				// 		Schema.assignExam,
-				// 		query,
-				// 		projections,
-				// 		options
-				// 	);
-				// 	let correctAnswer;
-				// 	if (questionDetails.correctAnswer.length === 1) {
-				// 		correctAnswer = questionDetails.correctAnswer[0];
-				// 	}
-				// 	if (assignedExamDetails.marksObtained === 0) {
-				// 		let toUpdate;
-				// 		let conditions = {
-				// 			$and: [
-				// 				{ examId: mongoose.Types.ObjectId(payload.examId) },
-				// 				{ studentId: mongoose.Types.ObjectId(userDetails._id) },
-				// 			],
-				// 		};
-				// 		if (payload.answer === correctAnswer) {
-				// 			await saveCorrectAnswer(
-				// 				payload,
-				// 				userDetails,
-				// 				examDetails,
-				// 				questionDetails
-				// 			);
-				// 			toUpdate = {
-				// 				$set: { marksObtained: questionDetails.questionMark },
-				// 			};
-				// 		} else {
-				// 			await saveIncorrectAnswer(
-				// 				payload,
-				// 				userDetails,
-				// 				examDetails,
-				// 				questionDetails
-				// 			);
-				// 			toUpdate = {
-				// 				$set: { marksObtained: 0 - examDetails.negativeMarks },
-				// 			};
-				// 		}
-				// 		await queries.findAndUpdate(
-				// 			Schema.assignExam,
-				// 			conditions,
-				// 			toUpdate,
-				// 			options
-				// 		);
-				// 	} else {
-				// 		if (payload.answer === correctAnswer) {
-				// 			await saveCorrectAnswer(
-				// 				payload,
-				// 				userDetails,
-				// 				examDetails,
-				// 				questionDetails
-				// 			);
-				// 		} else {
-				// 			await saveIncorrectAnswer(
-				// 				payload,
-				// 				userDetails,
-				// 				examDetails,
-				// 				questionDetails
-				// 			);
-				// 		}
-				// 	}
-				// 	return { response: { STATUS_CODE: 200, MSG: '' }, finalData: {} };
 			} else {
 				return {
 					response: RESPONSE_MESSAGES.EXAM.EXAM_QUESTION.INVALID_QUESTION_ID,
 					finalData: {},
 				};
 			}
-			// else {
-			// 	return {
-			// 		response: RESPONSE_MESSAGES.EXAM.EXAM_QUESTION.INVALID_EXAM_ID,
-			// 		finalData: {},
-			// 	};
-			// }
 		} catch (err) {
 			throw err;
 		}

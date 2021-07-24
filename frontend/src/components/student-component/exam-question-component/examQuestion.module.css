@@ -20,13 +20,21 @@
 	letter-spacing: 1px;
 }
 
-.pallete {
+.attemptedPalletes,
+.notVisitedPalletes,
+.notAttemptedPalletes,
+.attemptedReviewPalletes,
+.notAttemptedReviewPalletes {
 	border-radius: 8px;
 	padding: 12px 0px;
 	overflow: hidden;
 }
 
-.pallete::after {
+.attemptedPalletes::after,
+.notVisitedPalletes::after,
+.notAttemptedPalletes::after,
+.attemptedReviewPalletes::after,
+.notAttemptedReviewPalletes::after {
 	content: '';
 	position: absolute;
 	top: 0px;
@@ -34,7 +42,26 @@
 	width: 10px;
 	height: 10px;
 	border-top-right-radius: 8px;
-	background-color: #fb1a5a;
+}
+
+.attemptedPalletes::after {
+	background-color: green;
+}
+
+.notVisitedPalletes::after {
+	background-color: grey;
+}
+
+.notAttemptedPalletes::after {
+	background-color: red;
+}
+
+.attemptedReviewPalletes::after {
+	background-color: yellow;
+}
+
+.notAttemptedReviewPalletes::after {
+	background-color: orange;
 }
 
 .palletesContents {
