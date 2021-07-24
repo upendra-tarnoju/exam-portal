@@ -13,6 +13,7 @@ import AdminService from '../../../services/adminApi';
 import STMPForm from '../../../forms/settings-form/smtpForm';
 import CustomSnackBar from '../../../common/customSnackbar';
 import ResetPasswordForm from '../../../forms/settings-form/resetPasswordForm';
+import ImageStorageForm from '../../../forms/settings-form/imageStorageForm';
 
 const tabProps = (index) => {
 	return {
@@ -82,12 +83,10 @@ class Settings extends React.Component {
 	};
 
 	updateSettings = (values) => {
-		this.adminService
-			.updateSettings({ smtpCredentials: values })
-			.then((res) => {
-				let msg = res.data.msg;
-				this.handleSnackBar(true, msg, 'success');
-			});
+		this.adminService.updateSettings(values).then((res) => {
+			let msg = res.data.msg;
+			this.handleSnackBar(true, msg, 'success');
+		});
 	};
 
 	handleSnackBar = (status, msg, type) => {
@@ -123,6 +122,7 @@ class Settings extends React.Component {
 						<Tab label='Email' {...tabProps(0)} />
 						<Tab label='Reset Password' {...tabProps(1)} />
 						<Tab label='SMTP' {...tabProps(2)} />
+						<Tab label='Image storage' {...tabProps(3)} />
 					</Tabs>
 				</Card>
 				<Card className='p-3 mt-4'>
@@ -140,6 +140,12 @@ class Settings extends React.Component {
 					</TabPanel>
 					<TabPanel value={activeTab} index={2}>
 						<STMPForm
+							updateSettings={this.updateSettings}
+							adminSettings={adminSettings}
+						/>
+					</TabPanel>
+					<TabPanel value={activeTab} index={3}>
+						<ImageStorageForm
 							updateSettings={this.updateSettings}
 							adminSettings={adminSettings}
 						/>

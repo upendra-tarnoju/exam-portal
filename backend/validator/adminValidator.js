@@ -60,6 +60,15 @@ const adminValidator = {
 				smtpAPIKey: Joi.string().required(),
 				smtpServiceName: Joi.string().required(),
 			}).optional(),
+			firebaseCredentials: Joi.object({
+				apiKey: Joi.string().required(),
+				appId: Joi.string().required(),
+				authDomain: Joi.string().required(),
+				measurementID: Joi.string().required(),
+				messageSenderID: Joi.string().required(),
+				projectID: Joi.string().required(),
+				storageBucket: Joi.string().required(),
+			}),
 		}),
 	},
 	RESET_PASSWORD: {

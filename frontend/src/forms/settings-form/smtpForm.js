@@ -37,7 +37,7 @@ const STMPForm = (props) => {
 					: '',
 			}}
 			onSubmit={(values) => {
-				props.updateSettings(values);
+				props.updateSettings({ smtpCredentials: values });
 			}}
 		>
 			{(formikProps) => (

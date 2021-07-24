@@ -477,6 +477,8 @@ const admin = {
 
 	updateSettings: async (payload, userDetails) => {
 		try {
+			let projections = { _id: 1 };
+			let options = { lean: true };
 			if (payload.smtpCredentials) {
 				let findSettingQuery = {
 					$and: [
@@ -484,8 +486,6 @@ const admin = {
 						{ key: 'smtpCredentials' },
 					],
 				};
-				let projections = { _id: 1 };
-				let options = { lean: true };
 
 				let existingSMTPCredentials = await queries.findOne(
 					Schema.setting,
@@ -510,6 +510,41 @@ const admin = {
 					let newCredentials = {
 						key: 'smtpCredentials',
 						value: payload.smtpCredentials,
+						userId: userDetails._id,
+					};
+					await queries.create(Schema.setting, newCredentials);
+				}
+			} else if (payload.firebaseCredentials) {
+				let findSettingQuery = {
+					$and: [
+						{ userId: mongoose.Types.ObjectId(userDetails._id) },
+						{ key: 'firebaseCredentials' },
+					],
+				};
+
+				let existingFirebaseCredentials = await queries.findOne(
+					Schema.setting,
+					findSettingQuery,
+					projections,
+					options
+				);
+
+				if (existingFirebaseCredentials) {
+					let toUpdate = {
+						value: payload.firebaseCredentials,
+						modifiedDate: Date.now(),
+					};
+
+					await queries.findAndUpdate(
+						Schema.setting,
+						findSettingQuery,
+						toUpdate,
+						options
+					);
+				} else {
+					let newCredentials = {
+						key: 'firebaseCredentials',
+						value: payload.firebaseCredentials,
 						userId: userDetails._id,
 					};
 					await queries.create(Schema.setting, newCredentials);
