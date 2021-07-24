@@ -186,7 +186,6 @@ module.exports = {
 
 	UPDATE_PROFILE: {
 		body: Joi.object({
-			currentPassword: Joi.string().required(),
 			newPassword: Joi.string().required(),
 		}),
 	},
@@ -223,6 +222,12 @@ module.exports = {
 			gender: Joi.string().required(),
 			studentId: Joi.string().required().length(24),
 			mobileNumber: Joi.string().required(),
+		}),
+	},
+
+	RESET_PASSWORD: {
+		body: Joi.object({
+			newPassword: Joi.string().required(),
 		}),
 	},
 };

@@ -114,7 +114,18 @@ let CourseForm = (props) => {
 						}
 					/>
 					<div className='d-flex justify-content-end'>
-						<Button type='submit' variant='contained' color='primary'>
+						<Button
+							variant='contained'
+							className='bg-dark text-white mr-2'
+							onClick={() => props.closeModal(false)}
+						>
+							Cancel
+						</Button>
+						<Button
+							type='submit'
+							variant='contained'
+							className='bg-dark text-white'
+						>
 							{props.course && props.course.name._id !== ''
 								? 'Update'
 								: 'Create'}

@@ -91,7 +91,7 @@ class Students extends React.Component {
 	render() {
 		let { pageIndex, pageSize, examList, pageCount } = this.state;
 		return (
-			<div className='container p-4'>
+			<div className='p-4'>
 				<Card className='p-3'>
 					<div className='d-xs-block d-md-flex justify-content-between'>
 						<div>

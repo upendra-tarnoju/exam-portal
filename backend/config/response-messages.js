@@ -62,6 +62,12 @@ module.exports = {
 			STATUS_CODE: 200,
 			MSG: 'Examiner has been declined',
 		},
+		UPDATE_PASSWORD: {
+			SUCCESS: {
+				STATUS_CODE: 200,
+				MSG: 'Password is changed successfully',
+			},
+		},
 	},
 	COURSES: {
 		CREATE: {

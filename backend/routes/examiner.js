@@ -192,7 +192,7 @@ module.exports = () => {
 	);
 
 	router.patch(
-		'/profile',
+		'/resetPassword',
 		authMiddleware,
 		requestMiddleware(ExaminerValidator.UPDATE_PROFILE),
 		examinerController.updateProfile

@@ -38,7 +38,7 @@ const Examiner = (props) => {
 					path='/examiner/exam/:examId/questions'
 					component={ViewQuestions}
 				></Route>
-				<Route path='/examiner/setting' component={Settings} />
+				<Route path='/examiner/settings' component={Settings} />
 				<Route path='/examiner/students' component={Students} />
 				<Route
 					path='/examiner/exam/:examId/addStudent'

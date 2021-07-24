@@ -111,25 +111,19 @@ class Settings extends React.Component {
 		return (
 			<div className='p-5'>
 				<Card className='p-3'>
-					<div className='d-xs-block d-md-flex justify-content-between'>
-						<div>
-							<Typography variant='h4'>Settings</Typography>
-							<Typography variant='subtitle1'>
-								View your panel settings
-							</Typography>
-							<hr />
-							<Tabs
-								value={activeTab}
-								onChange={(event, newValue) => this.handleTabChange(newValue)}
-								indicatorColor='primary'
-								textColor='primary'
-							>
-								<Tab label='Email' {...tabProps(0)} />
-								<Tab label='Reset Password' {...tabProps(1)} />
-								<Tab label='SMTP' {...tabProps(2)} />
-							</Tabs>
-						</div>
-					</div>
+					<Typography variant='h4'>Settings</Typography>
+					<Typography variant='subtitle1'>View your panel settings</Typography>
+					<hr />
+					<Tabs
+						value={activeTab}
+						onChange={(event, newValue) => this.handleTabChange(newValue)}
+						indicatorColor='primary'
+						textColor='primary'
+					>
+						<Tab label='Email' {...tabProps(0)} />
+						<Tab label='Reset Password' {...tabProps(1)} />
+						<Tab label='SMTP' {...tabProps(2)} />
+					</Tabs>
 				</Card>
 				<Card className='p-3 mt-4'>
 					<TabPanel value={activeTab} index={0}>

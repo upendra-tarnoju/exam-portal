@@ -112,10 +112,10 @@ class ExaminerService {
 		});
 	};
 
-	updateProfile = (data) => {
+	resetPassword = (data) => {
 		let token = this.userService.getToken();
 		return axios({
-			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}/profile`,
+			url: `${process.env.REACT_APP_BASE_URL}/${this.EXAMINER_URL}/resetPassword`,
 			method: 'patch',
 			headers: {
 				'Content-Type': 'application/json',

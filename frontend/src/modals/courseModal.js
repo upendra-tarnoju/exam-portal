@@ -79,6 +79,7 @@ const CourseModal = (props) => {
 						handleSubmit={handleSubmit}
 						course={props.course}
 						coursesList={props.coursesList}
+						closeModal={props.closeModal}
 					/>
 				</div>
 			</Paper>

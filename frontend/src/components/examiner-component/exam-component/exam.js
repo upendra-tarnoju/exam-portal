@@ -175,7 +175,7 @@ class Exam extends Component {
 		} = this.state;
 
 		return (
-			<div className='container p-5'>
+			<div className='p-4'>
 				<Card className='p-3'>
 					<div className='d-xs-block d-md-flex justify-content-between'>
 						<div>

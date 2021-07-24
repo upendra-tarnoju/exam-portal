@@ -169,7 +169,7 @@ class Courses extends Component {
 		let { courses } = this.props;
 
 		return (
-			<div className='container py-5'>
+			<div className='p-4'>
 				<Card className='p-3'>
 					<div className='d-xs-block d-md-flex justify-content-between'>
 						<div>

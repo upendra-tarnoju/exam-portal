@@ -248,21 +248,22 @@ const examiners = {
 	},
 
 	updateProfile: async (payload, userDetails) => {
-		let user = await users.findById(examinerId).select({
-			password: 1,
-		});
-		let comparedPassword = factories.compareHashedPassword(
-			profileData.currentPassword,
-			user.password
-		);
-		if (comparedPassword) {
-			let hashedPasswod = factories.generateHashedPassword(
-				profileData.newPassword
+		try {
+			let hashedPassword = factories.generateHashedPassword(
+				payload.newPassword
 			);
-			await users.update(examinerId, { password: hashedPasswod });
-			return { status: 200, msg: 'Password updated' };
-		} else {
-			return { status: 401, msg: 'Incorrect current password' };
+
+			let conditions = { _id: userDetails._id };
+			let toUpdate = { password: hashedPassword, modifiedDate: Date.now() };
+			let options = { lean: true, new: true };
+
+			await queries.findAndUpdate(Schemas.users, conditions, toUpdate, options);
+			return {
+				response: RESPONSE_MESSAGES.EXAMINER_STATUS.UPDATE_PASSWORD.SUCCESS,
+				finalData: {},
+			};
+		} catch (err) {
+			throw err;
 		}
 	},
 };
