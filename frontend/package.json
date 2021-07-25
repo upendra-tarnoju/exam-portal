@@ -20,6 +20,7 @@
     "bootstrap": "^4.5.0",
     "chart.js": "^2.9.4",
     "clsx": "^1.1.1",
+    "firebase": "^8.8.0",
     "formik": "^2.1.5",
     "jquery": "^3.5.1",
     "js-cookie": "^2.2.1",
@@ -49,6 +50,7 @@
     "react-select": "^3.1.1",
     "redux": "^4.0.5",
     "screenfull": "^5.1.0",
+    "uuid": "^8.3.2",
     "yup": "^0.29.3"
   },
   "scripts": {

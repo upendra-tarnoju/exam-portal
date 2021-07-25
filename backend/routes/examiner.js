@@ -102,7 +102,7 @@ module.exports = () => {
 	router.post(
 		'/question',
 		authMiddleware,
-		multerMiddleware.upload.single('image'),
+		// multerMiddleware.upload.single('image'),
 		questionController.addNewQuestion
 	);
 
@@ -196,6 +196,12 @@ module.exports = () => {
 		authMiddleware,
 		requestMiddleware(ExaminerValidator.UPDATE_PROFILE),
 		examinerController.updateProfile
+	);
+
+	router.get(
+		'/getSettings',
+		authMiddleware,
+		examinerController.getExaminerSettings
 	);
 
 	return router;

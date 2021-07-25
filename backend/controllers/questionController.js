@@ -3,17 +3,20 @@ const responseManager = require('../lib/responseManager');
 
 const question = {
 	addNewQuestion: async (req, res) => {
-		let questionDetails = req.body;
-		let userDetails = req.user;
-		let imageDetails = req.file;
+		try {
+			let questionDetails = req.body;
+			let userDetails = req.user;
 
-		let response = await questionHandler.addNewQuestion(
-			questionDetails,
-			userDetails,
-			imageDetails
-		);
+			let responseData = await questionHandler.addNewQuestion(
+				questionDetails,
+				userDetails
+			);
 
-		res.status(response.status).send(response.data);
+			responseManager.sendSuccessResponse(responseData, res);
+			// res.status(response.status).send(response.data);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
 	},
 
 	getAllQuestions: async (req, res) => {

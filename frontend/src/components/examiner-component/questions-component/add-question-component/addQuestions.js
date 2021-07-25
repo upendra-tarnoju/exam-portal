@@ -5,9 +5,13 @@ import {
 	CardContent,
 	Typography,
 } from '@material-ui/core';
+import { v4 as uuidv4 } from 'uuid';
+import { connect } from 'react-redux';
 
 import QuestionService from '../../../../services/questionApi';
 import AddQuestionForm from '../../../../forms/question-form/addQuestionForm';
+import { storage } from '../../../../config/firebaseConfig';
+import * as ActionTypes from '../../../../action';
 
 class AddQuestions extends React.Component {
 	constructor() {
@@ -18,6 +22,25 @@ class AddQuestions extends React.Component {
 		this.questionService = new QuestionService();
 	}
 
+	handleUpload = (file) => {
+		let uploadTask = storage.ref(`questions/${uuidv4()}`).put(file);
+		uploadTask.on(
+			'state_changed',
+			(snapshot) => {},
+			(error) => {},
+			() => {
+				storage
+					.ref('questions')
+					.child(file.name)
+					.getDownloadURL()
+					.then((url) => {
+						this.setState({ image: url });
+						this.props.setQuestionImage(url);
+					});
+			}
+		);
+	};
+
 	handleFileChange = (event) => {
 		let file = event.target.files[0];
 		if (
@@ -25,7 +48,7 @@ class AddQuestions extends React.Component {
 			file.type === 'image/png' ||
 			file.type === 'image/jpg'
 		) {
-			this.setState({ image: file });
+			this.handleUpload(file);
 		} else {
 			let msg =
 				'Invalid image type. Supported file types are .jpeg, .jpg and .png';
@@ -39,20 +62,12 @@ class AddQuestions extends React.Component {
 
 	submitQuestion = (values, optionsList) => {
 		let { image } = this.state;
-		console.log('submitting question');
+		let { examId } = this.props;
 		let answerList = optionsList.filter((option) => option.answer);
 
 		if (answerList.length === 0) {
 			this.props.handleSnackBar(true, 'Select an correct option', 'error');
 		} else {
-			let examFormData = new FormData();
-
-			for (let [key, value] of Object.entries(values)) {
-				examFormData.append(key, value);
-			}
-
-			examFormData.append('examId', this.props.examId);
-
 			let optionObj = {};
 			for (let i = 0; i < optionsList.length; i++) {
 				optionObj[optionsList[i].key] = {
@@ -61,9 +76,10 @@ class AddQuestions extends React.Component {
 				};
 			}
 
-			examFormData.append('optionsList', JSON.stringify(optionObj));
-			examFormData.append('image', image);
-			return this.questionService.create(examFormData);
+			values['examId'] = examId;
+			values['optionsList'] = JSON.stringify(optionObj);
+			values['image'] = image;
+			return this.questionService.create(values);
 		}
 	};
 
@@ -88,4 +104,15 @@ class AddQuestions extends React.Component {
 	}
 }
 
-export default AddQuestions;
+const mapDispatchToProps = (dispatch) => {
+	return {
+		setQuestionImage: (image) => {
+			dispatch({
+				type: ActionTypes.QUESTION_IMAGE,
+				image: image,
+			});
+		},
+	};
+};
+
+export default connect(null, mapDispatchToProps)(AddQuestions);

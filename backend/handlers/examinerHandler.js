@@ -266,6 +266,30 @@ const examiners = {
 			throw err;
 		}
 	},
+
+	getExaminerSettings: async () => {
+		try {
+			let adminSettingsQuery = {
+				key: 'firebaseCredentials',
+			};
+
+			let projections = { key: 1, value: 1 };
+
+			let settingDetails = await queries.findOne(
+				Schemas.setting,
+				adminSettingsQuery,
+				projections,
+				{ lean: true }
+			);
+
+			return {
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { settings: settingDetails },
+			};
+		} catch (err) {
+			throw err;
+		}
+	},
 };
 
 module.exports = examiners;

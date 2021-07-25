@@ -7,7 +7,7 @@ let { queries } = require('../db');
 let Schema = require('../schemas');
 
 const questions = {
-	addNewQuestion: async (questionDetails, userDetails, imageDetails) => {
+	addNewQuestion: async (questionDetails, userDetails) => {
 		try {
 			let aggregateArray = [
 				{ $match: { examId: mongoose.Types.ObjectId(questionDetails.examId) } },
@@ -49,7 +49,7 @@ const questions = {
 					: null,
 				questionMark: questionDetails.questionMark,
 				optionType: questionDetails.optionType,
-				image: imageDetails ? imageDetails.id : null,
+				image: questionDetails.image ? questionDetails.image : null,
 				examinerId: userDetails._id,
 				correctAnswer: answerList,
 				options: optionList,
@@ -62,11 +62,8 @@ const questions = {
 					examData.totalMarks
 				) {
 					return {
-						status:
-							RESPONSE_MESSAGES.QUESTION.CREATE.TOTAL_MARKS_LIMIT.STATUS_CODE,
-						data: {
-							msg: RESPONSE_MESSAGES.QUESTION.CREATE.TOTAL_MARKS_LIMIT.MSG,
-						},
+						response: RESPONSE_MESSAGES.QUESTION.CREATE.TOTAL_MARKS_LIMIT,
+						finalData: {},
 					};
 				} else {
 					await queries.create(Schema.question, questionObject);
@@ -84,6 +81,7 @@ const questions = {
 								updatedDate: new Date(),
 							},
 						};
+						await queries.findAndUpdate(Schema.exam, conditions, toUpdate);
 					} else if (
 						questionData[0].examMarks + parseInt(questionDetails.questionMark) <
 						examData.totalMarks
@@ -94,17 +92,25 @@ const questions = {
 								updatedDate: new Date(),
 							},
 						};
+						await queries.findAndUpdate(Schema.exam, conditions, toUpdate);
 					}
-
-					await queries.findAndUpdate(Schema.exam, conditions, toUpdate);
 				}
 			} else {
 				await queries.create(Schema.question, questionObject);
+
+				toUpdate = {
+					$set: {
+						status: APP_CONSTANTS.EXAM_STATUS.INCOMPLETE_QUESTIONS,
+						updatedDate: new Date(),
+					},
+				};
+
+				await queries.findAndUpdate(Schema.exam, conditions, toUpdate);
 			}
 
 			return {
-				status: RESPONSE_MESSAGES.QUESTION.CREATE.SUCCESS.STATUS_CODE,
-				data: { msg: RESPONSE_MESSAGES.QUESTION.CREATE.SUCCESS.MSG },
+				response: RESPONSE_MESSAGES.QUESTION.CREATE.SUCCESS,
+				finalData: {},
 			};
 		} catch (err) {
 			throw err;

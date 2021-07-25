@@ -84,6 +84,17 @@ const examiner = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+
+	getExaminerSettings: async (req, res) => {
+		try {
+			let userDetails = req.user;
+
+			let responseData = await examinerHandler.getExaminerSettings(userDetails);
+			responseManager.sendSuccessResponse(responseData, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
 };
 
 module.exports = examiner;

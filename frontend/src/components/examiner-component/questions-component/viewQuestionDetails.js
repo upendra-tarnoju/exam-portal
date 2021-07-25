@@ -9,7 +9,7 @@ import GaugeChart from 'react-gauge-chart';
 import { connect } from 'react-redux';
 
 const ViewQuestionDetails = (props) => {
-	let { examDetails } = props;
+	let { examDetails, questionImage } = props;
 	let percent = examDetails.examMarks / examDetails.totalMarks;
 	return (
 		<Card>
@@ -47,6 +47,14 @@ const ViewQuestionDetails = (props) => {
 								percent={percent || 0}
 							/>
 						</div>
+						{questionImage != '' ? (
+							<div className='col-md-12'>
+								<Typography className='text-center font-weight-bold'>
+									Question Image
+								</Typography>
+								<img src={questionImage} className='w-100' />
+							</div>
+						) : null}
 					</div>
 				</div>
 			</CardContent>
@@ -57,6 +65,7 @@ const ViewQuestionDetails = (props) => {
 const mapStateToProps = (state) => {
 	return {
 		examDetails: state.examReducer.examDetails,
+		questionImage: state.examinerReducer.questionImage,
 	};
 };
 

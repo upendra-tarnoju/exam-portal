@@ -11,7 +11,7 @@ const questions = new Schema({
 	optionType: { type: String, required: true },
 	correctAnswer: [{ type: String, required: true }],
 	options: [{ key: String, value: String }],
-	image: { type: Schema.Types.ObjectId },
+	image: { type: String },
 	createdDate: { type: Number, default: Date.now },
 	modifiedDate: { type: Number, default: Date.now },
 	status: { type: String, required: true },

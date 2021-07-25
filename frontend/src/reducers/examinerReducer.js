@@ -1,7 +1,6 @@
 const initialState = {
 	courses: [],
-	examCode: '',
-	questions: [],
+	questionImage: '',
 };
 
 const examinerReducers = (state = initialState, action) => {
@@ -9,6 +8,11 @@ const examinerReducers = (state = initialState, action) => {
 		return {
 			...state,
 			courses: action.courses,
+		};
+	} else if (action.type === 'question_image') {
+		return {
+			...state,
+			questionImage: action.image,
 		};
 	}
 	return state;

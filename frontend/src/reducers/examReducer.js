@@ -13,11 +13,6 @@ const examReducers = (state = initialState, action) => {
 				examMarks: action.data.examMarks,
 			},
 		};
-	} else if (action.type === 'set_exam_list') {
-		return {
-			...state,
-			examsList: action.examList,
-		};
 	}
 	return state;
 };

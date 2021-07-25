@@ -8,13 +8,9 @@ import {
 	Table,
 	TableHead,
 	TableRow,
-	TableCell,
-	withStyles,
 	TableBody,
 	TableContainer,
-	Tooltip,
 	IconButton,
-	makeStyles,
 	FormControlLabel,
 	Radio,
 	Checkbox,
@@ -29,38 +25,8 @@ import { Editor } from '@tinymce/tinymce-react';
 import styles from '../../components/examiner-component/questions-component/question.module.css';
 import schema from '../../schema/questionSchema';
 import NewQuestionOptionModal from '../../modals/newQuestionOptionModal';
-
-const StyledTableCell = withStyles((theme) => ({
-	head: {
-		backgroundColor: theme.palette.common.black,
-		color: theme.palette.common.white,
-	},
-	body: {
-		fontSize: 14,
-	},
-}))(TableCell);
-
-const StyledTableRow = withStyles((theme) => ({
-	root: {
-		'&:nth-of-type(odd)': {
-			backgroundColor: theme.palette.action.hover,
-		},
-	},
-}))(TableRow);
-
-const BootstrapTooltip = (props) => {
-	const classes = useStylesBootstrap();
-	return <Tooltip arrow classes={classes} {...props} />;
-};
-
-const useStylesBootstrap = makeStyles((theme) => ({
-	arrow: {
-		color: theme.palette.common.black,
-	},
-	tooltip: {
-		backgroundColor: theme.palette.common.black,
-	},
-}));
+import { StyledTableCell, StyledTableRow } from '../../common/customTable';
+import BootstrapTooltip from '../../common/customTooltip';
 
 class AddQuestionForm extends React.Component {
 	constructor() {
@@ -135,10 +101,10 @@ class AddQuestionForm extends React.Component {
 						})
 				}
 				initialValues={{
-					question: '',
+					question: 'qwerty',
 					description: '',
-					questionMark: '',
-					optionType: '',
+					questionMark: '10',
+					optionType: 'single',
 					option: '',
 				}}
 			>
@@ -250,6 +216,7 @@ class AddQuestionForm extends React.Component {
 						</div>
 						<div className='d-flex justify-content-between mt-3'>
 							<div>
+								<Typography>Question Image</Typography>
 								<input
 									accept='image/*'
 									className='d-none align-self-center'
@@ -260,24 +227,24 @@ class AddQuestionForm extends React.Component {
 								/>
 								<label htmlFor='questionImage'>
 									<Button
-										className={
+										className={`${
 											this.props.image !== null ? styles.btnSuccess : null
-										}
+										} mt-2`}
 										variant='contained'
 										color='primary'
 										component='span'
 									>
-										Upload
+										{this.props.image !== null ? 'Uploaded' : 'Upload'}
 									</Button>
 								</label>
 								{this.props.image !== null ? (
 									<i
-										className={`fa fa-trash ${styles.removeButton}`}
+										className={`fa fa-trash ${styles.removeButton} mt-2`}
 										onClick={this.props.removeQuestionImage}
 									></i>
 								) : null}
 							</div>
-							<div className='align-self-center'>
+							<div className='align-self-end mt-2'>
 								<Button
 									variant='outlined'
 									className='bg-dark text-white'
