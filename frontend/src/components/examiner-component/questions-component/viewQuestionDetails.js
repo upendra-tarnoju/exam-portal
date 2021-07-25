@@ -47,12 +47,16 @@ const ViewQuestionDetails = (props) => {
 								percent={percent || 0}
 							/>
 						</div>
-						{questionImage != '' ? (
+						{questionImage !== '' ? (
 							<div className='col-md-12'>
 								<Typography className='text-center font-weight-bold'>
 									Question Image
 								</Typography>
-								<img src={questionImage} className='w-100' />
+								<img
+									src={questionImage}
+									className='w-100'
+									alt='question_image'
+								/>
 							</div>
 						) : null}
 					</div>

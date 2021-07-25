@@ -101,10 +101,10 @@ class AddQuestionForm extends React.Component {
 						})
 				}
 				initialValues={{
-					question: 'qwerty',
+					question: '',
 					description: '',
-					questionMark: '10',
-					optionType: 'single',
+					questionMark: '',
+					optionType: '',
 					option: '',
 				}}
 			>
