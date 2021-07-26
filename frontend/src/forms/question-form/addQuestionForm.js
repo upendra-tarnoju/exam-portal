@@ -305,7 +305,7 @@ class AddQuestionForm extends React.Component {
 												)}
 											</StyledTableCell>
 											<StyledTableCell>
-												<BootstrapTooltip title='Edit option'>
+												<BootstrapTooltip title='Delete option'>
 													<IconButton
 														size='small'
 														onClick={() => this.removeOption(index)}
@@ -313,7 +313,7 @@ class AddQuestionForm extends React.Component {
 														<Delete size='small' />
 													</IconButton>
 												</BootstrapTooltip>
-												<BootstrapTooltip title='Delete option'>
+												<BootstrapTooltip title='Edit option'>
 													<IconButton size='small'>
 														<Edit size='small' />
 													</IconButton>

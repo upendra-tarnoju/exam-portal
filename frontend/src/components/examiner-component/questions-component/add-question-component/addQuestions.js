@@ -23,7 +23,8 @@ class AddQuestions extends React.Component {
 	}
 
 	handleUpload = (file) => {
-		let uploadTask = storage.ref(`questions/${uuidv4()}`).put(file);
+		let imageId = uuidv4();
+		let uploadTask = storage.ref(`questions/${imageId}`).put(file);
 		uploadTask.on(
 			'state_changed',
 			(snapshot) => {},
@@ -31,7 +32,7 @@ class AddQuestions extends React.Component {
 			() => {
 				storage
 					.ref('questions')
-					.child(file.name)
+					.child(imageId)
 					.getDownloadURL()
 					.then((url) => {
 						this.setState({ image: url });

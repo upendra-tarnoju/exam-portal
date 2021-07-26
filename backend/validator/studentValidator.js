@@ -15,6 +15,7 @@ module.exports = {
 		}),
 		params: Joi.object({
 			examId: Joi.string().required().length(24),
+			questionId: Joi.string().optional(),
 		}),
 	},
 	SAVE_QUESTION_ANSWER: {

@@ -88,7 +88,7 @@ module.exports = {
 			endTime: Joi.string().optional(),
 			duration: Joi.number().optional(),
 			hideDuration: Joi.boolean().optional(),
-			currentPassword: Joi.string().required(),
+			currentPassword: Joi.string().optional(),
 		}),
 	},
 

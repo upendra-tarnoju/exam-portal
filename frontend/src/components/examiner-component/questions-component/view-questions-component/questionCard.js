@@ -76,11 +76,11 @@ const QuestionCard = (props) => {
 		<Card key={questionDetails._id} className='my-5'>
 			<CardMedia
 				component='img'
-				height='140'
+				height='240'
 				image={
 					questionDetails.image === null
 						? 'https://directory.bodc.in/images/parish/parish_details/No_Image_Available.jpg'
-						: 'bye'
+						: questionDetails.image
 				}
 			/>
 			<CardContent>

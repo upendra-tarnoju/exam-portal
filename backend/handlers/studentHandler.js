@@ -301,6 +301,14 @@ const students = {
 							{ status: APP_CONSTANTS.QUESTION_STATUS.ACTIVE },
 						],
 					};
+
+					if (payload.questionId) {
+						questionDetailQuery.$and.push({
+							_id: mongoose.Types.ObjectId(payload.questionId),
+						});
+						pageIndex = 0;
+					}
+
 					let projections = {
 						correctAnswer: 0,
 						examId: 0,
@@ -318,8 +326,12 @@ const students = {
 					if (questionDetails) {
 						if (assignedExamDetails.answerMarkings.length === 0) {
 							let allQuestionQuery = {
-								examId: mongoose.Types.ObjectId(payload.examId),
+								$and: [
+									{ examId: mongoose.Types.ObjectId(payload.examId) },
+									{ status: APP_CONSTANTS.QUESTION_STATUS.ACTIVE },
+								],
 							};
+
 							let projections = { _id: 1 };
 							let allQuestions = await queries.getData(
 								Schema.question,

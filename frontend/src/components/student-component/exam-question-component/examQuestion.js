@@ -13,6 +13,7 @@ import React from 'react';
 import FullScreenModal from '../../../modals/fullScreenModal';
 import screenfull from 'screenfull';
 import { Modal } from 'react-bootstrap';
+import htmlParser from 'html-react-parser';
 
 import StudentService from '../../../services/studentApi';
 import styles from './examQuestion.module.css';
@@ -36,6 +37,8 @@ class ExamQuestion extends React.Component {
 			fullScreenError: false,
 			submitModal: false,
 			snackbar: { show: false, msg: '', type: '' },
+			description: '',
+			image: '',
 		};
 		this.studentService = new StudentService();
 	}
@@ -45,7 +48,7 @@ class ExamQuestion extends React.Component {
 		this.nextQuestion(pageIndex);
 	}
 
-	nextQuestion(pageIndex) {
+	nextQuestion(pageIndex, questionId) {
 		let examId = this.props.match.params.examId;
 
 		this.studentService.getQuestionForExam(examId, pageIndex).then((res) => {
@@ -71,6 +74,8 @@ class ExamQuestion extends React.Component {
 					question: questionData.question,
 					options: questionData.options,
 					optionType: questionData.optionType,
+					description: questionData.description,
+					image: questionData.image,
 					questionMarkings: res.data.allQuestionsMarkings,
 					singleOptValue,
 					pageIndex,
@@ -210,11 +215,22 @@ class ExamQuestion extends React.Component {
 		if (type === undefined) type = snackbar.type;
 		this.setState({ snackbar: { show: status, msg: msg, type: type } });
 	};
-	s;
+
+	changeQuestion = (questionData, index) => {
+		let questionId = questionData.questionId;
+		this.nextQuestion(index, questionId);
+	};
 
 	render() {
-		let { question, questionMarkings, pageIndex, singleOptValue, snackbar } =
-			this.state;
+		let {
+			question,
+			questionMarkings,
+			pageIndex,
+			singleOptValue,
+			snackbar,
+			description,
+			image,
+		} = this.state;
 		// const renderCountTime = ({ hours, minutes, seconds }) => {
 		// 	return (
 		// 		<span>
@@ -284,6 +300,7 @@ class ExamQuestion extends React.Component {
 				palletesContent.push(
 					<div key={index} className='col col-md-3'>
 						<div
+							onClick={() => this.changeQuestion(currentValue, index)}
 							className={`mb-0 text-center bg-secondary text-white cursor-pointer ${
 								currentValue.status === 'NOT_VISITED'
 									? styles.notVisitedPalletes
@@ -328,8 +345,10 @@ class ExamQuestion extends React.Component {
 						<CountDown date={Date.now() + 100000} renderer={renderCountTime} />
 					</div>
 				</div> */}
+
 				<div className='row h-100'>
 					<div className={`${styles.optionBackground} col-md-9`}>
+						<pre>{description ? htmlParser(description) : ''}</pre>
 						<div className={`pt-3 px-4 ${styles.options}`}>
 							<FormControl component='fieldset'>
 								{this.state.optionType === 'single' ? (

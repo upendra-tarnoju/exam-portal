@@ -361,6 +361,12 @@ class Exam extends Component {
 																		color='secondary'
 																		variant='default'
 																	/>
+																) : exam.status === 'INCOMPLETE_QUESTIONS' ? (
+																	<Chip
+																		label='Incomplete questions'
+																		color='secondary'
+																		variant='default'
+																	/>
 																) : (
 																	exam.status
 																)}
