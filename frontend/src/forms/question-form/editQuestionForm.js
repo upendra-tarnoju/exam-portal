@@ -2,17 +2,13 @@ import React from 'react';
 import {
 	FormControlLabel,
 	IconButton,
-	makeStyles,
 	Radio,
 	Table,
-	TableCell,
 	TableContainer,
 	TableHead,
 	TableRow,
 	TextField,
-	Tooltip,
 	Typography,
-	withStyles,
 	TableBody,
 	Checkbox,
 	FormControl,
@@ -27,38 +23,8 @@ import { Editor } from '@tinymce/tinymce-react';
 import { Delete, Edit } from '@material-ui/icons';
 
 import NewQuestionOptionModal from '../../modals/newQuestionOptionModal';
-
-const StyledTableCell = withStyles((theme) => ({
-	head: {
-		backgroundColor: theme.palette.common.black,
-		color: theme.palette.common.white,
-	},
-	body: {
-		fontSize: 14,
-	},
-}))(TableCell);
-
-const StyledTableRow = withStyles((theme) => ({
-	root: {
-		'&:nth-of-type(odd)': {
-			backgroundColor: theme.palette.action.hover,
-		},
-	},
-}))(TableRow);
-
-const BootstrapTooltip = (props) => {
-	const classes = useStylesBootstrap();
-	return <Tooltip arrow classes={classes} {...props} />;
-};
-
-const useStylesBootstrap = makeStyles((theme) => ({
-	arrow: {
-		color: theme.palette.common.black,
-	},
-	tooltip: {
-		backgroundColor: theme.palette.common.black,
-	},
-}));
+import { StyledTableCell, StyledTableRow } from '../../common/customTable';
+import BootstrapTooltip from '../../common/customTooltip';
 
 const EditQuestionForm = (props) => {
 	let { questionDetails, optionsList, image } = props;

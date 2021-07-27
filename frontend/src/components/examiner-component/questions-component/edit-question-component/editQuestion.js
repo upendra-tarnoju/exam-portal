@@ -5,6 +5,7 @@ import { Delete } from '@material-ui/icons';
 import EditQuestionForm from '../../../../forms/question-form/editQuestionForm';
 import QuestionService from '../../../../services/questionApi';
 import CustomSnackBar from '../../../../common/customSnackbar';
+import { uploadQuestionImage } from '../../../../common/uploadImage';
 
 class EditQuestion extends React.Component {
 	constructor() {
@@ -22,7 +23,8 @@ class EditQuestion extends React.Component {
 	componentDidMount() {
 		let questionId = this.props.match.params.questionId;
 		this.questionService.getParticular(questionId).then((res) => {
-			let questionData = res.data;
+			let questionData = res.data.questionDetails;
+
 			let optionsList = [];
 
 			questionData.options.forEach((option) => {
@@ -40,8 +42,8 @@ class EditQuestion extends React.Component {
 					description: questionData.description,
 				},
 				image: {
-					value: '',
-					src: `${process.env.REACT_APP_BASE_URL}/api/image/${questionData.image}`,
+					value: questionData.image ? '' : null,
+					src: questionData.image ? questionData.image : '',
 				},
 				optionsList,
 			});
@@ -59,14 +61,6 @@ class EditQuestion extends React.Component {
 		if (answerList.length === 0) {
 			this.handleSnackBar(true, 'Select an correct option', 'error');
 		} else {
-			let examFormData = new FormData();
-
-			for (let [key, value] of Object.entries(values)) {
-				examFormData.append(key, value);
-			}
-
-			examFormData.append('examId', examId);
-
 			let optionObj = {};
 			for (let i = 0; i < optionsList.length; i++) {
 				optionObj[optionsList[i].key] = {
@@ -75,9 +69,12 @@ class EditQuestion extends React.Component {
 				};
 			}
 
-			examFormData.append('optionsList', JSON.stringify(optionObj));
-			examFormData.append('image', image.value);
-			this.questionService.update(questionId, examFormData).then((res) => {
+			values['optionsList'] = JSON.stringify(optionObj);
+			values['image'] = image.src;
+			values['examId'] = examId;
+
+			delete values['option'];
+			this.questionService.update(questionId, values).then((res) => {
 				this.handleSnackBar(true, res.data.msg, 'success');
 			});
 		}
@@ -144,7 +141,7 @@ class EditQuestion extends React.Component {
 		this.setState({ snackbar: { show: status, msg: msg, type: type } });
 	};
 
-	handleFileChange = (event) => {
+	handleFileChange = async (event) => {
 		if (event.target.files) {
 			let file = event.target.files[0];
 			if (
@@ -152,8 +149,10 @@ class EditQuestion extends React.Component {
 				file.type === 'image/png' ||
 				file.type === 'image/jpg'
 			) {
+				let url = await uploadQuestionImage(file);
+
 				this.setState({
-					image: { value: file, src: URL.createObjectURL(file) },
+					image: { value: file, src: url },
 				});
 			} else {
 				let msg =

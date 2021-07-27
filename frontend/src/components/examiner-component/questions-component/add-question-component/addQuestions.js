@@ -5,13 +5,12 @@ import {
 	CardContent,
 	Typography,
 } from '@material-ui/core';
-import { v4 as uuidv4 } from 'uuid';
 import { connect } from 'react-redux';
 
 import QuestionService from '../../../../services/questionApi';
 import AddQuestionForm from '../../../../forms/question-form/addQuestionForm';
-import { storage } from '../../../../config/firebaseConfig';
 import * as ActionTypes from '../../../../action';
+import { uploadQuestionImage } from '../../../../common/uploadImage';
 
 class AddQuestions extends React.Component {
 	constructor() {
@@ -22,34 +21,14 @@ class AddQuestions extends React.Component {
 		this.questionService = new QuestionService();
 	}
 
-	handleUpload = (file) => {
-		let imageId = uuidv4();
-		let uploadTask = storage.ref(`questions/${imageId}`).put(file);
-		uploadTask.on(
-			'state_changed',
-			(snapshot) => {},
-			(error) => {},
-			() => {
-				storage
-					.ref('questions')
-					.child(imageId)
-					.getDownloadURL()
-					.then((url) => {
-						this.setState({ image: url });
-						this.props.setQuestionImage(url);
-					});
-			}
-		);
-	};
-
-	handleFileChange = (event) => {
+	handleFileChange = async (event) => {
 		let file = event.target.files[0];
 		if (
 			file.type === 'image/jpeg' ||
 			file.type === 'image/png' ||
 			file.type === 'image/jpg'
 		) {
-			this.handleUpload(file);
+			await uploadQuestionImage(file);
 		} else {
 			let msg =
 				'Invalid image type. Supported file types are .jpeg, .jpg and .png';

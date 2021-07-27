@@ -229,7 +229,6 @@ class ExamQuestion extends React.Component {
 			singleOptValue,
 			snackbar,
 			description,
-			image,
 		} = this.state;
 		// const renderCountTime = ({ hours, minutes, seconds }) => {
 		// 	return (
