@@ -132,6 +132,8 @@ module.exports = {
 	QUESTION_STATUS: {
 		params: Joi.object({
 			questionId: Joi.string().required().length(24),
+		}),
+		body: Joi.object({
 			status: Joi.string()
 				.required()
 				.valid(
@@ -198,6 +200,15 @@ module.exports = {
 			question: Joi.string().required(),
 			questionMark: Joi.number().required(),
 			examId: Joi.string().required().length(24),
+			description: Joi.string().optional().allow(null),
+			optionsList: Joi.string().required(),
+			optionType: Joi.string()
+				.required()
+				.valid(
+					APP_CONSTANTS.OPTION_TYPE.SINGLE,
+					APP_CONSTANTS.OPTION_TYPE.MULTIPLE
+				),
+			image: Joi.string().required().allow(''),
 		}),
 	},
 

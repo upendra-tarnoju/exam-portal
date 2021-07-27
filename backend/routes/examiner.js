@@ -6,11 +6,7 @@ const {
 	questionController,
 	studentController,
 } = require('../controllers');
-const {
-	multerMiddleware,
-	authMiddleware,
-	requestMiddleware,
-} = require('../middleware');
+const { authMiddleware, requestMiddleware } = require('../middleware');
 const { ExaminerValidator } = require('../validator');
 
 module.exports = () => {
@@ -130,8 +126,7 @@ module.exports = () => {
 	router.patch(
 		'/question/:questionId',
 		authMiddleware,
-		multerMiddleware.upload.single('image'),
-		// validatorMiddleware(ExaminerValidator.UPDATE_QUESTION),
+		requestMiddleware(ExaminerValidator.UPDATE_QUESTION),
 		questionController.update
 	);
 

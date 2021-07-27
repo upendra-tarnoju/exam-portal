@@ -153,8 +153,8 @@ const questions = {
 			);
 
 			return {
-				status: 200,
-				data: { questions, examDetails, count: countDocuments },
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { questions, examDetails, count: countDocuments },
 			};
 		} catch (err) {
 			throw err;
@@ -247,7 +247,7 @@ const questions = {
 						options: optionList,
 						correctAnswer: answerList,
 						updatedDate: new Date(),
-						image: imageDetails && imageDetails.id ? imageDetails.id : null,
+						image: payload.image === '' ? null : payload.image,
 					};
 
 					let updatedQuestion = await queries.findAndUpdate(
@@ -284,24 +284,20 @@ const questions = {
 						await queries.findAndUpdate(Schema.exam, conditions, toUpdate);
 
 						return {
-							status: RESPONSE_MESSAGES.QUESTION.UPDATE.SUCCESS.STATUS_CODE,
-							data: { msg: RESPONSE_MESSAGES.QUESTION.UPDATE.SUCCESS.MSG },
+							response: RESPONSE_MESSAGES.QUESTION.UPDATE.SUCCESS,
+							finalData: {},
 						};
 					} else {
 						return {
-							status:
-								RESPONSE_MESSAGES.QUESTION.UPDATE.INVALID_QUESTION_ID
-									.STATUS_CODE,
-							data: {
-								msg: RESPONSE_MESSAGES.QUESTION.UPDATE.INVALID_QUESTION_ID.MSG,
-							},
+							response: RESPONSE_MESSAGES.QUESTION.UPDATE.INVALID_QUESTION_ID,
+							finalData: {},
 						};
 					}
 				}
 			} else {
 				return {
-					status: RESPONSE_MESSAGES.QUESTION.UPDATE.INVALID_EXAM_ID.STATUS_CODE,
-					data: { msg: RESPONSE_MESSAGES.QUESTION.UPDATE.INVALID_EXAM_ID.MSG },
+					response: RESPONSE_MESSAGES.QUESTION.UPDATE.INVALID_EXAM_ID,
+					finalData: {},
 				};
 			}
 		} catch (err) {
@@ -380,19 +376,13 @@ const questions = {
 
 			if (questionDetail) {
 				return {
-					status:
-						RESPONSE_MESSAGES.QUESTION.UPDATE.STATUS[data.status].STATUS_CODE,
-					data: {
-						msg: RESPONSE_MESSAGES.QUESTION.UPDATE.STATUS[data.status].MSG,
-					},
+					response: RESPONSE_MESSAGES.QUESTION.UPDATE.STATUS[data.status],
+					finalData: {},
 				};
 			} else {
 				return {
-					status:
-						RESPONSE_MESSAGES.QUESTION.UPDATE.STATUS.INVALID_ID.STATUS_CODE,
-					data: {
-						msg: RESPONSE_MESSAGES.QUESTION.UPDATE.STATUS.INVALID_ID.MSG,
-					},
+					response: RESPONSE_MESSAGES.QUESTION.UPDATE.STATUS.INVALID_ID,
+					finalData: {},
 				};
 			}
 		} catch (err) {

@@ -1,5 +1,5 @@
 const { questionHandler } = require('../handlers');
-const responseManager = require('../lib/responseManager');
+const { responseManager } = require('../lib');
 
 const question = {
 	addNewQuestion: async (req, res) => {
@@ -13,7 +13,6 @@ const question = {
 			);
 
 			responseManager.sendSuccessResponse(responseData, res);
-			// res.status(response.status).send(response.data);
 		} catch (err) {
 			responseManager.sendErrorResponse(err, res);
 		}
@@ -22,20 +21,19 @@ const question = {
 	getAllQuestions: async (req, res) => {
 		try {
 			let params = req.params;
+			let responseData = await questionHandler.getExamQuestions(params);
 
-			let response = await questionHandler.getExamQuestions(params);
-
-			res.status(response.status).send(response.data);
+			responseManager.sendSuccessResponse(responseData, res);
 		} catch (err) {
-			throw err;
+			responseManager.sendErrorResponse(err, res);
 		}
 	},
 
 	getParticularQuestion: async (req, res) => {
 		try {
 			let params = req.params;
-			let responseData = await questionHandler.getParticularQuestion(params);
 
+			let responseData = await questionHandler.getParticularQuestion(params);
 			responseManager.sendSuccessResponse(responseData, res);
 		} catch (err) {
 			responseManager.sendErrorResponse(err, res);
@@ -46,16 +44,11 @@ const question = {
 		try {
 			let params = req.params;
 			let questionDetails = req.body;
-			let imageDetails = req.file;
 
-			let response = await questionHandler.update(
-				params,
-				questionDetails,
-				imageDetails
-			);
-			res.status(response.status).send(response.data);
+			let responseData = await questionHandler.update(params, questionDetails);
+			responseManager.sendSuccessResponse(responseData, res);
 		} catch (err) {
-			throw err;
+			responseManager.sendErrorResponse(err, res);
 		}
 	},
 
@@ -74,11 +67,14 @@ const question = {
 		try {
 			let params = req.params;
 			let data = req.body;
-			let response = await questionHandler.updateQuestionStatus(params, data);
+			let responseData = await questionHandler.updateQuestionStatus(
+				params,
+				data
+			);
 
-			res.status(response.status).send(response.data);
+			responseManager.sendSuccessResponse(responseData, res);
 		} catch (err) {
-			throw err;
+			responseManager.sendErrorResponse(err, res);
 		}
 	},
 
