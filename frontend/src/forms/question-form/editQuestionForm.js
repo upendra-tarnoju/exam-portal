@@ -69,16 +69,14 @@ const EditQuestionForm = (props) => {
 						value={formikProps.values.description}
 						apiKey='tyd8ijnwqgb5p418emk3m1c82tzuxf0c6o55jy9w4dtj6erh'
 						init={{
+							content_style: 'pre {margin: 0 !important}',
+
 							height: 400,
 							menubar: true,
-							plugins: [
-								'advlist autolink lists link image',
-								'charmap print preview anchor help',
-								'searchreplace visualblocks code',
-								'insertdatetime media table paste wordcount',
-							],
+							plugins: ['code'],
 							toolbar:
-								'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | help',
+								'bold italic backcolor | alignleft aligncenter ' +
+								'alignright alignjustify | bullist numlist | ',
 						}}
 						onEditorChange={(content) => {
 							formikProps.setFieldValue('description', content);

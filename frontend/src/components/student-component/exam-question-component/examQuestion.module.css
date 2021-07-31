@@ -1,23 +1,48 @@
-.questionCard {
-	height: calc(100% - 114px) !important;
+.countDownTimer {
+	font-size: 34px;
+	color: white;
+	margin-right: 4px;
 }
 
-.question {
-	font-family: 'Raleway';
-	font-size: 20px;
+.outerContainer {
+	display: flex;
+	height: calc(100% -100px);
+	margin-top: 20px;
+	margin-left: 10px;
+	overflow-y: scroll;
 }
 
-.optionBackground {
-	background-color: #f7f7f6;
+.questionContainer {
+	width: 35.33%;
+	margin-right: 15px;
 }
 
-.options {
-	height: calc(100% - 130px) !important;
+.optionsContainer {
+	width: 35.33%;
+	margin-right: 15px;
 }
 
-.palleteHeading {
-	font-size: 18px;
-	letter-spacing: 1px;
+.palleteContainer {
+	width: 30%;
+}
+
+.description {
+	padding: 1px;
+	margin-top: 5px;
+	margin-bottom: 8px;
+}
+
+.description pre {
+	margin: 0 !important;
+}
+
+.questionImage {
+	width: 20rem;
+	height: 12rem;
+}
+
+.palletesContents {
+	height: 68.5vh !important;
 }
 
 .attemptedPalletes,
@@ -25,46 +50,43 @@
 .notAttemptedPalletes,
 .attemptedReviewPalletes,
 .notAttemptedReviewPalletes {
-	border-radius: 8px;
-	padding: 12px 0px;
-	overflow: hidden;
+	border-radius: 6px;
+	padding: 1px 0px;
+	width: 40px;
+	height: 40px;
+	font-size: 16px;
 }
 
-.attemptedPalletes::after,
-.notVisitedPalletes::after,
-.notAttemptedPalletes::after,
-.attemptedReviewPalletes::after,
-.notAttemptedReviewPalletes::after {
-	content: '';
-	position: absolute;
-	top: 0px;
-	right: 15px;
-	width: 10px;
-	height: 10px;
-	border-top-right-radius: 8px;
-}
-
-.attemptedPalletes::after {
+.attemptedPalletes {
 	background-color: green;
 }
 
-.notVisitedPalletes::after {
+.notVisitedPalletes {
 	background-color: grey;
 }
 
-.notAttemptedPalletes::after {
+.notAttemptedPalletes {
 	background-color: red;
+	color: white;
 }
 
-.attemptedReviewPalletes::after {
+.attemptedReviewPalletes {
 	background-color: yellow;
 }
 
-.notAttemptedReviewPalletes::after {
+.notAttemptedReviewPalletes {
 	background-color: orange;
 }
 
-.palletesContents {
-	height: calc(100% - 140px) !important;
-	overflow-y: scroll;
+.footer {
+	position: sticky;
+	left: 0;
+	bottom: 0px;
+	width: 100%;
+	background-color: #007bff;
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	padding: 8px 0px;
+	padding-right: 8px;
 }

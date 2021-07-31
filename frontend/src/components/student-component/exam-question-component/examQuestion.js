@@ -1,3 +1,4 @@
+import React from 'react';
 import {
 	Card,
 	FormControl,
@@ -7,18 +8,28 @@ import {
 	Button,
 	FormGroup,
 	Checkbox,
+	Typography,
+	IconButton,
 } from '@material-ui/core';
-import React from 'react';
-// import CountDown, { zeroPad } from 'react-countdown';
-import FullScreenModal from '../../../modals/fullScreenModal';
+import CountDown, { zeroPad } from 'react-countdown';
 import screenfull from 'screenfull';
-import { Modal } from 'react-bootstrap';
-import htmlParser from 'html-react-parser';
+import { v4 as uuidv4 } from 'uuid';
+import {
+	ChevronLeft,
+	ChevronRight,
+	Bookmark,
+	Save,
+	Clear,
+} from '@material-ui/icons';
+import moment from 'moment';
 
 import StudentService from '../../../services/studentApi';
 import styles from './examQuestion.module.css';
 import SubmitExamModal from '../../../modals/submitExamModal';
 import CustomSnackBar from '../../../common/customSnackbar';
+import FullScreenModal from '../../../modals/fullScreenModal';
+import BootstrapTooltip from '../../../common/customTooltip';
+import FullScreenErrorModal from '../../../modals/fullScreenErrorModal';
 
 class ExamQuestion extends React.Component {
 	constructor() {
@@ -33,12 +44,14 @@ class ExamQuestion extends React.Component {
 			singleOptValue: '',
 			multiOptValue: {},
 			questionId: '',
-			fullScreenModal: false,
+			fullScreenModal: true,
 			fullScreenError: false,
 			submitModal: false,
 			snackbar: { show: false, msg: '', type: '' },
 			description: '',
 			image: '',
+			subject: '',
+			duration: 0,
 		};
 		this.studentService = new StudentService();
 	}
@@ -81,6 +94,8 @@ class ExamQuestion extends React.Component {
 					pageIndex,
 					multiOptValue,
 					questionId: questionData._id,
+					subject: res.data.examDetails.subject,
+					duration: parseInt(res.data.examDetails.endTime),
 				});
 			}
 		});
@@ -228,15 +243,42 @@ class ExamQuestion extends React.Component {
 			pageIndex,
 			singleOptValue,
 			snackbar,
+			image,
 			description,
+			submitModal,
+			fullScreenModal,
+			fullScreenError,
+			duration,
+			subject,
 		} = this.state;
-		// const renderCountTime = ({ hours, minutes, seconds }) => {
-		// 	return (
-		// 		<span>
-		// 			{zeroPad(hours)}:{zeroPad(minutes)}:{zeroPad(seconds)}
-		// 		</span>
-		// 	);
-		// };
+		const renderCountTime = ({ hours, minutes, seconds }) => {
+			console.log(hours, minutes, seconds);
+			return (
+				<div className='d-flex'>
+					<div className={styles.countDownTimer}>{zeroPad(hours)}</div>
+					<Typography
+						variant='caption'
+						className='mb-0 mt-1 mr-1 align-self-center text-white'
+					>
+						Hour
+					</Typography>
+					<div className={styles.countDownTimer}>{zeroPad(minutes)}</div>
+					<Typography
+						variant='caption'
+						className='mb-0 mt-1 mr-1 align-self-center text-white'
+					>
+						Min
+					</Typography>
+					<div className={styles.countDownTimer}>{zeroPad(seconds)}</div>
+					<Typography
+						variant='caption'
+						className='mb-0 mt-1 align-self-center text-white'
+					>
+						Sec
+					</Typography>
+				</div>
+			);
+		};
 
 		const SingleOption = () =>
 			this.state.options.map((option, index) => {
@@ -272,24 +314,6 @@ class ExamQuestion extends React.Component {
 				);
 			});
 
-		const FullScreenErrorModal = () => {
-			return (
-				<Modal show={this.state.fullScreenError}>
-					<Modal.Header className='bg-dark text-white'>Warning</Modal.Header>
-					<Modal.Body>You cannot exit full screen mode during exam</Modal.Body>
-					<Modal.Footer>
-						<Button
-							variant='outlined'
-							color='primary'
-							onClick={this.openFullScreen}
-						>
-							Full Screen
-						</Button>
-					</Modal.Footer>
-				</Modal>
-			);
-		};
-
 		const RenderQuestionPallete = () => {
 			let { questionMarkings } = this.state;
 			let palletes = questionMarkings;
@@ -297,10 +321,9 @@ class ExamQuestion extends React.Component {
 			let palletesContent = [];
 			const contents = palletes.reduce((accumulator, currentValue, index) => {
 				palletesContent.push(
-					<div key={index} className='col col-md-3'>
+					<div key={index} className='col col-md-2 mb-2'>
 						<div
-							onClick={() => this.changeQuestion(currentValue, index)}
-							className={`mb-0 text-center bg-secondary text-white cursor-pointer ${
+							className={`mb-0 text-center cursor-pointer ${
 								currentValue.status === 'NOT_VISITED'
 									? styles.notVisitedPalletes
 									: currentValue.status === 'NOT_ATTEMPTED'
@@ -314,41 +337,77 @@ class ExamQuestion extends React.Component {
 									? styles.notAttemptedReviewPalletes
 									: null
 							}`}
+							onClick={() => this.changeQuestion(currentValue, index)}
 						>
-							{index + 1}
+							<Typography className='mt-2'>{index + 1}</Typography>
 						</div>
 					</div>
 				);
-				if (index % 4 === 3) {
-					accumulator.push(<div className='row m-2'>{palletesContent}</div>);
+				if (index % 2 === 3) {
+					accumulator.push(
+						<div key={uuidv4()} className='row m-2'>
+							{palletesContent}
+						</div>
+					);
 					palletesContent = [];
 				}
 				return accumulator;
 			}, []);
-			contents.push(<div className='row m-2'>{palletesContent}</div>);
+			contents.push(
+				<div key={uuidv4()} className='row m-2'>
+					{palletesContent}
+				</div>
+			);
 			return <div className={styles.palletesContents}>{contents}</div>;
 		};
 
-		return (
-			<Card className={`mx-5 mt-4 bg-white ${styles.questionCard}`}>
-				<div className='d-flex flex-column justify-content-center bg-primary flex-fill px-4 py-2'>
-					<h4 className='mb-0 align-items-center text-white'>
-						Question {pageIndex + 1}
-					</h4>
-					<p className={`${styles.question} mb-0 mt-2 align-items-center`}>
-						{question}
-					</p>
-				</div>
-				{/* <div className='d-flex flex-row'>
-					<div className='p-2'>
-						<CountDown date={Date.now() + 100000} renderer={renderCountTime} />
-					</div>
-				</div> */}
+		console.log('>>>>>>>duration', duration);
 
-				<div className='row h-100'>
-					<div className={`${styles.optionBackground} col-md-9`}>
-						<pre>{description ? htmlParser(description) : ''}</pre>
-						<div className={`pt-3 px-4 ${styles.options}`}>
+		return (
+			<React.Fragment>
+				<div className='bg-primary w-100 py-1 px-4 d-flex justify-content-between'>
+					<CountDown date={duration} renderer={renderCountTime} />
+					<Typography className='align-self-center'>{subject}</Typography>
+				</div>
+				<div className={styles.outerContainer}>
+					<div className={styles.questionContainer}>
+						<Card className='mb-2'>
+							<Typography
+								variant='h5'
+								className='text-center py-2 font-weight-bold'
+							>
+								Question {pageIndex + 1}
+							</Typography>
+						</Card>
+						<Card className='p-2'>
+							<Typography className='mt-2'>{question}</Typography>
+							{description ? (
+								<div
+									dangerouslySetInnerHTML={{ __html: description }}
+									className={styles.description}
+								/>
+							) : null}
+							{image ? (
+								<div className='text-center d-block'>
+									<img
+										src={image}
+										alt='question'
+										className={styles.questionImage}
+									/>
+								</div>
+							) : null}
+						</Card>
+					</div>
+					<div className={styles.optionsContainer}>
+						<Card className='mb-2'>
+							<Typography
+								variant='h5'
+								className='text-center py-2 font-weight-bold'
+							>
+								Options
+							</Typography>
+						</Card>
+						<Card className='p-2'>
 							<FormControl component='fieldset'>
 								{this.state.optionType === 'single' ? (
 									<RadioGroup
@@ -364,87 +423,88 @@ class ExamQuestion extends React.Component {
 									</FormGroup>
 								)}
 							</FormControl>
-						</div>
-						<div className='d-flex justify-content-center'>
-							<Button
-								variant='contained'
-								color='primary'
-								className='mr-2'
-								size='medium'
-								onClick={() => this.nextQuestion(pageIndex - 1)}
-								disabled={pageIndex === 0}
-							>
-								Previous
-							</Button>
-							<Button
-								variant='contained'
-								className='bg-danger text-white mr-2'
-								size='medium'
-								onClick={this.clearAnswer}
-							>
-								Clear
-							</Button>
-							<Button
-								variant='contained'
-								className='bg-info text-white mr-2'
-								size='medium'
-								onClick={this.saveAnswer}
-							>
-								Save
-							</Button>
-							<Button
-								variant='contained'
-								className='bg-info text-white mr-2'
-								size='medium'
-								onClick={this.reviewAnswer}
-							>
-								Review
-							</Button>
-							<Button
-								variant='contained'
-								color='primary'
-								className='mr-2'
-								size='medium'
-								disabled={pageIndex + 1 === questionMarkings.length}
-								onClick={() => this.nextQuestion(pageIndex + 1)}
-							>
-								Next
-							</Button>
-							<Button
-								variant='contained'
-								color='secondary'
-								onClick={() => this.handleSubmitExamModal(true)}
-							>
-								Submit
-							</Button>
-						</div>
+						</Card>
 					</div>
-					<div className='col-md-3 pl-0'>
-						<div
-							className={`bg-dark text-white px-3 py-3 ${styles.palleteHeading}`}
-						>
-							Question Pallete
-						</div>
-						<RenderQuestionPallete />
-						<FullScreenModal
-							show={this.state.fullScreenModal}
-							openFullScreen={this.openFullScreen}
-						/>
-						<FullScreenErrorModal />
-						<SubmitExamModal
-							show={this.state.submitModal}
-							submitExam={this.submitExam}
-							handleModal={this.handleSubmitExamModal}
-						/>
-						<CustomSnackBar
-							show={snackbar.show}
-							snackBarType={snackbar.type}
-							handleSnackBar={this.handleSnackBar}
-							message={snackbar.msg}
-						/>
+					<div className={styles.palleteContainer}>
+						<Card className='mb-2'>
+							<Typography
+								variant='h5'
+								className='text-center py-2 font-weight-bold'
+							>
+								Question Pallete
+							</Typography>
+						</Card>
+						<Card>
+							<RenderQuestionPallete />
+						</Card>
 					</div>
 				</div>
-			</Card>
+				<div className={styles.footer}>
+					<div>
+						<IconButton
+							disabled={pageIndex === 0}
+							onClick={() => this.nextQuestion(pageIndex - 1)}
+						>
+							<BootstrapTooltip title='Previous'>
+								<ChevronLeft className='text-white' />
+							</BootstrapTooltip>
+						</IconButton>
+
+						<IconButton onClick={this.clearAnswer}>
+							<BootstrapTooltip title='Clear'>
+								<Clear className='text-white' />
+							</BootstrapTooltip>
+						</IconButton>
+
+						<IconButton onClick={this.reviewAnswer}>
+							<BootstrapTooltip title='Review'>
+								<Bookmark className='text-white' />
+							</BootstrapTooltip>
+						</IconButton>
+
+						<IconButton onClick={this.saveAnswer}>
+							<BootstrapTooltip title='Save'>
+								<Save className='text-white' />
+							</BootstrapTooltip>
+						</IconButton>
+
+						<IconButton
+							disabled={pageIndex + 1 === questionMarkings.length}
+							onClick={() => this.nextQuestion(pageIndex + 1)}
+						>
+							<BootstrapTooltip title='Next'>
+								<ChevronRight className='text-white' />
+							</BootstrapTooltip>
+						</IconButton>
+					</div>
+					<Button
+						variant='contained'
+						className='bg-dark text-white align-self-center'
+						onClick={() => this.handleSubmitExamModal(true)}
+					>
+						Submit
+					</Button>
+				</div>
+				<FullScreenModal
+					show={fullScreenModal}
+					openFullScreen={this.openFullScreen}
+				/>
+				<FullScreenErrorModal
+					show={fullScreenError}
+					openFullScreen={this.openFullScreen}
+				/>
+				<SubmitExamModal
+					show={submitModal}
+					submitExam={this.submitExam}
+					handleModal={this.handleSubmitExamModal}
+				/>
+				<CustomSnackBar
+					show={snackbar.show}
+					snackBarType={snackbar.type}
+					handleSnackBar={this.handleSnackBar}
+					message={snackbar.msg}
+				/>
+			</React.Fragment>
 		);
 	}
 }

@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const FullScreenModal = (props) => {
+const FullScreenErrorModal = (props) => {
 	let classes = useStyles();
 	let { show, openFullScreen } = props;
 	return (
@@ -37,10 +37,10 @@ const FullScreenModal = (props) => {
 			<Fade in={props.show}>
 				<Paper className='w-25 p-4'>
 					<Typography variant='h6' component='p'>
-						Full screen
+						Warning
 					</Typography>
 					<Typography variant='body1' component='p' className='my-3'>
-						This exam needs to be opened in full screen mode.
+						You cannot exit full screen mode during exam
 					</Typography>
 					<div className='d-flex justify-content-end'>
 						<Button
@@ -57,4 +57,4 @@ const FullScreenModal = (props) => {
 	);
 };
 
-export default FullScreenModal;
+export default FullScreenErrorModal;
