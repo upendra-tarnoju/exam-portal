@@ -89,6 +89,9 @@ module.exports = {
 			duration: Joi.number().optional(),
 			hideDuration: Joi.boolean().optional(),
 			currentPassword: Joi.string().optional(),
+			examSwitchingAttempts: Joi.number().optional(),
+			updatePreviousQuestion: Joi.boolean().optional(),
+			shuffleQuestions: Joi.boolean().optional(),
 		}),
 	},
 

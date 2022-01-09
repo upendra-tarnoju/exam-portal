@@ -24,6 +24,9 @@ const exam = new Schema({
 	duration: { type: Number },
 	durationStatus: { type: String, required: true },
 	status: { type: String, required: true },
+	examSwitchingAttempts: { type: Number, required: true },
+	updatePreviousQuestion: { type: Boolean, required: true },
+	shuffleQuestions: { type: Boolean, required: true },
 });
 
 module.exports = mongoose.model('exam', exam);

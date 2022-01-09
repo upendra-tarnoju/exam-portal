@@ -41,5 +41,11 @@ module.exports = () => {
 		studentController.submitExam
 	);
 
+	router.put(
+		'/windowSwitch',
+		authMiddleware,
+		studentController.updateWindowSwitchAttempts
+	);
+
 	return router;
 };

@@ -416,7 +416,10 @@ const students = {
 						);
 					}
 
-					let answerMarkingProjections = { answerMarkings: 1 };
+					let answerMarkingProjections = {
+						answerMarkings: 1,
+						windowSwitchAttempts: 1,
+					};
 					let answerMarkingQuery = {
 						$and: [
 							{ studentId: mongoose.Types.ObjectId(userDetails._id) },
@@ -430,12 +433,23 @@ const students = {
 						{ lean: true }
 					);
 
+					let examQuery = { _id: mongoose.Types.ObjectId(payload.examId) };
+					let examProjections = { subject: 1, endTime: 1 };
+					let examDetails = await queries.findOne(
+						Schema.exam,
+						examQuery,
+						examProjections,
+						options
+					);
+
 					return {
 						response: { STATUS_CODE: 200, MSG: '' },
 						finalData: {
 							questionDetails,
 							existingAnswer,
 							allQuestionsMarkings: allQuestionsMarkings.answerMarkings,
+							examDetails,
+							windowSwitchAttempts: allQuestionsMarkings.windowSwitchAttempts,
 						},
 					};
 				}
@@ -897,6 +911,36 @@ const students = {
 						finalData: {},
 					};
 				}
+			}
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	updateWindowSwitchAttempts: async (payload, userDetails) => {
+		try {
+			let conditions = {
+				$and: [{ examId: payload.examId }, { studentId: userDetails._id }],
+			};
+			let toUpdate = { $inc: { windowSwitchAttempts: 1 } };
+			let options = { lean: true, new: true };
+
+			let updatedExamDetails = await queries.findAndUpdate(
+				Schema.assignExam,
+				conditions,
+				toUpdate,
+				options
+			);
+
+			if (updatedExamDetails) {
+				let examDetails = {
+					windowSwitchAttempts: updatedExamDetails.windowSwitchAttempts,
+				};
+
+				return {
+					response: { STATUS_CODE: 200, MSG: '' },
+					finalData: { examDetails },
+				};
 			}
 		} catch (err) {
 			throw err;

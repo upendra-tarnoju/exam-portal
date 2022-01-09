@@ -28,7 +28,6 @@ const assignExam = new Schema({
 	marksObtained: { type: Number, default: 0 },
 	attemptedQuestionsCount: { type: Number, default: 0 },
 	correctAnswerCount: { type: Number, default: 0 },
-	totalQuestions: { type: Number, default: 0 },
 	answerMarkings: {
 		type: [
 			{
@@ -38,6 +37,7 @@ const assignExam = new Schema({
 		],
 		default: [],
 	},
+	windowSwitchAttempts: { type: Number, default: 0 },
 });
 
 module.exports = mongoose.model('assignexam', assignExam);

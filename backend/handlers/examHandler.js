@@ -222,6 +222,12 @@ const exams = {
 				);
 			}
 
+			if (payload.examSwitchingAttempts) {
+				toUpdate.examSwitchingAttempts = payload.examSwitchingAttempts;
+				toUpdate.updatePreviousQuestion = payload.updatePreviousQuestion;
+				toUpdate.shuffleQuestions = payload.shuffleQuestions;
+			}
+
 			let updatedExam = await queries.findAndUpdate(
 				Schema.exam,
 				conditions,
