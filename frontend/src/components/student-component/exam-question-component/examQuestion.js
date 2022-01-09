@@ -21,7 +21,6 @@ import {
 	Save,
 	Clear,
 } from '@material-ui/icons';
-import moment from 'moment';
 
 import StudentService from '../../../services/studentApi';
 import styles from './examQuestion.module.css';
@@ -52,6 +51,7 @@ class ExamQuestion extends React.Component {
 			image: '',
 			subject: '',
 			duration: 0,
+			windowSwitchAttempts: 0,
 		};
 		this.studentService = new StudentService();
 	}
@@ -96,6 +96,7 @@ class ExamQuestion extends React.Component {
 					questionId: questionData._id,
 					subject: res.data.examDetails.subject,
 					duration: parseInt(res.data.examDetails.endTime),
+					windowSwitchAttempts: res.data.windowSwitchAttempts,
 				});
 			}
 		});
@@ -150,11 +151,16 @@ class ExamQuestion extends React.Component {
 
 	openFullScreen = () => {
 		if (screenfull.isEnabled) {
+			console.log('>>>>>>>>>>>requesting for full screen');
 			screenfull.request();
 
 			screenfull.on('change', () => {
+				console.log('>>>>>>>>>>>change screenfull event fired');
+				console.log('>>>>>>>>is full screen', screenfull.isFullscreen);
 				if (!screenfull.isFullscreen) {
+					console.log('>>>>>>>>>>>.inside if ');
 					this.setState({ fullScreenError: true });
+					screenfull.off('change');
 				} else this.setState({ fullScreenError: false });
 			});
 
@@ -252,7 +258,6 @@ class ExamQuestion extends React.Component {
 			subject,
 		} = this.state;
 		const renderCountTime = ({ hours, minutes, seconds }) => {
-			console.log(hours, minutes, seconds);
 			return (
 				<div className='d-flex'>
 					<div className={styles.countDownTimer}>{zeroPad(hours)}</div>
@@ -361,13 +366,17 @@ class ExamQuestion extends React.Component {
 			return <div className={styles.palletesContents}>{contents}</div>;
 		};
 
-		console.log('>>>>>>>duration', duration);
-
 		return (
 			<React.Fragment>
 				<div className='bg-primary w-100 py-1 px-4 d-flex justify-content-between'>
-					<CountDown date={duration} renderer={renderCountTime} />
-					<Typography className='align-self-center'>{subject}</Typography>
+					<CountDown
+						date={duration}
+						key={duration}
+						renderer={renderCountTime}
+					/>
+					<Typography className='align-self-center text-white'>
+						{subject}
+					</Typography>
 				</div>
 				<div className={styles.outerContainer}>
 					<div className={styles.questionContainer}>

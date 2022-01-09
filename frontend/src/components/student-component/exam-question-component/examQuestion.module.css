@@ -55,6 +55,7 @@
 	width: 40px;
 	height: 40px;
 	font-size: 16px;
+	color: white;
 }
 
 .attemptedPalletes {
@@ -67,7 +68,6 @@
 
 .notAttemptedPalletes {
 	background-color: red;
-	color: white;
 }
 
 .attemptedReviewPalletes {

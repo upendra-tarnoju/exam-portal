@@ -71,6 +71,19 @@ class StudentService {
 			},
 		});
 	}
+
+	updateWindowSwitchingAttempts(examId) {
+		let token = this.userService.getToken();
+		return axios({
+			method: 'put',
+			url: `${process.env.REACT_APP_BASE_URL}/${this.STUDENT_URL}/windowSwitch`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			data: { examId },
+		});
+	}
 }
 
 export default StudentService;

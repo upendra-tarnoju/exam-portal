@@ -7,7 +7,7 @@ import {
 	ListItemText,
 	Typography,
 } from '@material-ui/core';
-import { Details, Lock, Phone, Timer } from '@material-ui/icons';
+import { Details, Lock, MoreHoriz, Phone, Timer } from '@material-ui/icons';
 
 import ExamService from '../../../../services/examApi';
 import ExamDetailsForm from '../../../../forms/exam-form/edit-exam-form/examDetailsForm';
@@ -15,6 +15,7 @@ import ExamMarksForm from '../../../../forms/exam-form/edit-exam-form/examMarksF
 import ExamTimeForm from '../../../../forms/exam-form/edit-exam-form/examTimeForm';
 import ExamPasswordForm from '../../../../forms/exam-form/edit-exam-form/examPasswordForm';
 import CustomSnackBar from '../../../../common/customSnackbar';
+import ExamOtherSettingsForm from '../../../../forms/exam-form/edit-exam-form/examOtherSettingsForm';
 
 class EditExam extends React.Component {
 	constructor() {
@@ -49,6 +50,9 @@ class EditExam extends React.Component {
 	}
 
 	handleSnackBar = (status, msg, type) => {
+		let { snackbar } = this.state;
+		if (type === undefined) type = snackbar.type;
+
 		this.setState({
 			snackbar: {
 				show: status,
@@ -152,6 +156,16 @@ class EditExam extends React.Component {
 											primary='Password'
 										/>
 									</ListItem>
+									<ListItem
+										selected={activeTab === 4}
+										button
+										onClick={() => this.handleTabChange(4)}
+									>
+										<ListItemIcon>
+											<MoreHoriz />
+										</ListItemIcon>
+										<ListItemText selected={activeTab === 4} primary='Other' />
+									</ListItem>
 								</List>
 							</div>
 							<div className='col-md-8'>
@@ -173,6 +187,11 @@ class EditExam extends React.Component {
 									/>
 								) : activeTab === 3 ? (
 									<ExamPasswordForm
+										examDetails={exam}
+										handleSubmit={this.updateExamDetails}
+									/>
+								) : activeTab === 4 ? (
+									<ExamOtherSettingsForm
 										examDetails={exam}
 										handleSubmit={this.updateExamDetails}
 									/>
