@@ -1,24 +1,8 @@
 import { ApolloServer, gql } from "apollo-server";
-
-const typeDefs = gql`
-  type Book {
-    title: String
-    author: String
-  }
-
-  type Query {
-    books: [Book]
-  }
-`;
-
-const resolvers = {
-  Query: {
-    books: () => {data: 'Hello'},
-  },
-};
+import { schema } from "./schema";
 
 const server = new ApolloServer({
-  typeDefs, resolvers
+  schema,
 });
 
 server.listen().then(({url}) =>{
