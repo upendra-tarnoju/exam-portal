@@ -6,7 +6,7 @@ const { sender, transporter } = require('../config/mail');
 const APP_DEFAULTS = require('../config/app-defaults');
 const RESPONSE_MESSAGES = require('../config/response-messages');
 const { queries } = require('../db');
-const Schema = require('../schemas');
+const Schema = require('../../schemas');
 const { factories } = require('../factories');
 const { emailManager } = require('../lib');
 

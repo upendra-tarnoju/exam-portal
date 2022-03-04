@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const moment = require('moment');
 
 const { queries } = require('../db');
-const Schema = require('../schemas');
+const Schema = require('../../schemas');
 const { factories } = require('../factories');
 const RESPONSE_MESSAGES = require('../config/response-messages');
 const APP_CONSTANTS = require('../config/app-defaults');

@@ -5,7 +5,7 @@ let { factories } = require('../factories');
 let APP_CONSTANTS = require('../config/app-defaults');
 let RESPONSE_MESSAGES = require('../config/response-messages');
 const queries = require('../db/queries');
-let Schema = require('../schemas');
+let Schema = require('../../schemas');
 
 const exams = {
 	saveExamDetails: async (examDetails, userData) => {

@@ -9,7 +9,7 @@ const APP_DEFAULTS = require('../config/app-defaults');
 const RESPONSE_MESSAGES = require('../config/response-messages');
 const { queries } = require('../db');
 const { factories } = require('../factories');
-const Schema = require('../schemas');
+const Schema = require('../../schemas');
 
 let validateStudent = async (student, index) => {
 	let mobileNumberRegex = new RegExp('^[789]d{9}$');

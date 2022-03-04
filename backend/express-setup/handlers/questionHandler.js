@@ -4,7 +4,7 @@ const Grid = require('gridfs-stream');
 let APP_CONSTANTS = require('../config/app-defaults');
 let RESPONSE_MESSAGES = require('../config/response-messages');
 let { queries } = require('../db');
-let Schema = require('../schemas');
+let Schema = require('../../schemas');
 
 const questions = {
 	addNewQuestion: async (questionDetails, userDetails) => {
