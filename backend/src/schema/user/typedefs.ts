@@ -2,7 +2,7 @@ import { gql } from "apollo-server";
 
 const userTypeDef = gql`
   input LoginCredentials {
-    email: String!
+    email: EmailAddress!
     password: String!
   }
 
@@ -14,7 +14,7 @@ const userTypeDef = gql`
   input Signup {
     firstName: String!
     lastName: String!
-    email: String!
+    email: EmailAddress!
     password: String!
     mobileNumber: String!
     college: College!
@@ -24,15 +24,6 @@ const userTypeDef = gql`
     token: String!
     userType: String!
     lastLogin: String!
-  }
-
-  type Status {
-    code: Int!
-    message: String!
-  }
-
-  type ResponseError {
-    error: Status!
   }
 
   union LoginResponse = LoginSuccessResponse | ResponseError

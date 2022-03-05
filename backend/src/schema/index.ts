@@ -1,11 +1,13 @@
 import { makeExecutableSchema } from "@graphql-tools/schema";
 
 import UserTypeDefs from "./user/typedefs";
+import CommonTypeDefs from "./common/typeDefs";
 
 import UserResolvers from "./user/resolvers";
 
 
 const typeDefs = [
+  CommonTypeDefs,
   UserTypeDefs,
 ];
 
