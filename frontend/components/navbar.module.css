@@ -1,0 +1,13 @@
+.logo {
+  margin-left: 10px;
+}
+
+.navbarItems {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.navItem {
+  color: white;
+}
