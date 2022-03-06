@@ -1,9 +1,18 @@
 import type { NextPage } from 'next'
-import Navbar from '../components/navbar'
+import Head from "next/head";
+import React from 'react';
 
-const Home: NextPage = () => {
+import Navbar from '../components/navbar';
+
+const Home: NextPage = ({children}) => {
   return (
-    <Navbar />
+    <React.Fragment>
+      <Head>
+        <title>Signup</title>
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100&display=swap" rel="stylesheet" />
+      </Head>
+      <Navbar />
+    </React.Fragment>
   )
 }
 
