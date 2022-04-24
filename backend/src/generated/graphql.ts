@@ -4,6 +4,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -41,7 +42,7 @@ export type Mutation = {
 
 
 export type MutationSignupArgs = {
-  input?: InputMaybe<Signup>;
+  input: SignupUserInput;
 };
 
 export type Query = {
@@ -59,12 +60,10 @@ export type ResponseError = {
   error: Status;
 };
 
-export type Signup = {
+export type SignupUserInput = {
   email: Scalars['EmailAddress'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
-  mobileNumber: Scalars['String'];
-  password: Scalars['String'];
 };
 
 export type Status = {
@@ -153,7 +152,7 @@ export type ResolversTypes = {
   NonNegativeInt: ResolverTypeWrapper<Scalars['NonNegativeInt']>;
   Query: ResolverTypeWrapper<{}>;
   ResponseError: ResolverTypeWrapper<ResponseError>;
-  Signup: Signup;
+  SignupUserInput: SignupUserInput;
   Status: ResolverTypeWrapper<Status>;
   String: ResolverTypeWrapper<Scalars['String']>;
 };
@@ -171,7 +170,7 @@ export type ResolversParentTypes = {
   NonNegativeInt: Scalars['NonNegativeInt'];
   Query: {};
   ResponseError: ResponseError;
-  Signup: Signup;
+  SignupUserInput: SignupUserInput;
   Status: Status;
   String: Scalars['String'];
 };
@@ -192,7 +191,7 @@ export type LoginSuccessResponseResolvers<ContextType = any, ParentType extends 
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  signup?: Resolver<ResolversTypes['Status'], ParentType, ContextType, Partial<MutationSignupArgs>>;
+  signup?: Resolver<ResolversTypes['Status'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'input'>>;
 };
 
 export interface NonNegativeIntScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['NonNegativeInt'], any> {

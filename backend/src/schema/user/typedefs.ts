@@ -11,13 +11,10 @@ const userTypeDef = gql`
     name: String!
   }
   
-  input Signup {
+  input SignupUserInput {
     firstName: String!
     lastName: String!
     email: EmailAddress!
-    password: String!
-    mobileNumber: String!
-    college: College!
   }
 
   type LoginSuccessResponse {
@@ -32,8 +29,8 @@ const userTypeDef = gql`
     login(input: LoginCredentials): LoginResponse!
   }
 
-  type Mutation {
-    signup(input: Signup): Status!
+  extend type Mutation {
+    signup(input: SignupUserInput!): Status!
   }
 `;
 
